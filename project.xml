@@ -20,7 +20,6 @@
     </mailingLists>
    <repository>
         <connection>scm:svn:http://torwald.gistec-online.de/svn/ingrid:ingrid-ibus</connection>
-
     </repository>
     <build>
         <sourceDirectory>src/java</sourceDirectory>
