@@ -3,6 +3,7 @@
  * 
  * $Source: DispatcherTest.java,v $
  */
+
 package de.ingrid.ibus.v02;
 
 import junit.framework.TestCase;
