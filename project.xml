@@ -70,6 +70,16 @@
    <repository>
         <connection>scm:svn:http://torwald.gistec-online.de/svn/ingrid:ingrid-ibus</connection>
     </repository>
+    <dependencies>
+      <dependency>
+        <groupId>weta-g</groupId>
+        <artifactId>weta-g</artifactId>
+        <version>latest</version>
+        <type>zip</type>
+        <url>http://weta-group.net/maven</url>
+        <properties/>
+      </dependency>
+    </dependencies>
     <build>
         <sourceDirectory>src/java</sourceDirectory>
         <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
