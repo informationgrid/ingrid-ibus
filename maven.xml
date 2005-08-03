@@ -1,4 +1,5 @@
-<project xmlns:j="jelly:core">
+<project xmlns:j="jelly:core"
+		 xmlns:deploy="deploy">
 	
 	<goal name="jar">
 		<j:set var="testmatchpattern" value="**/*"/>
