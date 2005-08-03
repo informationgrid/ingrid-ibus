@@ -72,7 +72,7 @@
     </repository>
     <dependencies>
       <dependency>
-        <groupId>weta-g</groupId>
+        <groupId>weta</groupId>
         <artifactId>weta-g</artifactId>
         <version>latest</version>
         <type>zip</type>
