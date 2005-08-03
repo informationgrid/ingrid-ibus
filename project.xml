@@ -76,6 +76,7 @@
         <artifactId>weta-g</artifactId>
         <version>latest</version>
         <type>zip</type>
+       <url>http://www.weta-group.net/maven</url>
         <properties/>
       </dependency>
     </dependencies>
