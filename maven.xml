@@ -12,8 +12,17 @@
 		<attainGoal name="site"/>
 	</goal>
 	
+	
 	<goal name="test:test">
 		<attainGoal name="test:match" />	
 	</goal>
+	
+	<preGoal name="maven-jcoverage-plugin:report">
+		<j:set var="maven.test.failure.ignore" value="true"/>
+	</preGoal>
+	
+	<postGoal name="maven-jcoverage-plugin:report">
+		<j:set var="maven.test.failure.ignore" value="false"/>
+	</postGoal>
 	
 </project>
