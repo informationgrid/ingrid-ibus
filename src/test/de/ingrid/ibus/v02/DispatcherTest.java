@@ -16,15 +16,21 @@ import junit.framework.TestCase;
  * @author hs
  */
 public class DispatcherTest extends TestCase{
-
+    /**
+     * 
+     */
     public void testRedirectQueries() {
         fail("INGRID-18 not yet implemented");
     }
-    
+    /**
+     * 
+     */
     public void testReturnOfResults() {
         fail("INGRID-19 not yet implemented");
     }
-    
+    /**
+     * 
+     */
     public void testCommunicationWithStatisticOfAccesses() {
         fail("INGRID-20 not yet implemented");
     }

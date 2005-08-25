@@ -14,10 +14,15 @@ import junit.framework.TestCase;
  */
 public class IPlugConnectorTest extends TestCase {
 
+    /**
+     * 
+     */
     public void testCommunicationWithIPlug() {
         fail("INGRID-34 not yet implemented");
     }
-    
+    /**
+     * 
+     */
     public void testUsageOfJXTASockets() {
         fail("INGRID-35 not yet implemented");
     }

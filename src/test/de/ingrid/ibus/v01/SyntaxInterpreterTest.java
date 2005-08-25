@@ -13,15 +13,21 @@ import junit.framework.TestCase;
  * @author hs
  */
 public class SyntaxInterpreterTest extends TestCase {
-
+    /**
+     * 
+     */
     public void testTranslateToQuerySyntax() {
         fail("INGRID-36 not yet implemented");
     }
-    
+    /**
+     * 
+     */
     public void testFindAddressedDataSources() {
         fail("INGRID-37 not yet implemented");
     }
-    
+    /**
+     * 
+     */
     public void testFindDataFields() {
         fail("INGRID-38 not yet implemented");
     }

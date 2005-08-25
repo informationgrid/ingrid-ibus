@@ -13,15 +13,21 @@ import junit.framework.TestCase;
  * @author hs
  */
 public class PreProcessingPipelineTest extends TestCase {
-    
+    /**
+     * 
+     */
     public void testProcessRequest() {
         fail("INGRID-21 not yet implemented");
     }
-    
+    /**
+     * 
+     */
     public void testProcessResults() {
         fail("INGRID-22 not yet implemented");
     }
-    
+    /**
+     * 
+     */
     public void testImproveQuery() {
         fail("INGRID-23 not yet implemented");
     }
