@@ -79,6 +79,18 @@
        <url>http://www.weta-group.net/maven</url>
         <properties/>
       </dependency>
+      <dependency>
+        <groupId>ingrid</groupId>
+        <artifactId>ingrid-iplug</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>ingrid</groupId>
+        <artifactId>ingrid-utils</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <type>jar</type>
+      </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/java</sourceDirectory>
