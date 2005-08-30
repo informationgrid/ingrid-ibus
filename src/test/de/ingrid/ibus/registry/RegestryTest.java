@@ -6,20 +6,33 @@
 
 package de.ingrid.ibus.registry;
 
-import de.ingrid.iplug.IIPlug;
-import de.ingrid.utils.IngridQuey;
 import junit.framework.TestCase;
+import de.ingrid.iplug.IIPlug;
 
+/**
+ * 
+ * created on 21.07.2005 <p>
+ *
+ * @author hs
+ */
 public class RegestryTest extends TestCase {
 
+    /**
+     * 
+     * @throws Exception
+     */
     public void testAddAndGet() throws Exception {
         Regestry regestry = new Regestry();
-        IIPlug plug1 = new DummyIPlug(null, null);
+        IIPlug plug1 = new DummyIPlug("id", null);
         regestry.addIPlug(plug1);
-        IIPlug plug2 = regestry.getIPlug(plug1.geId());
+        IIPlug plug2 = regestry.getIPlug(plug1.getId());
         assertEquals(plug1, plug2);
     }
 
+    /**
+     * 
+     * @throws Exception
+     */
     public void testGetIplugsForQuery() throws Exception {
         Regestry regestry = new Regestry();
         for (int i = 0; i < 10; i++) {
@@ -28,11 +41,15 @@ public class RegestryTest extends TestCase {
         }
         for (int i = 0; i < 10; i++) {
             String dummy = "" + i;
-            IngridQuey quey = new IngridQuey(i, dummy);
-            IIPlug[] plugsForQuery = regestry.getIPlugsForQuery(quey);
+            DummyIngridQuery query = new DummyIngridQuery(i, dummy);
+            query.setFields(new String[]{dummy});
+            IIPlug[] plugsForQuery = regestry.getIPlugsForQuery(query);
             assertEquals(1, plugsForQuery.length);
         }
-
+        
+        DummyIngridQuery query = new DummyIngridQuery(20, "query");
+        query.setFields(new String[]{"anyField"});
+        assertEquals(0, regestry.getIPlugsForQuery(query).length);
     }
 
 }
