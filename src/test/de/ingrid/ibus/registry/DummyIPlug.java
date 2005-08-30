@@ -8,20 +8,40 @@ package de.ingrid.ibus.registry;
 
 import de.ingrid.iplug.IIPlug;
 
+/**
+ * created on 21.07.2005 <p>
+ *
+ * @author hs
+ */
+
 public class DummyIPlug implements IIPlug {
 
     private String[] fFields;
 
     private String fId;
-
-    public DummyIPlug(String id, String[] string) {
+    
+    /**
+     * @param id
+     * @param fields 
+     */
+    
+    public DummyIPlug(String id, String[] fields) {
         this.fId = id;
-        this.fFields = string;
+        this.fFields = fields;
 
     }
-
-    public String geId() {
+    /**
+     * @return The iplug id. 
+     */
+    public String getId() {
         return this.fId;
+    }
+    
+    /**
+     * @return The supported data fields
+     */
+    public String[] getFields() {
+        return this.fFields;
     }
 
 }
