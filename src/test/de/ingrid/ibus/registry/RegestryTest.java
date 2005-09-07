@@ -6,13 +6,18 @@
 
 package de.ingrid.ibus.registry;
 
+import java.io.StringReader;
+
 import junit.framework.TestCase;
 import de.ingrid.iplug.IIPlug;
+import de.ingrid.utils.IngridQuery;
+import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
  * 
- * created on 21.07.2005 <p>
- *
+ * created on 21.07.2005
+ * <p>
+ * 
  * @author hs
  */
 public class RegestryTest extends TestCase {
@@ -41,15 +46,15 @@ public class RegestryTest extends TestCase {
         }
         for (int i = 0; i < 10; i++) {
             String dummy = "" + i;
-            DummyIngridQuery query = new DummyIngridQuery(i, dummy);
-            query.setFields(new String[]{dummy});
+            QueryStringParser parser = new QueryStringParser(new StringReader(dummy + ":" + dummy));
+            IngridQuery query = parser.parse();
             IIPlug[] plugsForQuery = regestry.getIPlugsForQuery(query);
             assertEquals(1, plugsForQuery.length);
         }
-        
-        DummyIngridQuery query = new DummyIngridQuery(20, "query");
-        query.setFields(new String[]{"anyField"});
-        assertEquals(0, regestry.getIPlugsForQuery(query).length);
+
+        QueryStringParser parser = new QueryStringParser(new StringReader("a simple Query"));
+        IngridQuery query = parser.parse();
+        assertEquals(10, regestry.getIPlugsForQuery(query).length);
     }
 
 }

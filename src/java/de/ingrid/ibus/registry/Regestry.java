@@ -7,75 +7,112 @@
 package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
+
 import de.ingrid.iplug.IIPlug;
-import de.ingrid.utils.IngridQuey;
+import de.ingrid.utils.ClauseQuery;
+import de.ingrid.utils.FieldQuery;
+import de.ingrid.utils.IngridQuery;
+import de.ingrid.utils.TermQuery;
 
 /**
  * 
- * created on 21.07.2005 <p>
- *
+ * created on 21.07.2005
+ * <p>
+ * 
  * @author hs
  */
 
 public class Regestry {
-    private Hashtable fRegisteredIPlugs = new Hashtable();
-    
+
+    private HashMap fCache = new HashMap();
+
+    private HashMap fFieldIndex = new HashMap();
+
     /**
-     * Registers the given <code>IIPlug</code> instance.
-     * @param plug The <code>IIPlug</code> instance to register.
+     * Adds a iplug to the registry
+     * 
+     * @param plug
      */
     public void addIPlug(IIPlug plug) {
-        this.fRegisteredIPlugs.put(plug.getId(), plug);
+        putToCache(plug);
     }
 
-    /**
-     * Allows access to all registered <code>IIplug</code> instances. 
-     * @param id The id of the registered <code>IIPlug</code> instance.
-     * @return null if no <code>IIPlug</code> instance is registered.
-     */
-    public IIPlug getIPlug(String id) {
-        return (IIPlug) this.fRegisteredIPlugs.get(id);
-    }
+    private void putToCache(IIPlug plug) {
+        this.fCache.put(plug.getId(), plug);
+        String[] fields = plug.getFields();
+        if (fields != null) {
+            for (int i = 0; i < fields.length; i++) {
+                this.fFieldIndex.put(fields[i], plug);
 
-    /**
-     * 
-     * @param query
-     * @return All registered <code>IIPlug</code> instances which supports data fields which in the given query contains.       
-     */
-    public IIPlug[] getIPlugsForQuery(IngridQuey query) {
-        final List iPlugList = new ArrayList();
-        Iterator iterator = this.fRegisteredIPlugs.values().iterator();
-        IIPlug plug = null;
-        while (iterator.hasNext()) {
-            plug = (IIPlug) iterator.next();
-            if(checkForDataFields(query, plug.getFields())){
-                iPlugList.add(plug);
             }
         }
-        return (IIPlug[]) iPlugList.toArray(new IIPlug[iPlugList.size()]);
+
     }
-    
-    
+
     /**
-     * Checks for occurrence of datafields in the query. 
-     * @param ingridQuery The query to check for coccurrence of the given datafields.
-     * @param dataFields The fields to check for occurrence in the given query.
-     * @return true if one of the datafields occurs in the given query.  
+     * @param id
+     * @return the iplug by key or <code>null</code>
      */
-    private static boolean checkForDataFields(IngridQuey ingridQuery, String[] dataFields){
-        final Enumeration fields = ingridQuery.getFields();
-        final List dataFieldList = Arrays.asList(dataFields);
-        while (fields.hasMoreElements()) {
-            if(dataFieldList.contains(fields.nextElement())){
+    public IIPlug getIPlug(String id) {
+        return (IIPlug) this.fCache.get(id);
+    }
+
+    /**
+     * @param query
+     * @return the iiplugs that have the fields the query require.
+     */
+    public IIPlug[] getIPlugsForQuery(IngridQuery query) {
+
+        if (queryHasTerms(query)) {
+            return (IIPlug[]) this.fCache.values().toArray(new IIPlug[this.fCache.size()]);
+        }
+
+        ArrayList fields = new ArrayList();
+        getFieldsFromQuery(query, fields);
+        ArrayList plugs = new ArrayList();
+        int fieldCount = fields.size();
+        for (int i = 0; i < fieldCount; i++) {
+            String fieldName = (String) fields.get(i);
+            IIPlug plug = (IIPlug) this.fFieldIndex.get(fieldName);
+            if (plug != null) {
+                plugs.add(plug);
+            }
+
+        }
+
+        return (IIPlug[]) plugs.toArray(new IIPlug[plugs.size()]);
+    }
+
+    private boolean queryHasTerms(IngridQuery query) {
+        TermQuery[] terms = query.getTerms();
+        if (terms.length > 0) {
+            return true;
+        }
+        ClauseQuery[] clauses = query.getClauses();
+        for (int i = 0; i < clauses.length; i++) {
+            if (queryHasTerms(clauses[i])) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Recursive loop to extract field names from queries and clause subqueries
+     * 
+     * @param query
+     * @param fieldList
+     */
+    private void getFieldsFromQuery(IngridQuery query, ArrayList fieldList) {
+        FieldQuery[] fields = query.getFields();
+        for (int i = 0; i < fields.length; i++) {
+            fieldList.add(fields[i].getFieldName());
+        }
+        ClauseQuery[] clauses = query.getClauses();
+        for (int i = 0; i < clauses.length; i++) {
+            getFieldsFromQuery(clauses[i], fieldList);
+        }
     }
 
 }
