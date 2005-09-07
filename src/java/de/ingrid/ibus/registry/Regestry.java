@@ -43,8 +43,13 @@ public class Regestry {
         String[] fields = plug.getFields();
         if (fields != null) {
             for (int i = 0; i < fields.length; i++) {
-                this.fFieldIndex.put(fields[i], plug);
-
+                String field = fields[i];
+                ArrayList list = (ArrayList) this.fFieldIndex.get(field);
+                if (list == null) {
+                    list = new ArrayList();
+                    this.fFieldIndex.put(field, list);
+                }
+                list.add(plug);
             }
         }
 
@@ -74,11 +79,10 @@ public class Regestry {
         int fieldCount = fields.size();
         for (int i = 0; i < fieldCount; i++) {
             String fieldName = (String) fields.get(i);
-            IIPlug plug = (IIPlug) this.fFieldIndex.get(fieldName);
-            if (plug != null) {
-                plugs.add(plug);
+            ArrayList list = (ArrayList) this.fFieldIndex.get(fieldName);
+            if (list != null) {
+                plugs.addAll(list);
             }
-
         }
 
         return (IIPlug[]) plugs.toArray(new IIPlug[plugs.size()]);
