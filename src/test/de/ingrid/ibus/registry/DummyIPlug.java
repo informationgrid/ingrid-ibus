@@ -43,6 +43,10 @@ public class DummyIPlug implements IIPlug {
     public String[] getFields() {
         return this.fFields;
     }
+    public String getDataType() {
+        // TODO Auto-generated method stub
+        return null;
+    }
    
 
 }
