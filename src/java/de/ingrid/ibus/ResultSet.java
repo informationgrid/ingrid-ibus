@@ -11,21 +11,23 @@ import java.util.ArrayList;
 public class ResultSet extends ArrayList {
 
     private int fNumberOfConnections;
-    private int fNumberOfFinsihedConnections = 0;
-    private Bus fBus;
 
-    public ResultSet(int numberOfConnections, Bus bus) {
+    private int fNumberOfFinsihedConnections = 0;
+
+
+    public ResultSet(int numberOfConnections) {
         this.fNumberOfConnections = numberOfConnections;
-        fBus =bus;
     }
 
-    
-    
     /**
      * @return if all connections are finished
      */
     public boolean isComplete() {
         return this.fNumberOfConnections == this.fNumberOfFinsihedConnections;
+    }
+
+    public void resultsAdded() {
+        this.fNumberOfFinsihedConnections += 1;
     }
 
 }

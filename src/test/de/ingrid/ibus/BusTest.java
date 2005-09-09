@@ -15,7 +15,7 @@ import de.ingrid.utils.queryparser.QueryStringParser;
 public class BusTest extends TestCase {
 
     public void testSendQueries() throws Exception {
-        Bus bus = new Bus();
+        Bus bus = new Bus(new DummyProxyFactory());
         
         for (int i = 0; i < 3; i++) {
             DummyIPlug plug = new DummyIPlug("" + i, new String[] { "ort" });
@@ -23,7 +23,7 @@ public class BusTest extends TestCase {
         }
 
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        IngridDocument[] documents = bus.search(query, 0, Integer.MAX_VALUE, 1000);
+        IngridDocument[] documents = bus.search(query, Integer.MAX_VALUE, 1000);
         assertEquals(3, documents.length);
 
     }
