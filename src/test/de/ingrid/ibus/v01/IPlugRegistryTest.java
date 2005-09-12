@@ -4,6 +4,8 @@
  * $Source: DispatcherTest.java,v $
  */
 package de.ingrid.ibus.v01;
+import de.ingrid.ibus.registry.RegestryTest;
+import de.ingrid.ibus.registry.SyntaxInterpreterTest;
 import junit.framework.TestCase;
 
 /**
@@ -26,10 +28,14 @@ public class IPlugRegistryTest extends TestCase {
         fail("INGRID-29 not yet implemented");
     }
     /**
+     * @throws Exception 
      * 
      */
-    public void testStoreIndexStructures() {
-        fail("INGRID-30 not yet implemented");
+    public void testStoreIndexStructures() throws Exception {
+        new RegestryTest().testAddAndGet();
+        new SyntaxInterpreterTest().testGetIplugsForQuery();
+        
+        
     }
     /**
      * 
@@ -38,10 +44,13 @@ public class IPlugRegistryTest extends TestCase {
         fail("INGRID-31 not yet implemented");
     }
     /**
+     * test for INGRID-32
+     * 
+     * @throws Exception 
      * 
      */
-    public void testStoreDataInRAM() {
-        fail("INGRID-32 not yet implemented");
+    public void testStoreDataInRAM() throws Exception {
+        new RegestryTest().testAddAndGet();
     }
     /**
      * 
