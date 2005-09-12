@@ -15,9 +15,23 @@ import de.ingrid.utils.ClauseQuery;
 import de.ingrid.utils.FieldQuery;
 import de.ingrid.utils.IngridQuery;
 import de.ingrid.utils.TermQuery;
+import de.ingrid.utils.queryparser.ParseException;
+import de.ingrid.utils.queryparser.QueryStringParser;
 
 public class SyntaxInterpreter {
-
+    
+    /**
+     * Passes the given query to the {@link QueryStringParser}
+     * @param query The query to parse
+     * @return The parsed query object
+     * @throws ParseException
+     */
+    
+    public static IngridQuery parseQuery(String query) throws ParseException{
+        return QueryStringParser.parse(query);
+    }
+    
+    
     /**
      * @param query
      * @return the iplugs that have the fields the query require.
