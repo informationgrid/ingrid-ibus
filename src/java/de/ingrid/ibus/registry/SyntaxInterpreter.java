@@ -10,45 +10,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import de.ingrid.iplug.IIPlug;
-import de.ingrid.utils.ClauseQuery;
-import de.ingrid.utils.FieldQuery;
-import de.ingrid.utils.IngridQuery;
-import de.ingrid.utils.TermQuery;
-import de.ingrid.utils.queryparser.ParseException;
-import de.ingrid.utils.queryparser.QueryStringParser;
+import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.query.ClauseQuery;
+import de.ingrid.utils.query.FieldQuery;
+import de.ingrid.utils.query.IngridQuery;
+import de.ingrid.utils.query.TermQuery;
 
 public class SyntaxInterpreter {
-    
-    /**
-     * Passes the given query to the {@link QueryStringParser}
-     * @param query The query to parse
-     * @return The parsed query object
-     * @throws ParseException
-     */
-    
-    public static IngridQuery parseQuery(String query) throws ParseException{
-        return QueryStringParser.parse(query);
-    }
-    
-    
+
     /**
      * @param query
      * @return the iplugs that have the fields the query require.
      */
-    public static IIPlug[] getIPlugsForQuery(IngridQuery query, Regestry regestry) {
+    public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Regestry regestry) {
     
         String dataType = query.getDataType();
-        IIPlug[] allIPlugs = regestry.getAllIPlugs();
+        PlugDescription[] allIPlugs = regestry.getAllIPlugs();
         boolean hasTerms = queryHasTerms(query);
         if (hasTerms && dataType != null) {
             return filterForDataType(allIPlugs, dataType);
         }
-        String[] fields = getAllFieldsFromQuery(query);
-    
-        if (dataType == null && fields.length == 0 && hasTerms) {
+        if (dataType == null && hasTerms) {
             return allIPlugs;
         }
+        
+        String[] fields = getAllFieldsFromQuery(query);
+        
         if (dataType != null) {
             return filterForDataTypeAndFields(allIPlugs, dataType, fields);
         }
@@ -64,12 +51,12 @@ public class SyntaxInterpreter {
      * @param fields
      * @return plugs have at least one matching field
      */
-    private static IIPlug[] filterForFields(IIPlug[] allIPlugs, String[] fields) {
+    private static PlugDescription[] filterForFields(PlugDescription[] allIPlugs, String[] fields) {
         ArrayList arrayList = new ArrayList();
         HashSet hashSet = new HashSet();
         hashSet.addAll(Arrays.asList(fields));
         for (int i = 0; i < allIPlugs.length; i++) {
-            IIPlug plug = allIPlugs[i];
+            PlugDescription plug = allIPlugs[i];
             String[] plugFields = plug.getFields();
             for (int j = 0; j < plugFields.length; j++) {
                 String field = plugFields[j];
@@ -80,7 +67,7 @@ public class SyntaxInterpreter {
             }
     
         }
-        return (IIPlug[]) arrayList.toArray(new IIPlug[arrayList.size()]);
+        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
     }
 
     /**
@@ -89,12 +76,12 @@ public class SyntaxInterpreter {
      * @param fields
      * @return plugs matching datatype and have at least one matching field
      */
-    private static IIPlug[] filterForDataTypeAndFields(IIPlug[] allIPlugs, String dataType, String[] fields) {
+    private static PlugDescription[] filterForDataTypeAndFields(PlugDescription[] allIPlugs, String dataType, String[] fields) {
         ArrayList arrayList = new ArrayList();
         HashSet requiredFields = new HashSet();
         requiredFields.addAll(Arrays.asList(fields));
         for (int i = 0; i < allIPlugs.length; i++) {
-            IIPlug plug = allIPlugs[i];
+            PlugDescription plug = allIPlugs[i];
             if (plug.getDataType().equals(dataType)) {
                 String[] plugFields = plug.getFields();
                 for (int j = 0; j < plugFields.length; j++) {
@@ -107,7 +94,7 @@ public class SyntaxInterpreter {
     
             }
         }
-        return (IIPlug[]) arrayList.toArray(new IIPlug[arrayList.size()]);
+        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
     }
 
     /**
@@ -115,15 +102,15 @@ public class SyntaxInterpreter {
      * @param dataType
      * @return only plugs matching given datatype.
      */
-    private static IIPlug[] filterForDataType(IIPlug[] allIPlugs, String dataType) {
+    private static PlugDescription[] filterForDataType(PlugDescription[] allIPlugs, String dataType) {
         ArrayList arrayList = new ArrayList();
         for (int i = 0; i < allIPlugs.length; i++) {
-            IIPlug plug = allIPlugs[i];
+            PlugDescription plug = allIPlugs[i];
             if (plug.getDataType().equals(dataType)) {
                 arrayList.add(plug);
             }
         }
-        return (IIPlug[]) arrayList.toArray(new IIPlug[arrayList.size()]);
+        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
     }
 
     /**
