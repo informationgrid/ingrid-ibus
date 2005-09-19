@@ -6,13 +6,14 @@
 
 package de.ingrid.ibus;
 
-import de.ingrid.utils.IDataSource;
+import de.ingrid.iplug.IPlug;
 import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.query.IngridQuery;
 
-public class DummyDataSource implements IDataSource {
+public class DummyIPlug implements IPlug {
 
-    public IngridDocument[] search(IngridQuery query, int length) throws Exception {
+
+    public IngridDocument[] search(IngridQuery query, int start, int lenght) {
         return new IngridDocument[] { new IngridDocument(new Long(System.currentTimeMillis()), " a result") };
     }
 

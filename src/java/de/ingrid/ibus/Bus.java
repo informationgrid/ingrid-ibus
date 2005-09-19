@@ -41,13 +41,15 @@ public class Bus implements IBus {
      * @return array of founded documents
      * @throws Exception
      */
-    public IngridDocument[] search(IngridQuery query, int length, int maxMilliseconds) throws Exception {
+    public IngridDocument[] search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
+            throws Exception {
+        // TODO add grouping
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegestry);
         PlugQueryConnection[] connections = new PlugQueryConnection[plugsForQuery.length];
         ResultSet resultSet = new ResultSet(connections.length);
         for (int i = 0; i < plugsForQuery.length; i++) {
             PlugQueryConnection connection = new PlugQueryConnection(this.fProxyFactory, plugsForQuery[i], query,
-                    length, resultSet);
+                    length, i, resultSet);
             connection.start();
         }
         long end = System.currentTimeMillis() + maxMilliseconds;
@@ -68,8 +70,7 @@ public class Bus implements IBus {
 
     }
 
-    public IngridDocument[] search(IngridQuery query, int length) throws Exception {
-        return search(query, length, 10000);
-    }
+    
+    
 
 }

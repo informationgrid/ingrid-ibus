@@ -23,7 +23,7 @@ public class BusTest extends TestCase {
         }
 
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        IngridDocument[] documents = bus.search(query, Integer.MAX_VALUE, 1000);
+        IngridDocument[] documents = bus.search(query, 10, 1,  Integer.MAX_VALUE, 1000);
         assertEquals(3, documents.length);
 
     }
