@@ -7,7 +7,7 @@
 package de.ingrid.ibus.registry;
 
 import junit.framework.TestCase;
-import de.ingrid.iplug.IIPlug;
+import de.ingrid.iplug.PlugDescription;
 
 /**
  * 
@@ -24,9 +24,10 @@ public class RegestryTest extends TestCase {
      */
     public void testAddAndGet() throws Exception {
         Regestry regestry = new Regestry();
-        IIPlug plug1 = new DummyIPlug("id", null);
+        PlugDescription plug1 = new PlugDescription();
+        plug1.setPlugId("a ID");
         regestry.addIPlug(plug1);
-        IIPlug plug2 = regestry.getIPlug(plug1.getId());
+        PlugDescription plug2 = regestry.getIPlug(plug1.getPlugId());
         assertEquals(plug1, plug2);
     }
 

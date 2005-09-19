@@ -8,7 +8,7 @@ package de.ingrid.ibus;
 
 import de.ingrid.utils.IDataSource;
 import de.ingrid.utils.IngridDocument;
-import de.ingrid.utils.IngridQuery;
+import de.ingrid.utils.query.IngridQuery;
 
 public class DummyDataSource implements IDataSource {
 

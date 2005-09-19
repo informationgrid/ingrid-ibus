@@ -10,10 +10,9 @@ import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryConnection;
 import de.ingrid.ibus.registry.Regestry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
-import de.ingrid.iplug.IIPlug;
-import de.ingrid.utils.IDataSource;
+import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridDocument;
-import de.ingrid.utils.IngridQuery;
+import de.ingrid.utils.query.IngridQuery;
 
 /**
  * The IBus a centralized Bus that routes queries and return results
@@ -23,7 +22,7 @@ import de.ingrid.utils.IngridQuery;
  * @author sg
  * @version $Revision: 1.3 $
  */
-public class Bus implements IDataSource {
+public class Bus implements IBus {
 
     private Regestry fRegestry = new Regestry();
 
@@ -43,7 +42,7 @@ public class Bus implements IDataSource {
      * @throws Exception
      */
     public IngridDocument[] search(IngridQuery query, int length, int maxMilliseconds) throws Exception {
-        IIPlug[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegestry);
+        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegestry);
         PlugQueryConnection[] connections = new PlugQueryConnection[plugsForQuery.length];
         ResultSet resultSet = new ResultSet(connections.length);
         for (int i = 0; i < plugsForQuery.length; i++) {

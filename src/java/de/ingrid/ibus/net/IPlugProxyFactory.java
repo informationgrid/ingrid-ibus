@@ -6,11 +6,11 @@
 
 package de.ingrid.ibus.net;
 
-import de.ingrid.iplug.IIPlug;
+import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IDataSource;
 
 public interface IPlugProxyFactory {
 
-    public IDataSource createDataSourceProxy(IIPlug plug);
+    public IDataSource createDataSourceProxy(PlugDescription plug);
 
 }

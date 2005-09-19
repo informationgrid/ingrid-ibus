@@ -8,7 +8,8 @@ package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
 
-import de.ingrid.iplug.IIPlug;
+import de.ingrid.iplug.IPlug;
+import de.ingrid.iplug.PlugDescription;
 
 /**
  * 
@@ -27,11 +28,11 @@ public class Regestry {
      * 
      * @param plug
      */
-    public void addIPlug(IIPlug plug) {
+    public void addIPlug(PlugDescription plug) {
         putToCache(plug);
     }
 
-    private void putToCache(IIPlug plug) {
+    private void putToCache(PlugDescription plug) {
         this.fIPlugs.add(plug);
     }
 
@@ -39,11 +40,11 @@ public class Regestry {
      * @param id
      * @return the iplug by key or <code>null</code>
      */
-    public IIPlug getIPlug(String id) {
+    public PlugDescription getIPlug(String id) {
         int count = this.fIPlugs.size();
         for (int i = 0; i < count; i++) {
-            IIPlug plug = (IIPlug) this.fIPlugs.get(i);
-            if (plug.getId().equals(id)) {
+            PlugDescription plug = (PlugDescription) this.fIPlugs.get(i);
+            if (plug.getPlugId().equals(id)) {
                 return plug;
             }
         }
@@ -53,8 +54,8 @@ public class Regestry {
     /**
      * @return all registed iplugs
      */
-    public IIPlug[] getAllIPlugs() {
-        return (IIPlug[]) this.fIPlugs.toArray(new IIPlug[this.fIPlugs.size()]);
+    public PlugDescription[] getAllIPlugs() {
+        return (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs.size()]);
     }
 
 }

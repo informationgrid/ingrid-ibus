@@ -7,12 +7,12 @@
 package de.ingrid.ibus;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
-import de.ingrid.iplug.IIPlug;
+import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IDataSource;
 
 public class DummyProxyFactory implements IPlugProxyFactory {
 
-    public IDataSource createDataSourceProxy(IIPlug plug) {
+    public IDataSource createDataSourceProxy(PlugDescription plug) {
         // TODO Auto-generated method stub
         return new DummyDataSource();
     }
