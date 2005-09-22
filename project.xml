@@ -71,14 +71,12 @@
         <connection>scm:svn:http://torwald.gistec-online.de/svn/ingrid:ingrid-ibus</connection>
     </repository>
     <dependencies>
-      <dependency>
         <dependency>
             <groupId>weta</groupId>
             <artifactId>weta-g</artifactId>
             <version>SNAPSHOT</version>
-            <type>zip</type>
+            <type>zip</type>>
         </dependency>
-      </dependency>
       <dependency>
         <groupId>ingrid</groupId>
         <artifactId>ingrid-iplug</artifactId>
@@ -89,7 +87,7 @@
         <groupId>ingrid</groupId>
         <artifactId>ingrid-utils</artifactId>
         <version>0.1-SNAPSHOT</version>
-        <type>jar</type>
+        <type>jar</type>-->
       </dependency>
     </dependencies>
     <build>
