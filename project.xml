@@ -72,12 +72,12 @@
     </repository>
     <dependencies>
       <dependency>
-        <groupId>weta</groupId>
-        <artifactId>weta-g</artifactId>
-        <version>latest</version>
-        <type>zip</type>
-       <url>http://www.weta-group.net/maven</url>
-        <properties/>
+        <dependency>
+            <groupId>weta</groupId>
+            <artifactId>weta-g</artifactId>
+            <version>SNAPSHOT</version>
+            <type>zip</type>
+        </dependency>
       </dependency>
       <dependency>
         <groupId>ingrid</groupId>
