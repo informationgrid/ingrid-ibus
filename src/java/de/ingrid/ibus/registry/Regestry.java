@@ -20,6 +20,8 @@ import de.ingrid.iplug.PlugDescription;
 
 public class Regestry {
 
+    private static final String ADDING_TIMESTAMP = "addedTimeStamp";
+
     private ArrayList fIPlugs = new ArrayList();
 
     /**
@@ -32,6 +34,7 @@ public class Regestry {
     }
 
     private void putToCache(PlugDescription plug) {
+        plug.putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
         this.fIPlugs.add(plug);
     }
 
