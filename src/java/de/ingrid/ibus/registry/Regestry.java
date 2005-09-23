@@ -24,6 +24,15 @@ public class Regestry {
 
     private ArrayList fIPlugs = new ArrayList();
 
+    private long fLifeTime = 10000;
+
+    /**
+     * @param lifeTimeOfPlugs
+     */
+    public Regestry(long lifeTimeOfPlugs) {
+        this.fLifeTime = lifeTimeOfPlugs;
+    }
+
     /**
      * Adds a iplug to the registry
      * 
@@ -34,8 +43,22 @@ public class Regestry {
     }
 
     private void putToCache(PlugDescription plug) {
+        String id = plug.getPlugId();
+        removeFromCache(id);
         plug.putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
         this.fIPlugs.add(plug);
+    }
+
+    private void removeFromCache(String id) {
+        int count = this.fIPlugs.size();
+        for (int i = 0; i < count; i++) {
+            PlugDescription plug = (PlugDescription) this.fIPlugs.get(i);
+            if (plug.getPlugId().equals(id)) {
+                this.fIPlugs.remove(i);
+                break;
+            }
+        }
+
     }
 
     /**
@@ -54,10 +77,27 @@ public class Regestry {
     }
 
     /**
-     * @return all registed iplugs
+     * @return all registed iplugs without checking the time stamp
+     */
+    public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
+        return (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs.size()]);
+    }
+
+    /**
+     * @return all registed iplugs younger than given lifetime
      */
     public PlugDescription[] getAllIPlugs() {
-        return (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs.size()]);
+        ArrayList list = new ArrayList();
+        PlugDescription[] descriptions = (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs
+                .size()]);
+        long maxLifeTime = System.currentTimeMillis();
+        for (int i = 0; i < descriptions.length; i++) {
+            if (descriptions[i].getLong(ADDING_TIMESTAMP) + this.fLifeTime > maxLifeTime) {
+                list.add(descriptions[i]);
+            }
+        }
+        return (PlugDescription[]) list.toArray(new PlugDescription[list.size()]);
+
     }
 
 }

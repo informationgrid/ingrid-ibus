@@ -23,7 +23,7 @@ public class RegestryTest extends TestCase {
      * @throws Exception
      */
     public void testAddAndGet() throws Exception {
-        Regestry regestry = new Regestry();
+        Regestry regestry = new Regestry(1000);
         PlugDescription plug1 = new PlugDescription();
         plug1.setPlugId("a ID");
         regestry.addIPlug(plug1);

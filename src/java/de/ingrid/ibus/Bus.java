@@ -23,8 +23,8 @@ import de.ingrid.utils.query.IngridQuery;
  * @version $Revision: 1.3 $
  */
 public class Bus implements IBus {
-
-    private Regestry fRegestry = new Regestry();
+    // TODO INGRID-398 we need to made the lifetime configurable.
+    private Regestry fRegestry = new Regestry(100000);
 
     private IPlugProxyFactory fProxyFactory;
 
@@ -69,8 +69,5 @@ public class Bus implements IBus {
         return this.fRegestry;
 
     }
-
-    
-    
 
 }

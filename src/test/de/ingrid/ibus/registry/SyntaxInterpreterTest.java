@@ -67,11 +67,12 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testGetIplugsForQuery() throws Exception {
-        Regestry regestry = new Regestry();
+        Regestry regestry = new Regestry(1000000);
         for (int i = 0; i < 10; i++) {
             String dummy = "" + i;
             PlugDescription description = new PlugDescription();
             description.addField(dummy);
+            description.setPlugId(dummy);
             regestry.addIPlug(description);
         }
         for (int i = 0; i < 10; i++) {
