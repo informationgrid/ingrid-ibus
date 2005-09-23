@@ -8,7 +8,6 @@ package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
 
-import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
 
 /**
