@@ -6,6 +6,8 @@
 
 package de.ingrid.ibus.registry;
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 import de.ingrid.iplug.PlugDescription;
 
@@ -23,12 +25,30 @@ public class RegistryTest extends TestCase {
      * @throws Exception
      */
     public void testAddAndGet() throws Exception {
-        Registry regestry = new Registry(1000);
+        Registry registry = new Registry(1000);
         PlugDescription plug1 = new PlugDescription();
         plug1.setPlugId("a ID");
-        regestry.addIPlug(plug1);
-        PlugDescription plug2 = regestry.getIPlug(plug1.getPlugId());
+        registry.addIPlug(plug1);
+        PlugDescription plug2 = registry.getIPlug(plug1.getPlugId());
         assertEquals(plug1, plug2);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testGetAllIPlugs() throws Exception {
+        int plugLifeTime=250;
+        Registry registry = new Registry(plugLifeTime);
+        PlugDescription plug1 = new PlugDescription();
+        plug1.setPlugId("a ID");
+        registry.addIPlug(plug1);
+        
+        assertTrue(Arrays.asList(registry.getAllIPlugs()).contains(plug1));
+        assertTrue(Arrays.asList(registry.getAllIPlugsWithoutTimeLimitation()).contains(plug1));
+        
+        Thread.sleep(plugLifeTime+100);
+        assertFalse(Arrays.asList(registry.getAllIPlugs()).contains(plug1));
+        assertTrue(Arrays.asList(registry.getAllIPlugsWithoutTimeLimitation()).contains(plug1));
     }
 
 }
