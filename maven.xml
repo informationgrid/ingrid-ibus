@@ -4,7 +4,7 @@
 	<!-- create website with feature tests -->
 	<goal name="site:generate">
 		<j:set var="faeturetests" value="true"/>
-		<j:set var="testmatchpattern" value="**/*Test*"/>
+		<j:set var="testmatchpattern" value="**/*Test.java"/>
 		<j:set var="testnotmatchpattern" value=""/>
 		<attainGoal name="site"/>
 	</goal>
@@ -19,7 +19,7 @@
 	<!-- run tests without feature test if 'featuretest' is not set to true -->
 	<preGoal name="test:test">
 		<j:if test="${faeturetests != 'true'}">
-			<j:set var="testmatchpattern" value="**/*Test*"/>
+			<j:set var="testmatchpattern" value="**/*Test.java"/>
 			<j:set var="testnotmatchpattern" value="**/v*/*"/>
 		</j:if>
 	</preGoal>
