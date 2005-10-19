@@ -18,7 +18,7 @@ import de.ingrid.iplug.PlugDescription;
  * @author hs
  */
 
-public class Regestry {
+public class Registry {
 
     private static final String ADDING_TIMESTAMP = "addedTimeStamp";
 
@@ -29,7 +29,7 @@ public class Regestry {
     /**
      * @param lifeTimeOfPlugs
      */
-    public Regestry(long lifeTimeOfPlugs) {
+    public Registry(long lifeTimeOfPlugs) {
         this.fLifeTime = lifeTimeOfPlugs;
     }
 

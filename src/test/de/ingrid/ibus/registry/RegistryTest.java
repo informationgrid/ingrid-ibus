@@ -16,14 +16,14 @@ import de.ingrid.iplug.PlugDescription;
  * 
  * @author hs
  */
-public class RegestryTest extends TestCase {
+public class RegistryTest extends TestCase {
 
     /**
      * 
      * @throws Exception
      */
     public void testAddAndGet() throws Exception {
-        Regestry regestry = new Regestry(1000);
+        Registry regestry = new Registry(1000);
         PlugDescription plug1 = new PlugDescription();
         plug1.setPlugId("a ID");
         regestry.addIPlug(plug1);

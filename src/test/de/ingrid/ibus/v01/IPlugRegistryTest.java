@@ -4,7 +4,7 @@
  * $Source: DispatcherTest.java,v $
  */
 package de.ingrid.ibus.v01;
-import de.ingrid.ibus.registry.RegestryTest;
+import de.ingrid.ibus.registry.RegistryTest;
 import de.ingrid.ibus.registry.SyntaxInterpreterTest;
 import junit.framework.TestCase;
 
@@ -32,7 +32,7 @@ public class IPlugRegistryTest extends TestCase {
      * 
      */
     public void testStoreIndexStructures() throws Exception {
-        new RegestryTest().testAddAndGet();
+        new RegistryTest().testAddAndGet();
         new SyntaxInterpreterTest().testGetIplugsForQuery();
         
         
@@ -50,7 +50,7 @@ public class IPlugRegistryTest extends TestCase {
      * 
      */
     public void testStoreDataInRAM() throws Exception {
-        new RegestryTest().testAddAndGet();
+        new RegistryTest().testAddAndGet();
     }
     /**
      * 

@@ -67,7 +67,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testGetIplugsForQuery() throws Exception {
-        Regestry regestry = new Regestry(1000000);
+        Registry regestry = new Registry(1000000);
         for (int i = 0; i < 10; i++) {
             String dummy = "" + i;
             PlugDescription description = new PlugDescription();

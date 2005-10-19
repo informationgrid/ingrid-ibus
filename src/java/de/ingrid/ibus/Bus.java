@@ -8,7 +8,7 @@ package de.ingrid.ibus;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryConnection;
-import de.ingrid.ibus.registry.Regestry;
+import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
 import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridDocument;
@@ -24,7 +24,7 @@ import de.ingrid.utils.query.IngridQuery;
  */
 public class Bus implements IBus {
     // TODO INGRID-398 we need to made the lifetime configurable.
-    private Regestry fRegestry = new Regestry(100000);
+    private Registry fRegestry = new Registry(100000);
 
     private IPlugProxyFactory fProxyFactory;
 
@@ -65,7 +65,7 @@ public class Bus implements IBus {
     /**
      * @return the iplug regestry
      */
-    public Regestry getIPlugRegestry() {
+    public Registry getIPlugRegestry() {
         return this.fRegestry;
 
     }
