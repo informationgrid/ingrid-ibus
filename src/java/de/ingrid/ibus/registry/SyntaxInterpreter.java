@@ -22,7 +22,7 @@ public class SyntaxInterpreter {
      * @param query
      * @return the iplugs that have the fields the query require.
      */
-    public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Regestry regestry) {
+    public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry regestry) {
     
         String dataType = query.getDataType();
         PlugDescription[] allIPlugs = regestry.getAllIPlugs();
