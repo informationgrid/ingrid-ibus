@@ -1,8 +1,5 @@
 /*
  * Created on 29.09.2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.ingrid.ibus.cswinterface.analyse;
 
@@ -10,14 +7,13 @@ import javax.xml.soap.SOAPBodyElement;
 
 import org.w3c.dom.Element;
 
+import de.ingrid.ibus.cswinterface.exceptions.CSWInvalidParameterValueException;
 import de.ingrid.ibus.cswinterface.exceptions.CSWMissingParameterValueException;
 import de.ingrid.ibus.cswinterface.exceptions.CSWOperationNotSupportedException;
 
 /**
  * @author rschaefer
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class GetRecByIdAnalyser implements CSWAnalyser {
 
@@ -118,8 +114,23 @@ public class GetRecByIdAnalyser implements CSWAnalyser {
             
             ids = elemId.getFirstChild().getNodeValue();
             
-            //TODO tokenize ids: e.g '2, 6, 8'
-            sessionParameters.setIds(ids);
+            CommonAnalyser commonAnalyser = new CommonAnalyser(this.sessionParameters);
+            
+             // tokenize ids: e.g '2, 6, 8'
+            
+            if (!commonAnalyser.analyseIds(ids)) {
+                
+                
+                Exception e = 
+                    new CSWInvalidParameterValueException(" 'Id' is invalid.", "Id"); 
+                
+                throw e;     
+                
+            }
+            
+            
+            
+           
             
             
         }

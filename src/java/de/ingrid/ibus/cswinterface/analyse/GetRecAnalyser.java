@@ -1,8 +1,6 @@
 /*
  * Created on 29.09.2005
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.ingrid.ibus.cswinterface.analyse;
 
@@ -19,9 +17,7 @@ import de.ingrid.ibus.cswinterface.exceptions.CSWOperationNotSupportedException;
 
 /**
  * @author rschaefer
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * 
  */
 public class GetRecAnalyser implements CSWAnalyser {
 
@@ -201,9 +197,19 @@ private boolean analyseQuery(final SOAPBodyElement be) throws Exception {
            
        } else {
            
-        //  TODO analyse typeNames: csw:dataset,csw:datasetcollection,csw:service,csw:application
+        //analyse typeNames: csw:dataset,csw:datasetcollection,csw:service,csw:application
            
-           sessionParameters.setTypeNames(typeNames);   
+           CommonAnalyser commonAnalyser = new CommonAnalyser(this.sessionParameters);
+           
+           if (!commonAnalyser.analyseTypeNames(typeNames)) {
+               
+               Exception e = 
+                   new CSWInvalidParameterValueException("Attribute 'typeNames' is invalid.", "typeNames"); 
+               
+               throw e;     
+               
+           }
+            
            
        }
        
@@ -254,7 +260,8 @@ private boolean analyseConstraint(final SOAPBodyElement be) throws Exception {
         if (!constraintLangVersion.equals("1.0.0")) {
             
             Exception e = 
-                new CSWInvalidParameterValueException("Attribute 'version' of Element 'Constraint' is not '1.0.0'.", "version"); 
+                new CSWInvalidParameterValueException("Attribute 'version' of Element 'Constraint' is not '1.0.0'.", 
+                                                  "version"); 
             
             throw e; 
             
@@ -264,7 +271,8 @@ private boolean analyseConstraint(final SOAPBodyElement be) throws Exception {
     } else {
         
         Exception e = 
-            new CSWMissingParameterValueException("Attribute 'version' of Element 'Constraint' is missing.", "version"); 
+            new CSWMissingParameterValueException("Attribute 'version' of Element 'Constraint' is missing.", 
+                                                   "version"); 
         
         throw e; 
         

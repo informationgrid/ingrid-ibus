@@ -52,7 +52,7 @@ public class InitParameters {
 	/**
      *  Die benutzte Version des Catalog Service 
     */
-	private static String cswVersion = null;
+	private static String cswVersion = "2.0.0";
 	
 	/**
 	  *  der Pfad zur Capabilities - Datei

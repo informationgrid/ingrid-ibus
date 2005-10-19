@@ -56,6 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.messaging.JAXMServlet;
 import javax.xml.messaging.ReqRespListener;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -99,7 +100,7 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
     /**
 	  *  der Catalog Service 
 	  */
-	   //private InGeoWCAS wcas = null;
+	   private CSW csw = null;
     
       
 	   
@@ -142,22 +143,28 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
 			//fuer XML/XSL-Dateien absolute Pfade zusammensetzen 
 				   String absPathBeg = "file:///";
 	  
-			       String cswVersion = getInitParameter("cswversion");
-			    
-			       if  (!PatternTools.isVersionFormatValid(cswVersion)) { 
-						throw new ServletException("Init parameter 'wcas_version' has not the correct format: " + 
-						                            cswVersion);
-	               } else {
-	               	
-					InitParameters.setCswVersion(cswVersion);
-	               	
-					System.out.println("Starting CSW  Version " + InitParameters.getCswVersion());
+//			       String cswVersion = getInitParameter("cswversion");
+//			    
+//			       if  (!PatternTools.isVersionFormatValid(cswVersion)) { 
+//						throw new ServletException("Init parameter 'wcas_version' has not the correct format: " + 
+//						                            cswVersion);
+//	               } else {
+//	               	
+//					InitParameters.setCswVersion(cswVersion);
+//	               	
+//					System.out.println("Starting CSW  Version " + InitParameters.getCswVersion());
+//					
+//					logger.info("Starting CSW  Version " + InitParameters.getCswVersion());
+//	               
+//	               }
+			       
+			       
+			       System.out.println("Starting CSW  Version " + InitParameters.getCswVersion());
 					
 					logger.info("Starting CSW  Version " + InitParameters.getCswVersion());
-					
-					
-	               
-	               }
+			       
+			       
+			       
 	               
 				   String capabilitiesFile = getInitParameter("capabilities");
 				   capabilitiesFile = absPathBeg + getServletConfig().getServletContext().getRealPath(capabilitiesFile);
@@ -298,38 +305,58 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
          }
 		  
          
-            //wcas = new InGeoWCAS();
+            csw = new CSW();
          
-			//soapResponseMessage = wcas.performMessage( soapRequestMessage );
+			soapResponseMessage = csw.performMessage((Message) soapRequestMessage);
 			
-		    //FIXME only for testing
-		    soapResponseMessage = (Message) soapRequestMessage;
-		    
-         /*
-            soapResponseMessage = new Message(TestRequests.GETCAP1, false);
+		 
+         
+          /*
+            soapResponseMessage = new Message(SOAPTools.SOAP12ENV, false);
+            
+           
 		    
 		    SOAPPart sp = (SOAPPart) soapResponseMessage.getSOAPPart();
 	        
 	        SOAPEnvelope se = (SOAPEnvelope) sp.getEnvelope();
 	        
-	        se.clearBody();
+	        //se.clearBody();
 	        
 	        SOAPBody body = (SOAPBody) se.getBody();
 
 	        URL url = new URL(InitParameters.getCapabilitiesFile());
 	        
-	        Document doc = XMLTools.parse(url.getPath());
+	        //Document doc = XMLTools.parse(url.getPath());
+	        
+	        
+	        Reader reader = new InputStreamReader( url.openStream() );
+			
+			//TODO examine parse because of cap file
+			org.w3c.dom.Document doc = XMLTools.parse( reader );
 	        
 	        //System.out.println("doc: " + doc.getDocumentElement().toString());
             
 	        body.addDocument(doc);
 	       
+	        SOAPElement be = null;
+	        be = se;	 
+	        SOAPTools.copyNode( doc, be, se );
+	        
+	        
+	        
+	        
 	        //set SOAP Version 
 	        se.setSoapConstants(SOAPConstants.SOAP12_CONSTANTS);
 	        //se.setSoapConstants(SOAPConstants.SOAP11_CONSTANTS);
 	        
 	       */
+         
+        
+         
+         
+         
 		  
+		    //FIXME remove
 //		    Exception e = new Exception("test exception");
 //            
 //            throw e;

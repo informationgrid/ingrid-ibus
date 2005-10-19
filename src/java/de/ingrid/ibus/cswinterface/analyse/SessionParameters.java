@@ -1,10 +1,10 @@
 /*
  * Created on 04.10.2005
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.ingrid.ibus.cswinterface.analyse;
+
+import java.util.ArrayList;
 
 import javax.xml.soap.SOAPElement;
 
@@ -28,6 +28,26 @@ public final class SessionParameters {
     public  static final int STARTPOSITION = 1;
     
     
+    public static final String GETCAPABILITIES = "GetCapabilities";
+    
+    public static final String GETRECORDS = "GetRecords";
+    
+    public static final String GETRECORDBYID = "GetRecordById";
+    
+    
+    public static final String DESCRIBERECORD = "DescribeRecord";
+    
+    
+    
+    
+   private boolean operationIsGetCap = false;
+   
+   private boolean operationIsGetRecs = false;
+    
+   private boolean operationIsGetRecById = false;
+   
+   
+   private boolean operationIsDescRec = false;
     
     
     /**
@@ -62,6 +82,30 @@ public final class SessionParameters {
     
     
     /**
+     * Comment 
+     */
+    private boolean typeNameIsDataset = false;
+    
+    
+    /**
+     * Comment 
+     */
+    private boolean typeNameIsDatasetcollection = false;
+    
+    
+    /**
+     * Comment 
+     */
+    private boolean typeNameIsService = false;
+    
+    
+    /**
+     * Comment 
+     */
+    private boolean typeNameIsApplication = false;
+    
+    
+    /**
      * Comment for <code>startPosition</code>
      */
     private  int startPosition = STARTPOSITION;
@@ -78,7 +122,7 @@ public final class SessionParameters {
 
     
     /**
-     * soapElementFilter
+     * stores the OGC Filter element
      */
     private SOAPElement soapElementFilter = null;
    
@@ -97,7 +141,7 @@ public final class SessionParameters {
     
     
     /**
-     * Comment for ids of GetRecById      
+     * for the id string of GetRecById      
      * 
      */
     
@@ -105,23 +149,31 @@ public final class SessionParameters {
     
     
     
+    /**
+     * holds all ids from the id string of GetRecById
+     */
+    private ArrayList idsList = null;
+    
+    
+    
     
     /**
      * needed??
      */
-    public  void clear() {
-        
-        maxRecords = MAXRECORDS;
-        resultType = "hits";
-        outputFormat = "text/xml";
-        outputSchema = "csw:ogccore";
-        typeNames = null; 
-        startPosition = STARTPOSITION;
-        sortBy = "metadata_element_name:A";
-        soapElementFilter = null;
-        elementSetName = "full";
-        ids = null;
-    }
+//    public  void clear() {
+//        
+//        maxRecords = MAXRECORDS;
+//        resultType = "hits";
+//        outputFormat = "text/xml";
+//        outputSchema = "csw:ogccore";
+//        typeNames = null; 
+//        startPosition = STARTPOSITION;
+//        sortBy = "metadata_element_name:A";
+//        soapElementFilter = null;
+//        elementSetName = "full";
+//        ids = null;
+//        //TODO typeNames ...
+//    }
     
     
     
@@ -248,4 +300,112 @@ public final class SessionParameters {
     public void setIds(final String string) {
         this.ids = string;
     }
+    /**
+     * @return Returns the typeNameIsApplication.
+     */
+    public boolean isTypeNameIsApplication() {
+        return typeNameIsApplication;
+    }
+    /**
+     * @param typeNameIsAppl The typeNameIsApplication to set.
+     */
+    public void setTypeNameIsApplication(final boolean typeNameIsAppl) {
+        this.typeNameIsApplication = typeNameIsAppl;
+    }
+    /**
+     * @return Returns the typeNameIsDataset.
+     */
+    public boolean isTypeNameIsDataset() {
+        return typeNameIsDataset;
+    }
+    /**
+     * @param typeNameIsDatas The typeNameIsDataset to set.
+     */
+    public void setTypeNameIsDataset(final boolean typeNameIsDatas) {
+        this.typeNameIsDataset = typeNameIsDatas;
+    }
+    /**
+     * @return Returns the typeNameIsDatasetcollection.
+     */
+    public boolean isTypeNameIsDatasetcollection() {
+        return typeNameIsDatasetcollection;
+    }
+    /**
+     * @param typeNameIsDatasetcoll The typeNameIsDatasetcollection to set.
+     */
+    public void setTypeNameIsDatasetcollection(final boolean typeNameIsDatasetcoll) {
+        this.typeNameIsDatasetcollection = typeNameIsDatasetcoll;
+    }
+    /**
+     * @return Returns the typeNameIsService.
+     */
+    public boolean isTypeNameIsService() {
+        return typeNameIsService;
+    }
+    /**
+     * @param typeNameIsServ The typeNameIsService to set.
+     */
+    public void setTypeNameIsService(final boolean typeNameIsServ) {
+        this.typeNameIsService = typeNameIsServ;
+    }
+    /**
+     * @return Returns the idsList.
+     */
+    public ArrayList getIdsList() {
+        return idsList;
+    }
+    /**
+     * @param idsLst The idsList to set.
+     */
+    public void setIdsList(final ArrayList idsLst) {
+        this.idsList = idsLst;
+    }
+/**
+ * @return Returns the operationIsDescRec.
+ */
+public boolean isOperationIsDescRec() {
+    return operationIsDescRec;
+}
+/**
+ * @param opIsDescRec The operationIsDescRec to set.
+ */
+public void setOperationIsDescRec(final boolean opIsDescRec) {
+    this.operationIsDescRec = opIsDescRec;
+}
+/**
+ * @return Returns the operationIsGetCap.
+ */
+public boolean isOperationIsGetCap() {
+    return operationIsGetCap;
+}
+/**
+ * @param opIsGetCap The operationIsGetCap to set.
+ */
+public void setOperationIsGetCap(final boolean opIsGetCap) {
+    this.operationIsGetCap = opIsGetCap;
+}
+/**
+ * @return Returns the operationIsGetRecById.
+ */
+public boolean isOperationIsGetRecById() {
+    return operationIsGetRecById;
+}
+/**
+ * @param opIsGetRecById The operationIsGetRecById to set.
+ */
+public void setOperationIsGetRecById(final boolean opIsGetRecById) {
+    this.operationIsGetRecById = opIsGetRecById;
+}
+/**
+ * @return Returns the operationIsGetRecs.
+ */
+public boolean isOperationIsGetRecs() {
+    return operationIsGetRecs;
+}
+/**
+ * @param opIsGetRecs The operationIsGetRecs to set.
+ */
+public void setOperationIsGetRecs(final boolean opIsGetRecs) {
+    this.operationIsGetRecs = opIsGetRecs;
+}
 }

@@ -40,18 +40,29 @@ public class CSWAxisClient {
       Call call = null;
       
       
-      smsg =  AxisTools.createSOAPMessage(TestRequests.GETCAP1);
+      try {
+      
+          smsg =  AxisTools.createSOAPMessage(TestRequests.GETCAP1);
+   
+      } catch (Exception e2) {
+        // TODO Auto-generated catch block
+        e2.printStackTrace();
+    }
       
       
     try {
         
-        call = new Call("http://localhost:8080/csw/csw");
+         call = new Call("http://localhost:8080/csw/csw");
         
         //call = new Call("https://localhost:80/csw/csw");
         
         //call = new Call("http://www.uok.bayern.de/axis/services/UDK_Soap_Service");
          
         //call = new Call("http://146.140.211.20:8080/wcas/ingeowcas");
+        
+        //call = new Call("http://localhost:8080/advwcasportal/advwcasportal");
+        
+        
         
         
     } catch (MalformedURLException e) {
@@ -61,9 +72,9 @@ public class CSWAxisClient {
     
      //set SOAP Version 
       
-      call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+       call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
      
-     //call.setSOAPVersion(SOAPConstants.SOAP11_CONSTANTS);
+       //call.setSOAPVersion(SOAPConstants.SOAP11_CONSTANTS);
      
       call.setRequestMessage(smsg);
       

@@ -75,8 +75,9 @@ public final class AxisTools {
     /**
      * @param xmlString String
      * @return smsg Message the Axis Message
+     * @throws Exception e
      */
-    public static Message createSOAPMessage(final String xmlString) {
+    public static Message createSOAPMessage(final String xmlString) throws Exception {
         
         System.setProperty("javax.xml.soap.MessageFactory", 
                 "org.apache.axis.soap.MessageFactoryImpl");
@@ -88,8 +89,7 @@ public final class AxisTools {
 //        System.setProperty("javax.xml.parsers.DocumentBuilderFactory", 
 //	                     "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
         
-        
-        
+      
 //        Message axisSoapMessage = null;
 //        
 //        MessageFactory messageFactory = null;
@@ -131,10 +131,7 @@ public final class AxisTools {
 //			  
 //			  // create a SOAP body
 //			  SOAPBody body = envelope.getBody();
-			  
-			 
-			 		 
-			  
+			 		  
 //			  MessageElement cap = (MessageElement) soapFactory.createElement("GetCapabilities");
 //			  
 //			  MessageElement accVer = (MessageElement) soapFactory.createElement("AcceptVersions");
@@ -159,7 +156,7 @@ public final class AxisTools {
 //		    	SOAPElement el = bodyElmnt.addChildElement(ns1);
 //		    	el.addTextNode("TEST RESPONSE");
 			  
-		        MessageFactory mf = MessageFactory.newInstance();
+		        //MessageFactory mf = MessageFactory.newInstance();
 		        
 		        //SOAPMessage smsg =
 		        //        mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
@@ -220,8 +217,9 @@ public final class AxisTools {
             
             
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+           
+           // e.printStackTrace();
+           throw e;
         }
 	
         //return axisSoapMessage;

@@ -85,6 +85,22 @@ public class SOAPTools {
 	
 	
 	private static final Logger LOGGER = Logger.getLogger(SOAPTools.class);
+	
+	
+	
+	public static final String SOAP12ENV = 
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        
+    
+        "<soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\"\n" +
+        "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
+        "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+                 
+        " <soapenv:Body>\n" +
+          
+          " </soapenv:Body>\n" +
+        "</soapenv:Envelope>";
+	
 
 
 	 /**
@@ -184,7 +200,7 @@ public class SOAPTools {
                               "org.apache.axis.soap.SOAPFactoryImpl");
 			  
 		   
-		      MessageFactory msgFactory = MessageFactory.newInstance();
+		      //MessageFactory msgFactory = MessageFactory.newInstance();
 		       
 			   Message exceptionReportMessage = null;
         
@@ -196,28 +212,22 @@ public class SOAPTools {
 				   }
 				   */
 			       
-			      //TODO how to create SOAP 1.2 message without  se.clearBody()?
-			       
-				   exceptionReportMessage = (Message) msgFactory.createMessage();
+				   //exceptionReportMessage = (Message) msgFactory.createMessage();
 				 
-				  //TODO use Axis Message  
-				   //exceptionReportMessage = new Message(TestRequests.GETCAP1, false);
+				 
+				   exceptionReportMessage = new Message(SOAP12ENV, false);
 			       
 //			       AxisFault af = new AxisFault("test axis fault");
 //			       af.addFaultSubCodeAsString("myfault");
 //				   exceptionReportMessage = new Message(af);
 				   
-				  
-				   //exceptionReportMessage.dispose();
-				   
-		   
+			
 			        SOAPPart sp = (SOAPPart) exceptionReportMessage.getSOAPPart();
-			       
-			        
+			               
 			        SOAPEnvelope se = (SOAPEnvelope) sp.getEnvelope();
 			        
 			       
-			        se.clearBody();
+			        //se.clearBody();
 			        
 			        //set SOAP Version 
 			        se.setSoapConstants(SOAPConstants.SOAP12_CONSTANTS);
@@ -227,9 +237,7 @@ public class SOAPTools {
 				   SOAPBody soapBody = se.getBody();
 				   SOAPElement elemExceptionReport = soapBody.addChildElement("ExceptionReport");
 			     
-				   
-				   
-				   
+				   	   
 				   Name nameVersion = se.createName("version");
 				   
 				   String cswVersion = InitParameters.getCswVersion();

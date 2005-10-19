@@ -1,16 +1,12 @@
 /*
  * Created on 03.10.2005
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.ingrid.ibus.cswinterface;
 
 /**
  * @author rschaefer
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public final class TestRequests {
     
@@ -650,7 +646,7 @@ public final class TestRequests {
         "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
         "                    xmlns:udk-query=\"http://www.umweltdatenkatalog.de/udk/query\">\n" +
         "<soapenv:Body>\n" +    
-        "<udk-query:udk >\n" +
+        "<udk-query:udk>\n" +
          "<udk-query:data-source-query>\n" +
             "<udk-query:general>\n" +
               "<udk-query:search-term>wasser</udk-query:search-term>\n" +

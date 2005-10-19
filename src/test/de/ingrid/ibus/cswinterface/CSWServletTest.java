@@ -33,6 +33,8 @@ import org.apache.axis.soap.SOAPConstants;
 //import junit.framework.TestCase;
 
 import org.apache.axis.client.Call;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
 import org.custommonkey.xmlunit.XMLTestCase;
 
 //import javax.xml.soap.Name;
@@ -40,6 +42,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Element;
 
 import de.ingrid.ibus.cswinterface.CSWServlet;
+import de.ingrid.ibus.cswinterface.exceptions.CSWOperationNotSupportedException;
 import de.ingrid.ibus.cswinterface.tools.AxisTools;
 //import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.MimeHeaders;
@@ -88,9 +91,9 @@ public class CSWServletTest extends XMLTestCase {
     public final void testOnMessage() throws Exception {
        
         
-        SOAPMessage soapMessageRequest = null;
+        Message soapMessageRequest = null;
         
-        SOAPMessage soapMessageResponse = null;
+        Message soapMessageResponse = null;
          
         
         
@@ -101,7 +104,7 @@ public class CSWServletTest extends XMLTestCase {
         assertNotNull(soapMessageRequest);
         
         //call onMessage without tomcat running
-        soapMessageResponse = cswServlet.onMessage(soapMessageRequest);
+        soapMessageResponse = (Message) cswServlet.onMessage(soapMessageRequest);
         
       // call onMessage with tomcat running
 //        Call call = new Call("http://localhost:8080/csw/csw");
@@ -131,6 +134,7 @@ public class CSWServletTest extends XMLTestCase {
         AxisTools.createSOAPMessage(TestRequests.GETCAP1).writeTo(byteArrayOutputStreamResponseTest);
         
         
+        
         ByteArrayOutputStream byteArrayOutputStreamResponse = new ByteArrayOutputStream();
 		
         soapMessageResponse.writeTo(byteArrayOutputStreamResponse);
@@ -141,7 +145,53 @@ public class CSWServletTest extends XMLTestCase {
                                                                               byteArrayOutputStreamResponse.toString());
 
           
+        
+        soapMessageRequest = AxisTools.createSOAPMessage(TestRequests.GETCAPINVALID1);
+        
+        
+        soapMessageResponse = (Message) cswServlet.onMessage(soapMessageRequest);
+        
+       
       
+        //System.out.println("Test: " + AxisTools.createSOAPMessage(TestResponses.EXC1).getSOAPPartAsString());
+        
+        //System.out.println("Original: " + soapMessageResponse.getSOAPPartAsString());
+        
+        
+//        assertXMLEqual("comparing soapMessageResponseTest to soapMessageResponse", 
+//                 AxisTools.createSOAPMessage(TestResponses.EXC1).getSOAPPartAsString(),
+//                 soapMessageResponse.getSOAPPartAsString());
+        
+        
+        
+       
+        
+//        Diff myDiff = new Diff(TestResponses.EXC1, TestResponses.EXC2);
+//
+//        System.out.println("myDiff: " + myDiff);
+//        
+//        
+//        System.out.println("myDiff.similar(): " + myDiff.similar());
+//        
+//        System.out.println("myDiff.identical(): " + myDiff.identical());
+        
+       //assertXMLEqual(TestResponses.EXC1, TestResponses.EXC2);
+        
+        
+        String myControlXML = "<suite><test status=\"pass\">FirstTestCase</test><test status=\"pass\">SecondTestCase</test></suite>";
+        //String myTestXML = "<suite><test status=\"pass\">SecondTestCase</test><test status=\"pass\">FirstTestCase</test></suite>";
+        String myTestXML = "<suite><test status=\"pass\">FirstTestCase</test><test status=\"pass\">SecondTestCase</test></suite>";
+
+        //(assertXMLNotEqual("Repeated child elements in different sequence order are not equal by default",
+        //    myControlXML, myTestXML);
+
+        Diff myDiff = new Diff(myControlXML, myTestXML);
+        //myDiff.overrideElementQualifier(new ElementNameAndTextQualifier());
+        assertXMLEqual("But they are equal when an ElementQualifier controls which test element is compared with each control element",
+            myDiff, true);
+
+        
+        
     }
 
    
