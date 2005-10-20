@@ -16,26 +16,36 @@ import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.query.TermQuery;
 
+/**
+ * Supports you with static methods to extract various informations out of a
+ * query.
+ * 
+ * <p/>created on 19.10.2005
+ * 
+ * @version $Revision: $
+ * @author sg
+ * 
+ */
 public class SyntaxInterpreter {
 
     /**
      * @param query
+     * @param registry
      * @return the iplugs that have the fields the query require.
      */
-    public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry regestry) {
-    
+    public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
+
         String dataType = query.getDataType();
-        PlugDescription[] allIPlugs = regestry.getAllIPlugs();
+        PlugDescription[] allIPlugs = registry.getAllIPlugs();
         boolean hasTerms = queryHasTerms(query);
         if (hasTerms && dataType != null) {
             return filterForDataType(allIPlugs, dataType);
         }
-        if (dataType == null && hasTerms) {
+        if (hasTerms && dataType == null) {
             return allIPlugs;
         }
-        
+
         String[] fields = getAllFieldsFromQuery(query);
-        
         if (dataType != null) {
             return filterForDataTypeAndFields(allIPlugs, dataType, fields);
         }
@@ -43,7 +53,6 @@ public class SyntaxInterpreter {
             return filterForFields(allIPlugs, fields);
         }
         return null;
-    
     }
 
     /**
@@ -65,7 +74,7 @@ public class SyntaxInterpreter {
                     break;
                 }
             }
-    
+
         }
         return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
     }
@@ -76,7 +85,8 @@ public class SyntaxInterpreter {
      * @param fields
      * @return plugs matching datatype and have at least one matching field
      */
-    public static PlugDescription[] filterForDataTypeAndFields(PlugDescription[] allIPlugs, String dataType, String[] fields) {
+    public static PlugDescription[] filterForDataTypeAndFields(PlugDescription[] allIPlugs, String dataType,
+            String[] fields) {
         ArrayList arrayList = new ArrayList();
         HashSet requiredFields = new HashSet();
         requiredFields.addAll(Arrays.asList(fields));
@@ -91,7 +101,7 @@ public class SyntaxInterpreter {
                         break; // we need if only once of the fields occures
                     }
                 }
-    
+
             }
         }
         return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
