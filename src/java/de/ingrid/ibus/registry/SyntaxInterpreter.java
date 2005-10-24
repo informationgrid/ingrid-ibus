@@ -59,7 +59,7 @@ public class SyntaxInterpreter {
      * @param fields
      * @return plugs have at least one matching field
      */
-    public static PlugDescription[] filterForFields(PlugDescription[] allIPlugs, String[] fields) {
+    private static PlugDescription[] filterForFields(PlugDescription[] allIPlugs, String[] fields) {
         ArrayList arrayList = new ArrayList();
         HashSet hashSet = new HashSet();
         hashSet.addAll(Arrays.asList(fields));
@@ -84,7 +84,7 @@ public class SyntaxInterpreter {
      * @param fields
      * @return plugs matching datatype and have at least one matching field
      */
-    public static PlugDescription[] filterForDataTypeAndFields(PlugDescription[] allIPlugs, String dataType,
+    private static PlugDescription[] filterForDataTypeAndFields(PlugDescription[] allIPlugs, String dataType,
             String[] fields) {
         ArrayList arrayList = new ArrayList();
         HashSet requiredFields = new HashSet();
@@ -111,7 +111,7 @@ public class SyntaxInterpreter {
      * @param dataType
      * @return only plugs matching given datatype.
      */
-    public static PlugDescription[] filterForDataType(PlugDescription[] allIPlugs, String dataType) {
+    private static PlugDescription[] filterForDataType(PlugDescription[] allIPlugs, String dataType) {
         ArrayList arrayList = new ArrayList();
         for (int i = 0; i < allIPlugs.length; i++) {
             PlugDescription plug = allIPlugs[i];
