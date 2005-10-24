@@ -34,7 +34,6 @@ public class SyntaxInterpreter {
      * @return the iplugs that have the fields the query require.
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
-
         String dataType = query.getDataType();
         PlugDescription[] allIPlugs = registry.getAllIPlugs();
         boolean hasTerms = queryHasTerms(query);
@@ -46,13 +45,13 @@ public class SyntaxInterpreter {
         }
 
         String[] fields = getAllFieldsFromQuery(query);
-        if (dataType != null) {
+        if (dataType != null && fields.length > 0) {
             return filterForDataTypeAndFields(allIPlugs, dataType, fields);
         }
         if (dataType == null && fields.length > 0) {
             return filterForFields(allIPlugs, fields);
         }
-        return null;
+        return new PlugDescription[0];
     }
 
     /**
@@ -92,7 +91,7 @@ public class SyntaxInterpreter {
         requiredFields.addAll(Arrays.asList(fields));
         for (int i = 0; i < allIPlugs.length; i++) {
             PlugDescription plug = allIPlugs[i];
-            if (plug.getDataType().equals(dataType)) {
+            if (dataType.equals(plug.getDataType())) {
                 String[] plugFields = plug.getFields();
                 for (int j = 0; j < plugFields.length; j++) {
                     String field = plugFields[j];
@@ -116,7 +115,7 @@ public class SyntaxInterpreter {
         ArrayList arrayList = new ArrayList();
         for (int i = 0; i < allIPlugs.length; i++) {
             PlugDescription plug = allIPlugs[i];
-            if (plug.getDataType().equals(dataType)) {
+            if (dataType.equals(plug.getDataType())) {
                 arrayList.add(plug);
             }
         }
