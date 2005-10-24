@@ -40,7 +40,7 @@ public class IPlugRegistryTest extends TestCase {
      */
     public void testStoreIndexStructures() throws Exception {
         new RegistryTest().testAddAndGet();
-        new SyntaxInterpreterTest().testGetIplugsForQuery();
+        new SyntaxInterpreterTest().testGetIplugs_Fields();
 
     }
 

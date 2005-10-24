@@ -39,7 +39,8 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testFindAddressedDataSources() throws Exception {
-        interpreterTest.testGetIplugsForQuery();
+        interpreterTest.testGetIPlugs_DataTypes();
+        interpreterTest.testGetIplugs_FieldsAndDataTypes();
     }
 
     /**
@@ -48,9 +49,8 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testFindDataFields() throws Exception {
-        interpreterTest.testGetIplugsForQuery_Fields();
-        interpreterTest.testGetIplugsForQuery_DataTypes();
-        interpreterTest.testGetIplugsForQuery_FieldsAndDataTypes();
+        interpreterTest.testGetIplugs_Fields();
+        interpreterTest.testGetIplugs_FieldsAndDataTypes();
     }
 
     // ------------private------------------
