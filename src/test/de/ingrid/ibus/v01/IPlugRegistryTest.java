@@ -65,9 +65,11 @@ public class IPlugRegistryTest extends TestCase {
 
     /**
      * INGRID-33
+     * @throws Exception 
      */
-    public void testSearchAPI() {
-        fail("INGRID-33 not yet implemented");
+    public void testSearchAPI() throws Exception {
+        new SyntaxInterpreterTest().testGetIplugs_Fields();
+        new SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
+        new SyntaxInterpreterTest().testGetIPlugs_DataTypes();
     }
-
 }
