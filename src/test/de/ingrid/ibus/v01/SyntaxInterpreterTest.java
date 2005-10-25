@@ -19,7 +19,6 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @author hs
  */
 public class SyntaxInterpreterTest extends TestCase {
-    private static de.ingrid.ibus.registry.SyntaxInterpreterTest interpreterTest = new de.ingrid.ibus.registry.SyntaxInterpreterTest();
 
     /**
      * test for feature INGRID-36
@@ -39,8 +38,8 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testFindAddressedDataSources() throws Exception {
-        interpreterTest.testGetIPlugs_DataTypes();
-        interpreterTest.testGetIplugs_FieldsAndDataTypes();
+        new de.ingrid.ibus.registry.SyntaxInterpreterTest().testGetIPlugs_DataTypes();
+        new de.ingrid.ibus.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
     }
 
     /**
@@ -49,8 +48,8 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testFindDataFields() throws Exception {
-        interpreterTest.testGetIplugs_Fields();
-        interpreterTest.testGetIplugs_FieldsAndDataTypes();
+        new de.ingrid.ibus.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
+        new de.ingrid.ibus.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
     }
 
     // ------------private------------------
