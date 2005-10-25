@@ -29,6 +29,15 @@ public class SyntaxInterpreterTest extends TestCase {
 
     private PlugDescription[] descriptions = new PlugDescription[5];
 
+    /**
+     * Call setUp for feature tests
+     * 
+     * @throws Exception
+     */
+    public SyntaxInterpreterTest() throws Exception {
+        setUp();
+    }
+
     protected void setUp() throws Exception {
         this.registry = new Registry(100000);
         for (int i = 0; i < this.descriptions.length; i++) {
@@ -36,7 +45,6 @@ public class SyntaxInterpreterTest extends TestCase {
             this.descriptions[i].setPlugId("plug" + i);
             this.registry.addIPlug(this.descriptions[i]);
         }
-
     }
 
     /**
@@ -76,17 +84,17 @@ public class SyntaxInterpreterTest extends TestCase {
         this.descriptions[0].addField("field1");
         this.descriptions[1].setDataType("UDK");
         this.descriptions[1].addField("field2");
-        
+
         this.descriptions[2].setDataType("CSW");
         this.descriptions[2].addField("field1");
         this.descriptions[3].setDataType("CSW");
         this.descriptions[3].addField("field2");
-        
+
         assertEquals(1, getIPlugs("datatype:UDK field1:aField").length);
         assertEquals(1, getIPlugs("datatype:UDK field2:aField").length);
         assertEquals(1, getIPlugs("datatype:CSW field1:aField").length);
         assertEquals(1, getIPlugs("datatype:CSW field2:aField").length);
-        
+
         this.descriptions[4].setDataType("UDK");
         this.descriptions[4].addField("field1");
         assertEquals(2, getIPlugs("datatype:UDK field1:aField").length);
