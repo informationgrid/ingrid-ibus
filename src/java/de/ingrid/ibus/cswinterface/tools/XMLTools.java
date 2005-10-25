@@ -1,6 +1,4 @@
 
-
-
 package de.ingrid.ibus.cswinterface.tools;
 
 // JAXP 1.1
@@ -20,13 +18,19 @@ import org.apache.log4j.Logger;
 /**
  * Diese Klasse stellt Hilfsfunktionen fuer XML zur Verfuegung  
  */
-public class XMLTools {
+public final class XMLTools {
 	
-	
-	private final static Logger LOGGER = Logger.getLogger(XMLTools.class);
+	/**
+	 * constructor
+	 */
+	private XMLTools() { }
+    
+    
+	private static final Logger LOGGER = Logger.getLogger(XMLTools.class);
     
     /**
      * creates a new and empty dom document
+     * @return Document 
      */
     public static Document create() {
         javax.xml.parsers.DocumentBuilder builder = null;
@@ -149,13 +153,17 @@ public class XMLTools {
 		    
 			javax.xml.parsers.DocumentBuilder builder   = null;
         
-	
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         
+			factory.setNamespaceAware(true);
+			
+			//factory.setValidating(true);
+			
 			 try {
         	
 		
 				 //builder = XMLParserUtils.getXMLDocBuilder();
-				builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				builder =  factory.newDocumentBuilder();
 			
 		    
 			  } catch (ParserConfigurationException ex) {

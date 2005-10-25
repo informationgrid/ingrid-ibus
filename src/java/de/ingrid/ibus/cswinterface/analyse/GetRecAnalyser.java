@@ -16,16 +16,24 @@ import de.ingrid.ibus.cswinterface.exceptions.CSWOperationNotSupportedException;
 
 
 /**
+ * This class analyses a GetRecords request
  * @author rschaefer
  * 
  */
 public class GetRecAnalyser implements CSWAnalyser {
 
    
-   private SessionParameters sessionParameters = null;
+  /**
+   * stores values of the request
+   */
+private SessionParameters sessionParameters = null;
     
     
-   public GetRecAnalyser(final SessionParameters sessionParams) {
+ /**
+ * constructor 
+ * @param sessionParams SessionParameters
+ */
+public GetRecAnalyser(final SessionParameters sessionParams) {
        
        this.sessionParameters = sessionParams;
        
@@ -161,7 +169,10 @@ public class GetRecAnalyser implements CSWAnalyser {
     }
     
     
-  /**
+ /**
+  * analyse the query element,
+  * return true if ok.
+ * @param be SOAPBodyElement
  * @return queryIsValid boolean 
  * @throws Exception e
  */
@@ -221,6 +232,8 @@ private boolean analyseQuery(final SOAPBodyElement be) throws Exception {
 
 
 /**
+ * analyse the constraint element,
+ * return true if ok.
  * @param be SOAPBodyElement
  * @return boolean
  * @throws Exception e
@@ -283,11 +296,14 @@ private boolean analyseConstraint(final SOAPBodyElement be) throws Exception {
 }
 
 
+
 /**
+  * analyse the filter element,
+  * return true if ok.
  * Allow only OGC-Filter. CqlText is not supported yet.
- * @param be
- * @return
- * @throws Exception
+ * @param be SOAPBodyElement
+ * @return boolean
+ * @throws Exception e
  */
 private boolean analyseFilter(final SOAPBodyElement be) throws Exception {
     

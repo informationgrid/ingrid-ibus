@@ -7,14 +7,16 @@ package de.ingrid.ibus.cswinterface.analyse;
 import javax.xml.soap.SOAPBodyElement;
 
 /**
+ * interface for OGC CSW analysers
  * @author rschaefer
- *
  */
 public interface CSWAnalyser {
     
     
      /**
-      * 
+      * analyse the SOAP message
+      * and collect some values.
+      * return true if ok.
      * @param be SOAPBodyElement
      * @return boolean 
      * @throws Exception e
@@ -23,7 +25,9 @@ public interface CSWAnalyser {
     
     
     /**
-     * 
+     * analyse the keyword value pair (KVP) string 
+     * and collect some values.
+      * return true if ok.
     * @param kvpStr String
     * @return boolean 
     * @throws Exception e

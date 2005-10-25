@@ -17,10 +17,16 @@ import de.ingrid.ibus.cswinterface.exceptions.CSWOperationNotSupportedException;
  */
 public class GetRecByIdAnalyser implements CSWAnalyser {
 
-   
+    /**
+     * stores values of the request
+     */
     private SessionParameters sessionParameters = null;
     
     
+    /**
+     * constructor 
+     * @param sessionParams SessionParameters
+     */ 
    public GetRecByIdAnalyser(final SessionParameters sessionParams) {
        
        this.sessionParameters = sessionParams;
@@ -91,6 +97,8 @@ public class GetRecByIdAnalyser implements CSWAnalyser {
     
     
     /**
+     * analyse the id element,
+     * return true if ok.
      * @param be SOAPBodyElement
      * @return boolean
      * @throws Exception e

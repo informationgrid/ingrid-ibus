@@ -71,20 +71,19 @@ import org.apache.log4j.PropertyConfigurator;
 import org.w3c.dom.Document;
 
 import de.ingrid.ibus.cswinterface.analyse.GetCapAnalyser;
-import de.ingrid.ibus.cswinterface.analyse.SessionParameters;
 import de.ingrid.ibus.cswinterface.exceptions.CSWException;
 import de.ingrid.ibus.cswinterface.tools.AxisTools;
-import de.ingrid.ibus.cswinterface.tools.PatternTools;
+import de.ingrid.ibus.cswinterface.tools.IOTools;
 import de.ingrid.ibus.cswinterface.tools.SOAPTools;
-import de.ingrid.ibus.cswinterface.tools.XMLTools;
+
 
 
 
 
 /**
- * Servlet fuer den InGeo Catalog Service
- * nimmt SOAP-Anfrage entgegen und schickt
- * SOAP-Response zurueck
+ * servlet for the CSW.
+ * receives a SOAP request and returns 
+ * a SOAP response.
  * @author rschaefer
  */
 public class CSWServlet extends JAXMServlet implements ReqRespListener {
@@ -92,15 +91,17 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
 	
    
     /**
-     * Comment for <code>serialVersionUID</code>
+     * the serialVersionUID
      */
     static final long serialVersionUID = 0;
 	
 	
     /**
-	  *  der Catalog Service 
+	  *  the Catalogue Service Web 
 	  */
 	   private CSW csw = null;
+	   
+	   private boolean createSOAP12 = true;
     
       
 	   
@@ -114,110 +115,105 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
 		 * @param servletConfig servlet configuration
 		 * @throws ServletException exception
 		 */
-		public final void init(final ServletConfig servletConfig) throws ServletException {
-			
-			super.init(servletConfig);
-			
-			
-			//TODO init mit jConfig? 
-	     
-	         
-		     //debugging mit log4j
-			String log4jPropertiesFile = getInitParameter("log4jPropertiesFile");
-			
-			InitParameters.setLog4jPropertiesFile(log4jPropertiesFile);
-			
-			 //log4j logs with configuration file 
-			 PropertyConfigurator.configure(log4jPropertiesFile); 
-			
-			logger.debug("entering init(ServletConfig servletConfig)");
-			
-			
-	         //System.out.println("init: capabilitiesFile is " + InitParameters.getCapabilitiesFile());
-		     logger.debug("init: log4jPropertiesFile is " + InitParameters.getLog4jPropertiesFile());
+ public final void init(final ServletConfig servletConfig) throws ServletException {
+     
+   
+        super.init(servletConfig);
 
-	       
-	       
-	        //	TODO Pfade pruefen mit FileOutputStream 
-			
-			//fuer XML/XSL-Dateien absolute Pfade zusammensetzen 
-				   String absPathBeg = "file:///";
-	  
-//			       String cswVersion = getInitParameter("cswversion");
-//			    
-//			       if  (!PatternTools.isVersionFormatValid(cswVersion)) { 
-//						throw new ServletException("Init parameter 'wcas_version' has not the correct format: " + 
-//						                            cswVersion);
-//	               } else {
-//	               	
-//					InitParameters.setCswVersion(cswVersion);
-//	               	
-//					System.out.println("Starting CSW  Version " + InitParameters.getCswVersion());
-//					
-//					logger.info("Starting CSW  Version " + InitParameters.getCswVersion());
-//	               
-//	               }
-			       
-			       
-			       System.out.println("Starting CSW  Version " + InitParameters.getCswVersion());
-					
-					logger.info("Starting CSW  Version " + InitParameters.getCswVersion());
-			       
-			       
-			       
-	               
-				   String capabilitiesFile = getInitParameter("capabilities");
-				   capabilitiesFile = absPathBeg + getServletConfig().getServletContext().getRealPath(capabilitiesFile);
-			       
-			       InitParameters.setCapabilitiesFile(capabilitiesFile);
-			       
-			   //System.out.println("init: capabilitiesFile is " + InitParameters.getCapabilitiesFile());
-				logger.debug("init: capabilitiesFile is " + InitParameters.getCapabilitiesFile());
-			      
+        //debugging mit log4j
+        String log4jPropertiesFile = getInitParameter("log4jPropertiesFile");
 
-			  
-			     String strMaxRecords =  getInitParameter("maxRecords");
-			     
-			     InitParameters.setMaxRecords(Integer.parseInt(strMaxRecords));
-			     
-	            //System.out.println("init: maxRecords is " + InitParameters.getMaxRecords());
-		        logger.debug("init: maxRecords is " + InitParameters.getMaxRecords());
-			     
-			     
-			     //Koordinaten Gesamtdeutschland als Strings
-			     InitParameters.setDefault_WEST_Coord(getInitParameter("default_WEST_Coord"));
-			     
-	              //System.out.println("init: default_WEST_Coord is " + InitParameters.getDefault_WEST_Coord());
-			     logger.debug("init: default_WEST_Coord is " + InitParameters.getDefault_WEST_Coord());
-			     
-			     
-			     
-			     InitParameters.setDefault_OST_Coord(getInitParameter("default_OST_Coord"));
-			     
-			   //System.out.println("init: default_OST_Coord is " + InitParameters.getDefault_OST_Coord());
-			   logger.debug("init: default_OST_Coord is " + InitParameters.getDefault_OST_Coord());
-			     
-			     
-			     
-			     InitParameters.setDefault_NORD_Coord(getInitParameter("default_NORD_Coord"));
-			     
-			   //System.out.println("init: default_NORD_Coord is " + InitParameters.getDefault_NORD_Coord());
-			   logger.debug("init: default_NORD_Coord is " + InitParameters.getDefault_NORD_Coord());  
-			     
-			     
-			     
-			   InitParameters.setDefault_SUED_Coord(getInitParameter("default_SUED_Coord"));
-			     
-			     
-			    //System.out.println("init: default_SUED_Coord is " + InitParameters.getDefault_SUED_Coord());
-			   logger.debug("init: default_SUED_Coord is " + InitParameters.getDefault_SUED_Coord());
-			     
-			     
-			    logMemoryInfo("init"); 
-			     
-			    logger.debug("exiting init(ServletConfig servletConfig)");
-		
-		}
+        InitParameters.setLog4jPropertiesFile(log4jPropertiesFile);
+
+        //log4j logs with configuration file
+        PropertyConfigurator.configure(log4jPropertiesFile);
+
+        logger.debug("entering init(ServletConfig servletConfig)");
+
+   
+        System.setProperty("javax.xml.soap.MessageFactory", 
+          "org.apache.axis.soap.MessageFactoryImpl");
+
+        System.setProperty("javax.xml.soap.SOAPFactory", 
+            "org.apache.axis.soap.SOAPFactoryImpl");
+        
+        
+        System.out.println( "javax.xml.soap.MessageFactory: " + System.getProperty("javax.xml.soap.MessageFactory") );
+        
+        System.out.println("javax.xml.soap.SOAPFactory: " + System.getProperty("javax.xml.soap.SOAPFactory") );
+        
+        
+        
+        //System.out.println("init: capabilitiesFile is " +
+        // InitParameters.getCapabilitiesFile());
+        logger.info("init: log4jPropertiesFile is " + InitParameters.getLog4jPropertiesFile());
+
+        //	TODO Pfade pruefen mit FileOutputStream
+
+        //fuer XML/XSL-Dateien absolute Pfade zusammensetzen
+        String absPathBeg = "file:///";
+
+        
+        System.out.println("Starting CSW  Version " + InitParameters.getCswVersion());
+
+        logger.info("Starting CSW  Version " + InitParameters.getCswVersion());
+
+        String capabilitiesFile = getInitParameter("capabilities");
+        capabilitiesFile = absPathBeg + getServletConfig().getServletContext().getRealPath(capabilitiesFile);
+
+        InitParameters.setCapabilitiesFile(capabilitiesFile);
+
+        //System.out.println("init: capabilitiesFile is " +
+        // InitParameters.getCapabilitiesFile());
+        logger.info("init: capabilitiesFile is " + InitParameters.getCapabilitiesFile());
+
+        String describeRecordFile = getInitParameter("describerecord");
+        describeRecordFile = absPathBeg + getServletConfig().getServletContext().getRealPath(describeRecordFile);
+
+        InitParameters.setDescribeRecordFile(describeRecordFile);
+
+        //System.out.println("init: capabilitiesFile is " +
+        // InitParameters.getCapabilitiesFile());
+        logger.info("init: describeRecordFile is " + InitParameters.getDescribeRecordFile());
+
+        String strMaxRecords = getInitParameter("maxRecords");
+
+        InitParameters.setMaxRecords(Integer.parseInt(strMaxRecords));
+
+        //System.out.println("init: maxRecords is " +
+        // InitParameters.getMaxRecords());
+        logger.info("init: maxRecords is " + InitParameters.getMaxRecords());
+
+        //Koordinaten Gesamtdeutschland als Strings
+        InitParameters.setDefault_WEST_Coord(getInitParameter("default_WEST_Coord"));
+
+        //System.out.println("init: default_WEST_Coord is " +
+        // InitParameters.getDefault_WEST_Coord());
+        logger.info("init: default_WEST_Coord is " + InitParameters.getDefault_WEST_Coord());
+
+        InitParameters.setDefault_OST_Coord(getInitParameter("default_OST_Coord"));
+
+        //System.out.println("init: default_OST_Coord is " +
+        // InitParameters.getDefault_OST_Coord());
+        logger.info("init: default_OST_Coord is " + InitParameters.getDefault_OST_Coord());
+
+        InitParameters.setDefault_NORD_Coord(getInitParameter("default_NORD_Coord"));
+
+        //System.out.println("init: default_NORD_Coord is " +
+        // InitParameters.getDefault_NORD_Coord());
+        logger.info("init: default_NORD_Coord is " + InitParameters.getDefault_NORD_Coord());
+
+        InitParameters.setDefault_SUED_Coord(getInitParameter("default_SUED_Coord"));
+
+        //System.out.println("init: default_SUED_Coord is " +
+        // InitParameters.getDefault_SUED_Coord());
+        logger.info("init: default_SUED_Coord is " + InitParameters.getDefault_SUED_Coord());
+
+        logMemoryInfo("init");
+
+        logger.debug("exiting init(ServletConfig servletConfig)");
+
+    }
 
 
 	   
@@ -225,220 +221,171 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
 
 
 	/**
-     * Diese Methode wird von der Servlet Engine aufgerufen, wenn ein SOAP-Request
-     * ankommt.
-     * Der Rueckgabewert mess wird an den Client geschickt.
-     * @param soapRequestMessage SOAPMessage
+     * Diese Methode wird von der Servlet Engine aufgerufen, wenn ein
+     * SOAP-Request ankommt. Der Rueckgabewert mess wird an den Client
+     * geschickt.
+     * 
+     * @param message
+     *            SOAPMessage
      * @return soapResponseMessage SOAPMessage
      */
-    public final SOAPMessage onMessage(final SOAPMessage soapRequestMessage) {
+    public final SOAPMessage onMessage(final SOAPMessage message) {
         
-		System.out.println("CSWServlet: entering onMessage");
-		
-		//logger.debug("entering onMessage");
-		
-        //Startzeit aufnehmen
+		String methodName = "onMessage";
+        
+        System.out.println("CSWServlet: entering " + methodName);
+        
+	    logger.debug("entering " + methodName);
+	    
+	    //Startzeit aufnehmen
 	    long startTime = System.currentTimeMillis();
+	    //logger.debug("onMessage start time: " + startTime);
 	    
-		//logger.debug("onMessage start time: " + startTime);
 	    
-	    
-	
-	    //SOAPMessage soapResponseMessage = null;
-	    
-        Message soapResponseMessage = null;
-        
-        
-		
-
-		
 //		System.setProperty("javax.xml.parsers.DocumentBuilderFactory", 
-//		                   "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-	
-		System.setProperty("org.xml.sax.parser", "org.apache.xerces.parsers.SAXParser");
-		
-//		System.setProperty("javax.xml.transform.TransformerFactory", 
-//		                   "org.apache.xalan.processor.TransformerFactoryImpl");
-		
-		
-		//log  received message / request
-		try {
-                    
-          //message.writeTo(System.out);
-          
-		  ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		  
-		  soapRequestMessage.writeTo(byteArrayOutputStream);
-		  
-		  System.out.println("onMessage: received message: " + byteArrayOutputStream.toString());
-          
-          
-		  logger.debug("onMessage: received message: " + byteArrayOutputStream.toString());
-		  
-        
-        } catch (SOAPException e) {
-			
-			System.err.println("CSWServlet onMessage(): SOAPException: " + e);
-			 
-			logger.error("onMessage: " + e, e);
-        
-        } catch (IOException e) {
-        	
-			 System.err.println("CSWServlet onMessage(): IOException: " + e);
-			 
-			 logger.error("onMessage: " + e, e);
-        }
+//        "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+
+//System.setProperty("org.xml.sax.parser", "org.apache.xerces.parsers.SAXParser");
+
+//System.setProperty("javax.xml.transform.TransformerFactory", 
+//        "org.apache.xalan.processor.TransformerFactoryImpl");
 	    
-	
+	    
+	    
+	    System.setProperty("javax.xml.soap.MessageFactory", 
+            "org.apache.axis.soap.MessageFactoryImpl");
+
+            System.setProperty("javax.xml.soap.SOAPFactory", 
+              "org.apache.axis.soap.SOAPFactoryImpl");
+	    
+	    
+	    createSOAP12 = true;
+	    
+	    Message soapRequestMessage = (Message) message;
+	    
+	    //Message soapResponseMessage = null;
+	    
+	    SOAPMessage soapResponseMessage = null;
+	    
 		
-		try {
-			
+	    try {
+	   		
+		//log  received message / request
+               
+          //soapRequestMessage.writeTo(System.out);
+          System.out.println(methodName + ": received message: " + soapRequestMessage.getSOAPPartAsString());
+          
+          logger.debug(methodName + ": received message: " + soapRequestMessage.getSOAPPartAsString());
+		  
+        
+       		
 		    //test if SOAP is version 1.2
 		   
          if (!AxisTools.isSOAP12((Message) soapRequestMessage)) {
              
-             Exception e = new Exception("SOAP version is not SOAP 1.2.");
+             Exception e = new Exception("SOAP version of request is not SOAP 1.2.");
+             
+             //TODO why is SOAP 1.1 not working?
+             //It seems com.sun.xml.messaging.saaj.soap.*Impl make a mess?!
+             
+             //createSOAP12 = false;
              
              throw e;
              
              //TODO send SOAP 1.1 response?
          }
 		  
+           csw = new CSW();
          
-            csw = new CSW();
-         
-			soapResponseMessage = csw.performMessage((Message) soapRequestMessage);
-			
-		 
-         
-          /*
-            soapResponseMessage = new Message(SOAPTools.SOAP12ENV, false);
-            
-           
-		    
-		    SOAPPart sp = (SOAPPart) soapResponseMessage.getSOAPPart();
-	        
-	        SOAPEnvelope se = (SOAPEnvelope) sp.getEnvelope();
-	        
-	        //se.clearBody();
-	        
-	        SOAPBody body = (SOAPBody) se.getBody();
-
-	        URL url = new URL(InitParameters.getCapabilitiesFile());
-	        
-	        //Document doc = XMLTools.parse(url.getPath());
-	        
-	        
-	        Reader reader = new InputStreamReader( url.openStream() );
-			
-			//TODO examine parse because of cap file
-			org.w3c.dom.Document doc = XMLTools.parse( reader );
-	        
-	        //System.out.println("doc: " + doc.getDocumentElement().toString());
-            
-	        body.addDocument(doc);
-	       
-	        SOAPElement be = null;
-	        be = se;	 
-	        SOAPTools.copyNode( doc, be, se );
-	        
-	        
-	        
-	        
-	        //set SOAP Version 
-	        se.setSoapConstants(SOAPConstants.SOAP12_CONSTANTS);
-	        //se.setSoapConstants(SOAPConstants.SOAP11_CONSTANTS);
-	        
-	       */
-         
-        
-         
-         
-         
-		  
-		    //FIXME remove
-//		    Exception e = new Exception("test exception");
-//            
-//            throw e;
-		    
+		   soapResponseMessage = csw.doRequest((Message) soapRequestMessage);
 		
-		} catch (Exception e) {
-			
-			System.err.println("CSWServlet onMessage(): Exception: " + e);
-			
-			logger.error("onMessage: " + e, e);
-			
-			if (e instanceof CSWException) {
-			   
-			  try {
-			  	
-			     soapResponseMessage = SOAPTools.createExceptionReport(getClass().getName() + ": " + e.getMessage() , 
-				                                      ((CSWException) e).getExceptionCode(), 
-				                                       ((CSWException) e).getLocator());
-			  } catch (SOAPException e1) {
-			  	
-				System.err.println("CSWServlet onMessage(): SOAPException: " + e1);
-			 
-				logger.error("onMessage: " + e1, e1);
-				
-			  }
-			  
-			} else {
-				 
-			 try {
-			 						 											 
-			     soapResponseMessage = SOAPTools.createExceptionReport(getClass().getName() + ": " + e.toString(), 
-													    "NoApplicableCode", 
-													    null);
-			   } catch (SOAPException e1) {
-				
-				System.err.println("CSWServlet onMessage(): SOAPException: " + e1);
-			
-				logger.error("onMessage: " + e1, e1);
-			  }
-			 
-			} 
-		}
-		
-	 
-        //log  outgoing message / response
-	     try {
-	     	
-            //mess.writeTo(System.out);
-	     	
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-	     	
-			soapResponseMessage.writeTo(byteArrayOutputStream);
-            
-           System.out.println("onMessage: outgoing message: " + byteArrayOutputStream.toString());
-          
-          
-		   logger.debug("onMessage: outgoing message: " + byteArrayOutputStream.toString());
-            
-        
-		 } catch (SOAPException e) {
-			
-			 System.err.println("CSWServlet onMessage(): SOAPException: " + e);
-			 
-			 logger.error("onMessage: " + e, e);
-        
-		 } catch (IOException e) {
-        	
-			  System.err.println("CSWServlet onMessage(): IOException: " + e);
-			 
-			  logger.error("onMessage: " + e, e);
-		 }
-		  
-	  logMemoryInfo("onMessage");
-	 
-      long elapsedTime = System.currentTimeMillis() - startTime;	
-		
-	  System.out.println("CSWServlet: exiting onMessage: finished response in " + elapsedTime + " ms");
-		
-	  logger.debug("exiting onMessage: finished response in " + elapsedTime + " ms");	
 	
+      
+    } catch (Exception e) {
+		
+		System.err.println(methodName + ": Exception: " + e);
+		
+		logger.error(methodName + ": " + e, e);
+		
+		 try {
+				
+		     
+				if (e instanceof CSWException) {
+				   
+				 
+				  	
+				     soapResponseMessage = SOAPTools.createExceptionReport(getClass().getName() + 
+				                                           ": " + e.getMessage() , 
+					                                      ((CSWException) e).getExceptionCode(), 
+					                                       ((CSWException) e).getLocator(), createSOAP12);
+				 
+				  
+				} else {
+					 
+			
+				 						 											 
+				     soapResponseMessage = SOAPTools.createExceptionReport(getClass().getName() + 
+				                                            ": " + e.toString(), 
+														    "NoApplicableCode", 
+														    null, createSOAP12);
+				  
+				 
+				  } 
+				 
+				
+			   } catch (Exception se) {
+						
+			         System.err.println(methodName + ": Exception: " + se);
+					
+					 logger.error(methodName + ": " + se, se);
+			   } 
+		
+		
+    }	
+	  
+    try {
+   
+    
+       
+        if (soapResponseMessage == null) {
+            
+            Exception e = new Exception("SOAP response is null.");
+            
+            soapResponseMessage = SOAPTools.createExceptionReport(getClass().getName() + 
+                    ": " + e.toString(), 
+				    "NoApplicableCode", 
+				    null, true);
+            
+            throw e;
+        }
+        
+        //log  outgoing message / response
+        
+       //soapResponseMessage.writeTo(System.out);
+    
+       //System.out.println("onMessage: outgoing message: " + soapResponseMessage.getSOAPPartAsString());
+       
+       //logger.debug("onMessage: outgoing message: " + soapResponseMessage.getSOAPPartAsString());
+    
+       
+    } catch (Exception se) {
+		
+       System.err.println(methodName + ": Exception: " + se);
+	
+	   logger.error(methodName + ": " + se, se);
+    } 
+     
+    
+        logMemoryInfo("onMessage");
+	 
+        long elapsedTime = System.currentTimeMillis() - startTime;	
+		
+	    System.out.println("CSWServlet: exiting onMessage: finished response in " + elapsedTime + " ms");
+		
+	    logger.debug("exiting onMessage: finished response in " + elapsedTime + " ms");
+    
 
-	  return soapResponseMessage;
+	    return soapResponseMessage;
 	  
 	}
 	
@@ -465,10 +412,7 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
         
         
         
-        //SessionParameters.clear();
-        
-        //sessionParameters = new SessionParameters();
-        
+  
         try {
            
           
@@ -487,34 +431,26 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
             
             //System.out.println("CSWServlet:  queryString: " + queryString); 
             
-            //TODO consider other REQUESTs
+            response.setContentType("text/xml");
             
-            GetCapAnalyser getCapAnalyser = new GetCapAnalyser();
+            //TODO consider other REQUESTs e.g. DESCRIBERECORD
             
-            //TODO catch all exceptions
-            if (getCapAnalyser.analyse(queryString)) {
+              GetCapAnalyser getCapAnalyser = new GetCapAnalyser();
+            
+         
+               if (getCapAnalyser.analyse(queryString)) {
                 
-                  
-                response.setContentType("text/xml");
+                     URL url = new URL(InitParameters.getCapabilitiesFile());
                 
-                
-                URL url = new URL(InitParameters.getCapabilitiesFile());
-                
+                     IOTools.writeInputToOutputStream(url.openStream(), response.getOutputStream());
                
-                //TODO remove comment; test 
-               //( sendURL(url, response);
-
-                writeInput2OutputStream(url.openStream(), response.getOutputStream());
-                
-            
-            
-             //TODO send exceptions
-            } else {
+           
+            } /*else {
             
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 
             }
-            
+            */
             
            
             
@@ -522,13 +458,57 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
             
         
         } catch (Exception e) {
+            
+            
+            System.err.println(methodName + ": Exception: " + e);
+    		
+    		logger.error(methodName + ": " + e, e);
+    		
+    		 try {
+    				
+    		      SOAPMessage  soapResponseMessage = null;
+    				     
+    				if (e instanceof CSWException) {
+    				   
+    				 
+    				  	
+    				     soapResponseMessage = SOAPTools.createExceptionReport(getClass().getName() +
+    				                                                   ": " +  e.getMessage() , 
+    					                                      ((CSWException) e).getExceptionCode(), 
+    					                                       ((CSWException) e).getLocator(), createSOAP12);
+    				 
+    				  
+    				} else {
+    					 
+    			
+    				 						 											 
+    				     soapResponseMessage = SOAPTools.createExceptionReport(getClass().getName() + 
+    				                                                     ": " + e.toString(), 
+    														           "NoApplicableCode", 
+    														           null, createSOAP12);
+    				  
+    				 
+    				  } 
+    				
+    				  //put SOAP XML into the response object 
+                      soapResponseMessage.writeTo(response.getOutputStream());
+                       
+    				
+    			   } catch (Exception se) {
+    						
+    			         System.err.println(methodName + ": Exception: " + se);
+    					
+    					 logger.error(methodName + ": " + se, se);
+    			   } 
+    		
            
-            System.err.println("CSWServlet " + methodName + ": " + e);
-			
-			logger.error(methodName + ": " + e, e);
+            
             
         }
     
+        
+        
+        
         logger.info("exiting " + methodName);
         
         System.out.println("CSWServlet: exiting " + methodName); 
@@ -539,47 +519,6 @@ public class CSWServlet extends JAXMServlet implements ReqRespListener {
 
     
     
-    
-
-    
-    /**
-     * 
-     * TODO put in another class
-     * 
-     * @param inputStream InputStream
-     * @param outputstream OutputStream
-     * @throws IOException e
-     */
-    private void writeInput2OutputStream(final InputStream inputStream, final OutputStream outputstream) 
-              throws IOException {
-        
-         int c = 0;
-        
-         Reader reader = null;
-      
-         try {
-          
-         
-            reader = new InputStreamReader(inputStream);
-            
-            
-            
-            while ((c = reader.read()) != -1) {
-  	       
-               outputstream.write(c);     
-            } 
-         
-            
-         } finally {
-           
-             if (reader != null) {
-  	     
-                 reader.close();    
-           }	    
-        }	     
-  	    
-  	       
-     }	
     
 
   /**

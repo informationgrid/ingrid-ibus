@@ -56,9 +56,15 @@ public class InitParameters {
 	
 	/**
 	  *  der Pfad zur Capabilities - Datei
-	 */
+	  *
+	 **/
 		  
 	private static String capabilitiesFile = null;
+	
+	
+	
+	private static String describeRecordFile = null;
+	
 	
 	
 	/**
@@ -235,6 +241,18 @@ public static void setLog4jPropertiesFile(String string) {
         capabilitiesFile = string;
     }
 
+    /**
+     * @return Returns the describeRecordFile.
+     */
+    public static String getDescribeRecordFile() {
+        return describeRecordFile;
+    }
+    /**
+     * @param descRecordFile The describeRecordFile to set.
+     */
+    public static void setDescribeRecordFile(final String descRecordFile) {
+        InitParameters.describeRecordFile = descRecordFile;
+    }
 }
 
 

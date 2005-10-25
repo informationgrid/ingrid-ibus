@@ -9,6 +9,8 @@ import javax.xml.soap.SOAPBodyElement;
 import de.ingrid.ibus.cswinterface.exceptions.CSWOperationNotSupportedException;
 
 /**
+ * 
+ * This class analyses a DescribeRecord request
  * @author rschaefer
  *
  */

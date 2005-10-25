@@ -1,25 +1,26 @@
 /*
  * Created on 10.10.2005
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.ingrid.ibus.cswinterface.transform;
 
 import de.ingrid.utils.query.IngridQuery;
 
 /**
+ * transforms an IngridQuery into a query string
  * @author rschaefer
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
-public class IngridQueryToLuceneQuery {
+public class IngridQueryToString {
     
     
+    /**
+     * does the transforming
+     * @param ingridQuery IngridQuery
+     * @return queryString String
+     */
     public final String transform(final IngridQuery ingridQuery) {
         
-        String luceneQuery = null;
+        String queryString = null;
         
         
         StringBuffer buffer = new StringBuffer();
@@ -32,32 +33,33 @@ public class IngridQueryToLuceneQuery {
         IngridQuery[] clauses = ingridQuery.getClauses();
         for (int i = 0; i < clauses.length; i++) {
            
-            buffer.append(getOpString(clauses[i].getOperation()) + " " );
+            buffer.append(getOpString(clauses[i].getOperation()) + " ");
             
-            buffer.append(clauses[i].getDescription());
+           // buffer.append(clauses[i].getDescription());
+            buffer.append(transform(clauses[i]));
 
         }
         buffer.append(")");
         
-        luceneQuery = buffer.toString();
+        queryString = buffer.toString();
         
         
        
-        return  luceneQuery;
+        return  queryString;
     }
     
     
     /**
-     * @param buffer
-     * @param terms
+     * @param buffer StringBuffer
+     * @param terms IngridQuery[]
      */
-    private void appendToString(StringBuffer buffer, IngridQuery[] terms) {
+    private void appendToString(final StringBuffer buffer, final IngridQuery[] terms) {
         
         for (int i = 0; i < terms.length; i++) {
             
            String strOp = getOpString(terms[i].getOperation());
            
-           buffer.append(" " + strOp + " " );
+           buffer.append(" " + strOp + " ");
             
             
             buffer.append(terms[i]);
@@ -66,7 +68,12 @@ public class IngridQueryToLuceneQuery {
     }
 
     
-    private String getOpString(int operation) {
+    /**
+     * returns the operator as a string
+     * @param operation int
+     * @return strOp String
+     */
+    private String getOpString(final int operation) {
         
         String strOp = null;
         

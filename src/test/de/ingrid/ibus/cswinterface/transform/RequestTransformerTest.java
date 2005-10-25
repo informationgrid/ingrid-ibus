@@ -6,6 +6,8 @@
  */
 package de.ingrid.ibus.cswinterface.transform;
 
+import java.util.ArrayList;
+
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 
@@ -23,23 +25,92 @@ import junit.framework.TestCase;
  */
 public class RequestTransformerTest extends TestCase {
 
-    public final void testTransform() throws Exception {
+    public final void testTransformFilter() throws Exception {
         //TODO Implement transform().
        
         RequestTransformer requestTransformer = new RequestTransformer();
         
         IngridQuery ingridQuery = null;
         
-        SOAPElement soapElementFilter = getSOAPElementFilterFromString(TestRequests.GETREC1);
+        SOAPElement soapElementFilter = null;
+        
+        IngridQueryToString ingridQueryToString = new IngridQueryToString();
+        
+        
+        soapElementFilter = getSOAPElementFilterFromString(TestRequests.GETREC1);
+        
+        String queryString = null;
         
         ingridQuery = requestTransformer.transform(soapElementFilter);
         
         assertNotNull(ingridQuery);
         
-       //TODO compare query strings ..
-        //System.out.println("RequestTransformerTest IngridQuery: " + ingridQuery.toLogExp());
+       
+        
+        
+        queryString = ingridQueryToString.transform(ingridQuery);
+        
+       
+        
+        assertEquals("(AND ( AND t0:2005-10-20  OR title:Test ))", queryString);
+        
+        
+        
+        soapElementFilter = getSOAPElementFilterFromString(TestRequests.GETREC3);
+        
+       
+        
+        ingridQuery = requestTransformer.transform(soapElementFilter);
+        
+        assertNotNull(ingridQuery);
+        
+       
+    
+        
+        queryString = ingridQueryToString.transform(ingridQuery);
+        
+        
+        assertEquals("(AND ( AND anyText:fische  AND area:halle NOT ( AND anyText:saale  OR anyText:hufeisensee )))", queryString);
+        
+        
+        //System.out.println("get records as ingrid query string: " + queryString);
         
     }
+    
+    
+    public final void testTransformList() throws Exception {
+        //TODO Implement transform().
+       
+        RequestTransformer requestTransformer = new RequestTransformer();
+        
+        IngridQuery ingridQuery = null;
+        
+        ArrayList idsList = new ArrayList();
+        
+        String queryString = null;
+        
+        idsList.add("AID");
+        
+        idsList.add("BID");
+        
+        idsList.add("CID");
+   
+        ingridQuery = requestTransformer.transform(idsList);
+        
+        assertNotNull(ingridQuery);
+        
+       
+        IngridQueryToString ingridQueryToString = new IngridQueryToString();
+        
+        queryString = ingridQueryToString.transform(ingridQuery);
+        
+        //System.out.println("get record by id as lucene query: " + queryString);
+        
+        assertEquals("( AND ID:AID  AND ID:BID  AND ID:CID )", queryString);
+        
+        
+    }
+    
     
     
     private final SOAPElement getSOAPElementFilterFromString(String string) throws Exception {

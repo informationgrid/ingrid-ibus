@@ -17,6 +17,7 @@ import de.ingrid.ibus.cswinterface.exceptions.CSWOperationNotSupportedException;
 import de.ingrid.ibus.cswinterface.exceptions.CSWVersionNegotiationFailedException;
 
 /**
+ * This class analyses a GetCapabilities request
  * @author rschaefer
  *
  */

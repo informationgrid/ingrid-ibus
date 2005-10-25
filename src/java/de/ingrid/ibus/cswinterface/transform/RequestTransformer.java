@@ -1,12 +1,11 @@
 /*
  * Created on 07.10.2005
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package de.ingrid.ibus.cswinterface.transform;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 
 import javax.xml.soap.SOAPElement;
 
@@ -19,10 +18,9 @@ import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
+ * This class transforms an OGC XML Filter or 
+ * a list of ids into an IngridQuery.
  * @author rschaefer
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class RequestTransformer implements CSWRequestTransformer {
 
@@ -34,7 +32,7 @@ public class RequestTransformer implements CSWRequestTransformer {
 
         IngridQuery ingridQuery = null;
         
-        String luceneQuery = null;
+        String ingridQueryString = null;
         
         FilterImpl filter = getFilterFromSOAPElem(soapElementFilter);
         
@@ -44,20 +42,65 @@ public class RequestTransformer implements CSWRequestTransformer {
          ingridQuery = filterToIngridQuery.generateQueryFromFilter(filter);   
         */
        
-        FilterToLuceneQuery filterToLuceneQuery = new FilterToLuceneQuery();
+        FilterToIngridQueryString filterToIngrid = new FilterToIngridQueryString();
        
-        luceneQuery = filterToLuceneQuery.generateQueryFromFilter(filter);
+        ingridQueryString = filterToIngrid.generateQueryFromFilter(filter);
        
         //System.out.println("RequestTransformer luceneQuery: " + luceneQuery);
         
-        QueryStringParser parser = new QueryStringParser(new StringReader(luceneQuery));
+        QueryStringParser parser = new QueryStringParser(new StringReader(ingridQueryString));
         
         ingridQuery = parser.parse();
         
         
+        //TODO set source:map or service?
+        
         return ingridQuery;
     }
 
+    
+    
+    
+    
+    /** 
+     * 
+     * @see de.ingrid.ibus.cswinterface.transform.CSWRequestTransformer#transform(java.util.List)
+     */
+    public final IngridQuery transform(final ArrayList idsList) throws Exception {
+ 
+        // TODO implement
+        IngridQuery ingridQuery = null;
+        
+        
+        String queryString = "";
+        
+        //TODO name of field?
+        String idField = "ID:";
+    
+        
+        int listSize = idsList.size();
+        
+        
+        for (int i = 0; i < listSize; i++) {
+            
+            //queryString = queryString + " AND " + idField + (String) idsList.get(i);
+            
+            queryString = queryString + " " + idField + (String) idsList.get(i);
+            
+        }
+        
+        //System.out.println("queryString: " + queryString);
+        
+        
+        QueryStringParser parser = new QueryStringParser(new StringReader(queryString));
+        
+        ingridQuery = parser.parse();
+        
+        //TODO set source:map or service?
+    
+        return ingridQuery;
+    }
+    
     
     /**
      * 

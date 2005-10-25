@@ -16,13 +16,23 @@ import de.ingrid.ibus.cswinterface.exceptions.CSWInvalidParameterValueException;
 import de.ingrid.ibus.cswinterface.exceptions.CSWMissingParameterValueException;
 
 /**
+ * This class does an analysis of different 
+ * elements of OGC requests and puts some of
+ * the values into the sessionParameters.
  * @author rschaefer
  *
  */
 public final class CommonAnalyser {
     
+    /**
+     * stores some values of the requests
+     */
     private SessionParameters sessionParameters = null;
     
+    /**
+     * constructor
+     * @param sessionParams SessionParameters
+     */
     public CommonAnalyser(final SessionParameters sessionParams) {
         
         this.sessionParameters = sessionParams;
@@ -32,6 +42,13 @@ public final class CommonAnalyser {
     
     
     
+    /**
+     * analyse the name of the operation,
+     * return true if ok
+     * @param opName String
+     * @return boolean
+     * @throws Exception e
+     */
     public boolean analyseOperationName(final String opName) throws Exception {
         
        boolean opNameIsValid = false;
@@ -64,6 +81,8 @@ public final class CommonAnalyser {
     
     
     /**
+     * analyse the id(s)
+     * return true if ok 
      * @param ids String
      * @return boolean
      */
@@ -98,6 +117,8 @@ public final class CommonAnalyser {
     
     
     /**
+     * analyse the type names,
+     * return true if ok
      * @param typeNames String
      * @return boolean
      */
@@ -150,7 +171,14 @@ public final class CommonAnalyser {
       }  
     
     
-  public  boolean analyseResultType(final SOAPBodyElement be) throws Exception {
+  /**
+   * analyse the result type,
+   * return true if ok
+   * @param be SOAPBodyElement
+   * @return boolean
+   * @throws Exception e
+   */
+public boolean analyseResultType(final SOAPBodyElement be) throws Exception {
         
         
         String resultType = null;
@@ -193,7 +221,14 @@ public final class CommonAnalyser {
     
     
     
-    public  boolean analyseElementSetName(final SOAPBodyElement be) throws Exception {
+ /**
+  * analyse the element (set) name,
+  * return true if ok
+  * @param be SOAPBodyElement
+  * @return boolean
+  * @throws Exception e
+  */
+    public boolean analyseElementSetName(final SOAPBodyElement be) throws Exception {
         
         String elementSetName = null;
         
@@ -254,7 +289,13 @@ public final class CommonAnalyser {
     }
     
     
-    
+    /**
+    * analyse the output schema,
+    * return true if ok
+    * @param be SOAPBodyElement
+    * @return boolean
+    * @throws Exception e
+    */
     public  boolean analyseOutputSchema(final SOAPBodyElement be) throws Exception {
         
         String outputSchema = null;
@@ -287,6 +328,8 @@ public final class CommonAnalyser {
     
     
     /**
+     * analyse the output format,
+     * return true if ok
      * @param be SOAPBodyElement
      * @return boolean
      * @throws Exception e
@@ -311,7 +354,13 @@ public final class CommonAnalyser {
     }
    
     
-    
+    /**
+     * analyse the schema language,
+     * return true if ok
+     * @param be SOAPBodyElement
+     * @return boolean
+     * @throws Exception e
+     */
     public boolean analyseSchemaLanguage(final SOAPBodyElement be) throws Exception {
         
         String schemaLanguage = null;
@@ -333,7 +382,13 @@ public final class CommonAnalyser {
     }
     
     
-    
+    /**
+     * analyse the service,
+     * return true if ok
+     * @param be SOAPBodyElement
+     * @return boolean
+     * @throws Exception e
+     */
     public  boolean analyseService(final SOAPBodyElement be) throws Exception {
         
         String service = null;
@@ -364,6 +419,14 @@ public final class CommonAnalyser {
     }
     
     
+    
+    /**
+     * analyse the version,
+     * return true if ok
+     * @param be SOAPBodyElement
+     * @return boolean
+     * @throws Exception e
+     */    
     public boolean analyseVersion(final SOAPBodyElement be) throws Exception {
     
       

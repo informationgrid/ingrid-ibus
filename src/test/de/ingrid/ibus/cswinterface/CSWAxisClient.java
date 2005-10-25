@@ -42,7 +42,11 @@ public class CSWAxisClient {
       
       try {
       
-          smsg =  AxisTools.createSOAPMessage(TestRequests.GETCAP1);
+           smsg = AxisTools.createSOAPMessage(TestRequests.GETCAP1);
+          
+          //smsg = AxisTools.createSOAPMessage(TestRequests.GETCAPINVALID1);
+          
+          //smsg = AxisTools.createSOAPMessage(TestRequests.GETREC1);
    
       } catch (Exception e2) {
         // TODO Auto-generated catch block

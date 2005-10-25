@@ -8,6 +8,7 @@ package de.ingrid.ibus.cswinterface.tools;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 //import java.io.IOException;
 
 import javax.xml.soap.MessageFactory;
@@ -40,6 +41,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 
 //import javax.xml.soap.Name;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 //import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.MimeHeaders;
@@ -70,6 +72,62 @@ public final class AxisTools {
     
     
     
+    /**
+     * 
+     * @param inputStream InputStream 
+     * @return Message smsg
+     * @throws Exception e
+     */
+    public static Message createSOAPMessage(final InputStream inputStream) throws Exception {
+        
+        Message smsg = null;
+       
+        boolean bodyInStream = true;
+        //inputStream contains no SOAP envelope!
+       
+         smsg = new Message(inputStream, bodyInStream);
+// TODO creates invalid message?       
+//        SOAPPart sp = (SOAPPart) smsg.getSOAPPart();
+//        
+//        SOAPEnvelope se = (SOAPEnvelope) sp.getEnvelope();
+//        
+//        //set SOAP Version 
+//        se.setSoapConstants(SOAPConstants.SOAP12_CONSTANTS);
+        //se.setSoapConstants(SOAPConstants.SOAP11_CONSTANTS);
+        
+        
+        return smsg;
+        
+    }
+
+    
+    
+    /**
+     * 
+     * @param doc Document
+     * @return Message smsg
+     * @throws Exception e
+     */
+    public static Message createSOAPMessage(final Document doc) throws Exception {
+        
+        Message smsg = null;
+          
+        smsg = new Message(SOAPTools.SOAP12ENV, false);
+        
+	    SOAPPart sp = (SOAPPart) smsg.getSOAPPart();
+        
+        SOAPEnvelope se = (SOAPEnvelope) sp.getEnvelope();
+        
+        //set SOAP Version 
+        se.setSoapConstants(SOAPConstants.SOAP12_CONSTANTS);
+        //se.setSoapConstants(SOAPConstants.SOAP11_CONSTANTS);
+        
+        SOAPBody body = (SOAPBody) se.getBody();
+        
+        body.addDocument(doc);
+        
+        return smsg;
+    }
    
     
     /**
@@ -79,11 +137,11 @@ public final class AxisTools {
      */
     public static Message createSOAPMessage(final String xmlString) throws Exception {
         
-        System.setProperty("javax.xml.soap.MessageFactory", 
-                "org.apache.axis.soap.MessageFactoryImpl");
-        
-        System.setProperty("javax.xml.soap.SOAPFactory", 
-                "org.apache.axis.soap.SOAPFactoryImpl");
+//        System.setProperty("javax.xml.soap.MessageFactory", 
+//                "org.apache.axis.soap.MessageFactoryImpl");
+//        
+//        System.setProperty("javax.xml.soap.SOAPFactory", 
+//                "org.apache.axis.soap.SOAPFactoryImpl");
 //        
 //        
 //        System.setProperty("javax.xml.parsers.DocumentBuilderFactory", 
@@ -98,7 +156,7 @@ public final class AxisTools {
         
         Message smsg = null;
         
-		try {
+		
             
 		    
 //		    messageFactory = MessageFactory.newInstance();
@@ -164,6 +222,8 @@ public final class AxisTools {
 		        
 		        smsg = new Message(xmlString);
 		        
+		        //smsg = new Message(xmlString, true);
+		        
 //		        MessageContext messCont = smsg.getMessageContext();
 //		            
 //		        messCont.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
@@ -190,39 +250,7 @@ public final class AxisTools {
 //                     
 //              System.out.println("createSOAPMessage soapMessage " + 
 //                      byteArrayOutputStream.toString());
-			  
-			
-//            Call call = new Call("http://localhost:8080/csw/csw");
-//            
-//            call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
-//            
-//           //call.setSOAPVersion(SOAPConstants.SOAP11_CONSTANTS);
-//           
-//            //call.setRequestMessage(axisSoapMessage);
-//            
-//            //call.invoke();
-//            
-//            call.invoke(se);
-            
-            //call.invoke(smsg);
-            
-           
-            
-            //Message mess = new org.apache.axis.Message("<Envelope></Envelope>");
-            
-            //Message mess = new org.apache.axis.Message(envelope);
-            
-            //call.invoke(mess);
-            
-            
-            
-        } catch (Exception e) {
-           
-           // e.printStackTrace();
-           throw e;
-        }
-	
-        //return axisSoapMessage;
+		
         
         return smsg;
     }

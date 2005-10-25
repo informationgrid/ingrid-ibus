@@ -41,7 +41,6 @@ package de.ingrid.ibus.cswinterface.tools;
 
 import java.util.StringTokenizer;
 
-import org.apache.lucene.document.NumericField;
 
 import de.ingrid.ibus.cswinterface.exceptions.CSWInvalidParameterValueException;
 
@@ -162,24 +161,6 @@ public class PatternTools {
 	    return validDate;
      }	
    
-	/**
-	 * wandelt geogr Koordinaten in ein Format fuer 
-	 *die Indexierung mit Lucene um 
-	 * @param String coord
-	 * @return String validCoord
-	 */
-	public static String toLuceneIndexCoordFormat(String coord) throws Exception {
-		
-		if (coord == null)
-		  return "";
-		
-		try {
-			return NumericField.numberToString(Double.valueOf(coord.trim()));
-        } catch (NumberFormatException e) {
-			return "";
-        }
-	}	
-	
 	
 	
 	
@@ -240,15 +221,6 @@ public class PatternTools {
 		
 	}
 
-	public static void main(String[] args) {
-		
-		try {
-			System.out.println("PatternTools main: " +  PatternTools.toLuceneIndexCoordFormat("755.898"));
-		} catch (Exception e) {
-			System.err.println("PatternTools ERROR: " + e);	
-		}
-		
-	}	
-	
+
 
 }

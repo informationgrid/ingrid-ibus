@@ -7,6 +7,7 @@ package de.ingrid.ibus.cswinterface.tools;
 import java.io.ByteArrayOutputStream;
 
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 import org.apache.axis.Message;
 
@@ -20,9 +21,9 @@ public class SOAPToolsTest extends TestCase {
 
     public final void testCreateExceptionReport() throws Exception {
         
-        Message exceptionMess = null;
+        SOAPMessage exceptionMess = null;
         
-        exceptionMess = SOAPTools.createExceptionReport("exception text", "exception code", "locator");
+        exceptionMess = SOAPTools.createExceptionReport("exception text", "exception code", "locator", true);
         
         assertNotNull(exceptionMess);
         
