@@ -7,31 +7,48 @@
 package de.ingrid.ibus.v02;
 
 import junit.framework.TestCase;
+import de.ingrid.ibus.BusTest;
+import de.ingrid.ibus.registry.SyntaxInterpreterTest;
 
 /**
  * Test for dispatcher feature (INGRID-2)
- *  
- * created on 21.07.2005 <p>
- *
+ * 
+ * <p/> created on 21.07.2005
+ * 
+ * 
  * @author hs
  */
-public class DispatcherTest extends TestCase{
+public class DispatcherTest extends TestCase {
+    
     /**
-     * 
+     * INGRID-18
+     * @throws Exception 
      */
-    public void testRedirectQueries() {
-        fail("INGRID-18 not yet implemented");
+    public void testRedirectQueries() throws Exception {
+        //for dispatching ability
+        new SyntaxInterpreterTest().testGetIPlugs_DataTypes();
+        new SyntaxInterpreterTest().testGetIplugs_Fields();
+        new SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
+        
+        //for integration
+        new BusTest().testSearch();
     }
+
     /**
-     * 
+     * INGRID-19
+     * @throws Exception 
      */
-    public void testReturnOfResults() {
-        fail("INGRID-19 not yet implemented");
+    public void testReturnOfResults() throws Exception {
+        new BusTest().testSearch();
     }
+
     /**
-     * 
+     * INGRID-20
+     * @throws Exception 
+     * @throws Exception 
      */
-    public void testCommunicationWithStatisticOfAccesses() {
-        fail("INGRID-20 not yet implemented");
+    public void testCommunicationWithStatisticOfAccesses() throws Exception{
+        new BusTest().testSearchWithStatisticPreProcessor();
+        new BusTest().testSearchWithStatisticPostProcessor();
     }
 }
