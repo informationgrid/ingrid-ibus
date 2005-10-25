@@ -12,6 +12,7 @@ import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
 import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridDocument;
+import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
@@ -26,8 +27,13 @@ public class Bus implements IBus {
     // TODO INGRID-398 we need to made the lifetime configurable.
     private Registry fRegestry = new Registry(100000);
 
+    private ProcessorPipe fProcessorPipe= new ProcessorPipe();
+
     private IPlugProxyFactory fProxyFactory;
 
+    /**
+     * @param factory
+     */
     public Bus(IPlugProxyFactory factory) {
         this.fProxyFactory = factory;
     }
@@ -36,13 +42,14 @@ public class Bus implements IBus {
      * multicast the query to all connected IPlugs and return founded results
      * 
      * @param query
-     * @param start
      * @param length
      * @return array of founded documents
      * @throws Exception
      */
     public IngridDocument[] search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
             throws Exception {
+
+        this.fProcessorPipe.preProcess(query);
         // TODO add grouping
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegestry);
         PlugQueryConnection[] connections = new PlugQueryConnection[plugsForQuery.length];
@@ -58,7 +65,9 @@ public class Bus implements IBus {
             Thread.sleep(10);
         }
 
-        return (IngridDocument[]) resultSet.toArray(new IngridDocument[resultSet.size()]);
+        IngridDocument[] results = (IngridDocument[]) resultSet.toArray(new IngridDocument[resultSet.size()]);
+        this.fProcessorPipe.postProcess(query, results);
+        return results;
 
     }
 
@@ -67,7 +76,13 @@ public class Bus implements IBus {
      */
     public Registry getIPlugRegestry() {
         return this.fRegestry;
+    }
 
+    /**
+     * @return the processing pipe
+     */
+    public ProcessorPipe getProccessorPipe() {
+        return this.fProcessorPipe;
     }
 
 }
