@@ -37,14 +37,15 @@ public class BusTest extends TestCase {
     private Bus bus;
 
     private PlugDescription[] plugDescriptions = new PlugDescription[3];
-    
+
     /**
      * Call setUp for the feature tests
-     * @throws Exception 
+     * 
+     * @throws Exception
      * 
      */
     public BusTest() throws Exception {
-             setUp();
+        setUp();
     }
 
     protected void setUp() throws Exception {
@@ -69,36 +70,25 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testSearchWithStatisticPreProcessor() throws Exception {
+    public void testSearchWithStatisticProcessors() throws Exception {
         TestAppender appender = new TestAppender();
         Logger.getLogger(StatisticPreProcessor.class).addAppender(appender);
-        this.bus.getProccessorPipe().addPreProcessor(new StatisticPreProcessor());
-
-        IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-        assertTrue(appender.fLastLogMessage.indexOf(query.toString()) != -1);
-    }
-    
-    /**
-     * @throws Exception
-     */
-    public void testSearchWithStatisticPostProcessor() throws Exception {
-        TestAppender appender = new TestAppender();
         Logger.getLogger(StatisticPostProcessor.class).addAppender(appender);
+        this.bus.getProccessorPipe().addPreProcessor(new StatisticPreProcessor());
         this.bus.getProccessorPipe().addPostProcessor(new StatisticPostProcessor());
 
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-        assertTrue(appender.fLastLogMessage.indexOf(query.toString()) != -1);
+        assertEquals(2, appender.fLogMessageCount);
+        Logger.getLogger(StatisticPostProcessor.class).removeAppender(appender);
     }
-
 
     private class TestAppender implements Appender {
 
         /**
          * 
          */
-        public String fLastLogMessage;
+        public int fLogMessageCount = 0;
 
         public void addFilter(Filter arg0) {
             //
@@ -117,8 +107,7 @@ public class BusTest extends TestCase {
         }
 
         public void doAppend(LoggingEvent arg0) {
-            this.fLastLogMessage = arg0.getMessage().toString();
-
+            this.fLogMessageCount++;
         }
 
         public String getName() {

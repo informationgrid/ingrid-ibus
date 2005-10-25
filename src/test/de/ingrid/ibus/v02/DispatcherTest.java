@@ -48,7 +48,6 @@ public class DispatcherTest extends TestCase {
      * @throws Exception 
      */
     public void testCommunicationWithStatisticOfAccesses() throws Exception{
-        new BusTest().testSearchWithStatisticPreProcessor();
-        new BusTest().testSearchWithStatisticPostProcessor();
+        new BusTest().testSearchWithStatisticProcessors();
     }
 }
