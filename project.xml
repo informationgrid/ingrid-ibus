@@ -97,7 +97,7 @@
         <groupId>ingrid</groupId>
         <artifactId>ingrid-utils</artifactId>
         <version>0.1-SNAPSHOT</version>
-        <type>jar</type>-->
+        <type>jar</type>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -187,9 +187,7 @@
     </build>
 	<reports>
 		<report>maven-junit-report-plugin</report>
-        <!--
 		<report>maven-jcoverage-plugin</report>
-			-->
         <report>maven-tasklist-plugin</report>
 	</reports>
     <properties/>
