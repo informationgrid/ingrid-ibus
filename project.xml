@@ -120,6 +120,7 @@
           <artifactId>cglib-nodep</artifactId>
           <version>2.1_3</version>
           <type>jar</type>
+          <url>http://ibiblio.org/maven</url>
       </dependency>
       <dependency>
         <groupId>ingrid</groupId>
@@ -179,8 +180,8 @@
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>1.0.3</version>
+   	    <type>jar</type>
 	    <url>http://ibiblio.org/maven</url>
-	    <type>jar</type>
       </dependency>
       <dependency>
         <groupId>commons-discovery</groupId>
