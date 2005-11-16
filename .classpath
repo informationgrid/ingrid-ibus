@@ -5,17 +5,21 @@
 	<classpathentry kind="src" path="src/conf"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
-    <classpathentry kind="var" path="MAVEN_REPO/xmlunit/jars/xmlunit-1.0.jar"/>
-    <classpathentry kind="var" path="MAVEN_REPO/axis/jars/axis-jaxrpc-1.2.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/xmlunit/jars/xmlunit-1.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/axis/jars/axis-jaxrpc-1.2.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/axis/jars/axis-saaj-1.2.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/axis/jars/axis-1.2.1.jar"/>
-    <classpathentry kind="var" path="MAVEN_REPO/xerces/jars/xerces-2.4.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/xerces/jars/xerces-2.4.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/xml-apis/jars/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/javax.servlet/jars/servlet-api-2.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-discovery/jars/commons-discovery-0.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ingrid-iplug"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ingrid-utils"/>
+	<classpathentry kind="src" path="/ingrid-iplug"/>
+	<classpathentry kind="var" path="MAVEN_REPO/weta-components/jars/communication-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/weta-components/jars/communication-sockets-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/weta-components/jars/remote-proxies-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/cglib/jars/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="src" path="/ingrid-utils"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
