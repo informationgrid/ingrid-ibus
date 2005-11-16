@@ -10,8 +10,14 @@ import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
 
+/**
+ * 
+ */
 public class DummyProxyFactory implements IPlugProxyFactory {
 
+    /**
+     * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.iplug.PlugDescription)
+     */
     public IPlug createPlugProxy(PlugDescription plug) {
         return new DummyIPlug();
     }
