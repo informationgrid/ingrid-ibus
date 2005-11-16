@@ -67,7 +67,7 @@ public class PlugQueryConnection extends Thread {
             this.fResultSet.addAll(Arrays.asList(documents));
             this.fResultSet.resultsAdded();
         } catch (Exception e) {
-            this.fLog.error("could not retriev query result from iplug " + this.fPlugDescription.getPlugId(), e);
+            this.fLog.error("could not retrieve query result from iplug " + this.fPlugDescription.getPlugId(), e);
         }
     }
 }
