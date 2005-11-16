@@ -72,6 +72,16 @@
 		  <role>developer</role>
 	  </roles>
     </developer>
+    <developer>
+      <id>5</id>
+      <name>Martin Schaaf</name>
+      <email>ms(at)media(stripe)style(dot)com</email>
+      <organization>media style GmbH</organization>
+      <organizationUrl>http://www.media-style.com</organizationUrl>
+      <roles>
+		  <role>developer</role>
+	  </roles>
+    </developer>
   </developers>
     <shortDescription>todo short description</shortDescription>
     <issueTrackingUrl>http://jira.media-style.com/browse/INGRID</issueTrackingUrl>
@@ -85,8 +95,32 @@
             <groupId>weta</groupId>
             <artifactId>weta-g</artifactId>
             <version>SNAPSHOT</version>
-            <type>zip</type>>
+            <type>zip</type>
         </dependency>
+      <dependency>
+        <groupId>weta-components</groupId>
+        <artifactId>communication</artifactId>
+        <version>SNAPSHOT</version>
+	    <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>weta-components</groupId>
+        <artifactId>remote-proxies</artifactId>
+        <version>SNAPSHOT</version>
+	    <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>weta-components</groupId>
+        <artifactId>communication-sockets</artifactId>
+        <version>SNAPSHOT</version>
+	    <type>jar</type>
+      </dependency>
+      <dependency>
+          <groupId>cglib</groupId>
+          <artifactId>cglib-nodep</artifactId>
+          <version>2.1_3</version>
+          <type>jar</type>
+      </dependency>
       <dependency>
         <groupId>ingrid</groupId>
         <artifactId>ingrid-iplug</artifactId>
