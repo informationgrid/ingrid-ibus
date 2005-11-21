@@ -43,7 +43,7 @@ public class BusTest extends TestCase {
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setPlugId("" + i);
-            this.bus.getIPlugRegestry().addIPlug(this.plugDescriptions[i]);
+            this.bus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
         }
 
     }
@@ -71,6 +71,14 @@ public class BusTest extends TestCase {
         this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
         assertEquals(2, appender.fLogMessageCount);
         Logger.getLogger(StatisticPostProcessor.class).removeAppender(appender);
+    }
+
+    /**
+     * Test the instanciation process.
+     */
+    public void testGetInstance() {
+        Bus i = Bus.getInstance(new DummyProxyFactory());
+        assertNotNull(i);
     }
 
     private class TestAppender implements Appender {
