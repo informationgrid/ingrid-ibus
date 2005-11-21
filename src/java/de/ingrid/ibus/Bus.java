@@ -25,16 +25,19 @@ import de.ingrid.utils.query.IngridQuery;
  */
 public class Bus implements IBus {
     // TODO INGRID-398 we need to made the lifetime configurable.
-    private Registry fRegestry = new Registry(100000);
+    private Registry fRegistry = new Registry(100000);
 
-    private ProcessorPipe fProcessorPipe= new ProcessorPipe();
+    private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
-    private IPlugProxyFactory fProxyFactory;
+    private IPlugProxyFactory fProxyFactory = null;
+
+    private static Bus fBusInstance = null;
 
     /**
      * @param factory
      */
     public Bus(IPlugProxyFactory factory) {
+        Bus.fBusInstance = this;
         this.fProxyFactory = factory;
     }
 
@@ -42,16 +45,18 @@ public class Bus implements IBus {
      * multicast the query to all connected IPlugs and return founded results
      * 
      * @param query
+     * @param hitsPerPage
+     * @param currentPage
      * @param length
+     * @param maxMilliseconds
      * @return array of founded documents
      * @throws Exception
      */
     public IngridDocument[] search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
             throws Exception {
-
         this.fProcessorPipe.preProcess(query);
         // TODO add grouping
-        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegestry);
+        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         PlugQueryConnection[] connections = new PlugQueryConnection[plugsForQuery.length];
         ResultSet resultSet = new ResultSet(connections.length);
         for (int i = 0; i < plugsForQuery.length; i++) {
@@ -70,12 +75,24 @@ public class Bus implements IBus {
         return results;
 
     }
+    
+    /**
+     * @param factory
+     * @return The current Bus instance.
+     */
+    public static Bus getInstance(IPlugProxyFactory factory) {
+        if (null == fBusInstance) {
+            new Bus(factory);
+        }
+        
+        return fBusInstance;
+    }
 
     /**
      * @return the iplug regestry
      */
-    public Registry getIPlugRegestry() {
-        return this.fRegestry;
+    public Registry getIPlugRegistry() {
+        return this.fRegistry;
     }
 
     /**
