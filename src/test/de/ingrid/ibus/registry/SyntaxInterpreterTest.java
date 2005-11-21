@@ -50,7 +50,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testGetIPlugs_NoTermsNoFileds() throws Exception {
+    public void testGetIPlugs_NoTermsNoFields() throws Exception {
         assertEquals(0, getIPlugs("").length);
         this.descriptions[0].setDataType("UDK");
         assertEquals(0, getIPlugs("datatype:UDK").length);
