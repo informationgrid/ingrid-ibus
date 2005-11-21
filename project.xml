@@ -227,5 +227,4 @@
         <report>maven-checkstyle-plugin</report>
 	</reports>
     <properties/>
-	    
 </project>
