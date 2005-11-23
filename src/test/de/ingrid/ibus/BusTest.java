@@ -45,7 +45,6 @@ public class BusTest extends TestCase {
             this.plugDescriptions[i].setPlugId("" + i);
             this.bus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
         }
-
     }
 
     /**
