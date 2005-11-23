@@ -6,6 +6,9 @@
 
 package de.ingrid.ibus;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryConnection;
 import de.ingrid.ibus.registry.Registry;
@@ -24,6 +27,9 @@ import de.ingrid.utils.query.IngridQuery;
  * @version $Revision: 1.3 $
  */
 public class Bus implements IBus {
+
+    private static Log fLogger = LogFactory.getLog(Bus.class);
+
     // TODO INGRID-398 we need to made the lifetime configurable.
     private Registry fRegistry = new Registry(100000);
 
@@ -75,17 +81,16 @@ public class Bus implements IBus {
         return results;
 
     }
-    
+
     /**
-     * @param factory
-     * @return The current Bus instance.
+     * @param plugDescription
      */
-    public static Bus getInstance(IPlugProxyFactory factory) {
-        if (null == fBusInstance) {
-            new Bus(factory);
+    public static void addIPlug(PlugDescription plugDescription) {
+        if (null != fBusInstance) {
+            fBusInstance.fRegistry.addIPlug(plugDescription);
+        } else {
+            fLogger.error("Bus not yet instantiated.");
         }
-        
-        return fBusInstance;
     }
 
     /**
