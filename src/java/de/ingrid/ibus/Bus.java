@@ -64,9 +64,6 @@ public class Bus implements IBus {
         // TODO add grouping
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         PlugQueryConnection[] connections = new PlugQueryConnection[plugsForQuery.length];
-
-        System.out.println("How many connections: " + plugsForQuery.length);
-
         ResultSet resultSet = new ResultSet(connections.length);
         for (int i = 0; i < plugsForQuery.length; i++) {
             PlugQueryConnection connection = new PlugQueryConnection(this.fProxyFactory, plugsForQuery[i], query,

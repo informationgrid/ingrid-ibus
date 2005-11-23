@@ -27,14 +27,14 @@ public class ResultSet extends ArrayList {
     /**
      * @return if all connections are finished
      */
-    public boolean isComplete() {
+    public synchronized boolean isComplete() {
         return this.fNumberOfConnections == this.fNumberOfFinsihedConnections;
     }
 
     /**
      *  
      */
-    public void resultsAdded() {
+    public synchronized void resultsAdded() {
         this.fNumberOfFinsihedConnections += 1;
     }
 }
