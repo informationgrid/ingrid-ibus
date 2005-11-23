@@ -7,6 +7,7 @@
 package de.ingrid.ibus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *  
@@ -36,5 +37,12 @@ public class ResultSet extends ArrayList {
      */
     public synchronized void resultsAdded() {
         this.fNumberOfFinsihedConnections += 1;
+    }
+    
+    /**
+     * @see java.util.ArrayList#addAll(java.util.Collection)
+     */
+    public synchronized boolean addAll(Collection c) {
+        return super.addAll(c);
     }
 }

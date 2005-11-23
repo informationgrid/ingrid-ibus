@@ -24,7 +24,7 @@ import de.ingrid.utils.query.IngridQuery;
  * @version $Revision: $
  * @author jz
  * @author $Author: ${lastedit}
- * 
+ *  
  */
 public class PlugQueryConnection extends Thread {
 
@@ -60,6 +60,9 @@ public class PlugQueryConnection extends Thread {
         this.fResultSet = resultSet;
     }
 
+    /**
+     * @see java.lang.Thread#run()
+     */
     public void run() {
         try {
             IPlug plug = this.fFactory.createPlugProxy(this.fPlugDescription);
