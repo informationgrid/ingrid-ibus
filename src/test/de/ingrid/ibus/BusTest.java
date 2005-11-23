@@ -30,7 +30,7 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @version $Revision: $
  * @author sg
  * @author $Author jz ${lastedit}
- * 
+ *  
  */
 public class BusTest extends TestCase {
 
@@ -76,15 +76,18 @@ public class BusTest extends TestCase {
     /**
      * Test the instanciation process.
      */
-    public void testGetInstance() {
-        Bus i = Bus.getInstance(new DummyProxyFactory());
-        assertNotNull(i);
+    public void testAddIPlug() {
+        PlugDescription pd = new PlugDescription();
+        pd.setPlugId("bla");
+        Bus.addIPlug(pd);
+        PlugDescription[] pds = this.bus.getIPlugRegistry().getAllIPlugs();
+        assertEquals(4, pds.length);
     }
 
     private class TestAppender implements Appender {
 
         /**
-         * 
+         *  
          */
         public int fLogMessageCount = 0;
 
