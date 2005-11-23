@@ -8,13 +8,18 @@ package de.ingrid.ibus;
 
 import java.util.ArrayList;
 
+/**
+ *  
+ */
 public class ResultSet extends ArrayList {
 
     private int fNumberOfConnections;
 
     private int fNumberOfFinsihedConnections = 0;
 
-
+    /**
+     * @param numberOfConnections
+     */
     public ResultSet(int numberOfConnections) {
         this.fNumberOfConnections = numberOfConnections;
     }
@@ -26,8 +31,10 @@ public class ResultSet extends ArrayList {
         return this.fNumberOfConnections == this.fNumberOfFinsihedConnections;
     }
 
+    /**
+     *  
+     */
     public void resultsAdded() {
         this.fNumberOfFinsihedConnections += 1;
     }
-
 }
