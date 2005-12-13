@@ -8,7 +8,7 @@
 		<j:set var="testnotmatchpattern" value=""/>
 		<attainGoal name="site"/>
 	</goal>
-	
+
 	<!-- run only feature tests -->
 	<goal name="ftest">
 		<j:set var="faeturetests" value="true"/>
