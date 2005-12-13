@@ -1,6 +1,6 @@
 <project xmlns:j="jelly:core"
          xmlns:deploy="deploy">
-	
+
 	<!-- create website with feature tests -->
 	<goal name="site:generate">
 		<j:set var="faeturetests" value="true"/>
