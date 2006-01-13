@@ -13,6 +13,7 @@ import net.weta.components.proxies.ProxyService;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridDocument;
+import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
@@ -71,7 +72,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
      */
     public void testSearch() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        IngridDocument[] documents = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-        assertEquals(this.plugDescriptions.length, documents.length);
+        IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        assertEquals(this.plugDescriptions.length, hits.getHits().length);
     }
 }

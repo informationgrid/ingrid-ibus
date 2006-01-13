@@ -7,6 +7,8 @@
 package de.ingrid.ibus;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import net.weta.components.communication_sockets.SocketCommunication;
@@ -20,7 +22,8 @@ import de.ingrid.ibus.net.PlugQueryConnection;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
 import de.ingrid.iplug.PlugDescription;
-import de.ingrid.utils.IngridDocument;
+import de.ingrid.utils.IngridHit;
+import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
@@ -61,19 +64,21 @@ public class Bus implements IBus {
      * @param currentPage
      * @param length
      * @param maxMilliseconds
-     * @return array of founded documents
+     * @return IngridHits as container for hits and meta data
      * @throws Exception
      */
-    public IngridDocument[] search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
-            throws Exception {
+    public IngridHits search(IngridQuery query, int hitsPerPage,
+            int currentPage, int length, int maxMilliseconds) throws Exception {
         this.fProcessorPipe.preProcess(query);
         // TODO add grouping
-        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
+        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(
+                query, this.fRegistry);
         PlugQueryConnection[] connections = new PlugQueryConnection[plugsForQuery.length];
         ResultSet resultSet = new ResultSet(connections.length);
         for (int i = 0; i < plugsForQuery.length; i++) {
-            PlugQueryConnection connection = new PlugQueryConnection(this.fProxyFactory, plugsForQuery[i], query,
-                    length, i, resultSet);
+            PlugQueryConnection connection = new PlugQueryConnection(
+                    this.fProxyFactory, plugsForQuery[i], query, length, i,
+                    resultSet);
             connection.start();
         }
         long end = System.currentTimeMillis() + maxMilliseconds;
@@ -81,11 +86,32 @@ public class Bus implements IBus {
             // System.out.println("waiting");
             Thread.sleep(10);
         }
+        int totalHits = 0;
+        int count = resultSet.size();
+        ArrayList documents = new ArrayList();
+        for (int i = 0; i < count; i++) {
+            IngridHits hits = (IngridHits) resultSet.get(i);
+            totalHits += hits.length();
+            documents.addAll(Arrays.asList(hits.getHits()));
+        }
 
-        IngridDocument[] results = (IngridDocument[]) resultSet.toArray(new IngridDocument[resultSet.size()]);
-        this.fProcessorPipe.postProcess(query, results);
-        return results;
+        IngridHit[] hits = getSortedAndLimitedHits((IngridHit[]) documents
+                .toArray(new IngridHit[documents.size()]), hitsPerPage,
+                currentPage, length);
 
+        this.fProcessorPipe.postProcess(query, hits);
+        return new IngridHits("ibus", totalHits, hits);
+
+    }
+
+    private IngridHit[] getSortedAndLimitedHits(IngridHit[] documents,
+            int hitsPerPage, int currentPage, int length) {
+        Arrays.sort(documents, new IngridHitComparator());
+        length = Math.min(documents.length, length);
+        IngridHit[] hits = new IngridHit[length];
+        System.arraycopy(documents, 0, hits, 0, length);
+        return hits;
+//        return documents;
     }
 
     /**
@@ -114,11 +140,14 @@ public class Bus implements IBus {
     }
 
     /**
-     * This method is for starting a Proxy-Server by hand. The two required commandline options are "--multicastPort
-     * <port>" and "--unicastPort <port>". Every parameter need a different port where the proxy server listens on.
+     * This method is for starting a Proxy-Server by hand. The two required
+     * commandline options are "--multicastPort <port>" and "--unicastPort
+     * <port>". Every parameter need a different port where the proxy server
+     * listens on.
      * 
      * @param args
-     *            An array of strings containing the commandline options described above.
+     *            An array of strings containing the commandline options
+     *            described above.
      */
     public static void main(String[] args) {
         int mPort = 0;
@@ -135,15 +164,20 @@ public class Bus implements IBus {
             arguments.put(args[i], args[i + 1]);
         }
 
-        if (!arguments.containsKey("--multicastPort") || !arguments.containsKey("--unicastPort")) {
-            System.err.println("Wrong arguments. You must set --multicastPort <port> and --unicastPort <port>");
+        if (!arguments.containsKey("--multicastPort")
+                || !arguments.containsKey("--unicastPort")) {
+            System.err
+                    .println("Wrong arguments. You must set --multicastPort <port> and --unicastPort <port>");
             return;
         }
         try {
-            mPort = (new Integer((String) arguments.get("--multicastPort"))).intValue();
-            uPort = (new Integer((String) arguments.get("--unicastPort"))).intValue();
+            mPort = (new Integer((String) arguments.get("--multicastPort")))
+                    .intValue();
+            uPort = (new Integer((String) arguments.get("--unicastPort")))
+                    .intValue();
         } catch (Exception e) {
-            System.err.println("The supplied ports are no numbers. Valid ports are between 1 and 65535");
+            System.err
+                    .println("The supplied ports are no numbers. Valid ports are between 1 and 65535");
             return;
         }
 
@@ -154,7 +188,8 @@ public class Bus implements IBus {
         try {
             communication.startup();
         } catch (IOException e) {
-            System.err.println("Cannot start the communication: " + e.getMessage());
+            System.err.println("Cannot start the communication: "
+                    + e.getMessage());
         }
 
         // start the proxy server
@@ -163,9 +198,12 @@ public class Bus implements IBus {
         try {
             proxy.startup();
         } catch (IllegalArgumentException e) {
-            System.err.println("Wrong arguments supplied to the proxy service: " + e.getMessage());
+            System.err
+                    .println("Wrong arguments supplied to the proxy service: "
+                            + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Cannot start the proxy server: " + e.getMessage());
+            System.err.println("Cannot start the proxy server: "
+                    + e.getMessage());
         }
     }
 }

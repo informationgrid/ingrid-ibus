@@ -10,11 +10,11 @@
 	<classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-discovery/jars/commons-discovery-0.2.jar"/>
-	<classpathentry kind="src" path="/ingrid-iplug"/>
 	<classpathentry kind="var" path="MAVEN_REPO/weta-components/jars/communication-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/weta-components/jars/communication-sockets-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/weta-components/jars/remote-proxies-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/cglib/jars/cglib-nodep-2.1_3.jar"/>
 	<classpathentry kind="src" path="/ingrid-utils"/>
+	<classpathentry kind="var" path="MAVEN_REPO/ingrid/jars/ingrid-iplug-0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

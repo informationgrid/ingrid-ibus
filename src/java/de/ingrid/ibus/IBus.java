@@ -6,7 +6,7 @@
 
 package de.ingrid.ibus;
 
-import de.ingrid.utils.IngridDocument;
+import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
@@ -28,7 +28,7 @@ public interface IBus {
      * @return array of matching documents.
      * @throws Exception
      */
-    public IngridDocument[] search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
+    public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
             throws Exception;
 
 }

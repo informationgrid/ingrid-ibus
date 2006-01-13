@@ -6,15 +6,12 @@
 
 package de.ingrid.ibus.net;
 
-import java.util.Arrays;
-
 import org.apache.log4j.Logger;
 
 import de.ingrid.ibus.ResultSet;
 import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridHits;
-import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
@@ -29,7 +26,7 @@ import de.ingrid.utils.query.IngridQuery;
  */
 public class PlugQueryConnection extends Thread {
 
-    private Logger fLog = Logger.getLogger(this.getClass());
+    private final static Logger fLog = Logger.getLogger(PlugQueryConnection.class);
 
     private IPlugProxyFactory fFactory;
 
@@ -67,8 +64,7 @@ public class PlugQueryConnection extends Thread {
     public void run() {
         try {
             IPlug plug = this.fFactory.createPlugProxy(this.fPlugDescription);
-            IngridHits hits = plug.search(this.fQuery, this.fStart, this.fLength);
-            this.fResultSet.addAll(Arrays.asList(hits.getHits()));
+            this.fResultSet.add(plug.search(this.fQuery, this.fStart, this.fLength));
             this.fResultSet.resultsAdded();
         } catch (Exception e) {
             this.fLog.error("could not retrieve query result from iplug " + this.fPlugDescription.getPlugId(), e);

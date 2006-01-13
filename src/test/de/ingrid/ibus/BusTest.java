@@ -17,6 +17,7 @@ import org.apache.log4j.spi.LoggingEvent;
 
 import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridDocument;
+import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.processor.impl.StatisticPostProcessor;
 import de.ingrid.utils.processor.impl.StatisticPreProcessor;
 import de.ingrid.utils.query.IngridQuery;
@@ -52,8 +53,8 @@ public class BusTest extends TestCase {
      */
     public void testSearch() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        IngridDocument[] documents = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-        assertEquals(this.plugDescriptions.length, documents.length);
+        IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        assertEquals(this.plugDescriptions.length, hits.getHits().length);
     }
 
     /**
