@@ -34,11 +34,11 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
     /**
      * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.iplug.PlugDescription)
      */
-    public IPlug createPlugProxy(PlugDescription plug) {
+    public IPlug createPlugProxy(PlugDescription plug) throws Exception {
         IPlug result = null;
 
         final String wetagUrl = plug.getProxyServiceURL();
-        final Class iPlugClass = plug.getIPlugClass();
+        final Class iPlugClass = Thread.currentThread().getContextClassLoader().loadClass(plug.getIPlugClass());
 
         ProxyService proxyService = new ProxyService();
         proxyService.setCommunication(this.fCommunication);

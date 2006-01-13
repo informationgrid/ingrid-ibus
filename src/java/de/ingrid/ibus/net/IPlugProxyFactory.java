@@ -11,6 +11,6 @@ import de.ingrid.iplug.PlugDescription;
 
 public interface IPlugProxyFactory {
 
-    public IPlug createPlugProxy(PlugDescription plug);
+    public IPlug createPlugProxy(PlugDescription plug) throws Exception;
 
 }

@@ -52,7 +52,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setPlugId("" + i);
             this.plugDescriptions[i].setProxyServiceURL(comProxyServerUrl);
-            this.plugDescriptions[i].setIPlugClass(DummyIPlug.class);
+            this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());
             this.bus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
         }
     }
