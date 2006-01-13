@@ -14,7 +14,7 @@ import de.ingrid.utils.query.IngridQuery;
 public class DummyIPlug implements IPlug {
 
     public IngridHits search(IngridQuery query, int start, int lenght) {
-        return new IngridHits("bla", 1, new IngridHit[] { new IngridHit("provider", 23, 0.23f) });
+        return new IngridHits("bla", 1, new IngridHit[] { new IngridHit("provider", 23, 23, 0.23f) });
     }
 
 }
