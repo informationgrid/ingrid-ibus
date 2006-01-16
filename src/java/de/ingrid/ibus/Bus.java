@@ -108,7 +108,22 @@ public class Bus implements IBus {
         IngridHit[] hits = new IngridHit[length];
         System.arraycopy(documents, 0, hits, 0, length);
         return hits;
-        // return documents;
+    }
+
+    /**
+     * Returns the current IBus instance.
+     * 
+     * @return The IBus instance.
+     */
+    public static Bus getInstance() {
+        Bus result = null;
+        if (null != fBusInstance) {
+            result = fBusInstance;
+        } else {
+            fLogger.error("Bus not yet instantiated.");
+        }
+
+        return result;
     }
 
     /**
