@@ -50,6 +50,13 @@ public class Bus implements IBus {
     private static Bus fBusInstance = null;
 
     /**
+     * 
+     */
+    public Bus() {
+        //for deserialization
+    }
+    
+    /**
      * @param factory
      */
     public Bus(IPlugProxyFactory factory) {
