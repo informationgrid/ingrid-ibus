@@ -16,7 +16,6 @@ import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
 import de.ingrid.iplug.PlugDescription;
-import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.processor.impl.StatisticPostProcessor;
 import de.ingrid.utils.processor.impl.StatisticPreProcessor;
