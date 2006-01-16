@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
+import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.ibus.net.PlugQueryConnection;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
@@ -192,6 +193,10 @@ public class Bus implements IBus {
             System.err.println("Cannot start the proxy server: " + e.getMessage());
             System.exit(1);
         }
+
+        // instatiate the IBus
+        IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl(communication);
+        new Bus(proxyFactory);
 
         while (true) {
             try {
