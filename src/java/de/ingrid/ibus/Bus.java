@@ -66,7 +66,7 @@ public class Bus implements IBus {
      * @param currentPage
      * @param length
      * @param maxMilliseconds
-     * @return IngridHits as container for hits and meta data
+     * @return IngridHits as container for hits and meta data.
      * @throws Exception
      */
     public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
@@ -101,6 +101,28 @@ public class Bus implements IBus {
         this.fProcessorPipe.postProcess(query, hits);
 
         return new IngridHits("ibus", totalHits, hits);
+    }
+
+    /**
+     * @param query
+     * @param hitsPerPage
+     * @param currentPage
+     * @param length
+     * @param maxMilliseconds
+     * @return IngridHits as container for hits and meta data.
+     * @throws Exception
+     */
+    public static IngridHits searchR(IngridQuery query, int hitsPerPage, int currentPage, int length,
+            int maxMilliseconds) throws Exception {
+        IngridHits result = null;
+
+        if (null != fBusInstance) {
+            result = fBusInstance.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        } else {
+            fLogger.error("Bus not yet instantiated.");
+        }
+
+        return result;
     }
 
     private IngridHit[] getSortedAndLimitedHits(IngridHit[] documents, int hitsPerPage, int currentPage, int length) {
