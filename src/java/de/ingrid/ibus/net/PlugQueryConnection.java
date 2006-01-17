@@ -6,12 +6,14 @@
 
 package de.ingrid.ibus.net;
 
-import org.apache.log4j.Logger;
+
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import de.ingrid.ibus.ResultSet;
 import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
-import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
@@ -26,7 +28,7 @@ import de.ingrid.utils.query.IngridQuery;
  */
 public class PlugQueryConnection extends Thread {
 
-    private final static Logger fLog = Logger.getLogger(PlugQueryConnection.class);
+    private final static Log fLog = LogFactory.getLog(PlugQueryConnection.class);
 
     private IPlugProxyFactory fFactory;
 

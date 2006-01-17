@@ -6,14 +6,10 @@
 
 package de.ingrid.ibus;
 
-import junit.framework.TestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.ErrorHandler;
-import org.apache.log4j.spi.Filter;
-import org.apache.log4j.spi.LoggingEvent;
+import junit.framework.TestCase;
 
 import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridHits;
@@ -30,7 +26,7 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @version $Revision: $
  * @author sg
  * @author $Author jz ${lastedit}
- *  
+ * 
  */
 public class BusTest extends TestCase {
 
@@ -60,16 +56,12 @@ public class BusTest extends TestCase {
      * @throws Exception
      */
     public void testSearchWithStatisticProcessors() throws Exception {
-        TestAppender appender = new TestAppender();
-        Logger.getLogger(StatisticPreProcessor.class).addAppender(appender);
-        Logger.getLogger(StatisticPostProcessor.class).addAppender(appender);
+        //TODO: make this test log implementation independent
         this.bus.getProccessorPipe().addPreProcessor(new StatisticPreProcessor());
         this.bus.getProccessorPipe().addPostProcessor(new StatisticPostProcessor());
 
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-        assertEquals(2, appender.fLogMessageCount);
-        Logger.getLogger(StatisticPostProcessor.class).removeAppender(appender);
     }
 
     /**
@@ -81,62 +73,5 @@ public class BusTest extends TestCase {
         Bus.addIPlug(pd);
         PlugDescription[] pds = this.bus.getIPlugRegistry().getAllIPlugs();
         assertEquals(4, pds.length);
-    }
-
-    private class TestAppender implements Appender {
-
-        /**
-         *  
-         */
-        public int fLogMessageCount = 0;
-
-        public void addFilter(Filter arg0) {
-            //
-        }
-
-        public Filter getFilter() {
-            return null;
-        }
-
-        public void clearFilters() {
-            //
-        }
-
-        public void close() {
-            //
-        }
-
-        public void doAppend(LoggingEvent arg0) {
-            this.fLogMessageCount++;
-        }
-
-        public String getName() {
-            return null;
-        }
-
-        public void setErrorHandler(ErrorHandler arg0) {
-            //
-        }
-
-        public ErrorHandler getErrorHandler() {
-            return null;
-        }
-
-        public void setLayout(Layout arg0) {
-            //
-        }
-
-        public Layout getLayout() {
-            return null;
-        }
-
-        public void setName(String arg0) {
-            //
-        }
-
-        public boolean requiresLayout() {
-            return false;
-        }
-
     }
 }

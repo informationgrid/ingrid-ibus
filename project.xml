@@ -152,13 +152,6 @@
         <type>jar</type>
 	    <url>http://ibiblio.org/maven</url>
       </dependency> 
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.8</version>
-	    <type>jar</type>
-	    <url>http://ibiblio.org/maven</url>
-      </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/java</sourceDirectory>
