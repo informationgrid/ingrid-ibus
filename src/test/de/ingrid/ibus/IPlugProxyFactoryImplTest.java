@@ -12,7 +12,6 @@ import net.weta.components.communication_sockets.util.AddressUtil;
 import net.weta.components.proxies.ProxyService;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.iplug.PlugDescription;
-import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
