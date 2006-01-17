@@ -21,9 +21,21 @@ import de.ingrid.utils.IngridHit;
 public class IngridHitComparator implements Comparator {
 
     public int compare(Object arg0, Object arg1) {
+        if (null == arg0) {
+            return -1;
+        }
+        
+        if (null == arg1) {
+            return 1;
+        }
+        
         IngridHit hit0 = (IngridHit) arg0;
         IngridHit hit1 = (IngridHit) arg1;
-        return (hit0.getScore() - hit1.getScore()) > 0 ? -1 : 1;
-    }
 
+        float score0 = hit0.getScore();
+        float score1 = hit1.getScore();
+        float scoreDiff = score0 - score1;
+
+        return (scoreDiff > 0) ? -1 : 1;
+    }
 }
