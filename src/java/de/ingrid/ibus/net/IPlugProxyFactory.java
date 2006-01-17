@@ -6,10 +6,12 @@
 
 package de.ingrid.ibus.net;
 
+import java.io.Serializable;
+
 import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
 
-public interface IPlugProxyFactory {
+public interface IPlugProxyFactory extends Serializable {
 
     public IPlug createPlugProxy(PlugDescription plug) throws Exception;
 

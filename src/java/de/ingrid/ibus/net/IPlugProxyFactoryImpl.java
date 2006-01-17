@@ -24,6 +24,10 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
 
     private Log fLogger = LogFactory.getLog(this.getClass());
 
+    public IPlugProxyFactoryImpl() {
+        //for serialization
+    }
+    
     /**
      * @param communication
      */
