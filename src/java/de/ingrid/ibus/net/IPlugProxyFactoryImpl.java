@@ -50,6 +50,7 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
         try {
             ric = proxyService.createRemoteInvocationController(wetagUrl);
             result = (IPlug) ric.newInstance(iPlugClass, null, null);
+            result.configure(plug);
         } catch (Throwable t) {
             this.fLogger.error(t.getMessage(), t);
         }
