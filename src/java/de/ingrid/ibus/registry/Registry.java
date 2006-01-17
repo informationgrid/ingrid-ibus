@@ -7,6 +7,7 @@
 package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import de.ingrid.iplug.PlugDescription;
 
@@ -50,15 +51,15 @@ public class Registry {
     }
 
     private void removeFromCache(String id) {
-        int count = this.fIPlugs.size();
-        for (int i = 0; i < count; i++) {
-            PlugDescription plug = (PlugDescription) this.fIPlugs.get(i);
-            if (plug.getPlugId().equals(id)) {
-                this.fIPlugs.remove(i);
-                break;
+        for (Iterator iter = this.fIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription element = (PlugDescription) iter.next();
+            String elementId = element.getPlugId();
+            if ((null != elementId) && (null != id)) {
+                if (elementId.equals(id)) {
+                    iter.remove();
+                }
             }
         }
-
     }
 
     /**
