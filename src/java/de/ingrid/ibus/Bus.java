@@ -78,7 +78,7 @@ public class Bus implements IBus {
         ResultSet resultSet = new ResultSet(connections.length);
         for (int i = 0; i < plugsForQuery.length; i++) {
             PlugQueryConnection connection = new PlugQueryConnection(this.fProxyFactory, plugsForQuery[i], query,
-                    length, i, resultSet);
+                    ((currentPage * hitsPerPage) - hitsPerPage), length, resultSet);
             connection.start();
         }
         long end = System.currentTimeMillis() + maxMilliseconds;
