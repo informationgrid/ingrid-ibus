@@ -83,7 +83,6 @@ public class Bus implements IBus {
         }
         long end = System.currentTimeMillis() + maxMilliseconds;
         while (end > System.currentTimeMillis() && !resultSet.isComplete()) {
-            // System.out.println("waiting");
             Thread.sleep(10);
         }
         int totalHits = 0;
