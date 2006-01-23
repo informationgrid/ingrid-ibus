@@ -67,9 +67,10 @@ public class PlugQueryConnection extends Thread {
         try {
             IPlug plug = this.fFactory.createPlugProxy(this.fPlugDescription);
             this.fResultSet.add(plug.search(this.fQuery, this.fStart, this.fLength));
-            this.fResultSet.resultsAdded();
         } catch (Exception e) {
             this.fLog.error("could not retrieve query result from iplug " + this.fPlugDescription.getPlugId(), e);
+        } finally {
+            this.fResultSet.resultsAdded();
         }
     }
 }
