@@ -6,6 +6,8 @@
 
 package de.ingrid.ibus.net;
 
+import java.net.ConnectException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,6 +53,8 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
             ric = proxyService.createRemoteInvocationController(wetagUrl);
             result = (IPlug) ric.newInstance(iPlugClass, null, null);
             result.configure(plug);
+        } catch (ConnectException e) {
+            throw e;
         } catch (Throwable t) {
             this.fLogger.error(t.getMessage(), t);
         }
