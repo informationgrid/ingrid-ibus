@@ -15,7 +15,8 @@ public class BusFactory {
     private RemoteInvocationController fRIController = null;
 
     /**
-     * @param ric
+     * @param proxyService The proxy service.
+     * @param url The URL of the proxy server.
      * @throws Exception
      */
     public BusFactory(ProxyService proxyService, String url) throws Exception {
@@ -23,7 +24,9 @@ public class BusFactory {
     }
 
     /**
-     * @return The IBus implementation.
+     * This method returns the remote IBus instance.
+     * 
+     * @return The remote IBus instance.
      * @throws SecurityException
      * @throws NoSuchMethodException
      * @throws Exception
