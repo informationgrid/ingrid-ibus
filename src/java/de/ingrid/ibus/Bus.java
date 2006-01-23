@@ -71,6 +71,9 @@ public class Bus implements IBus {
      */
     public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
             throws Exception {
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
         this.fProcessorPipe.preProcess(query);
         // TODO add grouping
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
