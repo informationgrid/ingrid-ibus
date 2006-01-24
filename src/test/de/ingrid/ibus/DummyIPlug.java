@@ -12,6 +12,9 @@ import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 
+/**
+ * 
+ */
 public class DummyIPlug implements IPlug {
 
     public IngridHits search(IngridQuery query, int start, int lenght) {
@@ -20,7 +23,5 @@ public class DummyIPlug implements IPlug {
 
     public void configure(PlugDescription arg0) throws Exception {
         // TODO Auto-generated method stub
-        
     }
-
 }
