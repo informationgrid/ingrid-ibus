@@ -27,6 +27,8 @@ public class Registry {
 
     private long fLifeTime = 10000;
 
+    private ArrayList fIPlugListener = new ArrayList();
+
     /**
      * @param lifeTimeOfPlugs
      */
@@ -59,6 +61,12 @@ public class Registry {
                     iter.remove();
                 }
             }
+        }
+        
+        //call all listeners
+        for (Iterator iter = this.fIPlugListener.iterator(); iter.hasNext();) {
+            IPlugListener listener = (IPlugListener) iter.next();
+            listener.removeIPlug(id);
         }
     }
 
@@ -100,5 +108,18 @@ public class Registry {
         return (PlugDescription[]) list.toArray(new PlugDescription[list.size()]);
 
     }
+    
+    /**
+     * @param iPlugListener
+     */
+    public void addIPlugListener(IPlugListener iPlugListener) {
+        this.fIPlugListener.add(iPlugListener);
+    }
 
+    /**
+     * @param iPlugListener
+     */
+    public void removeIPlugListener(IPlugListener iPlugListener) {
+        this.fIPlugListener.remove(iPlugListener);
+    }
 }
