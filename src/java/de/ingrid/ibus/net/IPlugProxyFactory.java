@@ -11,8 +11,16 @@ import java.io.Serializable;
 import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
 
+/**
+ * 
+ */
 public interface IPlugProxyFactory extends Serializable {
 
+    /**
+     * @param plug
+     * @return The created IPlug instance.
+     * @throws Exception
+     */
     public IPlug createPlugProxy(PlugDescription plug) throws Exception;
 
 }
