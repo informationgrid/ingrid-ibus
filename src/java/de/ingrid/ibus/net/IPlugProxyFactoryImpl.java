@@ -18,7 +18,7 @@ import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
 
 /**
- *  
+ * 
  */
 public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
 
@@ -26,10 +26,12 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
 
     private Log fLogger = LogFactory.getLog(this.getClass());
 
+    /**
+     */
     public IPlugProxyFactoryImpl() {
-        //for serialization
+        // for serialization
     }
-    
+
     /**
      * @param communication
      */
