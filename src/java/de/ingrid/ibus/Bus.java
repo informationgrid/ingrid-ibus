@@ -8,12 +8,14 @@ package de.ingrid.ibus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryConnection;
+import de.ingrid.ibus.registry.IPlugListener;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
 import de.ingrid.iplug.PlugDescription;
@@ -23,14 +25,12 @@ import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
- * The IBus a centralized Bus that routes queries and return results
- * 
- * created on 09.08.2005
+ * The IBus a centralized Bus that routes queries and return results. Created on 09.08.2005
  * 
  * @author sg
  * @version $Revision: 1.3 $
  */
-public class Bus implements IBus {
+public class Bus implements IBus, IPlugListener {
 
     private static Log fLogger = LogFactory.getLog(Bus.class);
 
@@ -43,11 +43,13 @@ public class Bus implements IBus {
 
     private static Bus fBusInstance = null;
 
+    private HashMap fPlugQueryConnectionCache = new HashMap();
+
     /**
-     * 
+     * For deserialization.
      */
     public Bus() {
-        // for deserialization
+        this.fRegistry.addIPlugListener(this);
     }
 
     /**
@@ -56,10 +58,11 @@ public class Bus implements IBus {
     public Bus(IPlugProxyFactory factory) {
         Bus.fBusInstance = this;
         this.fProxyFactory = factory;
+        this.fRegistry.addIPlugListener(this);
     }
 
     /**
-     * multicast the query to all connected IPlugs and return founded results
+     * Multicast the query to all connected IPlugs and return founded results.
      * 
      * @param query
      * @param hitsPerPage
@@ -69,8 +72,8 @@ public class Bus implements IBus {
      * @return IngridHits as container for hits and meta data.
      * @throws Exception
      */
-    public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int length, int maxMilliseconds)
-            throws Exception {
+    public synchronized IngridHits search(IngridQuery query, final int hitsPerPage, int currentPage, final int length,
+            int maxMilliseconds) throws Exception {
         if (currentPage < 1) {
             currentPage = 1;
         }
@@ -80,9 +83,25 @@ public class Bus implements IBus {
         PlugQueryConnection[] connections = new PlugQueryConnection[plugsForQuery.length];
         ResultSet resultSet = new ResultSet(connections.length);
         for (int i = 0; i < plugsForQuery.length; i++) {
-            PlugQueryConnection connection = new PlugQueryConnection(this.fProxyFactory, plugsForQuery[i], query,
-                    (hitsPerPage * (currentPage - 1)), length, resultSet);
-            connection.start();
+            final int start = (hitsPerPage * (currentPage - 1));
+            PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.get(plugsForQuery[i]
+                    .getPlugId());
+            if (null == connection) {
+                fLogger.debug("Create new connection to IPlug: " + plugsForQuery[i].getPlugId());
+                connection = new PlugQueryConnection(this.fProxyFactory, plugsForQuery[i], query, start, length);
+                this.fPlugQueryConnectionCache.put(plugsForQuery[i].getPlugId(), connection);
+                connection.setResultSet(resultSet);
+                connection.start();
+            } else {
+                synchronized (connection) {
+                    connection.setResultSet(resultSet);
+                    connection.setQuery(query);
+                    connection.setStart(start);
+                    connection.setLength(length);
+
+                    connection.notify();
+                }
+            }
         }
         long end = System.currentTimeMillis() + maxMilliseconds;
         while (end > System.currentTimeMillis() && !resultSet.isComplete()) {
@@ -142,6 +161,7 @@ public class Bus implements IBus {
      */
     public static Bus getInstance() {
         Bus result = null;
+
         if (null != fBusInstance) {
             result = fBusInstance;
         } else {
@@ -174,5 +194,14 @@ public class Bus implements IBus {
      */
     public ProcessorPipe getProccessorPipe() {
         return this.fProcessorPipe;
+    }
+
+    public void removeIPlug(String iPlugId) {
+        fLogger.debug("Remove IPlug with ID: " + iPlugId);
+        PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.remove(iPlugId);
+        if (null != connection) {
+            connection.setStop(true);
+            connection.notify();
+        }
     }
 }
