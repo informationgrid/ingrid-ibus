@@ -37,7 +37,7 @@ public class Registry {
     }
 
     /**
-     * Adds a iplug to the registry
+     * Adds a iplug to the registry.
      * 
      * @param plug
      */
