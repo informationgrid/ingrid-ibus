@@ -194,7 +194,7 @@ public class Bus implements IBus, IPlugListener {
     }
 
     /**
-     * @return the processing pipe
+     * @return The processing pipe.
      */
     public ProcessorPipe getProccessorPipe() {
         return this.fProcessorPipe;
