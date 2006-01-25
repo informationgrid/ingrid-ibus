@@ -147,10 +147,14 @@ public class Bus implements IBus, IPlugListener {
     }
 
     private IngridHit[] getSortedAndLimitedHits(IngridHit[] documents, int hitsPerPage, int currentPage, int length) {
+        // sort
         Arrays.sort(documents, new IngridHitComparator());
+
+        // To remove empty entries?
         length = Math.min(documents.length, length);
         IngridHit[] hits = new IngridHit[length];
         System.arraycopy(documents, 0, hits, 0, length);
+
         return hits;
     }
 
@@ -183,7 +187,7 @@ public class Bus implements IBus, IPlugListener {
     }
 
     /**
-     * @return the iplug regestry
+     * @return The iplug registry.
      */
     public Registry getIPlugRegistry() {
         return this.fRegistry;
@@ -200,8 +204,7 @@ public class Bus implements IBus, IPlugListener {
         fLogger.debug("Remove IPlug with ID: " + iPlugId);
         PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.remove(iPlugId);
         if (null != connection) {
-            connection.setStop(true);
-            connection.notify();
+            connection.interrupt();
         }
     }
 }

@@ -84,6 +84,7 @@ public class PlugQueryConnection extends Thread {
                     try {
                         this.wait();
                     } catch (InterruptedException e) {
+                        this.fStopped = true;
                         fLog.debug("Wakeup thread for IPlug: " + iPlugId);
                     }
                 }
@@ -117,12 +118,5 @@ public class PlugQueryConnection extends Thread {
      */
     public void setLength(int length) {
         this.fLength = length;
-    }
-
-    /**
-     * @param stop
-     */
-    public void setStop(final boolean stop) {
-        this.fStopped = stop;
     }
 }
