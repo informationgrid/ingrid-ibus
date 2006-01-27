@@ -119,4 +119,11 @@ public class PlugQueryConnection extends Thread {
     public void setLength(int length) {
         this.fLength = length;
     }
+    
+    /**
+     * @return The IPlug itself.
+     */
+    public IPlug getIPlug() {
+        return this.fIPlug;
+    }
 }
