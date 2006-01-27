@@ -212,7 +212,7 @@ public class Bus implements IBus, IPlugListener {
 
     /**
      * @param hit
-     * @return
+     * @return A detailed document of a hit.
      * @throws Exception
      */
     public synchronized IngridDocument getDetails(IngridHit hit) throws Exception {
