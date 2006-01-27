@@ -18,7 +18,9 @@ import de.ingrid.ibus.net.PlugQueryConnection;
 import de.ingrid.ibus.registry.IPlugListener;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
+import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.processor.ProcessorPipe;
@@ -200,11 +202,28 @@ public class Bus implements IBus, IPlugListener {
         return this.fProcessorPipe;
     }
 
-    public void removeIPlug(String iPlugId) {
+    public synchronized void removeIPlug(String iPlugId) {
         fLogger.debug("Remove IPlug with ID: " + iPlugId);
         PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.remove(iPlugId);
         if (null != connection) {
             connection.interrupt();
         }
+    }
+
+    /**
+     * @param hit
+     * @return
+     * @throws Exception
+     */
+    public synchronized IngridDocument getDetails(IngridHit hit) throws Exception {
+        IngridDocument result = null;
+
+        PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.get(hit.getIPlugId());
+        if (connection != null) {
+            IPlug iPlug = connection.getIPlug();
+            result = iPlug.getDetails(hit);
+        }
+
+        return result;
     }
 }
