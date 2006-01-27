@@ -10,6 +10,7 @@ import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.IngridHit;
+import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 
@@ -26,7 +27,7 @@ public class DummyIPlug implements IPlug {
         // TODO Auto-generated method stub
     }
 
-    public IngridDocument getDetails(IngridHit hit) throws Exception {
+    public IngridHitDetail getDetails(IngridHit hit, IngridQuery ingridQuery) throws Exception {
         // TODO Auto-generated method stub
         return null;
     }

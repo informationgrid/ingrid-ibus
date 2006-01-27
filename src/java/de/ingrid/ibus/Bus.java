@@ -215,13 +215,15 @@ public class Bus implements IBus, IPlugListener {
      * @return A detailed document of a hit.
      * @throws Exception
      */
-    public synchronized IngridDocument getDetails(IngridHit hit) throws Exception {
+    public synchronized IngridDocument getDetails(IngridHit hit, IngridQuery ingridQuery) throws Exception {
         IngridDocument result = null;
 
-        PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.get(hit.getIPlugId());
+        PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.get(hit.getPlugId());
         if (connection != null) {
             IPlug iPlug = connection.getIPlug();
-            result = iPlug.getDetails(hit);
+            result = iPlug.getDetails(hit, ingridQuery);
+        } else {
+            fLogger.error("could not create connection to iplug: " + hit.getPlugId());
         }
 
         return result;
