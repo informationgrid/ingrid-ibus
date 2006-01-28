@@ -22,6 +22,9 @@ public class DummyIPlug implements IPlug {
     public static final String TITLE = "a title";
     private String fMyPlugId;
     
+    public DummyIPlug() {
+     // for serialisations 
+    }
     
     public DummyIPlug(String plugId) {
      this.fMyPlugId = plugId;
