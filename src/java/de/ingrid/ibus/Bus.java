@@ -20,8 +20,8 @@ import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
 import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
-import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.IngridHit;
+import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
@@ -215,8 +215,8 @@ public class Bus implements IBus, IPlugListener {
      * @return A detailed document of a hit.
      * @throws Exception
      */
-    public synchronized IngridDocument getDetails(IngridHit hit, IngridQuery ingridQuery) throws Exception {
-        IngridDocument result = null;
+    public synchronized IngridHitDetail getDetails(IngridHit hit, IngridQuery ingridQuery) throws Exception {
+        IngridHitDetail result = null;
 
         PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.get(hit.getPlugId());
         if (connection != null) {

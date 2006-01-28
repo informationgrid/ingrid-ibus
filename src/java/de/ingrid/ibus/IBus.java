@@ -8,6 +8,7 @@ package de.ingrid.ibus;
 
 import java.io.Serializable;
 
+import de.ingrid.utils.IDetailer;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 
@@ -20,7 +21,7 @@ import de.ingrid.utils.query.IngridQuery;
  * @version $Revision: 1.2 $
  * 
  */
-public interface IBus extends Serializable {
+public interface IBus extends Serializable, IDetailer {
     /**
      * @param query
      * @param hitsPerPage
