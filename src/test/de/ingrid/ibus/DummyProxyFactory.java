@@ -19,7 +19,7 @@ public class DummyProxyFactory implements IPlugProxyFactory {
      * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.iplug.PlugDescription)
      */
     public IPlug createPlugProxy(PlugDescription plug) {
-        return new DummyIPlug();
+        return new DummyIPlug(plug.getPlugId());
     }
 
 }

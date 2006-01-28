@@ -11,20 +11,15 @@ import org.apache.commons.logging.LogFactory;
 
 import de.ingrid.ibus.ResultSet;
 import de.ingrid.iplug.IPlug;
-import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
  * A thread for one query to one IPlug. Created on 24.10.2005
  */
-public class PlugQueryConnection extends Thread {
+public class PlugQueryRequest extends Thread {
 
-    private final static Log fLog = LogFactory.getLog(PlugQueryConnection.class);
-
-    private IPlugProxyFactory fFactory;
-
-    private PlugDescription fPlugDescription;
+    private final static Log fLog = LogFactory.getLog(PlugQueryRequest.class);
 
     private IngridQuery fQuery;
 
@@ -38,22 +33,25 @@ public class PlugQueryConnection extends Thread {
 
     private boolean fStopped = false;
 
+    private String fPlugId;
+
     /**
      * @param proxyFactory
      * @param plugDescription
      * @param query
      * @param start
      * @param length
+     * @param plug 
      * @throws Exception
      */
-    public PlugQueryConnection(IPlugProxyFactory proxyFactory, PlugDescription plugDescription, IngridQuery query,
-            int start, int length) throws Exception {
-        this.fFactory = proxyFactory;
-        this.fPlugDescription = plugDescription;
+    public PlugQueryRequest( IPlug plug, String plugId, ResultSet resultSet,  IngridQuery query, int start, int length) throws Exception {
+        this.fIPlug = plug;
+        this.fPlugId = plugId;
+        this.fResultSet =  resultSet;
         this.fQuery = query;
         this.fStart = start;
         this.fLength = length;
-        this.fIPlug = this.fFactory.createPlugProxy(this.fPlugDescription);
+        
     }
 
     /**
@@ -61,64 +59,63 @@ public class PlugQueryConnection extends Thread {
      */
     public void run() {
         synchronized (this) {
-            final String iPlugId = this.fPlugDescription.getPlugId();
 
             while (!this.fStopped) {
                 try {
-                    fLog.debug("Search in IPlug " + iPlugId + " ...");
+                    fLog.debug("Search in IPlug " + this.fPlugId + " ...");
                     IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
                     if (null != this.fResultSet) {
                         fLog.debug("Set result");
                         this.fResultSet.add(hits);
                     } else {
-                        fLog.error("No ResultSet set where IPlug " + iPlugId + " could add its results.");
+                        fLog.error("No ResultSet set where IPlug " + this.fPlugId + " could add its results.");
                     }
                 } catch (Exception e) {
-                    fLog.error("Could not retrieve query result from IPlug: " + iPlugId, e);
+                    fLog.error("Could not retrieve query result from IPlug: " + this.fPlugId, e);
                 } finally {
                     if (null != this.fResultSet) {
                         this.fResultSet.resultsAdded();
                     } else {
-                        fLog.error("No ResultSet set where IPlug " + iPlugId + " can sent its completion.");
+                        fLog.error("No ResultSet set where IPlug " + this.fPlugId + " can sent its completion.");
                     }
                     try {
                         this.wait();
                     } catch (InterruptedException e) {
                         this.fStopped = true;
-                        fLog.debug("Wakeup thread for IPlug: " + iPlugId);
+                        fLog.debug("Wakeup thread for IPlug: " + this.fPlugId);
                     }
                 }
             }
         }
     }
 
-    /**
-     * @param resultSet
-     */
-    public void setResultSet(ResultSet resultSet) {
-        this.fResultSet = resultSet;
-    }
+//    /**
+//     * @param resultSet
+//     */
+//    public void setResultSet(ResultSet resultSet) {
+//        this.fResultSet = resultSet;
+//    }
 
-    /**
-     * @param query
-     */
-    public void setQuery(IngridQuery query) {
-        this.fQuery = query;
-    }
+//    /**
+//     * @param query
+//     */
+//    public void setQuery(IngridQuery query) {
+//        this.fQuery = query;
+//    }
 
-    /**
-     * @param start
-     */
-    public void setStart(int start) {
-        this.fStart = start;
-    }
+//    /**
+//     * @param start
+//     */
+//    public void setStart(int start) {
+//        this.fStart = start;
+//    }
 
-    /**
-     * @param length
-     */
-    public void setLength(int length) {
-        this.fLength = length;
-    }
+//    /**
+//     * @param length
+//     */
+//    public void setLength(int length) {
+//        this.fLength = length;
+//    }
     
     /**
      * @return The IPlug itself.

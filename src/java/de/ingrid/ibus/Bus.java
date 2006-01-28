@@ -14,7 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
-import de.ingrid.ibus.net.PlugQueryConnection;
+import de.ingrid.ibus.net.PlugQueryRequest;
 import de.ingrid.ibus.registry.IPlugListener;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
@@ -45,7 +45,7 @@ public class Bus implements IBus, IPlugListener {
 
     private static Bus fBusInstance = null;
 
-    private HashMap fPlugQueryConnectionCache = new HashMap();
+    private HashMap fProxyPlugCache = new HashMap();
 
     /**
      * For deserialization.
@@ -82,28 +82,23 @@ public class Bus implements IBus, IPlugListener {
         this.fProcessorPipe.preProcess(query);
         // TODO add grouping
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
-        PlugQueryConnection[] connections = new PlugQueryConnection[plugsForQuery.length];
-        ResultSet resultSet = new ResultSet(connections.length);
-        for (int i = 0; i < plugsForQuery.length; i++) {
-            final int start = (hitsPerPage * (currentPage - 1));
-            PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.get(plugsForQuery[i]
-                    .getPlugId());
-            if (null == connection) {
-                fLogger.debug("Create new connection to IPlug: " + plugsForQuery[i].getPlugId());
-                connection = new PlugQueryConnection(this.fProxyFactory, plugsForQuery[i], query, start, length);
-                this.fPlugQueryConnectionCache.put(plugsForQuery[i].getPlugId(), connection);
-                connection.setResultSet(resultSet);
-                connection.start();
-            } else {
-                synchronized (connection) {
-                    connection.setResultSet(resultSet);
-                    connection.setQuery(query);
-                    connection.setStart(start);
-                    connection.setLength(length);
 
-                    connection.notify();
-                }
+        ResultSet resultSet = new ResultSet(plugsForQuery.length);
+        for (int i = 0; i < plugsForQuery.length; i++) {
+            PlugDescription plugDescription = plugsForQuery[i];
+            final int start = (hitsPerPage * (currentPage - 1));
+            
+            IPlug plugProxy = (IPlug) this.fProxyPlugCache.get(plugDescription.getPlugId());
+
+            if (null == plugProxy) {
+                fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
+                plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+                this.fProxyPlugCache.put(plugDescription.getPlugId(), plugProxy);
             }
+            PlugQueryRequest request = new PlugQueryRequest(plugProxy, plugDescription.getPlugId(), resultSet, query, start, length);
+            request.start();
+                
+            
         }
         long end = System.currentTimeMillis() + maxMilliseconds;
         while (end > System.currentTimeMillis() && !resultSet.isComplete()) {
@@ -204,7 +199,7 @@ public class Bus implements IBus, IPlugListener {
 
     public synchronized void removeIPlug(String iPlugId) {
         fLogger.debug("Remove IPlug with ID: " + iPlugId);
-        PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.remove(iPlugId);
+        PlugQueryRequest connection = (PlugQueryRequest) this.fProxyPlugCache.remove(iPlugId);
         if (null != connection) {
             connection.interrupt();
         }
@@ -216,16 +211,14 @@ public class Bus implements IBus, IPlugListener {
      * @throws Exception
      */
     public synchronized IngridHitDetail getDetails(IngridHit hit, IngridQuery ingridQuery) throws Exception {
-        IngridHitDetail result = null;
-
-        PlugQueryConnection connection = (PlugQueryConnection) this.fPlugQueryConnectionCache.get(hit.getPlugId());
-        if (connection != null) {
-            IPlug iPlug = connection.getIPlug();
-            result = iPlug.getDetails(hit, ingridQuery);
-        } else {
-            fLogger.error("could not create connection to iplug: " + hit.getPlugId());
+        PlugDescription plugDescription = getIPlugRegistry().getIPlug(hit.getPlugId());
+        IPlug plugProxy = (IPlug) this.fProxyPlugCache.get(hit.getPlugId());
+        if (null == plugProxy) {
+            fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
+            plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+            this.fProxyPlugCache.put(plugDescription.getPlugId(), plugProxy);
         }
-
-        return result;
+       return plugProxy.getDetails(hit, ingridQuery);
+       
     }
 }
