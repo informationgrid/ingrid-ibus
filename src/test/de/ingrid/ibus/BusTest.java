@@ -74,7 +74,7 @@ public class BusTest extends TestCase {
     public void testAddIPlug() {
         PlugDescription pd = new PlugDescription();
         pd.setPlugId("bla");
-        Bus.addIPlug(pd);
+        this.bus.addIPlug(pd);
         PlugDescription[] pds = this.bus.getIPlugRegistry().getAllIPlugs();
         assertEquals(4, pds.length);
     }

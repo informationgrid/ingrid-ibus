@@ -37,7 +37,7 @@ public class Bus implements IBus, IPlugListener {
     private static Log fLogger = LogFactory.getLog(Bus.class);
 
     // TODO INGRID-398 we need to made the lifetime configurable.
-    private Registry fRegistry = new Registry(100000);
+    private Registry fRegistry;
 
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
@@ -53,6 +53,7 @@ public class Bus implements IBus, IPlugListener {
     public Bus() {
         fBusInstance = this;
         this.fRegistry.addIPlugListener(this);
+        this.fRegistry =  new Registry(100000);
     }
 
     /**
@@ -61,6 +62,7 @@ public class Bus implements IBus, IPlugListener {
     public Bus(IPlugProxyFactory factory) {
         Bus.fBusInstance = this;
         this.fProxyFactory = factory;
+        this.fRegistry =  new Registry(100000);
         this.fRegistry.addIPlugListener(this);
     }
 
@@ -154,12 +156,8 @@ public class Bus implements IBus, IPlugListener {
     /**
      * @param plugDescription
      */
-    public static void addIPlug(PlugDescription plugDescription) {
-        if (null != fBusInstance) {
-            fBusInstance.fRegistry.addIPlug(plugDescription);
-        } else {
-            fLogger.error("Bus not yet instantiated.");
-        }
+    public void addIPlug(PlugDescription plugDescription) {
+        fRegistry.addIPlug(plugDescription);
     }
 
     /**

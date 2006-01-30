@@ -64,10 +64,10 @@ public class Registry {
         }
         
         //call all listeners
-        for (Iterator iter = this.fIPlugListener.iterator(); iter.hasNext();) {
-            IPlugListener listener = (IPlugListener) iter.next();
-            listener.removeIPlug(id);
-        }
+//        for (Iterator iter = this.fIPlugListener.iterator(); iter.hasNext();) {
+//            IPlugListener listener = (IPlugListener) iter.next();
+            //listener.removeIPlug(id);
+//        }
     }
 
     /**
