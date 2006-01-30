@@ -52,8 +52,9 @@ public class Bus implements IBus, IPlugListener {
      */
     public Bus() {
         fBusInstance = this;
-        this.fRegistry.addIPlugListener(this);
         this.fRegistry =  new Registry(100000);
+        this.fRegistry.addIPlugListener(this);
+      
     }
 
     /**
@@ -197,5 +198,9 @@ public class Bus implements IBus, IPlugListener {
         }
         return plugProxy.getDetails(hit, ingridQuery);
 
+    }
+
+    public PlugDescription getIPlug(String plugId) {
+        return fRegistry.getIPlug(plugId);
     }
 }

@@ -6,6 +6,7 @@
 
 package de.ingrid.ibus.registry;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -19,7 +20,7 @@ import de.ingrid.iplug.PlugDescription;
  * @author hs
  */
 
-public class Registry {
+public class Registry implements Serializable{
 
     private static final String ADDING_TIMESTAMP = "addedTimeStamp";
 
