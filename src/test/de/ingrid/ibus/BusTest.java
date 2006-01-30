@@ -35,6 +35,7 @@ public class BusTest extends TestCase {
     private PlugDescription[] plugDescriptions = new PlugDescription[3];
 
     protected void setUp() throws Exception {
+
         this.bus = new Bus(new DummyProxyFactory());
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
