@@ -51,6 +51,7 @@ public class Bus implements IBus, IPlugListener {
      * For deserialization.
      */
     public Bus() {
+        fBusInstance = this;
         this.fRegistry.addIPlugListener(this);
     }
 
@@ -87,7 +88,7 @@ public class Bus implements IBus, IPlugListener {
         for (int i = 0; i < plugsForQuery.length; i++) {
             PlugDescription plugDescription = plugsForQuery[i];
             final int start = (hitsPerPage * (currentPage - 1));
-            
+
             IPlug plugProxy = (IPlug) this.fProxyPlugCache.get(plugDescription.getPlugId());
 
             if (null == plugProxy) {
@@ -95,10 +96,10 @@ public class Bus implements IBus, IPlugListener {
                 plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
                 this.fProxyPlugCache.put(plugDescription.getPlugId(), plugProxy);
             }
-            PlugQueryRequest request = new PlugQueryRequest(plugProxy, plugDescription.getPlugId(), resultSet, query, start, length);
+            PlugQueryRequest request = new PlugQueryRequest(plugProxy, plugDescription.getPlugId(), resultSet, query,
+                    start, length);
             request.start();
-                
-            
+
         }
         long end = System.currentTimeMillis() + maxMilliseconds;
         while (end > System.currentTimeMillis() && !resultSet.isComplete()) {
@@ -119,28 +120,6 @@ public class Bus implements IBus, IPlugListener {
         this.fProcessorPipe.postProcess(query, hits);
 
         return new IngridHits("ibus", totalHits, hits);
-    }
-
-    /**
-     * @param query
-     * @param hitsPerPage
-     * @param currentPage
-     * @param length
-     * @param maxMilliseconds
-     * @return IngridHits as container for hits and meta data.
-     * @throws Exception
-     */
-    public static IngridHits searchR(IngridQuery query, int hitsPerPage, int currentPage, int length,
-            int maxMilliseconds) throws Exception {
-        IngridHits result = null;
-
-        if (null != fBusInstance) {
-            result = fBusInstance.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
-        } else {
-            fLogger.error("Bus not yet instantiated.");
-        }
-
-        return result;
     }
 
     private IngridHit[] getSortedAndLimitedHits(IngridHit[] documents, int hitsPerPage, int currentPage, int length) {
@@ -218,7 +197,7 @@ public class Bus implements IBus, IPlugListener {
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
             this.fProxyPlugCache.put(plugDescription.getPlugId(), plugProxy);
         }
-       return plugProxy.getDetails(hit, ingridQuery);
-       
+        return plugProxy.getDetails(hit, ingridQuery);
+
     }
 }
