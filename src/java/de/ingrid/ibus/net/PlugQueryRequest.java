@@ -60,7 +60,7 @@ public class PlugQueryRequest extends Thread {
     public void run() {
         synchronized (this) {
 
-            while (!this.fStopped) {
+//            while (!this.fStopped) {
                 try {
                     fLog.debug("Search in IPlug " + this.fPlugId + " ...");
                     IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
@@ -78,14 +78,14 @@ public class PlugQueryRequest extends Thread {
                     } else {
                         fLog.error("No ResultSet set where IPlug " + this.fPlugId + " can sent its completion.");
                     }
-                    try {
-                        this.wait();
-                    } catch (InterruptedException e) {
-                        this.fStopped = true;
-                        fLog.debug("Wakeup thread for IPlug: " + this.fPlugId);
-                    }
+//                    try {
+//                        this.wait();
+//                    } catch (InterruptedException e) {
+//                        this.fStopped = true;
+//                        fLog.debug("Wakeup thread for IPlug: " + this.fPlugId);
+//                    }
                 }
-            }
+//            }
         }
     }
 
