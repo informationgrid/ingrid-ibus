@@ -20,9 +20,11 @@ import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
 import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.IRecordLoader;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
+import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
@@ -32,7 +34,9 @@ import de.ingrid.utils.query.IngridQuery;
  * @author sg
  * @version $Revision: 1.3 $
  */
-public class Bus implements IBus, IPlugListener {
+public class Bus implements IBus, IPlugListener, IRecordLoader {
+
+    private static final long serialVersionUID = Bus.class.getName().hashCode();
 
     private static Log fLogger = LogFactory.getLog(Bus.class);
 
@@ -203,4 +207,20 @@ public class Bus implements IBus, IPlugListener {
     public PlugDescription getIPlug(String plugId) {
         return fRegistry.getIPlug(plugId);
     }
+
+    
+    public Record getRecord(IngridHit hit) throws Exception {
+        PlugDescription plugDescription = getIPlugRegistry().getIPlug(hit.getPlugId());
+        IPlug plugProxy = (IPlug) this.fProxyPlugCache.get(hit.getPlugId());
+        if (null == plugProxy) {
+            fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
+            plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+            this.fProxyPlugCache.put(plugDescription.getPlugId(), plugProxy);
+        }
+        if(plugProxy instanceof IRecordLoader){
+            return ((IRecordLoader)plugProxy).getRecord(hit);
+        }
+        fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId() + " but was requested to load a record");
+        return null;
+        }
 }
