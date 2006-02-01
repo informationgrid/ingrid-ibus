@@ -162,7 +162,7 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
      * @param plugDescription
      */
     public void addIPlug(PlugDescription plugDescription) {
-        fRegistry.addIPlug(plugDescription);
+        this.fRegistry.addIPlug(plugDescription);
     }
 
     /**
@@ -209,8 +209,12 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
         return null;
     }
 
+    /**
+     * @param plugId
+     * @return The IPlug description.
+     */
     public PlugDescription getIPlug(String plugId) {
-        return fRegistry.getIPlug(plugId);
+        return this.fRegistry.getIPlug(plugId);
     }
 
     public Record getRecord(IngridHit hit) throws Exception {
