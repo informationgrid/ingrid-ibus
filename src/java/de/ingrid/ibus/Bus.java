@@ -200,8 +200,13 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
             this.fProxyPlugCache.put(plugDescription.getPlugId(), plugProxy);
         }
-        return plugProxy.getDetails(hit, ingridQuery);
-
+        try {
+            return plugProxy.getDetails(hit, ingridQuery);    
+        } catch (Exception e) {
+            fLogger.error(e.toString());
+        }
+       // FIXME do we still need to announce any exception in the method signature now?
+        return null;
     }
 
     public PlugDescription getIPlug(String plugId) {
