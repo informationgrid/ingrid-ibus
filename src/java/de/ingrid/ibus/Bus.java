@@ -56,9 +56,9 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
      */
     public Bus() {
         fBusInstance = this;
-        this.fRegistry =  new Registry(100000);
+        this.fRegistry = new Registry(100000);
         this.fRegistry.addIPlugListener(this);
-      
+
     }
 
     /**
@@ -67,7 +67,7 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
     public Bus(IPlugProxyFactory factory) {
         Bus.fBusInstance = this;
         this.fProxyFactory = factory;
-        this.fRegistry =  new Registry(100000);
+        this.fRegistry = new Registry(100000);
         this.fRegistry.addIPlugListener(this);
     }
 
@@ -201,11 +201,11 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
             this.fProxyPlugCache.put(plugDescription.getPlugId(), plugProxy);
         }
         try {
-            return plugProxy.getDetails(hit, ingridQuery);    
+            return plugProxy.getDetails(hit, ingridQuery);
         } catch (Exception e) {
             fLogger.error(e.toString());
         }
-       // FIXME do we still need to announce any exception in the method signature now?
+        // FIXME do we still need to announce any exception in the method signature now?
         return null;
     }
 
@@ -213,7 +213,6 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
         return fRegistry.getIPlug(plugId);
     }
 
-    
     public Record getRecord(IngridHit hit) throws Exception {
         PlugDescription plugDescription = getIPlugRegistry().getIPlug(hit.getPlugId());
         IPlug plugProxy = (IPlug) this.fProxyPlugCache.get(hit.getPlugId());
@@ -222,10 +221,11 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
             this.fProxyPlugCache.put(plugDescription.getPlugId(), plugProxy);
         }
-        if(plugProxy instanceof IRecordLoader){
-            return ((IRecordLoader)plugProxy).getRecord(hit);
+        if (plugProxy instanceof IRecordLoader) {
+            return ((IRecordLoader) plugProxy).getRecord(hit);
         }
-        fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId() + " but was requested to load a record");
+        fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
+                + " but was requested to load a record");
         return null;
-        }
+    }
 }
