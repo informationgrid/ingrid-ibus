@@ -35,7 +35,7 @@ public class SyntaxInterpreter {
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
         String dataType = query.getDataType();
-        PlugDescription[] allIPlugs = registry.getAllIPlugsWithoutTimeLimitation();
+        PlugDescription[] allIPlugs = registry.getAllIPlugsWithoutTimeLimitation(); // FIXME uses deprcated method.
         boolean hasTerms = queryHasTerms(query);
         if (hasTerms && dataType != null) {
             return filterForDataType(allIPlugs, dataType);

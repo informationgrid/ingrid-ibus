@@ -88,6 +88,7 @@ public class Registry implements Serializable{
 
     /**
      * @return all registed iplugs without checking the time stamp
+     * @deprecated
      */
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
         return (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs.size()]);
