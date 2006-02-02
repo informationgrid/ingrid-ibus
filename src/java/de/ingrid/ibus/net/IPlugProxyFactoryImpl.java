@@ -22,9 +22,9 @@ import de.ingrid.iplug.PlugDescription;
  */
 public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
 
-    private ICommunication fCommunication;
-
     private Log fLogger = LogFactory.getLog(this.getClass());
+    
+    private ProxyService fProxyService;
 
     /**
      */
@@ -36,7 +36,8 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
      * @param communication
      */
     public IPlugProxyFactoryImpl(ICommunication communication) {
-        this.fCommunication = communication;
+        this.fProxyService=new ProxyService();
+        this.fProxyService.setCommunication(communication);
     }
 
     /**
@@ -48,11 +49,9 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
         final String wetagUrl = plug.getProxyServiceURL();
         final Class iPlugClass = Thread.currentThread().getContextClassLoader().loadClass(plug.getIPlugClass());
 
-        ProxyService proxyService = new ProxyService();
-        proxyService.setCommunication(this.fCommunication);
         RemoteInvocationController ric = null;
         try {
-            ric = proxyService.createRemoteInvocationController(wetagUrl);
+            ric = this.fProxyService.createRemoteInvocationController(wetagUrl);
             result = (IPlug) ric.newInstance(iPlugClass, null, null);
             result.configure(plug);
         } catch (ConnectException e) {
