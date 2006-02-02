@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *  
+ * 
  */
 public class ResultSet extends ArrayList {
 
@@ -33,12 +33,17 @@ public class ResultSet extends ArrayList {
     }
 
     /**
-     *  
+     * 
      */
     public synchronized void resultsAdded() {
         this.fNumberOfFinsihedConnections += 1;
+        if (isComplete()) {
+            synchronized (this) {
+                this.notify();
+            }
+        }
     }
-    
+
     /**
      * @see java.util.ArrayList#addAll(java.util.Collection)
      */

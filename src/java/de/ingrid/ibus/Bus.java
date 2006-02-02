@@ -29,7 +29,8 @@ import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
- * The IBus a centralized Bus that routes queries and return results. Created on 09.08.2005
+ * The IBus a centralized Bus that routes queries and return results. Created on
+ * 09.08.2005
  * 
  * @author sg
  * @version $Revision: 1.3 $
@@ -92,7 +93,8 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
 
         ResultSet resultSet = new ResultSet(plugsForQuery.length);
-        for (int i = 0; i < plugsForQuery.length; i++) {
+        int plugsForQueryLength = plugsForQuery.length;
+        for (int i = 0; i < plugsForQueryLength; i++) {
             PlugDescription plugDescription = plugsForQuery[i];
             final int start = (hitsPerPage * (currentPage - 1));
 
@@ -108,10 +110,10 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
             request.start();
 
         }
-        long end = System.currentTimeMillis() + maxMilliseconds;
-        while (end > System.currentTimeMillis() && !resultSet.isComplete()) {
-            Thread.sleep(10);
+        synchronized (resultSet) {
+            resultSet.wait(maxMilliseconds);
         }
+
         int totalHits = 0;
         int count = resultSet.size();
         ArrayList documents = new ArrayList();
@@ -205,7 +207,8 @@ public class Bus implements IBus, IPlugListener, IRecordLoader {
         } catch (Exception e) {
             fLogger.error(e.toString());
         }
-        // FIXME do we still need to announce any exception in the method signature now?
+        // FIXME do we still need to announce any exception in the method
+        // signature now?
         return null;
     }
 
