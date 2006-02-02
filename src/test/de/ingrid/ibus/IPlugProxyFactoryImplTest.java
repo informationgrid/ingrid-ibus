@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import net.weta.components.communication_sockets.SocketCommunication;
 import net.weta.components.communication_sockets.util.AddressUtil;
 import net.weta.components.proxies.ProxyService;
+import net.weta.components.proxies.remote.RemoteInvocationController;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridHits;
@@ -23,7 +24,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
     
     private int fHowMuchPlugs = 3;
     
-    private Bus bus;
+    private Bus fBus;
 
     private PlugDescription[] plugDescriptions = new PlugDescription[this.fHowMuchPlugs];
 
@@ -35,7 +36,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         com.setUnicastPort(9192);
         com.startup();
 
-        this.bus = new Bus(new IPlugProxyFactoryImpl(com));
+        this.fBus = new Bus(new IPlugProxyFactoryImpl(com));
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.fComProxyServer[i] = new SocketCommunication();
             this.fComProxyServer[i].setMulticastPort(50005 + i);
@@ -52,7 +53,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
             this.plugDescriptions[i].setPlugId("" + i);
             this.plugDescriptions[i].setProxyServiceURL(comProxyServerUrl);
             this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());
-            this.bus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
+            this.fBus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
         }
     }
 
@@ -65,7 +66,41 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         }
         super.tearDown();
     }
-
+    
+//    public void testConnectIBus() throws Throwable {
+////        SocketCommunication com0 = new SocketCommunication();
+////        com0.setMulticastPort(9191);
+////        com0.setUnicastPort(9192);
+////        com0.startup();
+//        Bus myBus = new Bus();
+//        
+//        for (int i = 0; i < 10; i++) {
+//            SocketCommunication com1 = new SocketCommunication();
+//            com1.setMulticastPort(9193);
+//            com1.setUnicastPort(9194);
+//            com1.startup();
+//
+//            ProxyService proxyService = new ProxyService();
+//            proxyService.setCommunication(com1);
+//            proxyService.startup();
+//            RemoteInvocationController controller = proxyService
+//                    .createRemoteInvocationController(AddressUtil.getWetagURL(
+//                            "localhost", 9192));
+//            Bus bus = (Bus) controller.invoke(Bus.class, Bus.class.getMethod(
+//                    "getInstance", null), null);
+//            
+//            
+//
+//            IngridQuery query = QueryStringParser.parse("fische ort:halle");
+//            System.out.println(i);
+//            IngridHits hits = bus.search(query, 10, 1, 10, 1000);
+//            assertEquals(this.plugDescriptions.length, hits.getHits().length);
+//            proxyService.shutdown();
+//            com1.shutdown();
+//        }
+//
+//    }
+//
     /**
      * @throws Exception
      */
@@ -73,7 +108,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         for (int i = 0; i < 100; i++) {
            System.out.println(i);
-            IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE,
+            IngridHits hits = this.fBus.search(query, 10, 1, Integer.MAX_VALUE,
                     1000);
             assertEquals(this.plugDescriptions.length, hits.getHits().length);
         }

@@ -91,17 +91,25 @@ public class SyntaxInterpreter {
         requiredFields.addAll(Arrays.asList(fields));
         for (int i = 0; i < allIPlugs.length; i++) {
             PlugDescription plug = allIPlugs[i];
-            if (dataType.equals(plug.getDataType())) {
-                String[] plugFields = plug.getFields();
-                for (int j = 0; j < plugFields.length; j++) {
-                    String field = plugFields[j];
-                    if (requiredFields.contains(field)) {
-                        arrayList.add(plug);
-                        break; // we need if only once of the fields occures
+            String[] dataTypes = plug.getDataTypes();
+            boolean added = false;
+            for (int j = 0; j < dataTypes.length && !added; j++) {
+                String oneType = dataTypes[j];
+                if (dataType.equals(oneType)) {
+                    String[] plugFields = plug.getFields();
+                    for (int k = 0; k < plugFields.length; k++) {
+                        String field = plugFields[k];
+                        if (requiredFields.contains(field)) {
+                            arrayList.add(plug);
+                            added = true;
+                            break; // we need if only once of the fields occures
+                        }
                     }
-                }
 
+                }
             }
+            
+           
         }
         return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
     }
@@ -115,9 +123,16 @@ public class SyntaxInterpreter {
         ArrayList arrayList = new ArrayList();
         for (int i = 0; i < allIPlugs.length; i++) {
             PlugDescription plug = allIPlugs[i];
-            if (dataType.equals(plug.getDataType())) {
-                arrayList.add(plug);
+            String[] dataTypes = plug.getDataTypes();
+            for (int j = 0; j < dataTypes.length; j++) {
+                String oneType = dataTypes[j];
+                if (dataType.equals(oneType)) {
+                    arrayList.add(plug);
+                    break; // if this plug suuport at least one type we add it to the list.
+                }    
             }
+            
+            
         }
         return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
     }

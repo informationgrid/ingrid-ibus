@@ -52,7 +52,7 @@ public class SyntaxInterpreterTest extends TestCase {
      */
     public void testGetIPlugs_NoTermsNoFields() throws Exception {
         assertEquals(0, getIPlugs("").length);
-        this.descriptions[0].setDataType("UDK");
+        this.descriptions[0].addDataType("UDK");
         assertEquals(0, getIPlugs("datatype:UDK").length);
     }
 
@@ -60,8 +60,8 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testGetIPlugs_DataTypes() throws Exception {
-        this.descriptions[0].setDataType("UDK");
-        this.descriptions[1].setDataType("UDK");
+        this.descriptions[0].addDataType("UDK");
+        this.descriptions[1].addDataType("UDK");
         assertEquals(2, getIPlugs("datatype:UDK aQuery").length);
     }
 
@@ -69,7 +69,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testGetIPlugs_NoFieldsNoDataDypes() throws Exception {
-        this.descriptions[0].setDataType("UDK");
+        this.descriptions[0].addDataType("UDK");
         this.descriptions[0].addField("field1");
         this.descriptions[1].addField("field1");
         assertEquals(this.descriptions.length, getIPlugs("aQuery").length);
@@ -80,14 +80,14 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testGetIplugs_FieldsAndDataTypes() throws Exception {
-        this.descriptions[0].setDataType("UDK");
+        this.descriptions[0].addDataType("UDK");
         this.descriptions[0].addField("field1");
-        this.descriptions[1].setDataType("UDK");
+        this.descriptions[1].addDataType("UDK");
         this.descriptions[1].addField("field2");
 
-        this.descriptions[2].setDataType("CSW");
+        this.descriptions[2].addDataType("CSW");
         this.descriptions[2].addField("field1");
-        this.descriptions[3].setDataType("CSW");
+        this.descriptions[3].addDataType("CSW");
         this.descriptions[3].addField("field2");
 
         assertEquals(1, getIPlugs("datatype:UDK field1:aField").length);
@@ -95,7 +95,7 @@ public class SyntaxInterpreterTest extends TestCase {
         assertEquals(1, getIPlugs("datatype:CSW field1:aField").length);
         assertEquals(1, getIPlugs("datatype:CSW field2:aField").length);
 
-        this.descriptions[4].setDataType("UDK");
+        this.descriptions[4].addDataType("UDK");
         this.descriptions[4].addField("field1");
         assertEquals(2, getIPlugs("datatype:UDK field1:aField").length);
     }
