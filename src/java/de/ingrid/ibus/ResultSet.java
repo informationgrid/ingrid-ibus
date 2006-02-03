@@ -14,6 +14,9 @@ import java.util.Collection;
  */
 public class ResultSet extends ArrayList {
 
+  
+    private static final long serialVersionUID = ResultSet.class.getName().hashCode();
+
     private int fNumberOfConnections;
 
     private int fNumberOfFinsihedConnections = 0;
