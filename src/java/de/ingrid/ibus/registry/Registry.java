@@ -8,8 +8,10 @@ package de.ingrid.ibus.registry;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
+import de.ingrid.iplug.IPlug;
 import de.ingrid.iplug.PlugDescription;
 
 /**
@@ -20,7 +22,7 @@ import de.ingrid.iplug.PlugDescription;
  * @author hs
  */
 
-public class Registry implements Serializable{
+public class Registry implements Serializable {
 
     private static final String ADDING_TIMESTAMP = "addedTimeStamp";
 
@@ -29,6 +31,8 @@ public class Registry implements Serializable{
     private long fLifeTime = 10000;
 
     private ArrayList fIPlugListener = new ArrayList();
+
+    private HashMap fPlugProxyCache = new HashMap();
 
     /**
      * @param lifeTimeOfPlugs
@@ -59,6 +63,7 @@ public class Registry implements Serializable{
      * @param plugId
      */
     public void removePlugFromCache(String plugId) {
+        fPlugProxyCache.remove(plugId);
         for (Iterator iter = this.fIPlugs.iterator(); iter.hasNext();) {
             PlugDescription element = (PlugDescription) iter.next();
             String elementId = element.getPlugId();
@@ -68,7 +73,7 @@ public class Registry implements Serializable{
                 }
             }
         }
-        
+
     }
 
     /**
@@ -91,7 +96,8 @@ public class Registry implements Serializable{
      * @deprecated
      */
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
-        return (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs.size()]);
+        return (PlugDescription[]) this.fIPlugs
+                .toArray(new PlugDescription[this.fIPlugs.size()]);
     }
 
     /**
@@ -99,18 +105,19 @@ public class Registry implements Serializable{
      */
     public PlugDescription[] getAllIPlugs() {
         ArrayList list = new ArrayList();
-        PlugDescription[] descriptions = (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs
-                .size()]);
+        PlugDescription[] descriptions = (PlugDescription[]) this.fIPlugs
+                .toArray(new PlugDescription[this.fIPlugs.size()]);
         long maxLifeTime = System.currentTimeMillis();
         for (int i = 0; i < descriptions.length; i++) {
             if (descriptions[i].getLong(ADDING_TIMESTAMP) + this.fLifeTime > maxLifeTime) {
                 list.add(descriptions[i]);
             }
         }
-        return (PlugDescription[]) list.toArray(new PlugDescription[list.size()]);
+        return (PlugDescription[]) list
+                .toArray(new PlugDescription[list.size()]);
 
     }
-    
+
     /**
      * @param iPlugListener
      */
@@ -123,6 +130,14 @@ public class Registry implements Serializable{
      */
     public void removeIPlugListener(IPlugListener iPlugListener) {
         this.fIPlugListener.remove(iPlugListener);
+    }
+
+    public IPlug getProxyFromCache(String plugId) {
+        return (IPlug) this.fPlugProxyCache.get(plugId);
+    }
+
+    public void addProxyToCache(String plugId, IPlug plugProxy) {
+        this.fPlugProxyCache.put(plugId, plugProxy);
     }
 
 }
