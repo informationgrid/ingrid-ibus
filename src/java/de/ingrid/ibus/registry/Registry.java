@@ -52,9 +52,14 @@ public class Registry implements Serializable {
 
     private void putToCache(PlugDescription plug) {
         String id = plug.getPlugId();
-        removePlugFromCache(id);
-        plug.putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
-        this.fIPlugs.add(plug);
+        if (getIPlug(id) == null) {
+            removePlugFromCache(id);
+            plug.putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
+            this.fIPlugs.add(plug);
+        } else {
+            // just update time stamp
+            getIPlug(id).putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
+        }
     }
 
     /**
