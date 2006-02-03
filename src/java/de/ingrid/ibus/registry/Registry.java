@@ -48,27 +48,27 @@ public class Registry implements Serializable{
 
     private void putToCache(PlugDescription plug) {
         String id = plug.getPlugId();
-        removeFromCache(id);
+        removePlugFromCache(id);
         plug.putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
         this.fIPlugs.add(plug);
     }
 
-    private void removeFromCache(String id) {
+    /**
+     * removes a iplug from cache, e.g. if the connection permanent fails.
+     * 
+     * @param plugId
+     */
+    public void removePlugFromCache(String plugId) {
         for (Iterator iter = this.fIPlugs.iterator(); iter.hasNext();) {
             PlugDescription element = (PlugDescription) iter.next();
             String elementId = element.getPlugId();
-            if ((null != elementId) && (null != id)) {
-                if (elementId.equals(id)) {
+            if ((null != elementId) && (null != plugId)) {
+                if (elementId.equals(plugId)) {
                     iter.remove();
                 }
             }
         }
         
-        //call all listeners
-//        for (Iterator iter = this.fIPlugListener.iterator(); iter.hasNext();) {
-//            IPlugListener listener = (IPlugListener) iter.next();
-            //listener.removeIPlug(id);
-//        }
     }
 
     /**
@@ -124,4 +124,5 @@ public class Registry implements Serializable{
     public void removeIPlugListener(IPlugListener iPlugListener) {
         this.fIPlugListener.remove(iPlugListener);
     }
+
 }
