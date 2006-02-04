@@ -35,7 +35,7 @@ import de.ingrid.utils.query.IngridQuery;
  * @author sg
  * @version $Revision: 1.3 $
  */
-public class Bus implements IBus,  IRecordLoader {
+public class Bus implements IBus, IRecordLoader {
 
     private static final long serialVersionUID = Bus.class.getName().hashCode();
 
@@ -50,7 +50,7 @@ public class Bus implements IBus,  IRecordLoader {
 
     private static Bus fBusInstance = null;
 
-//    private HashMap fProxyPlugCache = new HashMap();
+    // private HashMap fProxyPlugCache = new HashMap();
 
     /**
      * For deserialization.
@@ -58,7 +58,7 @@ public class Bus implements IBus,  IRecordLoader {
     public Bus() {
         fBusInstance = this;
         this.fRegistry = new Registry(100000);
-//        this.fRegistry.addIPlugListener(this);
+        // this.fRegistry.addIPlugListener(this);
 
     }
 
@@ -69,7 +69,7 @@ public class Bus implements IBus,  IRecordLoader {
         Bus.fBusInstance = this;
         this.fProxyFactory = factory;
         this.fRegistry = new Registry(100000);
-//        this.fRegistry.addIPlugListener(this);
+        // this.fRegistry.addIPlugListener(this);
     }
 
     /**
@@ -109,20 +109,30 @@ public class Bus implements IBus,  IRecordLoader {
             }
             final int start = (hitsPerPage * (currentPage - 1));
 
-            IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(plugDescription
-                    .getPlugId());
+            IPlug plugProxy = (IPlug) this.fRegistry
+                    .getProxyFromCache(plugDescription.getPlugId());
 
             if (null == plugProxy) {
                 if (fLogger.isDebugEnabled()) {
                     fLogger.debug("Create new connection to IPlug: "
                             + plugDescription.getPlugId());
                 }
-                plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-                this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
+                try {
+                    plugProxy = this.fProxyFactory
+                            .createPlugProxy(plugDescription);
+                    this.fRegistry.addProxyToCache(plugDescription.getPlugId(),
+                            plugProxy);
+                } catch (Exception e) {
+                    fLogger.info("removing plugdescription from repository: "
+                            + plugDescription.getPlugId() + ": "
+                            + plugDescription.getOrganisation());
+                    this.fRegistry.removePlugFromCache(plugDescription
+                            .getPlugId()+"  " +e.getMessage());
+                }
             }
-            PlugQueryRequest request = new PlugQueryRequest(plugProxy,fRegistry,
-                    plugDescription.getPlugId(), resultSet, query, start,
-                    length);
+            PlugQueryRequest request = new PlugQueryRequest(plugProxy,
+                    fRegistry, plugDescription.getPlugId(), resultSet, query,
+                    start, length);
             request.start();
 
         }
@@ -199,14 +209,14 @@ public class Bus implements IBus,  IRecordLoader {
         return this.fProcessorPipe;
     }
 
-//    public synchronized void removeIPlug(String iPlugId) {
-//        fLogger.debug("Remove IPlug with ID: " + iPlugId);
-//        PlugQueryRequest connection = (PlugQueryRequest) this.fProxyPlugCache
-//                .remove(iPlugId);
-//        if (null != connection) {
-//            connection.interrupt();
-//        }
-//    }
+    // public synchronized void removeIPlug(String iPlugId) {
+    // fLogger.debug("Remove IPlug with ID: " + iPlugId);
+    // PlugQueryRequest connection = (PlugQueryRequest) this.fProxyPlugCache
+    // .remove(iPlugId);
+    // if (null != connection) {
+    // connection.interrupt();
+    // }
+    // }
 
     /**
      * @param hit
@@ -222,7 +232,8 @@ public class Bus implements IBus,  IRecordLoader {
             fLogger.debug("Create new connection to IPlug: "
                     + plugDescription.getPlugId());
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-            this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
+            this.fRegistry.addProxyToCache(plugDescription.getPlugId(),
+                    plugProxy);
         }
         try {
             return plugProxy.getDetails(hit, ingridQuery);
@@ -245,12 +256,14 @@ public class Bus implements IBus,  IRecordLoader {
     public Record getRecord(IngridHit hit) throws Exception {
         PlugDescription plugDescription = getIPlugRegistry().getIPlug(
                 hit.getPlugId());
-        IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(hit.getPlugId());
+        IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(hit
+                .getPlugId());
         if (null == plugProxy) {
             fLogger.debug("Create new connection to IPlug: "
                     + plugDescription.getPlugId());
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-            this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
+            this.fRegistry.addProxyToCache(plugDescription.getPlugId(),
+                    plugProxy);
         }
         if (plugProxy instanceof IRecordLoader) {
             return ((IRecordLoader) plugProxy).getRecord(hit);
