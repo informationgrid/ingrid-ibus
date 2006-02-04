@@ -52,7 +52,8 @@ public class SyntaxInterpreterTest extends TestCase {
      */
     public void testGetIPlugs_NoTermsNoFields() throws Exception {
         assertEquals(0, getIPlugs("").length);
-        this.descriptions[0].addDataType("UDK");
+        // this.descriptions[0].addDataType("UDK"); // as soon a datatype is
+        // setted we get all plugs that suppor this datatype now.
         assertEquals(0, getIPlugs("datatype:UDK").length);
     }
 
@@ -112,13 +113,30 @@ public class SyntaxInterpreterTest extends TestCase {
             assertEquals(1, getIPlugs("field" + i + ":aField").length);
         }
 
-        QueryStringParser parser = new QueryStringParser(new StringReader("a simple Query"));
+        QueryStringParser parser = new QueryStringParser(new StringReader(
+                "a simple Query"));
         IngridQuery query = parser.parse();
-        assertEquals(this.descriptions.length, SyntaxInterpreter.getIPlugsForQuery(query, this.registry).length);
+        assertEquals(this.descriptions.length, SyntaxInterpreter
+                .getIPlugsForQuery(query, this.registry).length);
+    }
+
+    public void testDataTypeQueries() throws Exception {
+        Registry aRegestry = new Registry(10);
+        PlugDescription description = new PlugDescription();
+        description.setPlugId("23");
+        description.addField("datatype");
+        description.addDataType("www");
+        aRegestry.addIPlug(description);
+        IngridQuery query = QueryStringParser.parse("datatype:www");
+
+        assertEquals(1,
+                SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
+
     }
 
     private PlugDescription[] getIPlugs(String queryString) throws Exception {
-        QueryStringParser parser = new QueryStringParser(new StringReader(queryString));
+        QueryStringParser parser = new QueryStringParser(new StringReader(
+                queryString));
         IngridQuery query = parser.parse();
         return SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
     }

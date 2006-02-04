@@ -34,12 +34,11 @@ public class SyntaxInterpreter {
      * @return the iplugs that have the fields the query require.
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
-        String dataType = query.getDataType();
+        
         PlugDescription[] allIPlugs = registry.getAllIPlugsWithoutTimeLimitation(); // FIXME uses deprcated method.
+        String dataType = query.getDataType();
         boolean hasTerms = queryHasTerms(query);
-        if (hasTerms && dataType != null) {
-            return filterForDataType(allIPlugs, dataType);
-        }
+     
         if (hasTerms && dataType == null) {
             return allIPlugs;
         }
@@ -50,6 +49,9 @@ public class SyntaxInterpreter {
         }
         if (dataType == null && fields.length > 0) {
             return filterForFields(allIPlugs, fields);
+        }
+        if (dataType != null) {
+            return filterForDataType(allIPlugs, dataType);
         }
         return new PlugDescription[0];
     }
