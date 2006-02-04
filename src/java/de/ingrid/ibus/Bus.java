@@ -138,8 +138,10 @@ public class Bus implements IBus, IRecordLoader {
             request.start();
 
         }
-        synchronized (resultSet) {
-            resultSet.wait(maxMilliseconds);
+        if (plugsForQueryLength > 0) {
+            synchronized (resultSet) {
+                resultSet.wait(maxMilliseconds);
+            }
         }
 
         int totalHits = 0;
