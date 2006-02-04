@@ -106,7 +106,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
      */
     public void testSearch() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 3; i++) {
            System.out.println(i);
             IngridHits hits = this.fBus.search(query, 10, 1, Integer.MAX_VALUE,
                     1000);
