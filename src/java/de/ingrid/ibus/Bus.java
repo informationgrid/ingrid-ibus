@@ -145,26 +145,31 @@ public class Bus implements IBus, IRecordLoader {
         int totalHits = 0;
         int count = resultSet.size();
         ArrayList documents = new ArrayList();
+        boolean ranked = true;
         for (int i = 0; i < count; i++) {
             IngridHits hits = (IngridHits) resultSet.get(i);
             totalHits += hits.length();
+            if(ranked){
+                ranked = hits.isRanked();
+            }
             documents.addAll(Arrays.asList(hits.getHits()));
         }
 
         IngridHit[] hits = getSortedAndLimitedHits((IngridHit[]) documents
                 .toArray(new IngridHit[documents.size()]), hitsPerPage,
-                currentPage, length);
+                currentPage, length, ranked);
 
         this.fProcessorPipe.postProcess(query, hits);
 
-        return new IngridHits("ibus", totalHits, hits);
+        return new IngridHits("ibus", totalHits, hits, true);
     }
 
     private IngridHit[] getSortedAndLimitedHits(IngridHit[] documents,
-            int hitsPerPage, int currentPage, int length) {
+            int hitsPerPage, int currentPage, int length, boolean ranked) {
         // sort
-        Arrays.sort(documents, new IngridHitComparator());
-
+        if(ranked){
+            Arrays.sort(documents, new IngridHitComparator());
+        }
         // To remove empty entries?
         length = Math.min(documents.length, length);
         IngridHit[] hits = new IngridHit[length];
