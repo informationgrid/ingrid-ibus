@@ -125,9 +125,11 @@ public class Bus implements IBus, IRecordLoader {
                 } catch (Exception e) {
                     fLogger.info("removing plugdescription from repository: "
                             + plugDescription.getPlugId() + ": "
-                            + plugDescription.getOrganisation());
+                            + plugDescription.getOrganisation(),  e);
                     this.fRegistry.removePlugFromCache(plugDescription
-                            .getPlugId()+"  " +e.getMessage());
+                            .getPlugId());
+                    
+                    continue;
                 }
             }
             PlugQueryRequest request = new PlugQueryRequest(plugProxy,
