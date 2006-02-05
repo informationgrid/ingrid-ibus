@@ -143,7 +143,7 @@ public class Bus implements IBus, IRecordLoader {
                 resultSet.wait(maxMilliseconds);
             }
         }
-
+        float maxScore = 1.0f;
         int totalHits = 0;
         int count = resultSet.size();
         ArrayList documents = new ArrayList();
@@ -153,23 +153,36 @@ public class Bus implements IBus, IRecordLoader {
             totalHits += hits.length();
             if(ranked){
                 ranked = hits.isRanked();
+                if(hits.getHits().length>0){
+                    if(maxScore < hits.getHits()[0].getScore()){
+                        maxScore = hits.getHits()[0].getScore();
+                    }
+                }
+                
             }
             documents.addAll(Arrays.asList(hits.getHits()));
         }
 
-        IngridHit[] hits = getSortedAndLimitedHits((IngridHit[]) documents
+        IngridHit[] hits = sortLimitNormalize((IngridHit[]) documents
                 .toArray(new IngridHit[documents.size()]), hitsPerPage,
-                currentPage, length, ranked);
+                currentPage, length, ranked, maxScore);
 
         this.fProcessorPipe.postProcess(query, hits);
 
         return new IngridHits("ibus", totalHits, hits, true);
     }
 
-    private IngridHit[] getSortedAndLimitedHits(IngridHit[] documents,
-            int hitsPerPage, int currentPage, int length, boolean ranked) {
+    private IngridHit[] sortLimitNormalize(IngridHit[] documents,
+            int hitsPerPage, int currentPage, int length, boolean ranked, float maxScore) {
         // sort
         if(ranked){
+            // first normalize
+            float scoreNorm = 1.0f/maxScore;
+            int count = documents.length;
+            for (int i = 0; i < count; i++) {
+                documents[i].setScore(documents[i].getScore()*scoreNorm);
+            }
+            
             Arrays.sort(documents, new IngridHitComparator());
         }
         // To remove empty entries?

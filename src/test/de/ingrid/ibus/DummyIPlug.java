@@ -31,7 +31,7 @@ public class DummyIPlug implements IPlug {
     }
 
     public IngridHits search(IngridQuery query, int start, int lenght) {
-        return new IngridHits(this.fMyPlugId, 1, new IngridHit[] { new IngridHit(this.fMyPlugId, 23, 23, 0.23f) }, true);
+        return new IngridHits(this.fMyPlugId, 1, new IngridHit[] { new IngridHit(this.fMyPlugId, 23, 23, 23f) }, true);
     }
 
     public void configure(PlugDescription arg0) throws Exception {
