@@ -153,7 +153,7 @@ public class Bus implements IBus, IRecordLoader {
             totalHits += hits.length();
             if(ranked){
                 ranked = hits.isRanked();
-                if(hits.getHits().length>0){
+                if(ranked && hits.getHits().length>0){
                     if(maxScore < hits.getHits()[0].getScore()){
                         maxScore = hits.getHits()[0].getScore();
                     }
