@@ -8,14 +8,12 @@ package de.ingrid.ibus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryRequest;
-import de.ingrid.ibus.registry.IPlugListener;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
 import de.ingrid.iplug.IPlug;
@@ -83,7 +81,7 @@ public class Bus implements IBus, IRecordLoader {
      * @return IngridHits as container for hits and meta data.
      * @throws Exception
      */
-    public synchronized IngridHits search(IngridQuery query,
+    public IngridHits search(IngridQuery query,
             final int hitsPerPage, int currentPage, final int length,
             int maxMilliseconds) throws Exception {
         if (fLogger.isDebugEnabled()) {
@@ -99,6 +97,7 @@ public class Bus implements IBus, IRecordLoader {
 
         ResultSet resultSet = new ResultSet(plugsForQuery.length);
         int plugsForQueryLength = plugsForQuery.length;
+        PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength]; 
         for (int i = 0; i < plugsForQueryLength; i++) {
 
             PlugDescription plugDescription = plugsForQuery[i];
@@ -132,16 +131,21 @@ public class Bus implements IBus, IRecordLoader {
                     continue;
                 }
             }
-            PlugQueryRequest request = new PlugQueryRequest(plugProxy,
+            requests[i]= new PlugQueryRequest(plugProxy,
                     fRegistry, plugDescription.getPlugId(), resultSet, query,
                     start, length);
-            request.start();
+            requests[i].start();
 
         }
         if (plugsForQueryLength > 0) {
-            synchronized (resultSet) {
+//            synchronized (resultSet) {
                 resultSet.wait(maxMilliseconds);
-            }
+//            }
+        }
+        // stop all threads
+        for (int i = 0; i < plugsForQueryLength; i++) {
+            requests[i].interrupt();
+            requests[i] = null; // for gc.
         }
         float maxScore = 1.0f;
         int totalHits = 0;
@@ -245,7 +249,7 @@ public class Bus implements IBus, IRecordLoader {
      * @return A detailed document of a hit.
      * @throws Exception
      */
-    public synchronized IngridHitDetail getDetails(IngridHit hit,
+    public  IngridHitDetail getDetails(IngridHit hit,
             IngridQuery ingridQuery) throws Exception {
         PlugDescription plugDescription = getIPlugRegistry().getIPlug(
                 hit.getPlugId());

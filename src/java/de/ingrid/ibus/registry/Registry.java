@@ -24,6 +24,8 @@ import de.ingrid.iplug.PlugDescription;
 
 public class Registry implements Serializable {
 
+    private static final long serialVersionUID = Registry.class.getName().hashCode();
+
     private static final String ADDING_TIMESTAMP = "addedTimeStamp";
 
     private ArrayList fIPlugs = new ArrayList();
@@ -68,7 +70,9 @@ public class Registry implements Serializable {
      * @param plugId
      */
     public void removePlugFromCache(String plugId) {
-        fPlugProxyCache.remove(plugId);
+        synchronized(fPlugProxyCache){
+            fPlugProxyCache.remove(plugId);
+        }
         for (Iterator iter = this.fIPlugs.iterator(); iter.hasNext();) {
             PlugDescription element = (PlugDescription) iter.next();
             String elementId = element.getPlugId();
@@ -138,11 +142,15 @@ public class Registry implements Serializable {
     }
 
     public IPlug getProxyFromCache(String plugId) {
-        return (IPlug) this.fPlugProxyCache.get(plugId);
+        synchronized (fPlugProxyCache) {
+            return (IPlug) this.fPlugProxyCache.get(plugId);
+        }
     }
 
     public void addProxyToCache(String plugId, IPlug plugProxy) {
-        this.fPlugProxyCache.put(plugId, plugProxy);
+        synchronized (fPlugProxyCache) {
+            this.fPlugProxyCache.put(plugId, plugProxy);
+        }
     }
 
 }

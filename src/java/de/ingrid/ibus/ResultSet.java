@@ -42,7 +42,7 @@ public class ResultSet extends ArrayList {
         this.fNumberOfFinsihedConnections += 1;
         if (isComplete()) {
             synchronized (this) {
-                this.notify();
+                notifyAll();
             }
         }
     }
