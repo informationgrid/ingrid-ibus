@@ -14,35 +14,38 @@ import java.util.Collection;
  */
 public class ResultSet extends ArrayList {
 
-  
     private static final long serialVersionUID = ResultSet.class.getName().hashCode();
 
     private int fNumberOfConnections;
 
     private int fNumberOfFinsihedConnections = 0;
 
+    private Object fMonitor;
+
     /**
      * @param numberOfConnections
+     * @param monitor
      */
-    public ResultSet(int numberOfConnections) {
+    public ResultSet(int numberOfConnections, Object monitor) {
         this.fNumberOfConnections = numberOfConnections;
+        this.fMonitor = monitor;
     }
 
     /**
      * @return if all connections are finished
      */
-    public synchronized boolean isComplete() {
+    public boolean isComplete() {
         return this.fNumberOfConnections == this.fNumberOfFinsihedConnections;
     }
 
     /**
      * 
      */
-    public synchronized void resultsAdded() {
+    public void resultsAdded() {
         this.fNumberOfFinsihedConnections += 1;
-        if (isComplete()) {
-            synchronized (this) {
-                notifyAll();
+        synchronized (fMonitor) {
+            if (isComplete()) {
+                fMonitor.notify();
             }
         }
     }
@@ -50,7 +53,7 @@ public class ResultSet extends ArrayList {
     /**
      * @see java.util.ArrayList#addAll(java.util.Collection)
      */
-    public synchronized boolean addAll(Collection c) {
+    public boolean addAll(Collection c) {
         return super.addAll(c);
     }
 }

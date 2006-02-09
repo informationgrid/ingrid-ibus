@@ -81,9 +81,9 @@ public class Bus implements IBus, IRecordLoader {
      * @return IngridHits as container for hits and meta data.
      * @throws Exception
      */
-    public IngridHits search(IngridQuery query,
-            final int hitsPerPage, int currentPage, final int length,
+    public IngridHits search(IngridQuery query, final int hitsPerPage, int currentPage, final int length,
             int maxMilliseconds) throws Exception {
+        Object monitor = new Object();
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("search for: " + query.toString());
         }
@@ -92,55 +92,47 @@ public class Bus implements IBus, IRecordLoader {
         }
         this.fProcessorPipe.preProcess(query);
         // TODO add grouping
-        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(
-                query, this.fRegistry);
+        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
 
-        ResultSet resultSet = new ResultSet(plugsForQuery.length);
+        ResultSet resultSet = new ResultSet(plugsForQuery.length, monitor);
         int plugsForQueryLength = plugsForQuery.length;
-        PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength]; 
+        PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
         for (int i = 0; i < plugsForQueryLength; i++) {
 
             PlugDescription plugDescription = plugsForQuery[i];
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("forward query to: "
-                        + plugDescription.getPlugId() + ": "
+                fLogger.debug("forward query to: " + plugDescription.getPlugId() + ": "
                         + plugDescription.getOrganisation());
             }
             final int start = (hitsPerPage * (currentPage - 1));
 
-            IPlug plugProxy = (IPlug) this.fRegistry
-                    .getProxyFromCache(plugDescription.getPlugId());
+            IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(plugDescription.getPlugId());
 
             if (null == plugProxy) {
                 if (fLogger.isDebugEnabled()) {
-                    fLogger.debug("Create new connection to IPlug: "
-                            + plugDescription.getPlugId());
+                    fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
                 }
                 try {
-                    plugProxy = this.fProxyFactory
-                            .createPlugProxy(plugDescription);
-                    this.fRegistry.addProxyToCache(plugDescription.getPlugId(),
-                            plugProxy);
+                    plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+                    this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
                 } catch (Exception e) {
-                    fLogger.info("removing plugdescription from repository: "
-                            + plugDescription.getPlugId() + ": "
-                            + plugDescription.getOrganisation(),  e);
-                    this.fRegistry.removePlugFromCache(plugDescription
-                            .getPlugId());
-                    
+                    fLogger.info("removing plugdescription from repository: " + plugDescription.getPlugId() + ": "
+                            + plugDescription.getOrganisation(), e);
+                    this.fRegistry.removePlugFromCache(plugDescription.getPlugId());
+
                     continue;
                 }
             }
-            requests[i]= new PlugQueryRequest(plugProxy,
-                    fRegistry, plugDescription.getPlugId(), resultSet, query,
+            requests[i] = new PlugQueryRequest(plugProxy, fRegistry, plugDescription.getPlugId(), resultSet, query,
                     start, length);
             requests[i].start();
 
         }
         if (plugsForQueryLength > 0) {
-//            synchronized (resultSet) {
-                resultSet.wait(maxMilliseconds);
-//            }
+            synchronized (monitor) {
+                monitor.wait(maxMilliseconds);
+                System.out.println("will not wait any more...");
+            }
         }
         // stop all threads
         for (int i = 0; i < plugsForQueryLength; i++) {
@@ -155,38 +147,37 @@ public class Bus implements IBus, IRecordLoader {
         for (int i = 0; i < count; i++) {
             IngridHits hits = (IngridHits) resultSet.get(i);
             totalHits += hits.length();
-            if(ranked){
+            if (ranked) {
                 ranked = hits.isRanked();
-                if(ranked && hits.getHits().length>0){
-                    if(maxScore < hits.getHits()[0].getScore()){
+                if (ranked && hits.getHits().length > 0) {
+                    if (maxScore < hits.getHits()[0].getScore()) {
                         maxScore = hits.getHits()[0].getScore();
                     }
                 }
-                
+
             }
             documents.addAll(Arrays.asList(hits.getHits()));
         }
 
-        IngridHit[] hits = sortLimitNormalize((IngridHit[]) documents
-                .toArray(new IngridHit[documents.size()]), hitsPerPage,
-                currentPage, length, ranked, maxScore);
+        IngridHit[] hits = sortLimitNormalize((IngridHit[]) documents.toArray(new IngridHit[documents.size()]),
+                hitsPerPage, currentPage, length, ranked, maxScore);
 
         this.fProcessorPipe.postProcess(query, hits);
 
         return new IngridHits("ibus", totalHits, hits, true);
     }
 
-    private IngridHit[] sortLimitNormalize(IngridHit[] documents,
-            int hitsPerPage, int currentPage, int length, boolean ranked, float maxScore) {
+    private IngridHit[] sortLimitNormalize(IngridHit[] documents, int hitsPerPage, int currentPage, int length,
+            boolean ranked, float maxScore) {
         // sort
-        if(ranked){
+        if (ranked) {
             // first normalize
-            float scoreNorm = 1.0f/maxScore;
+            float scoreNorm = 1.0f / maxScore;
             int count = documents.length;
             for (int i = 0; i < count; i++) {
-                documents[i].setScore(documents[i].getScore()*scoreNorm);
+                documents[i].setScore(documents[i].getScore() * scoreNorm);
             }
-            
+
             Arrays.sort(documents, new IngridHitComparator());
         }
         // To remove empty entries?
@@ -249,17 +240,13 @@ public class Bus implements IBus, IRecordLoader {
      * @return A detailed document of a hit.
      * @throws Exception
      */
-    public  IngridHitDetail getDetails(IngridHit hit,
-            IngridQuery ingridQuery) throws Exception {
-        PlugDescription plugDescription = getIPlugRegistry().getIPlug(
-                hit.getPlugId());
+    public IngridHitDetail getDetails(IngridHit hit, IngridQuery ingridQuery) throws Exception {
+        PlugDescription plugDescription = getIPlugRegistry().getIPlug(hit.getPlugId());
         IPlug plugProxy = fRegistry.getProxyFromCache(hit.getPlugId());
         if (null == plugProxy) {
-            fLogger.debug("Create new connection to IPlug: "
-                    + plugDescription.getPlugId());
+            fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-            this.fRegistry.addProxyToCache(plugDescription.getPlugId(),
-                    plugProxy);
+            this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
         }
         try {
             return plugProxy.getDetails(hit, ingridQuery);
@@ -280,22 +267,17 @@ public class Bus implements IBus, IRecordLoader {
     }
 
     public Record getRecord(IngridHit hit) throws Exception {
-        PlugDescription plugDescription = getIPlugRegistry().getIPlug(
-                hit.getPlugId());
-        IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(hit
-                .getPlugId());
+        PlugDescription plugDescription = getIPlugRegistry().getIPlug(hit.getPlugId());
+        IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(hit.getPlugId());
         if (null == plugProxy) {
-            fLogger.debug("Create new connection to IPlug: "
-                    + plugDescription.getPlugId());
+            fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-            this.fRegistry.addProxyToCache(plugDescription.getPlugId(),
-                    plugProxy);
+            this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
         }
         if (plugProxy instanceof IRecordLoader) {
             return ((IRecordLoader) plugProxy).getRecord(hit);
         }
-        fLogger.warn("plug does not implement record loader: "
-                + plugDescription.getPlugId()
+        fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
                 + " but was requested to load a record");
         return null;
     }

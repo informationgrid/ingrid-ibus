@@ -32,7 +32,6 @@ public class PlugQueryRequest extends Thread {
 
     private IPlug fIPlug;
 
-
     private String fPlugId;
 
     private Registry fRegestry;
@@ -46,9 +45,8 @@ public class PlugQueryRequest extends Thread {
      * @param plug
      * @throws Exception
      */
-    public PlugQueryRequest(IPlug plug, Registry registry, String plugId,
-            ResultSet resultSet, IngridQuery query, int start, int length)
-            throws Exception {
+    public PlugQueryRequest(IPlug plug, Registry registry, String plugId, ResultSet resultSet, IngridQuery query,
+            int start, int length) throws Exception {
         this.fIPlug = plug;
         this.fRegestry = registry;
         this.fPlugId = plugId;
@@ -63,36 +61,27 @@ public class PlugQueryRequest extends Thread {
      * @see java.lang.Thread#run()
      */
     public void run() {
-        synchronized (this) {
-            try {
-                if (fLog.isDebugEnabled()) {
-                    fLog.debug("Search in IPlug " + this.fPlugId + " ...");
-                }
-                IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart,
-                        this.fLength);
-                if (null != this.fResultSet) {
-                    if (fLog.isDebugEnabled()) {
-                        fLog.debug("adding results from: " + fPlugId
-                                + " size: " + hits.size());
-                    }
-                    this.fResultSet.add(hits);
-                } else {
-                    fLog.error("No ResultSet set where IPlug " + this.fPlugId
-                            + " could add its results.");
-                }
-            } catch (Exception e) {
-                fLog.error(
-                        "(REMOVING IPLUG!) Could not retrieve query result from IPlug: "
-                                + this.fPlugId, e);
-                fRegestry.removePlugFromCache(fPlugId);
 
-            } finally {
-                if (null != this.fResultSet) {
-                    this.fResultSet.resultsAdded();
-                } else {
-                    fLog.error("No ResultSet set where IPlug " + this.fPlugId
-                            + " can sent its completion.");
-                }
+        try {
+            if (fLog.isDebugEnabled()) {
+                fLog.debug("Search in IPlug " + this.fPlugId + " ...");
+            }
+            IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
+
+            if (fLog.isDebugEnabled()) {
+                fLog.debug("adding results from: " + fPlugId + " size: " + hits.size());
+            }
+            this.fResultSet.add(hits);
+
+        } catch (Exception e) {
+            fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
+            fRegestry.removePlugFromCache(fPlugId);
+
+        } finally {
+            if (null != this.fResultSet) {
+                this.fResultSet.resultsAdded();
+            } else {
+                fLog.error("No ResultSet set where IPlug " + this.fPlugId + " can sent its completion.");
             }
         }
     }

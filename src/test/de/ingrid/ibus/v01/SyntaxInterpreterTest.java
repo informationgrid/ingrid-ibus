@@ -84,6 +84,6 @@ public class SyntaxInterpreterTest extends TestCase {
     private void checkParseBooleanQuery() throws ParseException, de.ingrid.utils.queryparser.ParseException {
         IngridQuery query = QueryStringParser.parse("term1 OR term2");
         assertEquals(2, query.getTerms().length);
-        assertEquals(IngridQuery.OR, query.getTerms()[1].getOperation());
+        assertEquals(false, query.getTerms()[1].isRequred());
     }
 }
