@@ -8,6 +8,8 @@ package de.ingrid.ibus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,12 +18,13 @@ import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryRequest;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.registry.SyntaxInterpreter;
-import de.ingrid.iplug.IPlug;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.IBus;
+import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IRecordLoader;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
+import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
@@ -33,7 +36,7 @@ import de.ingrid.utils.query.IngridQuery;
  * @author sg
  * @version $Revision: 1.3 $
  */
-public class Bus implements IBus, IRecordLoader {
+public class Bus implements IBus {
 
     private static final long serialVersionUID = Bus.class.getName().hashCode();
 
@@ -193,7 +196,7 @@ public class Bus implements IBus, IRecordLoader {
      * 
      * @return The IBus instance.
      */
-    public static Bus getInstance() {
+    public static IBus getInstance() {
         Bus result = null;
 
         if (null != fBusInstance) {
@@ -208,7 +211,7 @@ public class Bus implements IBus, IRecordLoader {
     /**
      * @param plugDescription
      */
-    public void addIPlug(PlugDescription plugDescription) {
+    public void addPlugDescription(PlugDescription plugDescription) {
         this.fRegistry.addIPlug(plugDescription);
     }
 
@@ -236,38 +239,15 @@ public class Bus implements IBus, IRecordLoader {
     // }
 
     /**
-     * @param hit
-     * @return A detailed document of a hit.
-     * @throws Exception
-     */
-    public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery) throws Exception {
-        PlugDescription plugDescription = getIPlugRegistry().getIPlug(hit.getPlugId());
-        IPlug plugProxy = fRegistry.getProxyFromCache(hit.getPlugId());
-        if (null == plugProxy) {
-            fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
-            plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-            this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
-        }
-        try {
-            return plugProxy.getDetail(hit, ingridQuery);
-        } catch (Exception e) {
-            fLogger.error(e.toString());
-        }
-        // FIXME do we still need to announce any exception in the method
-        // signature now?
-        return null;
-    }
-
-    /**
      * @param plugId
      * @return The IPlug description.
      */
     public PlugDescription getIPlug(String plugId) {
-        return this.fRegistry.getIPlug(plugId);
+        return this.fRegistry.getPlugDescription(plugId);
     }
 
     public Record getRecord(IngridHit hit) throws Exception {
-        PlugDescription plugDescription = getIPlugRegistry().getIPlug(hit.getPlugId());
+        PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(hit.getPlugId());
         IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(hit.getPlugId());
         if (null == plugProxy) {
             fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
@@ -280,5 +260,107 @@ public class Bus implements IBus, IRecordLoader {
         fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
                 + " but was requested to load a record");
         return null;
+    }
+
+    /**
+     * @param hit
+     * @return A detailed document of a hit.
+     * @throws Exception
+     */
+    public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery, String[] requestedFields) throws Exception {
+        IPlug plugProxy = getPlugProxy(hit.getPlugId());
+        try {
+            return plugProxy.getDetail(hit, ingridQuery, requestedFields);
+        } catch (Exception e) {
+            fLogger.error(e.toString());
+        }
+        // FIXME do we still need to announce any exception in the method
+        // signature now?
+        return null;
+    }
+
+    public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
+
+        // collect requests for plugs
+        HashMap hashMap = new HashMap();
+        IngridHit hit;
+        for (int i = 0; i < hits.length; i++) {
+            hit = hits[i];
+            ArrayList requestHitList = (ArrayList) hashMap.get(hit.getPlugId());
+            if (requestHitList == null) {
+                requestHitList = new ArrayList();
+                hashMap.put(hit.getPlugId(), requestHitList);
+            }
+            requestHitList.add(hit);
+        }
+        // send requests and collect response
+        Iterator iterator = hashMap.keySet().iterator();
+        IPlug plugProxy;
+        ArrayList resultList = new ArrayList();
+        while (iterator.hasNext()) {
+            String plugId = (String) iterator.next();
+            ArrayList requestHitList = (ArrayList) hashMap.get(plugId);
+            if (requestHitList != null) {
+                IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
+                plugProxy = getPlugProxy(plugId);
+                IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
+                resultList.addAll(Arrays.asList(responseDetails)); // FIXME to
+                // improve performance we can use an Array instead of a list
+                // here.
+            }
+        }
+
+        // sort to be in the same order as the requested hits.
+        IngridHitDetail[] details = new IngridHitDetail[hits.length];
+        for (int i = 0; i < hits.length; i++) {
+            String plugId = hits[i].getPlugId();
+            int documentId = hits[i].getDocumentId();
+            int count = resultList.size();
+            try {
+
+                for (int j = 0; j < count; j++) {
+                    IngridHitDetail detail = (IngridHitDetail) resultList.get(i);
+
+                    if (detail.getDocumentId() == documentId && detail.getPlugId().equals(plugId)) {
+                        details[i] = detail;
+                        pushMetaData(details[i]); // push meta data to details
+                    }
+                }
+            } catch (Exception e) {
+                fLogger.warn("unable to process detail in getDetais:" + details.toString() + " : ", e);
+            }
+            details[i] = new IngridHitDetail(hits[i], "no title", "no summary"); // FIXME
+            // we
+            // should
+            // internationalize
+            // this.
+
+        }
+        return details;
+    }
+
+    private void pushMetaData(IngridHitDetail detail) {
+        PlugDescription plugDescription = fRegistry.getPlugDescription(detail.getPlugId());
+        detail.setOrganisation(plugDescription.getOrganisation());
+        detail.setDataSourceName(plugDescription.getDataSourceName());
+        detail.setIplugClassName(plugDescription.getIPlugClass());
+
+    }
+
+    /**
+     * @param plugId
+     * @return a proxy from cache or if it was not cached we create a new proxy
+     *         and add it to the cache.
+     * @throws Exception
+     */
+    private IPlug getPlugProxy(String plugId) throws Exception {
+        IPlug plugProxy = fRegistry.getProxyFromCache(plugId);
+        if (null == plugProxy) {
+            PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(plugId);
+            fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
+            plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+            this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
+        }
+        return plugProxy;
     }
 }

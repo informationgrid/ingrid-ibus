@@ -7,7 +7,7 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
 public class HangingConnectionTest extends TestCase {

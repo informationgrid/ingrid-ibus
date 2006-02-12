@@ -14,8 +14,8 @@ import org.apache.commons.logging.LogFactory;
 import net.weta.components.communication.ICommunication;
 import net.weta.components.proxies.ProxyService;
 import net.weta.components.proxies.remote.RemoteInvocationController;
-import de.ingrid.iplug.IPlug;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.IPlug;
+import de.ingrid.utils.PlugDescription;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
     }
 
     /**
-     * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.iplug.PlugDescription)
+     * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription)
      */
     public IPlug createPlugProxy(PlugDescription plug) throws Exception {
         IPlug result = null;

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import de.ingrid.iplug.IPlug;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.IPlug;
+import de.ingrid.utils.PlugDescription;
 
 /**
  * 
@@ -54,13 +54,13 @@ public class Registry implements Serializable {
 
     private void putToCache(PlugDescription plug) {
         String id = plug.getPlugId();
-        if (getIPlug(id) == null) {
+        if (getPlugDescription(id) == null) {
             removePlugFromCache(id);
             plug.putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
             this.fIPlugs.add(plug);
         } else {
             // just update time stamp
-            getIPlug(id).putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
+            getPlugDescription(id).putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
         }
     }
 
@@ -89,7 +89,7 @@ public class Registry implements Serializable {
      * @param id
      * @return the iplug by key or <code>null</code>
      */
-    public PlugDescription getIPlug(String id) {
+    public PlugDescription getPlugDescription(String id) {
         int count = this.fIPlugs.size();
         for (int i = 0; i < count; i++) {
             PlugDescription plug = (PlugDescription) this.fIPlugs.get(i);

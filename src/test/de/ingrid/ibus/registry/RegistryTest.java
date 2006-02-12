@@ -9,7 +9,7 @@ package de.ingrid.ibus.registry;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.PlugDescription;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class RegistryTest extends TestCase {
         PlugDescription plug1 = new PlugDescription();
         plug1.setPlugId("a ID");
         registry.addIPlug(plug1);
-        PlugDescription plug2 = registry.getIPlug(plug1.getPlugId());
+        PlugDescription plug2 = registry.getPlugDescription(plug1.getPlugId());
         assertEquals(plug1, plug2);
     }
 

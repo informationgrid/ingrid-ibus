@@ -7,8 +7,8 @@
 package de.ingrid.ibus;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
-import de.ingrid.iplug.IPlug;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.IPlug;
+import de.ingrid.utils.PlugDescription;
 
 /**
  * 
@@ -16,7 +16,7 @@ import de.ingrid.iplug.PlugDescription;
 public class DummyProxyFactory implements IPlugProxyFactory {
 
     /**
-     * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.iplug.PlugDescription)
+     * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription)
      */
     public IPlug createPlugProxy(PlugDescription plug) {
         return new DummyIPlug(plug.getPlugId());

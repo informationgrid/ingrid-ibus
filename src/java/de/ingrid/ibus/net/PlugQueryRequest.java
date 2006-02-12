@@ -11,7 +11,7 @@ import org.apache.commons.logging.LogFactory;
 
 import de.ingrid.ibus.ResultSet;
 import de.ingrid.ibus.registry.Registry;
-import de.ingrid.iplug.IPlug;
+import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 

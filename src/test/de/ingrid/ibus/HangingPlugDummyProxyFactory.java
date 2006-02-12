@@ -7,11 +7,11 @@
 package de.ingrid.ibus;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
-import de.ingrid.iplug.IPlug;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
+import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
 
 public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
@@ -34,14 +34,16 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
 
         public IngridHits search(IngridQuery query, int start, int length) throws Exception {
             System.out.println("i will wait for ever");
-            int i =0;
             while (true){
             }
-                
-
         }
 
-        public IngridHitDetail getDetail(IngridHit hit, IngridQuery query) throws Exception {
+        public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) throws Exception {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
             // TODO Auto-generated method stub
             return null;
         }

@@ -9,7 +9,7 @@ package de.ingrid.ibus.registry;
 import java.io.StringReader;
 
 import junit.framework.TestCase;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 

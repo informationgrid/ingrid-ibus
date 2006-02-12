@@ -8,8 +8,8 @@ package de.ingrid.ibus.net;
 
 import java.io.Serializable;
 
-import de.ingrid.iplug.IPlug;
-import de.ingrid.iplug.PlugDescription;
+import de.ingrid.utils.IPlug;
+import de.ingrid.utils.PlugDescription;
 
 /**
  * 

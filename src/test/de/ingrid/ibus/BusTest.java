@@ -7,10 +7,10 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
-import de.ingrid.iplug.PlugDescription;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
+import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.processor.impl.StatisticPostProcessor;
 import de.ingrid.utils.processor.impl.StatisticPreProcessor;
 import de.ingrid.utils.query.IngridQuery;
@@ -75,7 +75,7 @@ public class BusTest extends TestCase {
     public void testAddIPlug() {
         PlugDescription pd = new PlugDescription();
         pd.setPlugId("bla");
-        this.bus.addIPlug(pd);
+        this.bus.addPlugDescription(pd);
         PlugDescription[] pds = this.bus.getIPlugRegistry().getAllIPlugs();
         assertEquals(4, pds.length);
     }
@@ -89,12 +89,12 @@ public class BusTest extends TestCase {
         IngridHit[] hitArray = hits.getHits();
         for (int i = 0; i < hitArray.length; i++) {
             IngridHit hit = hitArray[i];
-            IngridHitDetail details = this.bus.getDetail(hit, query);
+            IngridHitDetail details = this.bus.getDetail(hit, query, new String[0]);
             assertNotNull(details);
             assertEquals(DummyIPlug.TITLE, details.getTitle());
             
             String plugId = details.getPlugId();
-            PlugDescription plugDescription = this.bus.getIPlugRegistry().getIPlug(plugId);
+            PlugDescription plugDescription = this.bus.getIPlugRegistry().getPlugDescription(plugId);
             assertEquals(ORGANISATION, plugDescription.getOrganisation());
         }
 
