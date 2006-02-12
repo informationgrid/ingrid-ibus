@@ -41,7 +41,7 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
 
         }
 
-        public IngridHitDetail getDetails(IngridHit hit, IngridQuery query) throws Exception {
+        public IngridHitDetail getDetail(IngridHit hit, IngridQuery query) throws Exception {
             // TODO Auto-generated method stub
             return null;
         }

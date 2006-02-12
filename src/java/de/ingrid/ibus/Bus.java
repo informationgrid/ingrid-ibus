@@ -240,7 +240,7 @@ public class Bus implements IBus, IRecordLoader {
      * @return A detailed document of a hit.
      * @throws Exception
      */
-    public IngridHitDetail getDetails(IngridHit hit, IngridQuery ingridQuery) throws Exception {
+    public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery) throws Exception {
         PlugDescription plugDescription = getIPlugRegistry().getIPlug(hit.getPlugId());
         IPlug plugProxy = fRegistry.getProxyFromCache(hit.getPlugId());
         if (null == plugProxy) {
@@ -249,7 +249,7 @@ public class Bus implements IBus, IRecordLoader {
             this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
         }
         try {
-            return plugProxy.getDetails(hit, ingridQuery);
+            return plugProxy.getDetail(hit, ingridQuery);
         } catch (Exception e) {
             fLogger.error(e.toString());
         }

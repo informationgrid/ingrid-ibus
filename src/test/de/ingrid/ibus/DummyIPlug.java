@@ -38,7 +38,7 @@ public class DummyIPlug implements IPlug {
         // TODO Auto-generated method stub
     }
 
-    public IngridHitDetail getDetails(IngridHit hit, IngridQuery ingridQuery)
+    public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery)
             throws Exception {
         return new IngridHitDetail(hit, TITLE, SUMMARY);
 

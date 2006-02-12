@@ -89,7 +89,7 @@ public class BusTest extends TestCase {
         IngridHit[] hitArray = hits.getHits();
         for (int i = 0; i < hitArray.length; i++) {
             IngridHit hit = hitArray[i];
-            IngridHitDetail details = this.bus.getDetails(hit, query);
+            IngridHitDetail details = this.bus.getDetail(hit, query);
             assertNotNull(details);
             assertEquals(DummyIPlug.TITLE, details.getTitle());
             
