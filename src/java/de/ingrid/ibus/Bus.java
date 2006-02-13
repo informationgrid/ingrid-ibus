@@ -324,20 +324,23 @@ public class Bus implements IBus {
             String plugId = hits[i].getPlugId();
             int documentId = hits[i].getDocumentId();
             int count = resultList.size();
+            boolean found = false;
             try {
-
                 for (int j = 0; j < count; j++) {
                     IngridHitDetail detail = (IngridHitDetail) resultList.get(i);
-
                     if (detail.getDocumentId() == documentId && detail.getPlugId().equals(plugId)) {
                         details[i] = detail;
                         pushMetaData(details[i]); // push meta data to details
+                        found = true;
                     }
                 }
             } catch (Exception e) {
                 fLogger.warn("unable to process detail in getDetais:" + details.toString() + " : ", e);
+             
             }
-            details[i] = new IngridHitDetail(hits[i], "no title", "no summary"); // FIXME
+            if(!found){
+                details[i] = new IngridHitDetail(hits[i], "no title", "no summary"); // FIXME
+            }
             // we
             // should
             // internationalize
