@@ -273,7 +273,9 @@ public class Bus implements IBus {
         }
         IPlug plugProxy = getPlugProxy(hit.getPlugId());
         try {
-            return plugProxy.getDetail(hit, ingridQuery, requestedFields);
+             IngridHitDetail detail = plugProxy.getDetail(hit, ingridQuery, requestedFields);
+             pushMetaData(detail);
+             return detail;
         } catch (Exception e) {
             fLogger.error(e.toString());
         }
