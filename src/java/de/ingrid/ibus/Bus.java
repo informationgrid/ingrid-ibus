@@ -268,6 +268,9 @@ public class Bus implements IBus {
      * @throws Exception
      */
     public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery, String[] requestedFields) throws Exception {
+        if (requestedFields==null){
+            requestedFields = new String[0];
+        }
         IPlug plugProxy = getPlugProxy(hit.getPlugId());
         try {
             return plugProxy.getDetail(hit, ingridQuery, requestedFields);
@@ -281,6 +284,9 @@ public class Bus implements IBus {
 
     public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
 
+        if (requestedFields==null){
+            requestedFields = new String[0];
+        }
         // collect requests for plugs
         HashMap hashMap = new HashMap();
         IngridHit hit;
