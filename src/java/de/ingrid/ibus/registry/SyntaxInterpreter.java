@@ -40,22 +40,45 @@ public class SyntaxInterpreter {
         boolean hasTerms = queryHasTerms(query);
      
         if (hasTerms && dataTypes.length == 0) {
-            return allIPlugs;
+            return filterForRanking(query,allIPlugs);
         }
 
         String[] fields = getAllFieldsFromQuery(query);
         if (dataTypes.length > 0&& fields.length > 0) {
-            return filterForDataTypeAndFields(allIPlugs, dataTypes, fields);
+            return   filterForRanking(query,filterForDataTypeAndFields(allIPlugs, dataTypes, fields));
         }
         if (dataTypes.length == 0 && fields.length > 0) {
-            return filterForFields(allIPlugs, fields);
+        	 return filterForRanking(query,filterForFields(allIPlugs, fields));
         }
         if (dataTypes.length >0) {
-            return filterForDataType(allIPlugs, dataTypes);
+             return filterForRanking(query, filterForDataType(allIPlugs, dataTypes));
         }
         return new PlugDescription[0];
     }
 
+    private static PlugDescription[] filterForRanking(IngridQuery ingridQuery,
+			PlugDescription[] descriptions) {
+		ArrayList arrayList = new ArrayList();
+
+		for (int i = 0; i < descriptions.length; i++) {
+			String[] rankingTypes = descriptions[i].getRankingTypes();
+			if (rankingTypes.length > 0) {
+				for (int j = 0; j < rankingTypes.length; j++) {
+					if (rankingTypes[j].toLowerCase().equals(
+							ingridQuery.getRankingType())) {
+						arrayList.add(descriptions[i]);
+						break;
+					}
+				}
+			} else {
+				arrayList.add(descriptions[i]);
+			}
+		}
+
+		return (PlugDescription[]) arrayList
+				.toArray(new PlugDescription[arrayList.size()]);
+
+	}
     /**
      * @param allIPlugs
      * @param fields

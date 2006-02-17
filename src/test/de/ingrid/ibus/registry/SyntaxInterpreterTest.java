@@ -133,6 +133,32 @@ public class SyntaxInterpreterTest extends TestCase {
                 SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
 
     }
+    
+    public void testIsRanked() throws Exception {
+    	Registry aRegestry = new Registry(10);
+        PlugDescription description = new PlugDescription();
+        description.setPlugId("23");
+        description.addField("datatype");
+        description.addDataType("www");
+        description.setRankinTypes(true, false, false);
+        aRegestry.addIPlug(description);
+             IngridQuery query = QueryStringParser.parse("datatype:www ranking:score");
+
+        assertEquals(1,
+                SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
+      
+        aRegestry = new Registry(10);
+         description = new PlugDescription();
+        description.setPlugId("23");
+        description.addField("datatype");
+        description.addDataType("www");
+        description.setRankinTypes(false, false, true);
+        aRegestry.addIPlug(description);
+              query = QueryStringParser.parse("datatype:www ranking:sore");
+
+        assertEquals(0,
+                SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
+	}
 
     private PlugDescription[] getIPlugs(String queryString) throws Exception {
         QueryStringParser parser = new QueryStringParser(new StringReader(
