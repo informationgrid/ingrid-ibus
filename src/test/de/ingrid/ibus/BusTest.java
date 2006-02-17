@@ -20,7 +20,6 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * BusTest
  * 
  * <p/>created on 07.09.2005
- * 
  * @version $Revision: $
  * @author sg
  * @author $Author jz ${lastedit}
