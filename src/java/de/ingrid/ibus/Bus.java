@@ -139,9 +139,11 @@ public class Bus implements IBus {
         }
         // stop all threads
         for (int i = 0; i < plugsForQueryLength; i++) {
-            requests[i].interrupt();
-            requests[i] = null; // for gc.
-        }
+			if (requests[i] != null) {
+				requests[i].interrupt();
+			}
+			requests[i] = null; // for gc.
+		}
         float maxScore = 1.0f;
         int totalHits = 0;
         int count = resultSet.size();
@@ -339,7 +341,8 @@ public class Bus implements IBus {
              
             }
             if(!found){
-                details[i] = new IngridHitDetail(hits[i], "no title", "no summary"); // FIXME
+                details[i] = new IngridHitDetail(); // FIXME
+                
             }
             // we
             // should
