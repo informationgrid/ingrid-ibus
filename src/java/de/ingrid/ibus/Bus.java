@@ -293,7 +293,7 @@ public class Bus implements IBus {
         }
         // collect requests for plugs
         HashMap hashMap = new HashMap();
-        IngridHit hit;
+        IngridHit hit = null;
         for (int i = 0; i < hits.length; i++) {
             hit = hits[i];
             ArrayList requestHitList = (ArrayList) hashMap.get(hit.getPlugId());
@@ -341,14 +341,9 @@ public class Bus implements IBus {
              
             }
             if(!found){
-                details[i] = new IngridHitDetail(); // FIXME
+                details[i] = new IngridHitDetail(hit, "" , ""); // FIXME
                 
             }
-            // we
-            // should
-            // internationalize
-            // this.
-
         }
         return details;
     }
