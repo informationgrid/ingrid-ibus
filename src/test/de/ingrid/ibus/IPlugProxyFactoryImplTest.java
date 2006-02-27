@@ -10,7 +10,6 @@ import junit.framework.TestCase;
 import net.weta.components.communication_sockets.SocketCommunication;
 import net.weta.components.communication_sockets.util.AddressUtil;
 import net.weta.components.proxies.ProxyService;
-import net.weta.components.proxies.remote.RemoteInvocationController;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
