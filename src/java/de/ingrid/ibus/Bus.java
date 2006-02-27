@@ -109,7 +109,7 @@ public class Bus implements IBus {
             }
             final int start = (hitsPerPage * (currentPage - 1));
 
-            IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(plugDescription.getPlugId());
+            IPlug plugProxy = this.fRegistry.getProxyFromCache(plugDescription.getPlugId());
 
             if (null == plugProxy) {
                 if (fLogger.isDebugEnabled()) {
