@@ -5,9 +5,9 @@
  */
 package de.ingrid.ibus.v01;
 
+import junit.framework.TestCase;
 import de.ingrid.ibus.registry.RegistryTest;
 import de.ingrid.ibus.registry.SyntaxInterpreterTest;
-import junit.framework.TestCase;
 
 /**
  * Test for iplug-registry-feature (INGRID-5). created on 21.07.2005
