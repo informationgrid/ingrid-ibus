@@ -25,7 +25,7 @@ public class RegistryTest extends TestCase {
      * @throws Exception
      */
     public void testAddAndGet() throws Exception {
-        Registry registry = new Registry(1000);
+        Registry registry = new Registry(1000, true);
         PlugDescription plug1 = new PlugDescription();
         plug1.setPlugId("a ID");
         registry.addIPlug(plug1);
@@ -38,7 +38,7 @@ public class RegistryTest extends TestCase {
      */
     public void testGetAllIPlugs() throws Exception {
         int plugLifeTime=250;
-        Registry registry = new Registry(plugLifeTime);
+        Registry registry = new Registry(plugLifeTime, true);
         PlugDescription plug1 = new PlugDescription();
         plug1.setPlugId("a ID");
         registry.addIPlug(plug1);

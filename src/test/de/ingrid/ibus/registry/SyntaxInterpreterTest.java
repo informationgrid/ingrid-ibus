@@ -39,7 +39,7 @@ public class SyntaxInterpreterTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        this.registry = new Registry(100000);
+        this.registry = new Registry(100000, true);
         for (int i = 0; i < this.descriptions.length; i++) {
             this.descriptions[i] = new PlugDescription();
             this.descriptions[i].setPlugId("plug" + i);
@@ -121,7 +121,7 @@ public class SyntaxInterpreterTest extends TestCase {
     }
 
     public void testDataTypeQueries() throws Exception {
-        Registry aRegestry = new Registry(10);
+        Registry aRegestry = new Registry(10, true);
         PlugDescription description = new PlugDescription();
         description.setPlugId("23");
         description.addField("datatype");
@@ -135,7 +135,7 @@ public class SyntaxInterpreterTest extends TestCase {
     }
     
     public void testIsRanked() throws Exception {
-    	Registry aRegestry = new Registry(10);
+    	Registry aRegestry = new Registry(10, true);
         PlugDescription description = new PlugDescription();
         description.setPlugId("23");
         description.addField("datatype");
@@ -147,7 +147,7 @@ public class SyntaxInterpreterTest extends TestCase {
         assertEquals(1,
                 SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
       
-        aRegestry = new Registry(10);
+        aRegestry = new Registry(10, true);
          description = new PlugDescription();
         description.setPlugId("23");
         description.addField("datatype");

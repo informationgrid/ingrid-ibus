@@ -35,7 +35,7 @@ public class SyntaxInterpreter {
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
         
-        PlugDescription[] allIPlugs = registry.getAllIPlugsWithoutTimeLimitation(); // FIXME uses deprcated method.
+        PlugDescription[] allIPlugs = getActivatedIplugs(registry.getAllIPlugsWithoutTimeLimitation()); // FIXME uses deprcated method.
         String[] dataTypes = query.getPositiveDataTypes();
         boolean hasTerms = queryHasTerms(query);
      
@@ -56,6 +56,17 @@ public class SyntaxInterpreter {
         return new PlugDescription[0];
     }
 
+    private static PlugDescription[] getActivatedIplugs(PlugDescription[] descriptions) {
+		ArrayList arrayList = new ArrayList();
+		for (int i = 0; i < descriptions.length; i++) {
+			if (descriptions[i].isActivate()) {
+				arrayList.add(descriptions[i]);
+			}
+		}
+		return (PlugDescription[]) arrayList
+				.toArray(new PlugDescription[arrayList.size()]);
+	}
+    
     private static PlugDescription[] filterForRanking(IngridQuery ingridQuery,
 			PlugDescription[] descriptions) {
 		ArrayList arrayList = new ArrayList();

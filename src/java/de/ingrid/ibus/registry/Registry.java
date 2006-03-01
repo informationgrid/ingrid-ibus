@@ -36,11 +36,15 @@ public class Registry implements Serializable {
 
     private HashMap fPlugProxyCache = new HashMap();
 
+	private boolean fIplugAutoActivation;
+
     /**
      * @param lifeTimeOfPlugs
+     * @param iplugAutoActivation 
      */
-    public Registry(long lifeTimeOfPlugs) {
+    public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation) {
         this.fLifeTime = lifeTimeOfPlugs;
+        this.fIplugAutoActivation = iplugAutoActivation;
     }
 
     /**
@@ -49,8 +53,13 @@ public class Registry implements Serializable {
      * @param plug
      */
     public void addIPlug(PlugDescription plug) {
-        putToCache(plug);
-    }
+		if (this.fIplugAutoActivation) {
+			plug.activate();
+		} else {
+			plug.deActivate();
+		}
+		putToCache(plug);
+	}
 
     private void putToCache(PlugDescription plug) {
         String id = plug.getPlugId();
@@ -109,7 +118,9 @@ public class Registry implements Serializable {
                 .toArray(new PlugDescription[this.fIPlugs.size()]);
     }
 
-    /**
+ 
+
+	/**
      * @return all registed iplugs younger than given lifetime
      */
     public PlugDescription[] getAllIPlugs() {
@@ -152,5 +163,34 @@ public class Registry implements Serializable {
             this.fPlugProxyCache.put(plugId, plugProxy);
         }
     }
+    
+    
+    /**
+     * activate a plug
+     * @param plugId
+     * @throws IllegalArgumentException if plugId is unknown
+     */
+    public void activatePlug(String plugId) throws IllegalArgumentException{
+		PlugDescription plugDescription = getPlugDescription(plugId);
+		if (plugDescription != null) {
+			plugDescription.activate();
+		} else {
+			throw new IllegalArgumentException("iplug unknown");
+		}
+	}
+    
+    /**
+     * deActivate a plug
+     * @param plugId
+     * @throws IllegalArgumentException if plugId is unknown
+     */
+    public void deActivatePlug(String plugId) throws IllegalArgumentException{
+		PlugDescription plugDescription = getPlugDescription(plugId);
+		if (plugDescription != null) {
+			plugDescription.deActivate();
+		} else {
+			throw new IllegalArgumentException("iplug unknown");
+		}
+	}
 
 }

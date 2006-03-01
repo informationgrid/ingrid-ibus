@@ -6,6 +6,8 @@
 
 package de.ingrid.ibus;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
+import de.ingrid.utils.config.Configuration;
 import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
@@ -58,19 +61,36 @@ public class Bus implements IBus {
      */
     public Bus() {
         fBusInstance = this;
-        this.fRegistry = new Registry(100000);
-        // this.fRegistry.addIPlugListener(this);
+		
+		boolean iplugAutoActivation = getAutoActivationProperty();
+		this.fRegistry = new Registry(100000, iplugAutoActivation);
 
     }
 
+	private boolean getAutoActivationProperty() {
+		Configuration configuration = new Configuration();
+		InputStream resourceAsStream = Bus.class
+				.getResourceAsStream("/configuration.xml");
+		boolean iplugAutoActivation = true;
+		if (resourceAsStream != null) {
+			try {
+				configuration.load(resourceAsStream);
+			} catch (IOException e) {
+				fLogger.error("unable to load existing configuration", e);
+			}
+			iplugAutoActivation = configuration.get("iplugAutoActivation", "false").equals("true");
+		}
+		return iplugAutoActivation;
+	}
+
     /**
-     * @param factory
-     */
+	 * @param factory
+	 */
     public Bus(IPlugProxyFactory factory) {
         Bus.fBusInstance = this;
         this.fProxyFactory = factory;
-        this.fRegistry = new Registry(100000);
-        // this.fRegistry.addIPlugListener(this);
+		boolean iplugAutoActivation = getAutoActivationProperty();
+        this.fRegistry = new Registry(100000, iplugAutoActivation);
     }
 
     /**
