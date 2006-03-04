@@ -106,6 +106,7 @@ public class BusTest extends TestCase {
 		IngridQuery query = QueryStringParser.parse("fische ort:halle");
 		IngridHits hits = this.bus
 				.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+		
 		assertEquals(this.plugDescriptions.length, hits.getHits().length);
 		IngridHit[] hitArray = hits.getHits();
 		IngridHitDetail[] details = this.bus.getDetails(hitArray, query,
