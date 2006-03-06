@@ -15,5 +15,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/cglib/jars/cglib-nodep-2.1_3.jar"/>
 	<classpathentry kind="src" path="/ingrid-utils"/>
 	<classpathentry kind="var" path="MAVEN_REPO/ingrid/jars/ingrid-iplug-0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/weta-components/jars/communication-jxta-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
