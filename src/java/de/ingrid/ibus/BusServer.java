@@ -3,28 +3,14 @@
  */
 package de.ingrid.ibus;
 
-import java.io.FileReader;
-import java.lang.reflect.Method;
 import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication_sockets.SocketCommunication;
-import net.weta.components.peer.PeerService;
-import net.weta.components.peer.messaging.JxtaMessageQueue;
 import net.weta.components.proxies.ProxyService;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.InputSource;
-
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.ibus.registry.Registry;
-import de.ingrid.utils.queryparser.ParseException;
 
 /**
  * 

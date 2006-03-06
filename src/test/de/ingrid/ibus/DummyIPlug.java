@@ -48,4 +48,9 @@ public class DummyIPlug implements IPlug {
     public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
         return new IngridHitDetail[] { new IngridHitDetail(hits[0], TITLE, SUMMARY) };
     }
+
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

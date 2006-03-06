@@ -48,6 +48,11 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
             return null;
         }
 
+		public void close() throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
     }
 
 }

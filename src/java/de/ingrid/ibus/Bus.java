@@ -387,4 +387,8 @@ public class Bus implements IBus {
         }
         return plugProxy;
     }
+
+	public void close() throws Exception {
+		this.fBusInstance = null;
+	}
 }
