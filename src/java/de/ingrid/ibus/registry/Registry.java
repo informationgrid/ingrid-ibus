@@ -11,6 +11,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import net.weta.components.communication.ICommunication;
+
+import de.ingrid.ibus.Bus;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
 
@@ -36,11 +42,15 @@ public class Registry implements Serializable {
 
     private HashMap fPlugProxyCache = new HashMap();
 
-	private boolean fIplugAutoActivation;
+    private boolean fIplugAutoActivation;
+
+    private ICommunication fCommunication = null;
+
+    private static Log fLogger = LogFactory.getLog(Registry.class);
 
     /**
      * @param lifeTimeOfPlugs
-     * @param iplugAutoActivation 
+     * @param iplugAutoActivation
      */
     public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation) {
         this.fLifeTime = lifeTimeOfPlugs;
@@ -53,13 +63,24 @@ public class Registry implements Serializable {
      * @param plug
      */
     public void addIPlug(PlugDescription plug) {
-		if (this.fIplugAutoActivation) {
-			plug.activate();
-		} else {
-			plug.deActivate();
-		}
-		putToCache(plug);
-	}
+        if (this.fIplugAutoActivation) {
+            plug.activate();
+        } else {
+            plug.deActivate();
+        }
+
+        if (null != this.fCommunication) {
+            try {
+                this.fCommunication.subscribeGroup(plug.getProxyServiceURL());
+            } catch (Exception e) {
+                fLogger.error(e.getMessage(), e);
+            }
+        } else {
+            fLogger.error("The communication isn't set in the registry.");
+        }
+
+        putToCache(plug);
+    }
 
     private void putToCache(PlugDescription plug) {
         String id = plug.getPlugId();
@@ -79,7 +100,7 @@ public class Registry implements Serializable {
      * @param plugId
      */
     public void removePlugFromCache(String plugId) {
-        synchronized(fPlugProxyCache){
+        synchronized (fPlugProxyCache) {
             fPlugProxyCache.remove(plugId);
         }
         for (Iterator iter = this.fIPlugs.iterator(); iter.hasNext();) {
@@ -114,27 +135,23 @@ public class Registry implements Serializable {
      * @deprecated
      */
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
-        return (PlugDescription[]) this.fIPlugs
-                .toArray(new PlugDescription[this.fIPlugs.size()]);
+        return (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs.size()]);
     }
 
- 
-
-	/**
+    /**
      * @return all registed iplugs younger than given lifetime
      */
     public PlugDescription[] getAllIPlugs() {
         ArrayList list = new ArrayList();
-        PlugDescription[] descriptions = (PlugDescription[]) this.fIPlugs
-                .toArray(new PlugDescription[this.fIPlugs.size()]);
+        PlugDescription[] descriptions = (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs
+                .size()]);
         long maxLifeTime = System.currentTimeMillis();
         for (int i = 0; i < descriptions.length; i++) {
             if (descriptions[i].getLong(ADDING_TIMESTAMP) + this.fLifeTime > maxLifeTime) {
                 list.add(descriptions[i]);
             }
         }
-        return (PlugDescription[]) list
-                .toArray(new PlugDescription[list.size()]);
+        return (PlugDescription[]) list.toArray(new PlugDescription[list.size()]);
 
     }
 
@@ -163,34 +180,51 @@ public class Registry implements Serializable {
             this.fPlugProxyCache.put(plugId, plugProxy);
         }
     }
-    
-    
+
     /**
      * activate a plug
+     * 
      * @param plugId
-     * @throws IllegalArgumentException if plugId is unknown
+     * @throws IllegalArgumentException
+     *             if plugId is unknown
      */
-    public void activatePlug(String plugId) throws IllegalArgumentException{
-		PlugDescription plugDescription = getPlugDescription(plugId);
-		if (plugDescription != null) {
-			plugDescription.activate();
-		} else {
-			throw new IllegalArgumentException("iplug unknown");
-		}
-	}
-    
+    public void activatePlug(String plugId) throws IllegalArgumentException {
+        PlugDescription plugDescription = getPlugDescription(plugId);
+        if (plugDescription != null) {
+            plugDescription.activate();
+        } else {
+            throw new IllegalArgumentException("iplug unknown");
+        }
+    }
+
     /**
      * deActivate a plug
+     * 
      * @param plugId
-     * @throws IllegalArgumentException if plugId is unknown
+     * @throws IllegalArgumentException
+     *             if plugId is unknown
      */
-    public void deActivatePlug(String plugId) throws IllegalArgumentException{
-		PlugDescription plugDescription = getPlugDescription(plugId);
-		if (plugDescription != null) {
-			plugDescription.deActivate();
-		} else {
-			throw new IllegalArgumentException("iplug unknown");
-		}
-	}
+    public void deActivatePlug(String plugId) throws IllegalArgumentException {
+        PlugDescription plugDescription = getPlugDescription(plugId);
+        if (plugDescription != null) {
+            plugDescription.deActivate();
+        } else {
+            throw new IllegalArgumentException("iplug unknown");
+        }
+    }
+
+    /**
+     * @return
+     */
+    public ICommunication getCommunication() {
+        return this.fCommunication;
+    }
+
+    /**
+     * @param communication
+     */
+    public void setCommunication(ICommunication communication) {
+        this.fCommunication = communication;
+    }
 
 }

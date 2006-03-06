@@ -23,6 +23,7 @@ import org.xml.sax.InputSource;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
+import de.ingrid.ibus.registry.Registry;
 import de.ingrid.utils.queryparser.ParseException;
 
 /**
@@ -55,7 +56,7 @@ public class BusServer {
         if (arguments.containsKey("--multicastPort") && arguments.containsKey("--unicastPort")) {
             int mPort = 0;
             int uPort = 0;
-            
+
             try {
                 mPort = (new Integer((String) arguments.get("--multicastPort"))).intValue();
                 uPort = (new Integer((String) arguments.get("--unicastPort"))).intValue();
@@ -63,9 +64,9 @@ public class BusServer {
                 System.err.println("The supplied ports are no numbers. Valid ports are between 1 and 65535");
                 System.exit(1);
             }
-            
+
             try {
-                communication = startSocketCommunication( uPort, mPort);
+                communication = startSocketCommunication(uPort, mPort);
             } catch (Exception e) {
                 System.err.println("Cannot start the communication: " + e.getMessage());
                 System.exit(1);
@@ -73,9 +74,9 @@ public class BusServer {
         } else if (arguments.containsKey("--descriptor")) {
             String filename = (String) arguments.get("--descriptor");
             String busurl = (String) arguments.get("--descriptor");
-            
+
             try {
-                //communication = startJxtaCommunication(filename);
+                // communication = startJxtaCommunication(filename);
                 communication.subscribeGroup(busurl);
             } catch (Exception e) {
                 System.err.println("Cannot start the communication: " + e.getMessage());
@@ -101,7 +102,9 @@ public class BusServer {
 
         // instatiate the IBus
         IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl(communication);
-        new Bus(proxyFactory);
+        Bus bus = new Bus(proxyFactory);
+        Registry registry = bus.getIPlugRegistry();
+        registry.setCommunication(communication);
 
         while (true) {
             try {

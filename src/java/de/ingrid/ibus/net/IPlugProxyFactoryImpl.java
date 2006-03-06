@@ -27,8 +27,6 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
     
     private ProxyService fProxyService;
 
-    private ICommunication fCommunication;
-
     /**
      */
     public IPlugProxyFactoryImpl() {
@@ -40,7 +38,6 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
      */
     public IPlugProxyFactoryImpl(ICommunication communication) {
         this.fProxyService=new ProxyService();
-        this.fCommunication = communication;
         this.fProxyService.setCommunication(communication);
     }
 
@@ -55,12 +52,6 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
 
         RemoteInvocationController ric = null;
         try {
-            try {
-            	//FIXME: subscribe on adding the iplug
-                this.fCommunication.subscribeGroup(wetagUrl);
-            } catch (IOException e) {
-                // TODO: ignore for now
-            }
             ric = this.fProxyService.createRemoteInvocationController(wetagUrl);
             result = (IPlug) ric.newInstance(iPlugClass, null, null);
             result.configure(plug);
