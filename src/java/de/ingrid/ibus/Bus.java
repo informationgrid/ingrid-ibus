@@ -63,7 +63,6 @@ public class Bus implements IBus {
 
         boolean iplugAutoActivation = getAutoActivationProperty();
         this.fRegistry = new Registry(100000, iplugAutoActivation);
-
     }
 
     private boolean getAutoActivationProperty() {
