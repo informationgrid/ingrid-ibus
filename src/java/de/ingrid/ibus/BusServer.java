@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication_sockets.SocketCommunication;
+import net.weta.components.peer.StartJxtaConfig;
 import net.weta.components.proxies.ProxyService;
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
@@ -62,7 +63,7 @@ public class BusServer {
             String busurl = (String) arguments.get("--descriptor");
 
             try {
-                // communication = startJxtaCommunication(filename);
+                communication = StartJxtaConfig.start(filename);
                 communication.subscribeGroup(busurl);
             } catch (Exception e) {
                 System.err.println("Cannot start the communication: " + e.getMessage());

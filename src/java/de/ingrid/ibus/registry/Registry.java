@@ -16,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 
 import net.weta.components.communication.ICommunication;
 
-import de.ingrid.ibus.Bus;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
 
