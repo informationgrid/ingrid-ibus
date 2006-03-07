@@ -60,7 +60,7 @@ public class BusServer {
             }
         } else if (arguments.containsKey("--descriptor")) {
             String filename = (String) arguments.get("--descriptor");
-            String busurl = (String) arguments.get("--descriptor");
+            String busurl = (String) arguments.get("--busurl");
 
             try {
                 communication = StartJxtaConfig.start(filename);
