@@ -6,15 +6,15 @@
 
 package de.ingrid.ibus.net;
 
-import java.io.IOException;
 import java.net.ConnectException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.proxies.ProxyService;
 import net.weta.components.proxies.remote.RemoteInvocationController;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
 

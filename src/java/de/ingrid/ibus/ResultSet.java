@@ -17,7 +17,7 @@ public class ResultSet extends ArrayList {
 	private static final long serialVersionUID = ResultSet.class.getName()
 			.hashCode();
 
-	private int fNumberOfConnections;
+	private int  fNumberOfConnections;
 
 	private int fNumberOfFinsihedConnections = 0;
 
@@ -35,30 +35,25 @@ public class ResultSet extends ArrayList {
 	/**
 	 * @return if all connections are finished
 	 */
-	public boolean isComplete() {
+	public synchronized boolean isComplete() {
 		return this.fNumberOfConnections == this.fNumberOfFinsihedConnections;
 	}
 
 	/**
-	 * 
-	 */
-	public void resultsAdded() {
-		this.fNumberOfFinsihedConnections += 1;
-		synchronized (fMonitor) {
-			if (isComplete()) {
-				fMonitor.notify();
-			}
-		}
-	}
+     * 
+     */
+    public synchronized void resultsAdded() {
+        this.fNumberOfFinsihedConnections += 1;
+        if (isComplete()) {
+            synchronized (fMonitor) {
+                fMonitor.notify();
+            }
+        }
+    }
 
-	/**
-	 * @see java.util.ArrayList#addAll(java.util.Collection)
-	 */
-	public boolean addAll(Collection c) {
-		return super.addAll(c);
-	}
 
-	public boolean add(Object arg0) {
+
+	public synchronized boolean add(Object arg0) {
 		if (arg0 == null) {
 			throw new IllegalArgumentException("null can not added as Hits");
 		}

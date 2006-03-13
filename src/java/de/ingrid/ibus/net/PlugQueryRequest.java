@@ -72,7 +72,7 @@ public class PlugQueryRequest extends Thread {
 
 			if (fLog.isDebugEnabled()) {
 				fLog.debug("adding results from: " + fPlugId + " size: "
-						+ hits.size());
+						+ hits.length());
 			}
 			this.fResultSet.add(hits);
 			success=true;
@@ -84,8 +84,10 @@ public class PlugQueryRequest extends Thread {
 			fRegestry.removePlugFromCache(fPlugId);
 
 		} finally {
-			if (null != this.fResultSet && success) {
-				this.fResultSet.resultsAdded();
+			if ( this.fResultSet !=null && success) {
+                synchronized (fResultSet) {
+                    this.fResultSet.resultsAdded();    
+                }
 			} else {
 				fLog.error("No ResultSet set where IPlug " + this.fPlugId
 						+ " can sent its completion.");
