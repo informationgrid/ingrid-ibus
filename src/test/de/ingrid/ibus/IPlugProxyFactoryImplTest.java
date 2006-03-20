@@ -38,7 +38,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         this.fBus = new Bus(new IPlugProxyFactoryImpl(com));
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.fComProxyServer[i] = new SocketCommunication();
-            this.fComProxyServer[i].setMulticastPort(50005 + i);
+            this.fComProxyServer[i].setMulticastPort(59005 + i);
             this.fComProxyServer[i].setUnicastPort(60006 + i);
             this.fComProxyServer[i].startup();
             
