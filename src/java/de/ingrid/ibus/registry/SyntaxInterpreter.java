@@ -134,7 +134,7 @@ public class SyntaxInterpreter {
                 if (containsOneDataType(allowedDataTypes, oneType)) {
                     String[] plugFields = plug.getFields();
                     for (int k = 0; k < plugFields.length; k++) {
-                        String field = plugFields[k];
+                        String field = plugFields[k].toLowerCase();
                         if (requiredFields.contains(field)) {
                             arrayList.add(plug);
                             added = true;
