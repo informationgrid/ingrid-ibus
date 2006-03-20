@@ -84,14 +84,14 @@ public class SyntaxInterpreterTest extends TestCase {
         this.descriptions[0].addDataType("UDK");
         this.descriptions[0].addField("field1");
         this.descriptions[1].addDataType("UDK");
-        this.descriptions[1].addField("field2");
+        this.descriptions[1].addField("FIeld2");
 
         this.descriptions[2].addDataType("CSW");
         this.descriptions[2].addField("field1");
         this.descriptions[3].addDataType("CSW");
         this.descriptions[3].addField("field2");
 
-        assertEquals(1, getIPlugs("datatype:UDK field1:aField").length);
+        assertEquals(1, getIPlugs("datatype:UDK Field1:aField").length);
         assertEquals(1, getIPlugs("datatype:UDK field2:aField").length);
         assertEquals(1, getIPlugs("datatype:CSW field1:aField").length);
         assertEquals(1, getIPlugs("datatype:CSW field2:aField").length);
@@ -118,6 +118,8 @@ public class SyntaxInterpreterTest extends TestCase {
         IngridQuery query = parser.parse();
         assertEquals(this.descriptions.length, SyntaxInterpreter
                 .getIPlugsForQuery(query, this.registry).length);
+        
+        
     }
 
     public void testDataTypeQueries() throws Exception {

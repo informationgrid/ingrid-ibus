@@ -44,7 +44,7 @@ public class SyntaxInterpreter {
         }
 
         String[] fields = getAllFieldsFromQuery(query);
-        if (dataTypes.length > 0&& fields.length > 0) {
+        if (dataTypes.length > 0 && fields.length > 0) {
             return   filterForRanking(query,filterForDataTypeAndFields(allIPlugs, dataTypes, fields));
         }
         if (dataTypes.length == 0 && fields.length > 0) {
@@ -103,7 +103,7 @@ public class SyntaxInterpreter {
             PlugDescription plug = allIPlugs[i];
             String[] plugFields = plug.getFields();
             for (int j = 0; j < plugFields.length; j++) {
-                String field = plugFields[j];
+                String field = plugFields[j].toLowerCase();
                 if (hashSet.contains(field)) {
                     arrayList.add(plug);
                     break;

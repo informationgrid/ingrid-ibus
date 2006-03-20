@@ -54,6 +54,13 @@ public class BusTest extends TestCase {
 				.search(query, 10, 1, Integer.MAX_VALUE, 1000);
 		assertEquals(this.plugDescriptions.length, hits.getHits().length);
 	}
+    
+    public void testFieldSearch() throws Exception {
+        this.plugDescriptions[this.plugDescriptions.length-1].addField("aField");
+        IngridQuery query = QueryStringParser.parse("aField:halle");
+        IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        assertEquals(1, hits.getHits().length);
+    }
 
 	/**
 	 * @throws Exception
