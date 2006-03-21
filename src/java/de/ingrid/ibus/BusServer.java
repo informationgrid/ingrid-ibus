@@ -3,6 +3,7 @@
  */
 package de.ingrid.ibus;
 
+import java.io.FileInputStream;
 import java.util.HashMap;
 
 import net.weta.components.communication.ICommunication;
@@ -56,6 +57,7 @@ public class BusServer {
                 communication = startSocketCommunication(uPort, mPort);
             } catch (Exception e) {
                 System.err.println("Cannot start the communication: " + e.getMessage());
+                e.printStackTrace();
                 System.exit(1);
             }
         } else if (arguments.containsKey("--descriptor")) {
@@ -63,10 +65,12 @@ public class BusServer {
             String busurl = (String) arguments.get("--busurl");
 
             try {
-                communication = StartJxtaConfig.start(filename);
+                FileInputStream fileIS = new FileInputStream(filename);
+                communication = StartJxtaConfig.start(fileIS);
                 communication.subscribeGroup(busurl);
             } catch (Exception e) {
                 System.err.println("Cannot start the communication: " + e.getMessage());
+                e.printStackTrace();
                 System.exit(1);
             }
         } else {
