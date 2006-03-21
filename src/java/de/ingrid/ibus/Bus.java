@@ -53,8 +53,6 @@ public class Bus extends Thread implements IBus {
 
 	private static Bus fBusInstance = null;
 
-	// private HashMap fProxyPlugCache = new HashMap();
-
 	/**
 	 * For deserialization.
 	 */
@@ -267,15 +265,6 @@ public class Bus extends Thread implements IBus {
 		return this.fProcessorPipe;
 	}
 
-	// public synchronized void removeIPlug(String iPlugId) {
-	// fLogger.debug("Remove IPlug with ID: " + iPlugId);
-	// PlugQueryRequest connection = (PlugQueryRequest) this.fProxyPlugCache
-	// .remove(iPlugId);
-	// if (null != connection) {
-	// connection.interrupt();
-	// }
-	// }
-
 	/**
 	 * @param plugId
 	 * @return The IPlug description.
@@ -287,8 +276,7 @@ public class Bus extends Thread implements IBus {
 	public Record getRecord(IngridHit hit) throws Exception {
 		PlugDescription plugDescription = getIPlugRegistry()
 				.getPlugDescription(hit.getPlugId());
-		IPlug plugProxy = (IPlug) this.fRegistry.getProxyFromCache(hit
-				.getPlugId());
+		IPlug plugProxy = this.fRegistry.getProxyFromCache(hit.getPlugId());
 		if (null == plugProxy) {
 			fLogger.debug("Create new connection to IPlug: "
 					+ plugDescription.getPlugId());
