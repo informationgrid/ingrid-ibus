@@ -272,7 +272,14 @@ public class Bus extends Thread implements IBus {
 	public PlugDescription getIPlug(String plugId) {
 		return this.fRegistry.getPlugDescription(plugId);
 	}
-
+    
+    /**
+     * @return all iplugs regested in the regestry
+     */
+    public PlugDescription[] getAllIPlugs(){
+        return this.fRegistry.getAllIPlugs();
+    }
+    
 	public Record getRecord(IngridHit hit) throws Exception {
 		PlugDescription plugDescription = getIPlugRegistry()
 				.getPlugDescription(hit.getPlugId());
