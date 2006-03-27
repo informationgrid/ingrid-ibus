@@ -75,8 +75,7 @@ public class SyntaxInterpreter {
 			String[] rankingTypes = descriptions[i].getRankingTypes();
 			if (rankingTypes.length > 0) {
 				for (int j = 0; j < rankingTypes.length; j++) {
-					if (rankingTypes[j].toLowerCase().equals(
-							ingridQuery.getRankingType())) {
+					if (ingridQuery.isRanked(rankingTypes[j].toLowerCase())) {
 						arrayList.add(descriptions[i]);
 						break;
 					}
