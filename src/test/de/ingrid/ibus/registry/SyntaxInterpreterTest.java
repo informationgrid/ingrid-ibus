@@ -10,6 +10,7 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 import de.ingrid.utils.PlugDescription;
+import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
@@ -64,6 +65,12 @@ public class SyntaxInterpreterTest extends TestCase {
         this.descriptions[0].addDataType("UDK");
         this.descriptions[1].addDataType("UDK");
         assertEquals(2, getIPlugs("datatype:UDK aQuery").length);
+        // using query parser
+        assertEquals(0, getIPlugs("-datatype:UDK aQuery").length);
+        IngridQuery query = QueryStringParser.parse("aQuery");
+        query.addField(new FieldQuery(false, true, "datatype", "UDK")); 
+        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
+        assertEquals(0, plugsForQuery.length);
     }
 
     /**

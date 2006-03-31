@@ -36,22 +36,23 @@ public class SyntaxInterpreter {
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
         
         PlugDescription[] allIPlugs = getActivatedIplugs(registry.getAllIPlugsWithoutTimeLimitation()); // FIXME uses deprcated method.
-        String[] dataTypes = query.getPositiveDataTypes();
+        String[] posDataTypes = query.getPositiveDataTypes();
+        String[] negDataTypes = query.getNegativeDataTypes();
         boolean hasTerms = queryHasTerms(query);
      
-        if (hasTerms && dataTypes.length == 0) {
+        if (hasTerms && posDataTypes.length == 0 && negDataTypes.length ==0) {
             return filterForRanking(query,allIPlugs);
         }
 
         String[] fields = getAllFieldsFromQuery(query);
-        if (dataTypes.length > 0 && fields.length > 0) {
-            return   filterForRanking(query,filterForDataTypeAndFields(allIPlugs, dataTypes, fields));
+        if ((posDataTypes.length > 0 || negDataTypes.length>0)&& fields.length > 0) {
+            return   filterForRanking(query,filterForDataTypeAndFields(allIPlugs, posDataTypes, negDataTypes, fields));
         }
-        if (dataTypes.length == 0 && fields.length > 0) {
+        if (posDataTypes.length == 0 && negDataTypes.length == 0 && fields.length > 0) {
         	 return filterForRanking(query,filterForFields(allIPlugs, fields));
         }
-        if (dataTypes.length >0) {
-             return filterForRanking(query, filterForDataType(allIPlugs, dataTypes));
+        if (posDataTypes.length > 0 || negDataTypes.length > 0) {
+             return filterForRanking(query, filterForDataType(allIPlugs, posDataTypes, negDataTypes));
         }
         return new PlugDescription[0];
     }
@@ -124,7 +125,7 @@ public class SyntaxInterpreter {
      * @param fields
      * @return plugs matching datatype and have at least one matching field
      */
-    private static PlugDescription[] filterForDataTypeAndFields(PlugDescription[] allIPlugs, String[] allowedDataTypes,
+    private static PlugDescription[] filterForDataTypeAndFields(PlugDescription[] allIPlugs, String[] allowedDataTypes, String[] notAllowedDatatypes,
             String[] fields) {
         ArrayList arrayList = new ArrayList();
         HashSet requiredFields = new HashSet();
@@ -135,7 +136,7 @@ public class SyntaxInterpreter {
             boolean added = false;
             for (int j = 0; j < dataTypes.length && !added; j++) {
                 String oneType = dataTypes[j];
-                if (containsOneDataType(allowedDataTypes, oneType)) {
+                if (containsOneDataType(allowedDataTypes, oneType) && !containsOneDataType(notAllowedDatatypes, oneType)) {
                     String[] plugFields = plug.getFields();
                     for (int k = 0; k < plugFields.length; k++) {
                         String field = plugFields[k].toLowerCase();
@@ -168,14 +169,14 @@ public class SyntaxInterpreter {
      * @param allowedDataTypes
      * @return only plugs matching given datatype.
      */
-    private static PlugDescription[] filterForDataType(PlugDescription[] allIPlugs, String[] allowedDataTypes) {
+    private static PlugDescription[] filterForDataType(PlugDescription[] allIPlugs, String[] allowedDataTypes, String[] notAllowedDataTypes) {
         ArrayList arrayList = new ArrayList();
         for (int i = 0; i < allIPlugs.length; i++) {
             PlugDescription plug = allIPlugs[i];
             String[] dataTypes = plug.getDataTypes();
             for (int j = 0; j < dataTypes.length; j++) {
                 String oneType = dataTypes[j];
-                if (containsOneDataType(allowedDataTypes, oneType)) {
+                if (containsOneDataType(allowedDataTypes, oneType) && !containsOneDataType(notAllowedDataTypes, oneType)) {
                     arrayList.add(plug);
                     break; // if this plug suuport at least one type we add it to the list.
                 }    
