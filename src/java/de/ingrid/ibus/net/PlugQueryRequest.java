@@ -62,7 +62,7 @@ public class PlugQueryRequest extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	public void run() {
-		boolean success = false;
+		
 		try {
 			if (fLog.isDebugEnabled()) {
 				fLog.debug("Search in IPlug " + this.fPlugId + " ...");
@@ -75,7 +75,6 @@ public class PlugQueryRequest extends Thread {
 						+ hits.length());
 			}
 			this.fResultSet.add(hits);
-			success=true;
 
 		} catch (Exception e) {
 			fLog.error(
@@ -84,7 +83,7 @@ public class PlugQueryRequest extends Thread {
 			fRegestry.removePlugFromCache(fPlugId);
 
 		} finally {
-			if ( this.fResultSet !=null && success) {
+			if ( this.fResultSet !=null ) {
                 synchronized (fResultSet) {
                     this.fResultSet.resultsAdded();    
                 }
