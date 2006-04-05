@@ -355,13 +355,20 @@ public class Bus extends Thread implements IBus {
 				plugProxy = getPlugProxy(plugId);
 				IngridHitDetail[] responseDetails = plugProxy.getDetails(
 						requestHits, query, requestedFields);
+                
+                for (int i = 0; i < responseDetails.length; i++) {
+                   if(responseDetails[i]==null){
+                       fLogger.error(plugId+": responded details that are null");                       
+                   }
+                }
+                
 				resultList.addAll(Arrays.asList(responseDetails)); // FIXME to
 				// improve performance we can use an Array instead of a list
 				// here.
 			}
 		}
 
-		int count = resultList.size();
+//		int count = resultList.size();
 		IngridHitDetail[] resultDetails = (IngridHitDetail[]) resultList
 				.toArray(new IngridHitDetail[resultList.size()]);
 		// sort to be in the same order as the requested hits.
