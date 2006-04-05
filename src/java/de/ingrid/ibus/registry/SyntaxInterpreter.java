@@ -70,10 +70,9 @@ public class SyntaxInterpreter {
     
     private static PlugDescription[] filterForRanking(IngridQuery ingridQuery,
 			PlugDescription[] descriptions) {
-        
-        if(ingridQuery.getRankingType()==null 
-                || ingridQuery.getRankingType().equalsIgnoreCase(IngridQuery.NOT_RANKED)){
-            return descriptions;
+
+        if (ingridQuery.getRankingType() == null) {
+            ingridQuery.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
         }
 		ArrayList arrayList = new ArrayList();
 
