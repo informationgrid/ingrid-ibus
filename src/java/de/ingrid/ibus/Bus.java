@@ -211,7 +211,10 @@ public class Bus extends Thread implements IBus {
 				}
 
 			}
-			documents.addAll(Arrays.asList(hits.getHits()));
+            IngridHit[] toAddHits = hits.getHits();
+            if(toAddHits!=null){
+                documents.addAll(Arrays.asList(toAddHits));
+            }
 		}
 
 		IngridHit[] hits = sortLimitNormalize((IngridHit[]) documents
