@@ -75,7 +75,7 @@ public class Registry implements Serializable {
                 fLogger.error(e.getMessage(), e);
             }
         } else {
-            fLogger.error("The communication isn't set in the registry.");
+//            fLogger.error("The communication isn't set in the registry.");
         }
 
         putToCache(plug);

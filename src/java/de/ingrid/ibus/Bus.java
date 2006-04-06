@@ -120,7 +120,7 @@ public class Bus extends Thread implements IBus {
 	 * @throws Exception
 	 */
 	public IngridHits search(IngridQuery query, final int hitsPerPage,
-			int currentPage, final int length, int maxMilliseconds)
+			int currentPage, int length, int maxMilliseconds)
 			throws Exception {
 		Object monitor = new Object();
 		if (fLogger.isDebugEnabled()) {
@@ -215,17 +215,85 @@ public class Bus extends Thread implements IBus {
 		}
 
 		IngridHit[] hits = sortLimitNormalize((IngridHit[]) documents
-				.toArray(new IngridHit[documents.size()]), hitsPerPage,
-				currentPage, length, ranked, maxScore);
+				.toArray(new IngridHit[documents.size()]),  ranked, maxScore);
 
 		this.fProcessorPipe.postProcess(query, hits);
+        hits = groupHits(query, hits);
 
-		return new IngridHits("ibus", totalHits, hits, true);
+//      To remove empty entries?
+        int pageStart = (currentPage-1)*hitsPerPage;
+        int resultLength = Math.min(hits.length-pageStart, hitsPerPage);
+        IngridHit[] newHits = new IngridHit[resultLength];
+        System.arraycopy(hits, pageStart, newHits, 0, resultLength);
+        
+		return new IngridHits("ibus", totalHits, newHits, true);
 	}
 
-	private IngridHit[] sortLimitNormalize(IngridHit[] documents,
-			int hitsPerPage, int currentPage, int length, boolean ranked,
-			float maxScore) {
+	private IngridHit[] groupHits(IngridQuery query, IngridHit[] hits) {
+        String grouped = query.getGrouped();
+        if(grouped!=null && !grouped.equalsIgnoreCase(IngridQuery.GROUPED_OFF)){
+            
+            // push grouped fields 
+            if(grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PLUGID)){
+                for (int i = 0; i < hits.length; i++) {
+                    hits[i].addGroupedField(hits[i].getPlugId());
+                }
+                
+            } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_ORGANISATION)){
+                for (int i = 0; i < hits.length; i++) {
+                    hits[i].addGroupedField(getIPlug(hits[i].getPlugId()).getOrganisation());
+                }
+                
+            }else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PARTNER)){
+                for (int i = 0; i < hits.length; i++) {
+                    String[] partners = getIPlug(hits[i].getPlugId()).getPartners();
+                    for (int j = 0; j < partners.length; j++) {
+                        hits[i].addGroupedField(partners[j]);  
+                    }
+                }
+            }
+            
+            ArrayList results = new ArrayList();
+
+            for (int i = 0; i < hits.length; i++) {
+                IngridHit hit = hits[i];
+                int size = results.size();
+                boolean found = false;
+                for (int j = 0; j < size; j++) {
+                    IngridHit group = (IngridHit) results.get(j);
+                    if(areInSameGroup(group, hit)){
+                        group.addGroupHit(hit);
+                        found = true;
+                    }
+                }
+                if(!found){
+                    results.add(hit); // we add the hit as new group
+                }
+            }
+            // return group hits
+            return (IngridHit[]) results.toArray(new IngridHit[results.size()]);
+        }
+        
+        return hits;
+    }
+
+    private boolean areInSameGroup(IngridHit group, IngridHit hit) {
+        String[] groupFields = group.getGroupedFileds();
+        String[] hitFields = hit.getGroupedFileds();
+        if (groupFields == null || hitFields == null) {
+            return false;
+        }
+        for (int i = 0; i < groupFields.length; i++) {
+            for (int j = 0; j < hitFields.length; j++) {
+                if (groupFields[i].equalsIgnoreCase(hitFields[j])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private IngridHit[] sortLimitNormalize(IngridHit[] documents, boolean ranked, float maxScore) {
 		// sort
 		if (ranked) {
 			// first normalize
@@ -237,12 +305,7 @@ public class Bus extends Thread implements IBus {
 
 			Arrays.sort(documents, new IngridHitComparator());
 		}
-		// To remove empty entries?
-		length = Math.min(documents.length, length);
-		IngridHit[] hits = new IngridHit[length];
-		System.arraycopy(documents, 0, hits, 0, length);
-
-		return hits;
+		return documents;
 	}
 
 	
