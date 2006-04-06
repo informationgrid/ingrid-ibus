@@ -58,11 +58,38 @@ public class Bus extends Thread implements IBus {
 	 */
 	public Bus() {
 		fBusInstance = this;
-
 		boolean iplugAutoActivation = getAutoActivationProperty();
 		this.fRegistry = new Registry(100000, iplugAutoActivation);
 	}
+    
+    /**
+     * @param factory
+     */
+    public Bus(IPlugProxyFactory factory) {
+        Bus.fBusInstance = this;
+        this.fProxyFactory = factory;
+        boolean iplugAutoActivation = getAutoActivationProperty();
+        this.fRegistry = new Registry(100000, iplugAutoActivation);
+    }
 
+
+    /**
+     * Returns the current IBus instance.
+     * 
+     * @return The IBus instance.
+     */
+    public static IBus getInstance() {
+        Bus result = null;
+
+        if (null != fBusInstance) {
+            result = fBusInstance;
+        } else {
+            fLogger.error("Bus not yet instantiated.");
+        }
+
+        return result;
+    }
+    
 	private boolean getAutoActivationProperty() {
 		Configuration configuration = new Configuration();
 		InputStream resourceAsStream = Bus.class
@@ -80,15 +107,6 @@ public class Bus extends Thread implements IBus {
 		return iplugAutoActivation;
 	}
 
-	/**
-	 * @param factory
-	 */
-	public Bus(IPlugProxyFactory factory) {
-		Bus.fBusInstance = this;
-		this.fProxyFactory = factory;
-		boolean iplugAutoActivation = getAutoActivationProperty();
-		this.fRegistry = new Registry(100000, iplugAutoActivation);
-	}
 
 	/**
 	 * Multicast the query to all connected IPlugs and return founded results.
@@ -227,58 +245,9 @@ public class Bus extends Thread implements IBus {
 		return hits;
 	}
 
-	/**
-	 * Returns the current IBus instance.
-	 * 
-	 * @return The IBus instance.
-	 */
-	public static IBus getInstance() {
-		Bus result = null;
+	
 
-		if (null != fBusInstance) {
-			result = fBusInstance;
-		} else {
-			fLogger.error("Bus not yet instantiated.");
-		}
-
-		return result;
-	}
-
-	/**
-	 * @param plugDescription
-	 */
-	public void addPlugDescription(PlugDescription plugDescription) {
-		this.fRegistry.addIPlug(plugDescription);
-	}
-
-	/**
-	 * @return The iplug registry.
-	 */
-	public Registry getIPlugRegistry() {
-		return this.fRegistry;
-	}
-
-	/**
-	 * @return The processing pipe.
-	 */
-	public ProcessorPipe getProccessorPipe() {
-		return this.fProcessorPipe;
-	}
-
-	/**
-	 * @param plugId
-	 * @return The IPlug description.
-	 */
-	public PlugDescription getIPlug(String plugId) {
-		return this.fRegistry.getPlugDescription(plugId);
-	}
-    
-    /**
-     * @return all iplugs regested in the regestry
-     */
-    public PlugDescription[] getAllIPlugs(){
-        return this.fRegistry.getAllIPlugs();
-    }
+   
     
 	public Record getRecord(IngridHit hit) throws Exception {
 		PlugDescription plugDescription = getIPlugRegistry()
@@ -427,6 +396,45 @@ public class Bus extends Thread implements IBus {
 		return plugProxy;
 	}
 
+    /**
+     * @return The processing pipe.
+     */
+    public ProcessorPipe getProccessorPipe() {
+        return this.fProcessorPipe;
+    }
+
+
+    /**
+     * @return The iplug registry.
+     */
+    public Registry getIPlugRegistry() {
+        return this.fRegistry;
+    }
+
+
+    /**
+     * @param plugDescription
+     */
+    public void addPlugDescription(PlugDescription plugDescription) {
+        this.fRegistry.addIPlug(plugDescription);
+    }
+     
+    /**
+     * @return all iplugs regested in the regestry
+     */
+    public PlugDescription[] getAllIPlugs(){
+        return this.fRegistry.getAllIPlugs();
+    }
+
+    
+    /**
+     * @param plugId
+     * @return The IPlug description.
+     */
+    public PlugDescription getIPlug(String plugId) {
+        return this.fRegistry.getPlugDescription(plugId);
+    }
+    
 	public void close() throws Exception {
 		this.fBusInstance = null;
 	}
