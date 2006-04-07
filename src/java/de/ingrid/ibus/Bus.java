@@ -225,7 +225,12 @@ public class Bus extends Thread implements IBus {
 
 //      To remove empty entries?
         int pageStart = (currentPage-1)*hitsPerPage;
-        int resultLength = Math.min(hits.length, hitsPerPage);
+        int resultLength = 0;
+        if(hits.length>pageStart){
+          resultLength = Math.min(hits.length-pageStart, hitsPerPage);
+        }  else {
+            resultLength = Math.min(hits.length, hitsPerPage);
+        }
         IngridHit[] newHits = new IngridHit[resultLength];
         System.arraycopy(hits, pageStart, newHits, 0, resultLength);
         
