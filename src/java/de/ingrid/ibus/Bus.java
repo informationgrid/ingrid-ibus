@@ -130,6 +130,7 @@ public class Bus extends Thread implements IBus {
 			currentPage = 1;
 		}
 		this.fProcessorPipe.preProcess(query);
+        boolean grouping = query.getGrouped()!=null && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF);
 		// TODO add grouping
 		PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(
 				query, this.fRegistry);
@@ -137,6 +138,7 @@ public class Bus extends Thread implements IBus {
 		ResultSet resultSet = new ResultSet(plugsForQuery.length, monitor);
 		int plugsForQueryLength = plugsForQuery.length;
 		PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
+        int start = 0;
 		for (int i = 0; i < plugsForQueryLength; i++) {
 
 			PlugDescription plugDescription = plugsForQuery[i];
@@ -145,7 +147,10 @@ public class Bus extends Thread implements IBus {
 						+ plugDescription.getPlugId() + ": "
 						+ plugDescription.getOrganisation());
 			}
-			final int start = (hitsPerPage * (currentPage - 1));
+		
+//            if(!grouping){
+//                start = (hitsPerPage * (currentPage - 1));
+//            }
 
 			IPlug plugProxy = this.fRegistry.getProxyFromCache(plugDescription
 					.getPlugId());
@@ -172,7 +177,7 @@ public class Bus extends Thread implements IBus {
 			}
 			requests[i] = new PlugQueryRequest(plugProxy, fRegistry,
 					plugDescription.getPlugId(), resultSet, query, start,
-					length);
+					Integer.MAX_VALUE-1);  // this fix a known lucene bug.
 			requests[i].start();
 
 		}
@@ -221,7 +226,9 @@ public class Bus extends Thread implements IBus {
 				.toArray(new IngridHit[documents.size()]),  ranked, maxScore);
 
 		this.fProcessorPipe.postProcess(query, hits);
-        hits = groupHits(query, hits);
+        if(grouping){
+            hits = groupHits(query, hits);
+        }
 
 //      To remove empty entries?
         int pageStart = (currentPage-1)*hitsPerPage;
@@ -232,6 +239,7 @@ public class Bus extends Thread implements IBus {
             resultLength = Math.min(hits.length, hitsPerPage);
         }
         IngridHit[] newHits = new IngridHit[resultLength];
+        
         System.arraycopy(hits, pageStart, newHits, 0, resultLength);
         
 		return new IngridHits("ibus", totalHits, newHits, true);
@@ -239,50 +247,47 @@ public class Bus extends Thread implements IBus {
 
 	private IngridHit[] groupHits(IngridQuery query, IngridHit[] hits) {
         String grouped = query.getGrouped();
-        if(grouped!=null && !grouped.equalsIgnoreCase(IngridQuery.GROUPED_OFF)){
-            
-            // push grouped fields 
-            if(grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PLUGID)){
-                for (int i = 0; i < hits.length; i++) {
-                    hits[i].addGroupedField(hits[i].getPlugId());
-                }
-                
-            } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_ORGANISATION)){
-                for (int i = 0; i < hits.length; i++) {
-                    hits[i].addGroupedField(getIPlug(hits[i].getPlugId()).getOrganisation());
-                }
-                
-            }else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PARTNER)){
-                for (int i = 0; i < hits.length; i++) {
-                    String[] partners = getIPlug(hits[i].getPlugId()).getPartners();
-                    for (int j = 0; j < partners.length; j++) {
-                        hits[i].addGroupedField(partners[j]);  
-                    }
-                }
-            }
-            
-            ArrayList results = new ArrayList();
 
+        // push grouped fields
+        if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PLUGID)) {
             for (int i = 0; i < hits.length; i++) {
-                IngridHit hit = hits[i];
-                int size = results.size();
-                boolean found = false;
-                for (int j = 0; j < size; j++) {
-                    IngridHit group = (IngridHit) results.get(j);
-                    if(areInSameGroup(group, hit)){
-                        group.addGroupHit(hit);
-                        found = true;
-                    }
-                }
-                if(!found){
-                    results.add(hit); // we add the hit as new group
+                hits[i].addGroupedField(hits[i].getPlugId());
+            }
+
+        } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_ORGANISATION)) {
+            for (int i = 0; i < hits.length; i++) {
+                hits[i].addGroupedField(getIPlug(hits[i].getPlugId()).getOrganisation());
+            }
+
+        } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PARTNER)) {
+            for (int i = 0; i < hits.length; i++) {
+                String[] partners = getIPlug(hits[i].getPlugId()).getPartners();
+                for (int j = 0; j < partners.length; j++) {
+                    hits[i].addGroupedField(partners[j]);
                 }
             }
-            // return group hits
-            return (IngridHit[]) results.toArray(new IngridHit[results.size()]);
         }
-        
-        return hits;
+
+        ArrayList results = new ArrayList();
+
+        for (int i = 0; i < hits.length; i++) {
+            IngridHit hit = hits[i];
+            int size = results.size();
+            boolean found = false;
+            for (int j = 0; j < size; j++) {
+                IngridHit group = (IngridHit) results.get(j);
+                if (areInSameGroup(group, hit)) {
+                    group.addGroupHit(hit);
+                    found = true;
+                }
+            }
+            if (!found) {
+                results.add(hit); // we add the hit as new group
+            }
+        }
+        // return group hits
+        return (IngridHit[]) results.toArray(new IngridHit[results.size()]);
+
     }
 
     private boolean areInSameGroup(IngridHit group, IngridHit hit) {
