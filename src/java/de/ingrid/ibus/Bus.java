@@ -135,10 +135,47 @@ public class Bus extends Thread implements IBus {
 		PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(
 				query, this.fRegistry);
 
-		ResultSet resultSet = new ResultSet(plugsForQuery.length, monitor);
+         int start = 0;
+        int requestLength = 0;
+        if (!grouping) {
+            requestLength = (hitsPerPage * Math.max((currentPage - 1), 1));
+        } else {
+            requestLength = (hitsPerPage * (currentPage - 1)) * 3;
+        }
+            
+        
+        
+		ResultSet resultSet = requestHits(query, maxMilliseconds, monitor, plugsForQuery, start, requestLength);
+		IngridHits tmpHits = normalizeScores(resultSet);
+        IngridHit[] hits = tmpHits.getHits();
+        int totalHits = (int) tmpHits.length();
+        
+		this.fProcessorPipe.postProcess(query, hits);
+        if(grouping){
+            hits = groupHits(query, hits);
+        }
+
+//      To remove empty entries?
+        int pageStart = (currentPage-1)*hitsPerPage;
+        int resultLength = 0;
+        if(hits.length>pageStart){
+          resultLength = Math.min(hits.length-pageStart, hitsPerPage);
+        }  else {
+            resultLength = Math.min(hits.length, hitsPerPage);
+        }
+        IngridHit[] newHits = new IngridHit[resultLength];
+        
+        System.arraycopy(hits, pageStart, newHits, 0, resultLength);
+        
+		return new IngridHits("ibus", totalHits, newHits, true);
+	}
+
+    private ResultSet requestHits(IngridQuery query, int maxMilliseconds, Object monitor, PlugDescription[] plugsForQuery, int start, int requestLength) throws Exception {
+        ResultSet resultSet = new ResultSet(plugsForQuery.length, monitor);
 		int plugsForQueryLength = plugsForQuery.length;
 		PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
-        int start = 0;
+       
+        
 		for (int i = 0; i < plugsForQueryLength; i++) {
 
 			PlugDescription plugDescription = plugsForQuery[i];
@@ -148,9 +185,7 @@ public class Bus extends Thread implements IBus {
 						+ plugDescription.getOrganisation());
 			}
 		
-//            if(!grouping){
-//                start = (hitsPerPage * (currentPage - 1));
-//            }
+          
 
 			IPlug plugProxy = this.fRegistry.getProxyFromCache(plugDescription
 					.getPlugId());
@@ -177,7 +212,7 @@ public class Bus extends Thread implements IBus {
 			}
 			requests[i] = new PlugQueryRequest(plugProxy, fRegistry,
 					plugDescription.getPlugId(), resultSet, query, start,
-					Integer.MAX_VALUE-1);  // this fix a known lucene bug.
+					requestLength); 
 			requests[i].start();
 
 		}
@@ -199,52 +234,38 @@ public class Bus extends Thread implements IBus {
 			}
 			requests[i] = null; // for gc.
 		}
-		float maxScore = 1.0f;
-		int totalHits = 0;
-		int count = resultSet.size();
-		ArrayList documents = new ArrayList();
-		boolean ranked = true;
-		for (int i = 0; i < count; i++) {
-			IngridHits hits = (IngridHits) resultSet.get(i);
-			totalHits += hits.length();
-			if (ranked) {
-				ranked = hits.isRanked();
-				if (ranked && hits.getHits().length > 0) {
-					if (maxScore < hits.getHits()[0].getScore()) {
-						maxScore = hits.getHits()[0].getScore();
-					}
-				}
+        return resultSet;
+    }
 
-			}
+    private IngridHits normalizeScores(ArrayList resultSet){
+        float maxScore = 1.0f;
+        int totalHits = 0;
+        int count = resultSet.size();
+        ArrayList documents = new ArrayList();
+        boolean ranked = true;
+        for (int i = 0; i < count; i++) {
+            IngridHits hits = (IngridHits) resultSet.get(i);
+            totalHits += hits.length();
+            if (ranked) {
+                ranked = hits.isRanked();
+                if (ranked && hits.getHits().length > 0) {
+                    if (maxScore < hits.getHits()[0].getScore()) {
+                        maxScore = hits.getHits()[0].getScore();
+                    }
+                }
+
+            }
             IngridHit[] toAddHits = hits.getHits();
             if(toAddHits!=null){
                 documents.addAll(Arrays.asList(toAddHits));
             }
-		}
-
-		IngridHit[] hits = sortLimitNormalize((IngridHit[]) documents
-				.toArray(new IngridHit[documents.size()]),  ranked, maxScore);
-
-		this.fProcessorPipe.postProcess(query, hits);
-        if(grouping){
-            hits = groupHits(query, hits);
         }
 
-//      To remove empty entries?
-        int pageStart = (currentPage-1)*hitsPerPage;
-        int resultLength = 0;
-        if(hits.length>pageStart){
-          resultLength = Math.min(hits.length-pageStart, hitsPerPage);
-        }  else {
-            resultLength = Math.min(hits.length, hitsPerPage);
-        }
-        IngridHit[] newHits = new IngridHit[resultLength];
+        return new IngridHits("ibus", totalHits, sortLimitNormalize((IngridHit[]) documents
+                .toArray(new IngridHit[documents.size()]),  ranked, maxScore), true);
         
-        System.arraycopy(hits, pageStart, newHits, 0, resultLength);
-        
-		return new IngridHits("ibus", totalHits, newHits, true);
-	}
-
+    }
+    
 	private IngridHit[] groupHits(IngridQuery query, IngridHit[] hits) {
         String grouped = query.getGrouped();
 
