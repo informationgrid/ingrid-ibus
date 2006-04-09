@@ -272,19 +272,25 @@ public class Bus extends Thread implements IBus {
         // push grouped fields
         if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PLUGID)) {
             for (int i = 0; i < hits.length; i++) {
-                hits[i].addGroupedField(hits[i].getPlugId());
+                if (hits[i].getGroupedFileds() != null) {
+                    hits[i].addGroupedField(hits[i].getPlugId());
+                }
             }
 
         } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_ORGANISATION)) {
             for (int i = 0; i < hits.length; i++) {
-                hits[i].addGroupedField(getIPlug(hits[i].getPlugId()).getOrganisation());
+                if (hits[i].getGroupedFileds() != null) {
+                    hits[i].addGroupedField(getIPlug(hits[i].getPlugId()).getOrganisation());
+                }
             }
 
         } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PARTNER)) {
             for (int i = 0; i < hits.length; i++) {
                 String[] partners = getIPlug(hits[i].getPlugId()).getPartners();
                 for (int j = 0; j < partners.length; j++) {
-                    hits[i].addGroupedField(partners[j]);
+                    if (hits[i].getGroupedFileds() != null) {
+                        hits[i].addGroupedField(partners[j]);
+                    }
                 }
             }
         }
