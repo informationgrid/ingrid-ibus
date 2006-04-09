@@ -164,6 +164,12 @@ public class Bus extends Thread implements IBus {
             resultLength = Math.min(hits.length, hitsPerPage);
         }
         IngridHit[] newHits = new IngridHit[resultLength];
+        System.out.println("++++++++");
+        System.out.println("hits"+hits.length);
+        System.out.println("pageStart"+pageStart);
+        System.out.println("newHits"+newHits.length);
+        System.out.println("resultLength"+resultLength);
+        System.out.println("++++++++");
         
         System.arraycopy(hits, pageStart, newHits, 0, resultLength);
         
@@ -272,14 +278,14 @@ public class Bus extends Thread implements IBus {
         // push grouped fields
         if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PLUGID)) {
             for (int i = 0; i < hits.length; i++) {
-                if (hits[i].getGroupedFileds() != null) {
+                if (hits[i].getGroupedFileds() == null) {
                     hits[i].addGroupedField(hits[i].getPlugId());
                 }
             }
 
         } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_ORGANISATION)) {
             for (int i = 0; i < hits.length; i++) {
-                if (hits[i].getGroupedFileds() != null) {
+                if (hits[i].getGroupedFileds() == null) {
                     hits[i].addGroupedField(getIPlug(hits[i].getPlugId()).getOrganisation());
                 }
             }
@@ -288,7 +294,7 @@ public class Bus extends Thread implements IBus {
             for (int i = 0; i < hits.length; i++) {
                 String[] partners = getIPlug(hits[i].getPlugId()).getPartners();
                 for (int j = 0; j < partners.length; j++) {
-                    if (hits[i].getGroupedFileds() != null) {
+                    if (hits[i].getGroupedFileds() == null) {
                         hits[i].addGroupedField(partners[j]);
                     }
                 }
