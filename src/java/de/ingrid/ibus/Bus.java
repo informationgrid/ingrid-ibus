@@ -135,17 +135,17 @@ public class Bus extends Thread implements IBus {
 		PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(
 				query, this.fRegistry);
 
-         int start = 0;
+      
         int requestLength = 0;
         if (!grouping) {
-            requestLength = (hitsPerPage * Math.max((currentPage - 1), 1));
+            requestLength = hitsPerPage * currentPage ;
         } else {
-            requestLength = (hitsPerPage * (currentPage - 1)) * 3;
+            requestLength = hitsPerPage * currentPage  * 3;
         }
             
         
         
-		ResultSet resultSet = requestHits(query, maxMilliseconds, monitor, plugsForQuery, start, requestLength);
+		ResultSet resultSet = requestHits(query, maxMilliseconds, monitor, plugsForQuery, 0, requestLength);
 		IngridHits tmpHits = normalizeScores(resultSet);
         IngridHit[] hits = tmpHits.getHits();
         int totalHits = (int) tmpHits.length();
@@ -156,7 +156,10 @@ public class Bus extends Thread implements IBus {
         }
 
 //      To remove empty entries?
-        int pageStart = (currentPage-1)*hitsPerPage;
+      
+       int  pageStart = (currentPage-1)*hitsPerPage;
+      
+        
         int resultLength = 0;
         if(hits.length>pageStart){
           resultLength = Math.min(hits.length-pageStart, hitsPerPage);
@@ -164,12 +167,6 @@ public class Bus extends Thread implements IBus {
             resultLength = Math.min(hits.length, hitsPerPage);
         }
         IngridHit[] newHits = new IngridHit[resultLength];
-        System.out.println("++++++++");
-        System.out.println("hits"+hits.length);
-        System.out.println("pageStart"+pageStart);
-        System.out.println("newHits"+newHits.length);
-        System.out.println("resultLength"+resultLength);
-        System.out.println("++++++++");
         
         System.arraycopy(hits, pageStart, newHits, 0, resultLength);
         
