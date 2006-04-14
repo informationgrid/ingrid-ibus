@@ -7,10 +7,6 @@
 package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-
-import sun.net.www.content.text.plain;
 
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.ClauseQuery;
@@ -210,7 +206,7 @@ public class SyntaxInterpreter {
                 String provider = notAllowedProvider[i];
                 for (int j = 0; j < allIPlugs.length; j++) {
                     String[] providers = allIPlugs[j].getProviders();
-                    if (!containsString(providers, provider)) {
+                    if (!containsString(providers, provider) || providers.length > 1) {
                         arrayList.add(allIPlugs[j]);
                     }
                 }
