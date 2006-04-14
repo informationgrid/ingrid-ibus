@@ -52,7 +52,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testGetIPlugs_NoTermsNoFields() throws Exception {
-        assertEquals(0, getIPlugs("").length);
+        assertEquals(5, getIPlugs("").length); // no limitations at all.
         // this.descriptions[0].addDataType("UDK"); // as soon a datatype is
         // setted we get all plugs that suppor this datatype now.
         assertEquals(0, getIPlugs("datatype:UDK").length);
@@ -174,6 +174,21 @@ public class SyntaxInterpreterTest extends TestCase {
                 queryString));
         IngridQuery query = parser.parse();
         return SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
+    }
+    
+    public void testGetIPlugs_Provider() throws Exception {
+        this.descriptions[0].addProvider("anhalt");
+        this.descriptions[1].addProvider("berlin");
+        assertEquals(1, getIPlugs("provider:anhalt aQuery").length);
+        assertEquals(1, getIPlugs("provider:berlin aQuery").length);
+        assertEquals(0, getIPlugs("provider:hessen aQuery").length);
+        // using query parser
+        assertEquals(4, getIPlugs("-provider:berlin aQuery").length);
+       
+        IngridQuery query = QueryStringParser.parse("aQuery");
+        query.addField(new FieldQuery(true, false, "provider", "anhalt")); 
+        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
+        assertEquals(1, plugsForQuery.length);
     }
 
 }
