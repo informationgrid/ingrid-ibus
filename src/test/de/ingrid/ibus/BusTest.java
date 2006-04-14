@@ -41,6 +41,7 @@ public class BusTest extends TestCase {
 			this.plugDescriptions[i] = new PlugDescription();
 			this.plugDescriptions[i].setPlugId("" + i);
 			this.plugDescriptions[i].setOrganisation(ORGANISATION);
+            this.plugDescriptions[i].addField("ort");
 			this.bus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
 		}
 	}
