@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -421,6 +422,7 @@ public class Bus extends Thread implements IBus {
 		Iterator iterator = hashMap.keySet().iterator();
 		IPlug plugProxy;
 		ArrayList resultList = new ArrayList();
+    Random random = new Random(System.currentTimeMillis());
 		while (iterator.hasNext()) {
 			String plugId = (String) iterator.next();
 			ArrayList requestHitList = (ArrayList) hashMap.get(plugId);
@@ -433,9 +435,8 @@ public class Bus extends Thread implements IBus {
                 
                 for (int i = 0; i < responseDetails.length; i++) {
                    if(responseDetails[i]==null){
-                       fLogger.error(plugId+": responded details that are null");                       
-                   }else {
-                     resultList.add(responseDetails[i]);
+                       fLogger.error(plugId+": responded details that are null (set a pseudo responseDetail");
+                       responseDetails[i] = new IngridHitDetail(plugId, random.nextInt(), random.nextInt(), 0.0f, "", "");
                    }
                 }
                 
