@@ -419,6 +419,7 @@ public class Bus extends Thread implements IBus {
 			requestHitList.add(hit);
 		}
     
+    
 		// send requests and collect response
 		Iterator iterator = hashMap.keySet().iterator();
 		IPlug plugProxy;
