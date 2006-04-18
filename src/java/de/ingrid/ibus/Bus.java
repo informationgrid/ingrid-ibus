@@ -434,10 +434,12 @@ public class Bus extends Thread implements IBus {
                 for (int i = 0; i < responseDetails.length; i++) {
                    if(responseDetails[i]==null){
                        fLogger.error(plugId+": responded details that are null");                       
+                   }else {
+                     resultList.add(responseDetails[i]);
                    }
                 }
                 
-				resultList.addAll(Arrays.asList(responseDetails)); // FIXME to
+				//resultList.addAll(Arrays.asList(responseDetails)); // FIXME to
 				// improve performance we can use an Array instead of a list
 				// here.
 			}
