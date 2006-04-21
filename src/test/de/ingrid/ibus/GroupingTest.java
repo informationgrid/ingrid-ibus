@@ -63,19 +63,30 @@ public class GroupingTest extends TestCase {
         int length = 1000;
         int maxMilliseconds = 1000;
         IngridHits hits = bus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        long tmp1 = hits.length();  // 1.250
+        int tmp2 = hits.getHits().length;  // 10
         assertEquals(count, hits.length());
         assertEquals(10, hits.getHits().length);
         
         currentPage = 2;
         hits = bus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        tmp1 = hits.length(); // 1.250
+        tmp2 = hits.getHits().length; // 10
         assertEquals(count, hits.length());
         assertEquals(10, hits.getHits().length);
         
         currentPage = 3;
         hits = bus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        tmp1 = hits.length();  // 1.250
+        tmp2 = hits.getHits().length; // 5
         assertEquals(count, hits.length());
         assertEquals(5, hits.getHits().length);
         
+        currentPage = 4;
+        // SCHMEISST ArrayIndexOutOfBoundsException !!!!!
+        hits = bus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        assertEquals(count, hits.length());
+        assertEquals(5, hits.getHits().length);
 
     }
 
