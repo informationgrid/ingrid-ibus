@@ -150,16 +150,22 @@ public class Bus extends Thread implements IBus {
 
         // To remove empty entries?
 
-        int pageStart = (currentPage - 1) * hitsPerPage;
+        int pageStart = Math.min(((currentPage - 1) * hitsPerPage) , hits.length);
 
         int resultLength = 0;
+        if(hits.length == pageStart){
+            pageStart = Math.min(((currentPage - 2) * hitsPerPage) , hits.length);
+        }
         if (hits.length > pageStart) {
             resultLength = Math.min(hits.length - pageStart, hitsPerPage);
         } else {
             resultLength = Math.min(hits.length, hitsPerPage);
         }
         IngridHit[] newHits = new IngridHit[resultLength];
-
+//        System.out.println("hits: " + hits.length);
+//        System.out.println("pageStart: " + pageStart);
+//        System.out.println("newHi"+newHits.length);
+//        System.out.println("resultlenght: " + resultLength);
         System.arraycopy(hits, pageStart, newHits, 0, resultLength);
 
         return new IngridHits("ibus", totalHits, newHits, true);
