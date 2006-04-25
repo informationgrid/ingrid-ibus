@@ -143,6 +143,9 @@ public class Bus extends Thread implements IBus {
         IngridHit[] hits = tmpHits.getHits();
         int totalHits = (int) tmpHits.length();
 
+        if (hits.length == 0) {
+            return tmpHits;
+        }
         this.fProcessorPipe.postProcess(query, hits);
         if (grouping) {
             hits = groupHits(query, hits);
@@ -150,11 +153,11 @@ public class Bus extends Thread implements IBus {
 
         // To remove empty entries?
 
-        int pageStart = Math.min(((currentPage - 1) * hitsPerPage) , hits.length);
+        int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
 
         int resultLength = 0;
-        if(hits.length == pageStart){
-            pageStart = Math.min(((currentPage - 2) * hitsPerPage) , hits.length);
+        if (hits.length == pageStart) {
+            pageStart = Math.min(((currentPage - 2) * hitsPerPage), hits.length);
         }
         if (hits.length > pageStart) {
             resultLength = Math.min(hits.length - pageStart, hitsPerPage);
@@ -162,10 +165,10 @@ public class Bus extends Thread implements IBus {
             resultLength = Math.min(hits.length, hitsPerPage);
         }
         IngridHit[] newHits = new IngridHit[resultLength];
-//        System.out.println("hits: " + hits.length);
-//        System.out.println("pageStart: " + pageStart);
-//        System.out.println("newHi"+newHits.length);
-//        System.out.println("resultlenght: " + resultLength);
+        // System.out.println("hits: " + hits.length);
+        // System.out.println("pageStart: " + pageStart);
+        // System.out.println("newHi"+newHits.length);
+        // System.out.println("resultlenght: " + resultLength);
         System.arraycopy(hits, pageStart, newHits, 0, resultLength);
 
         return new IngridHits("ibus", totalHits, newHits, true);
@@ -202,8 +205,8 @@ public class Bus extends Thread implements IBus {
                     continue;
                 }
             }
-            requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet, query,
-                    start, requestLength);
+            requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
+                    query, start, requestLength);
             requests[i].start();
 
         }
