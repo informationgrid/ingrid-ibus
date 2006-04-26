@@ -56,6 +56,9 @@ public class BusTest extends TestCase {
 		assertEquals(this.plugDescriptions.length, hits.getHits().length);
 	}
     
+    /**
+     * @throws Exception
+     */
     public void testFieldSearch() throws Exception {
         this.plugDescriptions[this.plugDescriptions.length-1].addField("aField");
         IngridQuery query = QueryStringParser.parse("aField:halle");
@@ -88,6 +91,9 @@ public class BusTest extends TestCase {
 		assertEquals(4, pds.length);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testGetHitDetail() throws Exception {
 
 		IngridQuery query = QueryStringParser.parse("fische ort:halle");
@@ -110,6 +116,9 @@ public class BusTest extends TestCase {
 
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void testGetHitDetails() throws Exception {
 		IngridQuery query = QueryStringParser.parse("fische ort:halle");
 		IngridHits hits = this.bus
