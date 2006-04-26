@@ -72,18 +72,6 @@
         <connection>scm:svn:http://torwald.gistec-online.de/svn/ingrid:ingrid-ibus</connection>
     </repository>
     <dependencies>
-        <!--dependency>
-            <groupId>weta</groupId>
-            <artifactId>weta-g</artifactId>
-            <version>SNAPSHOT</version>
-            <type>zip</type>
-        </dependency-->
-        <dependency>
-            <groupId>weta</groupId>
-            <artifactId>weta-g</artifactId>
-            <version>SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
         <dependency>
             <groupId>weta-components</groupId>
             <artifactId>communication</artifactId>
@@ -95,19 +83,6 @@
             <artifactId>communication-sockets</artifactId>
             <version>SNAPSHOT</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>weta-components</groupId>
-            <artifactId>remote-proxies</artifactId>
-            <version>SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.1_3</version>
-            <type>jar</type>
-            <url>http://ibiblio.org/maven</url>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -210,19 +185,7 @@
         <dependency>
             <groupId>jxta</groupId>
             <artifactId>jxta</artifactId>
-            <version>2.3.4</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>jxta</groupId>
-            <artifactId>jxtaext</artifactId>
-            <version>2.3.4</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>jal</groupId>
-            <artifactId>jal</artifactId>
-            <version>0.4</version>
+            <version>2.3.6</version>
             <type>jar</type>
         </dependency>
         <dependency>

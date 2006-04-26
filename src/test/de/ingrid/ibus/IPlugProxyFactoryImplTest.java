@@ -7,10 +7,11 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
+import net.weta.components.communication.reflect.ProxyService;
 import net.weta.components.communication_sockets.SocketCommunication;
 import net.weta.components.communication_sockets.util.AddressUtil;
-import net.weta.components.proxies.ProxyService;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
+import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
@@ -27,7 +28,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
 
     private PlugDescription[] plugDescriptions = new PlugDescription[this.fHowMuchPlugs];
 
-    private SocketCommunication[] fComProxyServer = new SocketCommunication[this.fHowMuchPlugs];
+    private SocketCommunication[] fPlugComms = new SocketCommunication[this.fHowMuchPlugs];
 
     protected void setUp() throws Exception {
         SocketCommunication com = new SocketCommunication();
@@ -37,20 +38,15 @@ public class IPlugProxyFactoryImplTest extends TestCase {
 
         this.fBus = new Bus(new IPlugProxyFactoryImpl(com));
         for (int i = 0; i < this.plugDescriptions.length; i++) {
-            this.fComProxyServer[i] = new SocketCommunication();
-            this.fComProxyServer[i].setMulticastPort(59005 + i);
-            this.fComProxyServer[i].setUnicastPort(60006 + i);
-            this.fComProxyServer[i].startup();
+            this.fPlugComms[i] = new SocketCommunication();
+            this.fPlugComms[i].setMulticastPort(59005 + i);
+            this.fPlugComms[i].setUnicastPort(60006 + i);
+            this.fPlugComms[i].startup();
             
-            String comProxyServerUrl = AddressUtil.getWetagURL("localhost", 60006 + i);
-            
-            ProxyService proxyService = new ProxyService();
-            proxyService.setCommunication(this.fComProxyServer[i]);
-            proxyService.startup();
-
+            ProxyService.createProxyServer(this.fPlugComms[i],IPlug.class,new DummyIPlug());
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setPlugId("" + i);
-            this.plugDescriptions[i].setProxyServiceURL(comProxyServerUrl);
+            this.plugDescriptions[i].setProxyServiceURL(AddressUtil.getWetagURL("localhost", 60006 + i));
             this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());
             this.plugDescriptions[i].addField("ort");
             this.fBus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
@@ -62,7 +58,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
      */
     protected void tearDown() throws Exception {
         for (int i = 0; i < this.plugDescriptions.length; i++) {
-            this.fComProxyServer[i].shutdown();
+            this.fPlugComms[i].shutdown();
         }
         super.tearDown();
     }

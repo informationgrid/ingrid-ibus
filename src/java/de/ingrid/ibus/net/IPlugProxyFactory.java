@@ -6,15 +6,13 @@
 
 package de.ingrid.ibus.net;
 
-import java.io.Serializable;
-
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
 
 /**
  * 
  */
-public interface IPlugProxyFactory extends Serializable {
+public interface IPlugProxyFactory {
 
     /**
      * @param plug

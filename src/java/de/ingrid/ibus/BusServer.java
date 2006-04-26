@@ -7,12 +7,13 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 
 import net.weta.components.communication.ICommunication;
+import net.weta.components.communication.reflect.ReflectMessageHandler;
 import net.weta.components.communication_sockets.SocketCommunication;
 import net.weta.components.peer.StartJxtaConfig;
-import net.weta.components.proxies.ProxyService;
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.ibus.registry.Registry;
+import de.ingrid.utils.IBus;
 
 /**
  * 
@@ -20,13 +21,17 @@ import de.ingrid.ibus.registry.Registry;
 public class BusServer {
 
     /**
-     * This method is for starting a Proxy-Server by hand. The two required commandline options are "--multicastPort
-     * <port>" and "--unicastPort <port>". Every parameter need a different port where the proxy server listens on.
+     * This method is for starting a Proxy-Server by hand. The two required
+     * commandline options are "--multicastPort <port>" and "--unicastPort
+     * <port>". Every parameter need a different port where the proxy server
+     * listens on.
      * 
      * @param args
-     *            An array of strings containing the commandline options described above.
+     *            An array of strings containing the commandline options
+     *            described above.
+     * @throws InterruptedException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         final String usage = "Wrong numbers of arguments. You must set --descriptor <filename> and --busurl "
                 + "<wetag url> for jxta or  --multicastPort <port> and --unicastPort <port> for socket communication.";
         HashMap arguments = new HashMap();
@@ -78,31 +83,20 @@ public class BusServer {
             System.exit(1);
         }
 
-        // start the proxy server
-        ProxyService proxy = new ProxyService();
-        proxy.setCommunication(communication);
-        try {
-            proxy.startup();
-        } catch (IllegalArgumentException e) {
-            System.err.println("Wrong arguments supplied to the proxy service: " + e.getMessage());
-            System.exit(1);
-        } catch (Exception e) {
-            System.err.println("Cannot start the proxy server: " + e.getMessage());
-            System.exit(1);
-        }
-
         // instatiate the IBus
         IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl(communication);
         Bus bus = new Bus(proxyFactory);
         Registry registry = bus.getIPlugRegistry();
         registry.setCommunication(communication);
 
-        while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // can be ignored
-            }
+        // start the proxy service
+        ReflectMessageHandler messageHandler = new ReflectMessageHandler();
+        messageHandler.addObjectToCall(IBus.class, bus);
+        communication.getMessageQueue().getProcessorRegistry().addMessageHandler(ReflectMessageHandler.MESSAGE_TYPE,
+                messageHandler);
+
+        synchronized (BusServer.class) {
+            BusServer.class.wait();
         }
     }
 

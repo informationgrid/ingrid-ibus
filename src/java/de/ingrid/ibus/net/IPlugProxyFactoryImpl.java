@@ -6,15 +6,8 @@
 
 package de.ingrid.ibus.net;
 
-import java.net.ConnectException;
-
 import net.weta.components.communication.ICommunication;
-import net.weta.components.proxies.ProxyService;
-import net.weta.components.proxies.remote.RemoteInvocationController;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import net.weta.components.communication.reflect.ProxyService;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
 
@@ -23,9 +16,7 @@ import de.ingrid.utils.PlugDescription;
  */
 public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
 
-    private Log fLogger = LogFactory.getLog(this.getClass());
-    
-    private ProxyService fProxyService;
+    private ICommunication fCommunication;
 
     /**
      */
@@ -37,30 +28,26 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
      * @param communication
      */
     public IPlugProxyFactoryImpl(ICommunication communication) {
-        this.fProxyService=new ProxyService();
-        this.fProxyService.setCommunication(communication);
+        this.fCommunication=communication;
     }
 
     /**
      * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription)
      */
-    public IPlug createPlugProxy(PlugDescription plug) throws Exception {
-        IPlug result = null;
+    public IPlug createPlugProxy(PlugDescription plugDescription) throws Exception {
+        final String plugUrl = plugDescription.getProxyServiceURL();
+        IPlug plug = (IPlug) ProxyService.createProxy(this.fCommunication,IPlug.class, plugUrl);
+//        plug.configure(plugDescription);
+//        try {
+//            ric = this.fProxyService.createRemoteInvocationController(plugUrl);
+//            result = (IPlug) ric.newInstance(iPlugClass, null, null);
+//            result.configure(plug);
+//        } catch (ConnectException e) {
+//            throw e;
+//        } catch (Throwable t) {
+//            this.fLogger.error(t.getMessage(), t);
+//        }
 
-        final String wetagUrl = plug.getProxyServiceURL();
-        final Class iPlugClass = Thread.currentThread().getContextClassLoader().loadClass(plug.getIPlugClass());
-
-        RemoteInvocationController ric = null;
-        try {
-            ric = this.fProxyService.createRemoteInvocationController(wetagUrl);
-            result = (IPlug) ric.newInstance(iPlugClass, null, null);
-            result.configure(plug);
-        } catch (ConnectException e) {
-            throw e;
-        } catch (Throwable t) {
-            this.fLogger.error(t.getMessage(), t);
-        }
-
-        return result;
+        return plug;
     }
 }

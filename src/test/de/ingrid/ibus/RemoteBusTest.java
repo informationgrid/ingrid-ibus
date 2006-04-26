@@ -7,10 +7,10 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
+import net.weta.components.communication.reflect.ProxyService;
 import net.weta.components.communication_sockets.SocketCommunication;
 import net.weta.components.communication_sockets.util.AddressUtil;
-import net.weta.components.proxies.ProxyService;
-import net.weta.components.proxies.remote.RemoteInvocationController;
+import de.ingrid.utils.IBus;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
@@ -27,16 +27,10 @@ public class RemoteBusTest extends TestCase {
         com.setMulticastPort(10022);
         com.setUnicastPort(10023);
         com.startup();
-
-        ProxyService proxyService = new ProxyService();
-        proxyService.setCommunication(com);
-        proxyService.startup();
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
 
         String iBusUrl = AddressUtil.getWetagURL("localhost", 10023);
-        RemoteInvocationController ric = proxyService.createRemoteInvocationController(iBusUrl);
-        // to be sure there is an instance
-        new Bus(new DummyProxyFactory());
-        Bus bus = (Bus) ric.invoke(Bus.class, Bus.class.getMethod("getInstance", null), null);
+        IBus bus = (IBus) ProxyService.createProxy(com, IBus.class, iBusUrl);
         IngridHits hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
         assertNotNull(hits);
     }
