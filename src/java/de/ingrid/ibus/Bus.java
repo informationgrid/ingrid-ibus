@@ -491,11 +491,12 @@ public class Bus extends Thread implements IBus {
         return this.fRegistry;
     }
 
-    /**
-     * @param plugDescription
-     */
     public void addPlugDescription(PlugDescription plugDescription) {
         this.fRegistry.addIPlug(plugDescription);
+    }
+    
+    public void removePlugDescription(PlugDescription plugDescripion) {
+        this.fRegistry.removePlugFromCache(plugDescripion.getPlugId());
     }
 
     public PlugDescription[] getAllIPlugs() {

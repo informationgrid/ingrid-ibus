@@ -35,7 +35,6 @@ public class BusTest extends TestCase {
 	private PlugDescription[] plugDescriptions = new PlugDescription[3];
 
 	protected void setUp() throws Exception {
-
 		this.bus = new Bus(new DummyProxyFactory());
 		for (int i = 0; i < this.plugDescriptions.length; i++) {
 			this.plugDescriptions[i] = new PlugDescription();
@@ -83,12 +82,15 @@ public class BusTest extends TestCase {
 	/**
 	 * Test the instanciation process.
 	 */
-	public void testAddIPlug() {
+	public void testAddRemoveIPlug() {
+        assertEquals(this.plugDescriptions.length, this.bus.getIPlugRegistry().getAllIPlugs().length);
 		PlugDescription pd = new PlugDescription();
 		pd.setPlugId("bla");
 		this.bus.addPlugDescription(pd);
-		PlugDescription[] pds = this.bus.getIPlugRegistry().getAllIPlugs();
-		assertEquals(4, pds.length);
+		assertEquals(this.plugDescriptions.length+1, this.bus.getIPlugRegistry().getAllIPlugs().length);
+        this.bus.removePlugDescription(pd);
+        assertEquals(this.plugDescriptions.length, this.bus.getIPlugRegistry().getAllIPlugs().length);
+        assertNull(this.bus.getIPlugRegistry().getProxyFromCache(pd.getPlugId()));
 	}
 
 	/**

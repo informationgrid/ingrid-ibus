@@ -99,8 +99,8 @@ public class Registry implements Serializable {
      * @param plugId
      */
     public void removePlugFromCache(String plugId) {
-        synchronized (fPlugProxyCache) {
-            fPlugProxyCache.remove(plugId);
+        synchronized (this.fPlugProxyCache) {
+            this.fPlugProxyCache.remove(plugId);
         }
         for (Iterator iter = this.fIPlugs.iterator(); iter.hasNext();) {
             PlugDescription element = (PlugDescription) iter.next();
@@ -168,14 +168,22 @@ public class Registry implements Serializable {
         this.fIPlugListener.remove(iPlugListener);
     }
 
+    /**
+     * @param plugId
+     * @return the plug proxy
+     */
     public IPlug getProxyFromCache(String plugId) {
-        synchronized (fPlugProxyCache) {
+        synchronized (this.fPlugProxyCache) {
             return (IPlug) this.fPlugProxyCache.get(plugId);
         }
     }
 
+    /**
+     * @param plugId
+     * @param plugProxy
+     */
     public void addProxyToCache(String plugId, IPlug plugProxy) {
-        synchronized (fPlugProxyCache) {
+        synchronized (this.fPlugProxyCache) {
             this.fPlugProxyCache.put(plugId, plugProxy);
         }
     }
@@ -213,7 +221,7 @@ public class Registry implements Serializable {
     }
 
     /**
-     * @return
+     * @return the communication
      */
     public ICommunication getCommunication() {
         return this.fCommunication;
