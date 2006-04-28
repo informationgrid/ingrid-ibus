@@ -28,7 +28,7 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
      * @param communication
      */
     public IPlugProxyFactoryImpl(ICommunication communication) {
-        this.fCommunication=communication;
+        this.fCommunication = communication;
     }
 
     /**
@@ -36,17 +36,7 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
      */
     public IPlug createPlugProxy(PlugDescription plugDescription) throws Exception {
         final String plugUrl = plugDescription.getProxyServiceURL();
-        IPlug plug = (IPlug) ProxyService.createProxy(this.fCommunication,IPlug.class, plugUrl);
-//        plug.configure(plugDescription);
-//        try {
-//            ric = this.fProxyService.createRemoteInvocationController(plugUrl);
-//            result = (IPlug) ric.newInstance(iPlugClass, null, null);
-//            result.configure(plug);
-//        } catch (ConnectException e) {
-//            throw e;
-//        } catch (Throwable t) {
-//            this.fLogger.error(t.getMessage(), t);
-//        }
+        IPlug plug = (IPlug) ProxyService.createProxy(this.fCommunication, IPlug.class, plugUrl);
 
         return plug;
     }
