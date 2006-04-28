@@ -346,11 +346,12 @@ public class Bus extends Thread implements IBus {
         PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(hit.getPlugId());
         IPlug plugProxy = this.fRegistry.getProxyFromCache(hit.getPlugId());
         if (null == plugProxy) {
-            fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
+            fLogger.error("Create new connection to IPlug: " + plugDescription.getPlugId());
+            // TODO this should'nt happen
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
             this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
         }
-        if (plugProxy instanceof IRecordLoader) {
+        if (plugDescription.isRecordloader()) {
             return ((IRecordLoader) plugProxy).getRecord(hit);
         }
         fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
