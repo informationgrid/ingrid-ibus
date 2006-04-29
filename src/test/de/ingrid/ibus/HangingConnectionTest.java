@@ -10,12 +10,25 @@ import junit.framework.TestCase;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
+/**
+ * TODO comment for HangingConnectionTest 
+ * 
+ * <p/>created on 29.04.2006
+ * 
+ * @version $Revision: $
+ * @author jz
+ * @author $Author: ${lastedit}
+ *  
+ */
 public class HangingConnectionTest extends TestCase {
 
+    /**
+     * @throws Exception
+     */
     public void testhangConnection() throws Exception {
         Bus bus = new Bus(new HangingPlugDummyProxyFactory());
         PlugDescription plugDescriptions = new PlugDescription();
-        plugDescriptions.setPlugId("");
+        plugDescriptions.setProxyServiceURL("");
         plugDescriptions.setOrganisation("org");
         bus.getIPlugRegistry().addIPlug(plugDescriptions);
         long start = System.currentTimeMillis();

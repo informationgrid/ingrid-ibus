@@ -38,7 +38,7 @@ public class BusTest extends TestCase {
 		this.bus = new Bus(new DummyProxyFactory());
 		for (int i = 0; i < this.plugDescriptions.length; i++) {
 			this.plugDescriptions[i] = new PlugDescription();
-			this.plugDescriptions[i].setPlugId("" + i);
+			this.plugDescriptions[i].setProxyServiceURL("" + i);
 			this.plugDescriptions[i].setOrganisation(ORGANISATION);
             this.plugDescriptions[i].addField("ort");
 			this.bus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
@@ -85,7 +85,7 @@ public class BusTest extends TestCase {
 	public void testAddRemoveIPlug() {
         assertEquals(this.plugDescriptions.length, this.bus.getIPlugRegistry().getAllIPlugs().length);
 		PlugDescription pd = new PlugDescription();
-		pd.setPlugId("bla");
+		pd.setProxyServiceURL("bla");
 		this.bus.addPlugDescription(pd);
 		assertEquals(this.plugDescriptions.length+1, this.bus.getIPlugRegistry().getAllIPlugs().length);
         this.bus.removePlugDescription(pd);

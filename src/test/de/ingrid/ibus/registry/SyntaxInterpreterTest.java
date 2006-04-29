@@ -43,7 +43,7 @@ public class SyntaxInterpreterTest extends TestCase {
         this.registry = new Registry(100000, true);
         for (int i = 0; i < this.descriptions.length; i++) {
             this.descriptions[i] = new PlugDescription();
-            this.descriptions[i].setPlugId("plug" + i);
+            this.descriptions[i].setProxyServiceURL("plug" + i);
             this.registry.addIPlug(this.descriptions[i]);
         }
     }
@@ -129,10 +129,13 @@ public class SyntaxInterpreterTest extends TestCase {
         
     }
 
+    /**
+     * @throws Exception
+     */
     public void testDataTypeQueries() throws Exception {
         Registry aRegestry = new Registry(10, true);
         PlugDescription description = new PlugDescription();
-        description.setPlugId("23");
+        description.setProxyServiceURL("23");
         description.addField("datatype");
         description.addDataType("www");
         aRegestry.addIPlug(description);
@@ -143,10 +146,13 @@ public class SyntaxInterpreterTest extends TestCase {
 
     }
     
+    /**
+     * @throws Exception
+     */
     public void testIsRanked() throws Exception {
     	Registry aRegestry = new Registry(10, true);
         PlugDescription description = new PlugDescription();
-        description.setPlugId("23");
+        description.setProxyServiceURL ("23");
         description.addField("datatype");
         description.addDataType("www");
         description.setRankinTypes(true, false, false);
@@ -158,7 +164,7 @@ public class SyntaxInterpreterTest extends TestCase {
       
         aRegestry = new Registry(10, true);
          description = new PlugDescription();
-        description.setPlugId("23");
+        description.setProxyServiceURL("23");
         description.addField("datatype");
         description.addDataType("www");
         description.setRankinTypes(false, false, true);
@@ -176,6 +182,9 @@ public class SyntaxInterpreterTest extends TestCase {
         return SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
     }
     
+    /**
+     * @throws Exception
+     */
     public void testGetIPlugs_Provider() throws Exception {
         this.descriptions[0].addProvider("anhalt");
         this.descriptions[1].addProvider("berlin");

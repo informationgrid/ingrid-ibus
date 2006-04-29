@@ -13,19 +13,32 @@ import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 import junit.framework.TestCase;
 
+/**
+ * TODO comment for ScoreNormalizingTest 
+ * 
+ * <p/>created on 29.04.2006
+ * 
+ * @version $Revision: $
+ * @author jz
+ * @author $Author: ${lastedit}
+ *  
+ */
 public class ScoreNormalizingTest extends TestCase {
 
+    /**
+     * @throws Exception
+     */
     public void testScore() throws Exception {
         Bus bus = new Bus();
         bus = new Bus(new DummyProxyFactory());
 
         PlugDescription plugDescriptions0 = new PlugDescription();
-        plugDescriptions0.setPlugId("1");
+        plugDescriptions0.setProxyServiceURL ("1");
         plugDescriptions0.setOrganisation("friedens ministerium");
         bus.getIPlugRegistry().addIPlug(plugDescriptions0);
 
         PlugDescription plugDescriptions1 = new PlugDescription();
-        plugDescriptions1.setPlugId("2");
+        plugDescriptions1.setProxyServiceURL("2");
         plugDescriptions1.setOrganisation("liebes ministerium"); // 1984
         bus.getIPlugRegistry().addIPlug(plugDescriptions1);
         IngridQuery query = QueryStringParser.parse("a Query");

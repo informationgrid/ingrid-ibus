@@ -6,6 +6,16 @@ import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 import junit.framework.TestCase;
 
+/**
+ * TODO comment for GroupingTest 
+ * 
+ * <p/>created on 29.04.2006
+ * 
+ * @version $Revision: $
+ * @author jz
+ * @author $Author: ${lastedit}
+ *  
+ */
 public class GroupingTest extends TestCase {
 
     private static final String ORGANISATION = "a organisation";
@@ -19,12 +29,15 @@ public class GroupingTest extends TestCase {
         this.fBus = new Bus(new DummyProxyFactory());
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
-            this.plugDescriptions[i].setPlugId("" + i);
+            this.plugDescriptions[i].setProxyServiceURL("" + i);
             this.plugDescriptions[i].setOrganisation(ORGANISATION);
             this.fBus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public void testGrouping() throws Exception {
 
         IngridQuery query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_ORGANISATION);
@@ -43,6 +56,9 @@ public class GroupingTest extends TestCase {
 
     }
 
+    /**
+     * @throws Exception
+     */
     public void testPaging() throws Exception {
         // setup
         Bus bus = new Bus(new DummyProxyFactory());
@@ -50,7 +66,7 @@ public class GroupingTest extends TestCase {
         for (int i = 0; i < 25; i++) {
             for (int j = 0; j < 50; j++) {
                 PlugDescription plugDescription = new PlugDescription();
-                plugDescription.setPlugId("" + i + "_" + j);
+                plugDescription.setProxyServiceURL("" + i + "_" + j);
                 plugDescription.setOrganisation(""+i);
                 bus.getIPlugRegistry().addIPlug(plugDescription);
                 count ++;

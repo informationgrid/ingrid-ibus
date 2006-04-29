@@ -45,7 +45,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
             
             ProxyService.createProxyServer(this.fPlugComms[i],IPlug.class,new DummyIPlug());
             this.plugDescriptions[i] = new PlugDescription();
-            this.plugDescriptions[i].setPlugId("" + i);
+            this.plugDescriptions[i].setProxyServiceURL("" + i);
             this.plugDescriptions[i].setProxyServiceURL(AddressUtil.getWetagURL("localhost", 60006 + i));
             this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());
             this.plugDescriptions[i].addField("ort");
