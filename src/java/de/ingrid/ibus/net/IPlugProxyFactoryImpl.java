@@ -9,6 +9,7 @@ package de.ingrid.ibus.net;
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.reflect.ProxyService;
 import de.ingrid.utils.IPlug;
+import de.ingrid.utils.IRecordLoader;
 import de.ingrid.utils.PlugDescription;
 
 /**
@@ -36,8 +37,13 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
      */
     public IPlug createPlugProxy(PlugDescription plugDescription) throws Exception {
         final String plugUrl = plugDescription.getProxyServiceURL();
-        IPlug plug = (IPlug) ProxyService.createProxy(this.fCommunication, IPlug.class, plugUrl);
 
-        return plug;
+        if (plugDescription.isRecordloader()) {
+            return (IPlug) ProxyService.createProxy(this.fCommunication, IPlug.class, plugUrl);
+        } else {
+            return (IPlug) ProxyService.createProxy(this.fCommunication, new Class[] { IPlug.class, IRecordLoader.class },
+                    plugUrl);
+        }
+
     }
 }
