@@ -39,11 +39,9 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
         final String plugUrl = plugDescription.getProxyServiceURL();
 
         if (plugDescription.isRecordloader()) {
-            return (IPlug) ProxyService.createProxy(this.fCommunication, IPlug.class, plugUrl);
-        } else {
-            return (IPlug) ProxyService.createProxy(this.fCommunication, new Class[] { IPlug.class, IRecordLoader.class },
-                    plugUrl);
+            return (IPlug) ProxyService.createProxy(this.fCommunication,
+                    new Class[] { IPlug.class, IRecordLoader.class }, plugUrl);
         }
-
+        return (IPlug) ProxyService.createProxy(this.fCommunication, IPlug.class, plugUrl);
     }
 }
