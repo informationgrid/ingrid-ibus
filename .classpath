@@ -14,6 +14,5 @@
 	<classpathentry kind="src" path="/ingrid-utils"/>
 	<classpathentry kind="var" path="MAVEN_REPO/ingrid/jars/ingrid-iplug-0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/weta-components/jars/communication-jxta-SNAPSHOT.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ingrid-iplug"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
