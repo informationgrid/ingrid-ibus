@@ -36,6 +36,6 @@ public class IngridHitComparator implements Comparator {
         float score1 = hit1.getScore();
         float scoreDiff = score0 - score1;
 
-        return (scoreDiff > 0) ? -1 : 1;
+        return (scoreDiff < 0) ? 1 : -1;
     }
 }
