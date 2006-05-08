@@ -4,7 +4,6 @@
 package de.ingrid.ibus;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
