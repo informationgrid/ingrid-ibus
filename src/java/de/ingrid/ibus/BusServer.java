@@ -95,7 +95,7 @@ public class BusServer {
         Properties properties = new Properties();
         try {
             properties.load(is);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Problems on loading globalRanking.properties");
             e.printStackTrace();
         }
