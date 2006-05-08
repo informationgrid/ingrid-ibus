@@ -91,7 +91,7 @@ public class BusServer {
         registry.setCommunication(communication);
 
         // read in the boost for iplugs
-        InputStream is = bus.getClass().getResourceAsStream("globalRanking.properties");
+        InputStream is = bus.getClass().getResourceAsStream("/globalRanking.properties");
         Properties properties = new Properties();
         try {
             properties.load(is);
