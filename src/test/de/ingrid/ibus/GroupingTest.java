@@ -45,15 +45,39 @@ public class GroupingTest extends TestCase {
         int currentPage = 1;
         int length = 1000;
         int maxMilliseconds = 1000;
-        IngridHits hits = fBus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        IngridHits hits = this.fBus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
         assertEquals(5, hits.length());
         assertEquals(1, hits.getHits().length);
 
         query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_PLUGID);
-        hits = fBus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        hits = this.fBus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
         assertEquals(5, hits.length());
         assertEquals(5, hits.getHits().length);
 
+    }
+    
+    /**
+     * @throws Exception
+     */
+    public void testGroupingINGRID_911() throws Exception {
+       PlugDescription plugDesc = new PlugDescription();
+        plugDesc.setProxyServiceURL("additional plug" );
+        plugDesc.setOrganisation("other organisation");
+        this.fBus.getIPlugRegistry().addIPlug(plugDesc);
+        
+        IngridQuery query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_ORGANISATION);
+        int hitsPerPage = 10;
+        int currentPage = 1;
+        int length = 1000;
+        int maxMilliseconds = 1000;
+        IngridHits hits = this.fBus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        assertEquals(6, hits.length());
+        assertEquals(2, hits.getHits().length);
+
+        query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_PLUGID);
+        hits = this.fBus.search(query, hitsPerPage, currentPage, length, maxMilliseconds);
+        assertEquals(6, hits.length());
+        assertEquals(6, hits.getHits().length);
     }
 
     /**
