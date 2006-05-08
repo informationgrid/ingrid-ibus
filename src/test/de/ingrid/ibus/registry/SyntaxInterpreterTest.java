@@ -68,7 +68,7 @@ public class SyntaxInterpreterTest extends TestCase {
         // using query parser
         assertEquals(0, getIPlugs("-datatype:UDK aQuery").length);
         IngridQuery query = QueryStringParser.parse("aQuery");
-        query.addField(new FieldQuery(false, true, "datatype", "UDK")); 
+        query.addField(new FieldQuery(false, true, "datatype", "UDK"));
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
         assertEquals(0, plugsForQuery.length);
     }
@@ -120,13 +120,10 @@ public class SyntaxInterpreterTest extends TestCase {
             assertEquals(1, getIPlugs("field" + i + ":aField").length);
         }
 
-        QueryStringParser parser = new QueryStringParser(new StringReader(
-                "a simple Query"));
+        QueryStringParser parser = new QueryStringParser(new StringReader("a simple Query"));
         IngridQuery query = parser.parse();
-        assertEquals(this.descriptions.length, SyntaxInterpreter
-                .getIPlugsForQuery(query, this.registry).length);
-        
-        
+        assertEquals(this.descriptions.length, SyntaxInterpreter.getIPlugsForQuery(query, this.registry).length);
+
     }
 
     /**
@@ -141,47 +138,43 @@ public class SyntaxInterpreterTest extends TestCase {
         aRegestry.addIPlug(description);
         IngridQuery query = QueryStringParser.parse("datatype:www");
 
-        assertEquals(1,
-                SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
+        assertEquals(1, SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
 
     }
-    
+
     /**
      * @throws Exception
      */
     public void testIsRanked() throws Exception {
-    	Registry aRegestry = new Registry(10, true);
+        Registry aRegestry = new Registry(10, true);
         PlugDescription description = new PlugDescription();
-        description.setProxyServiceURL ("23");
+        description.setProxyServiceURL("23");
         description.addField("datatype");
         description.addDataType("www");
         description.setRankinTypes(true, false, false);
         aRegestry.addIPlug(description);
-             IngridQuery query = QueryStringParser.parse("datatype:www ranking:score");
+        IngridQuery query = QueryStringParser.parse("datatype:www ranking:score");
 
-        assertEquals(1,
-                SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
-      
+        assertEquals(1, SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
+
         aRegestry = new Registry(10, true);
-         description = new PlugDescription();
+        description = new PlugDescription();
         description.setProxyServiceURL("23");
         description.addField("datatype");
         description.addDataType("www");
         description.setRankinTypes(false, false, true);
         aRegestry.addIPlug(description);
-              query = QueryStringParser.parse("datatype:www ranking:sore");
+        query = QueryStringParser.parse("datatype:www ranking:sore");
 
-        assertEquals(0,
-                SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
-	}
+        assertEquals(0, SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
+    }
 
     private PlugDescription[] getIPlugs(String queryString) throws Exception {
-        QueryStringParser parser = new QueryStringParser(new StringReader(
-                queryString));
+        QueryStringParser parser = new QueryStringParser(new StringReader(queryString));
         IngridQuery query = parser.parse();
         return SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
     }
-    
+
     /**
      * @throws Exception
      */
@@ -193,9 +186,26 @@ public class SyntaxInterpreterTest extends TestCase {
         assertEquals(0, getIPlugs("provider:hessen aQuery").length);
         // using query parser
         assertEquals(4, getIPlugs("-provider:berlin aQuery").length);
-       
+
         IngridQuery query = QueryStringParser.parse("aQuery");
-        query.addField(new FieldQuery(true, false, "provider", "anhalt")); 
+        query.addField(new FieldQuery(true, false, "provider", "anhalt"));
+        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
+        assertEquals(1, plugsForQuery.length);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testGetIPlugs_IPlugs() throws Exception {
+        assertEquals(0, getIPlugs("query " + IngridQuery.IPLUGS + ":" + "wrongPlug").length);
+        assertEquals(1, getIPlugs("query " + IngridQuery.IPLUGS + ":" + this.descriptions[0].getPlugId()).length);
+        assertEquals(1, getIPlugs("query " + IngridQuery.IPLUGS + ":" + this.descriptions[1].getPlugId()).length);
+
+        assertEquals(2, getIPlugs("query " + IngridQuery.IPLUGS + ":" + this.descriptions[0].getPlugId()+" "
+                + IngridQuery.IPLUGS + ":" + this.descriptions[1].getPlugId()).length);
+        // using query parser
+        IngridQuery query = QueryStringParser.parse("aQuery");
+        query.addField(new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[0].getPlugId()));
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
         assertEquals(1, plugsForQuery.length);
     }
