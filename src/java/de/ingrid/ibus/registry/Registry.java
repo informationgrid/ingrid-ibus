@@ -251,6 +251,12 @@ public class Registry implements Serializable {
      * @return The boost factor to a iplug.
      */
     public Float getGlobalRankingBoost(String plugId) {
-        return (Float) this.fGlobalRanking.get(plugId);
+        Float result = null;
+
+        if (null != this.fGlobalRanking) {
+            result = (Float) this.fGlobalRanking.get(plugId);
+        }
+        
+        return result;
     }
 }
