@@ -244,17 +244,20 @@ public class Bus extends Thread implements IBus {
                 ranked = hits.isRanked();
                 if (ranked && hits.getHits().length > 0) {
                     Float boost = this.fRegistry.getGlobalRankingBoost(hits.getPlugId());
-                    float score = hits.getHits()[0].getScore();
+                    IngridHit[] resultHits = hits.getHits();
+
                     if (null != boost) {
-                        score = score * boost.floatValue();
-                        hits.getHits()[0].setScore(score);
+                        for (int j = 0; j < resultHits.length; j++) {
+                            float score = resultHits[j].getScore();
+                            score = score * boost.floatValue();
+                            hits.getHits()[j].setScore(score);
+                        }
                     }
-                    
-                    if (maxScore < score) {
-                        maxScore = score;
+
+                    if (maxScore < resultHits[0].getScore()) {
+                        maxScore = resultHits[0].getScore();
                     }
                 }
-
             }
             IngridHit[] toAddHits = hits.getHits();
             if (toAddHits != null) {
@@ -501,7 +504,7 @@ public class Bus extends Thread implements IBus {
     public void addPlugDescription(PlugDescription plugDescription) {
         this.fRegistry.addIPlug(plugDescription);
     }
-    
+
     public void removePlugDescription(PlugDescription plugDescripion) {
         this.fRegistry.removePlugFromCache(plugDescripion.getPlugId());
     }
