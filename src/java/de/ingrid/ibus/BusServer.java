@@ -4,7 +4,11 @@
 package de.ingrid.ibus;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
@@ -21,15 +25,12 @@ import de.ingrid.utils.IBus;
 public class BusServer {
 
     /**
-     * This method is for starting a Proxy-Server by hand. The two required
-     * commandline options are "--multicastPort <port>" and "--unicastPort
-     * <port>". Every parameter need a different port where the proxy server
-     * listens on.
+     * This method is for starting a Proxy-Server by hand. The two required commandline options are "--multicastPort
+     * <port>" and "--unicastPort <port>". Every parameter need a different port where the proxy server listens on.
      * 
      * @param args
-     *            An array of strings containing the commandline options
-     *            described above.
-     * @throws InterruptedException 
+     *            An array of strings containing the commandline options described above.
+     * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
         final String usage = "Wrong numbers of arguments. You must set --descriptor <filename> and --busurl "
@@ -88,6 +89,28 @@ public class BusServer {
         Bus bus = new Bus(proxyFactory);
         Registry registry = bus.getIPlugRegistry();
         registry.setCommunication(communication);
+
+        // read in the boost for iplugs
+        InputStream is = bus.getClass().getResourceAsStream("globalRanking.properties");
+        Properties properties = new Properties();
+        try {
+            properties.load(is);
+        } catch (IOException e) {
+            System.err.println("Problems on loading globalRanking.properties");
+            e.printStackTrace();
+        }
+        HashMap globalRanking = new HashMap();
+        for (Iterator iter = properties.entrySet().iterator(); iter.hasNext();) {
+            String element = (String) iter.next();
+            try {
+                Float value = new Float((String) properties.get(element));
+                globalRanking.put(element, value);
+            } catch (NumberFormatException e) {
+                System.err.println("Cannot convert the value " + properties.get(element) + " from element " + element
+                        + " to a Float.");
+            }
+        }
+        registry.setGlobalRanking(globalRanking);
 
         // start the proxy service
         ReflectMessageHandler messageHandler = new ReflectMessageHandler();

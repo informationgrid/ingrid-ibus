@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import net.weta.components.communication.ICommunication;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import net.weta.components.communication.ICommunication;
 
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
@@ -44,6 +44,8 @@ public class Registry implements Serializable {
     private boolean fIplugAutoActivation;
 
     private ICommunication fCommunication = null;
+
+    private HashMap fGlobalRanking = null;
 
     private static Log fLogger = LogFactory.getLog(Registry.class);
 
@@ -75,7 +77,7 @@ public class Registry implements Serializable {
                 fLogger.error(e.getMessage(), e);
             }
         } else {
-//            fLogger.error("The communication isn't set in the registry.");
+            // fLogger.error("The communication isn't set in the registry.");
         }
 
         putToCache(plug);
@@ -234,4 +236,21 @@ public class Registry implements Serializable {
         this.fCommunication = communication;
     }
 
+    /**
+     * Sets the global ranking for all iplugs.
+     * 
+     * @param globalRanking
+     *            A HashMap containing a boost factor to a iplug id.
+     */
+    public void setGlobalRanking(HashMap globalRanking) {
+        this.fGlobalRanking = globalRanking;
+    }
+
+    /**
+     * @param plugId A iplug id.
+     * @return The boost factor to a iplug.
+     */
+    public Float getGlobalRankingBoost(String plugId) {
+        return (Float) this.fGlobalRanking.get(plugId);
+    }
 }

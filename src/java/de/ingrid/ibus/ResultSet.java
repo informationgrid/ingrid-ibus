@@ -7,7 +7,6 @@
 package de.ingrid.ibus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * 

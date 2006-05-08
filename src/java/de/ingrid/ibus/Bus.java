@@ -243,8 +243,15 @@ public class Bus extends Thread implements IBus {
             if (ranked) {
                 ranked = hits.isRanked();
                 if (ranked && hits.getHits().length > 0) {
-                    if (maxScore < hits.getHits()[0].getScore()) {
-                        maxScore = hits.getHits()[0].getScore();
+                    Float boost = this.fRegistry.getGlobalRankingBoost(hits.getPlugId());
+                    float score = hits.getHits()[0].getScore();
+                    if (null != boost) {
+                        score = score * boost.floatValue();
+                        hits.getHits()[0].setScore(score);
+                    }
+                    
+                    if (maxScore < score) {
+                        maxScore = score;
                     }
                 }
 
@@ -347,7 +354,7 @@ public class Bus extends Thread implements IBus {
         IPlug plugProxy = this.fRegistry.getProxyFromCache(hit.getPlugId());
         if (null == plugProxy) {
             fLogger.error("Create new connection to IPlug: " + plugDescription.getPlugId());
-            // TODO this should'nt happen
+            // TODO this shouldn't happen
             plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
             this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
         }
