@@ -100,10 +100,11 @@ public class BusServer {
             e.printStackTrace();
         }
         HashMap globalRanking = new HashMap();
-        for (Iterator iter = properties.entrySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
             String element = (String) iter.next();
             try {
                 Float value = new Float((String) properties.get(element));
+                System.out.println("add boost for iplug: " + element + " with value: " + value);
                 globalRanking.put(element, value);
             } catch (NumberFormatException e) {
                 System.err.println("Cannot convert the value " + properties.get(element) + " from element " + element
