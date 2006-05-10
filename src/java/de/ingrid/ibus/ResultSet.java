@@ -27,6 +27,7 @@ public class ResultSet extends ArrayList {
      */
     public ResultSet(int numberOfConnections) {
         this.fNumberOfConnections = numberOfConnections;
+        this.fPlugIdsWithResult=new ArrayList(numberOfConnections);
     }
 
     /**

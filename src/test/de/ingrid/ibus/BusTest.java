@@ -32,7 +32,7 @@ public class BusTest extends TestCase {
 
     private Bus bus;
 
-    private PlugDescription[] plugDescriptions = new PlugDescription[3000];
+    private PlugDescription[] plugDescriptions = new PlugDescription[30];
 
     protected void setUp() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
@@ -49,13 +49,15 @@ public class BusTest extends TestCase {
      * @throws Exception
      */
     public void testSearch() throws Exception {
-        IngridQuery query = QueryStringParser.parse("fische ort:halle");
+        IngridQuery query = QueryStringParser.parse("fische ort:halle ranking:score");
 
         for (int i = 0; i < 5; i++) {
             long time = System.currentTimeMillis();
             IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000);
             System.out.println("search took " + (System.currentTimeMillis() - time) + " ms");
             assertEquals(this.plugDescriptions.length, hits.getHits().length);
+            assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
+            assertTrue(hits.isRanked());
         }
 
     }
@@ -68,6 +70,7 @@ public class BusTest extends TestCase {
         IngridQuery query = QueryStringParser.parse("aField:halle");
         IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
         assertEquals(1, hits.getHits().length);
+        assertEquals(1, hits.getInVolvedPlugs());
     }
 
     /**
@@ -132,6 +135,44 @@ public class BusTest extends TestCase {
         for (int i = 0; i < details.length; i++) {
             IngridHitDetail detail = details[i];
             assertEquals(detail.getDocumentId(), hitArray[i].getDocumentId());
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testUnrankedSearch() throws Exception {
+        this.bus = new Bus(new DummyProxyFactory());
+        this.plugDescriptions = new PlugDescription[3];
+        for (int i = 0; i < this.plugDescriptions.length; i++) {
+            this.plugDescriptions[i] = new PlugDescription();
+            this.plugDescriptions[i].setProxyServiceURL("" + i);
+            this.plugDescriptions[i].setOrganisation(ORGANISATION);
+            this.plugDescriptions[i].addField("ort");
+            this.bus.addPlugDescription(this.plugDescriptions[i]);
+        }
+
+        IngridQuery query = QueryStringParser.parse("fische");
+        query.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
+        IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        assertEquals(this.plugDescriptions.length, hits.getHits().length);
+        assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
+        assertFalse(hits.isRanked());
+        for (int i = 0; i < this.plugDescriptions.length; i++) {
+            assertEquals(hits.getHits()[0].getPlugId(), this.plugDescriptions[0].getPlugId());
+        }
+
+        // invert order of plugdescriptions
+        this.bus.removePlugDescription(this.plugDescriptions[0]);
+        this.bus.removePlugDescription(this.plugDescriptions[1]);
+        assertEquals(1, this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000).length());
+        this.bus.addPlugDescription(this.plugDescriptions[1]);
+        this.bus.addPlugDescription(this.plugDescriptions[0]);
+
+        hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        for (int i = 0; i < this.plugDescriptions.length; i++) {
+            assertEquals(hits.getHits()[i].getPlugId(), this.plugDescriptions[this.plugDescriptions.length - i - 1]
+                    .getPlugId());
         }
 
     }

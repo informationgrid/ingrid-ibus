@@ -21,6 +21,7 @@ package de.ingrid.ibus;
 import java.util.Comparator;
 
 import de.ingrid.utils.IngridHit;
+import de.ingrid.utils.IngridHits;
 
 /**
  * Container for different {@link java.util.Comparator}.
@@ -37,7 +38,7 @@ public class Comparators {
     /**
      * Compares the score of two hits.
      */
-    public static final Comparator INGRID_HIT_COMPARATOR = new Comparator() {
+    public static final Comparator SCORE_HIT_COMPARATOR = new Comparator() {
 
         public int compare(Object arg0, Object arg1) {
             if (null == arg0) {
@@ -56,6 +57,23 @@ public class Comparators {
             float scoreDiff = score0 - score1;
 
             return (scoreDiff < 0) ? 1 : -1;
+        }
+    };
+
+    /***/
+    public static final String UNRANKED_HITS_COMPARATOR_POSITION = "hits-position";
+
+    /**
+     * 
+     */
+    public static final Comparator UNRANKED_HITS_COMPARATOR = new Comparator() {
+
+        public int compare(Object o1, Object o2) {
+            IngridHits hits1 = (IngridHits) o1;
+            IngridHits hits2 = (IngridHits) o2;
+            Integer pos1 = (Integer) hits1.get(UNRANKED_HITS_COMPARATOR_POSITION);
+            Integer pos2 = (Integer) hits2.get(UNRANKED_HITS_COMPARATOR_POSITION);
+            return pos1.compareTo(pos2);
         }
 
     };
