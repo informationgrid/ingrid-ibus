@@ -74,80 +74,52 @@ public class Bus extends Thread implements IBus {
         }
         this.fProcessorPipe.preProcess(query);
         boolean grouping = query.getGrouped() != null && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF);
-        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
 
-        int requestLength = 0;
+        int requestLength;
         if (!grouping) {
             requestLength = hitsPerPage * currentPage;
         } else {
-            requestLength = hitsPerPage * currentPage * 3;
+            requestLength = startHit + (hitsPerPage * 3);
         }
+        ResultSet resultSet = requestHits(query, maxMilliseconds, SyntaxInterpreter.getIPlugsForQuery(query,
+                this.fRegistry), 0, requestLength);
 
-        ResultSet resultSet = requestHits(query, maxMilliseconds, new Object(), plugsForQuery, 0, requestLength);
         // XXX We normalize always ? for unranked searches too ?
         IngridHits tmpHits = normalizeScores(resultSet);
         IngridHit[] hits = tmpHits.getHits();
         int totalHits = (int) tmpHits.length();
         if (hits.length == 0) {
-            return new IngridHits("ibus", hits.length, hits, true);
+            IngridHits hitContainer = new IngridHits(hits.length, hits);
+            setDefaultInformations(hitContainer, resultSet, true);
         }
         this.fProcessorPipe.postProcess(query, hits);
 
+        IngridHits hitContainer;
         if (grouping) {
             hits = cutFirstHits(hits, startHit);
-            return groupHits(query, hits, hitsPerPage, totalHits, startHit);
-        }
-        hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
-        return new IngridHits("ibus", totalHits, hits, true);
-
-    }
-
-    private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
-        int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
-        int resultLength = 0;
-        if (hits.length == pageStart) {
-            pageStart = Math.min(((currentPage - 2) * hitsPerPage), hits.length);
-        }
-        if (hits.length > pageStart) {
-            resultLength = Math.min(hits.length - pageStart, hitsPerPage);
+            hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
         } else {
-            resultLength = Math.min(hits.length, hitsPerPage);
+            hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
+            hitContainer = new IngridHits(totalHits, hits);
         }
-        if (hits.length == resultLength) {
-            return hits;
-        }
-        IngridHit[] cuttedHits = new IngridHit[resultLength];
-        System.arraycopy(hits, pageStart, cuttedHits, 0, resultLength);
-        // System.out.println("hits: " + hits.length);
-        // System.out.println("pageStart: " + pageStart);
-        // System.out.println("newHi"+newHits.length);
-        // System.out.println("resultlenght: " + resultLength);s
-        return cuttedHits;
+        setDefaultInformations(hitContainer, resultSet, true);
+        return hitContainer;
     }
 
-    private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
-        int newLength = hits.length - startHit;
-        if (hits.length == newLength) {
-            return hits;
-        }
-        IngridHit[] cuttedHits = new IngridHit[newLength];
-        System.arraycopy(hits, startHit, cuttedHits, 0, newLength);
-        return cuttedHits;
+    private void setDefaultInformations(IngridHits hitContainer, ResultSet resultSet, boolean ranked) {
+        hitContainer.setPlugId("ibus");
+        hitContainer.setInVolvedPlugs(resultSet.getPlugIdsWithResult().length);
+        hitContainer.setRanked(ranked);
     }
 
-    private ResultSet requestHits(IngridQuery query, int maxMilliseconds, Object monitor,
-            PlugDescription[] plugsForQuery, int start, int requestLength) throws Exception {
-        ResultSet resultSet = new ResultSet(plugsForQuery.length, monitor);
+    private ResultSet requestHits(IngridQuery query, int maxMilliseconds, PlugDescription[] plugsForQuery, int start,
+            int requestLength) throws Exception {
         int plugsForQueryLength = plugsForQuery.length;
+        ResultSet resultSet = new ResultSet(plugsForQueryLength);
         PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
 
         for (int i = 0; i < plugsForQueryLength; i++) {
             PlugDescription plugDescription = plugsForQuery[i];
-            if (fLogger.isDebugEnabled()) {
-                fLogger.debug("forward query to: " + plugDescription.getPlugId() + ": "
-                        + plugDescription.getOrganisation());
-            }
-
             IPlug plugProxy = getPlugProxy(plugDescription.getPlugId());
             requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
                     query, start, requestLength);
@@ -155,14 +127,13 @@ public class Bus extends Thread implements IBus {
         }
         if (plugsForQueryLength > 0) {
             try {
-                synchronized (monitor) {
+                synchronized (resultSet) {
                     if (!resultSet.isComplete()) {
-                        monitor.wait(maxMilliseconds);
+                        resultSet.wait(maxMilliseconds);
                     }
                 }
-            } catch (Exception e) {
-                System.out.println("was interrupted.");
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                fLogger.warn("waiting for results iterrupted");
             }
         }
         for (int i = 0; i < plugsForQueryLength; i++) {
@@ -210,7 +181,6 @@ public class Bus extends Thread implements IBus {
 
         return new IngridHits("ibus", totalHits, sortLimitNormalize((IngridHit[]) documents
                 .toArray(new IngridHit[documents.size()]), ranked, maxScore), true);
-
     }
 
     private IngridHit[] sortLimitNormalize(IngridHit[] documents, boolean ranked, float maxScore) {
@@ -255,9 +225,8 @@ public class Bus extends Thread implements IBus {
             groupedHitsLength++;
         }
 
-        // return group hits
-        IngridHit[] hits2 = (IngridHit[]) groupHits.toArray(new IngridHit[groupHits.size()]);
-        return new IngridHits("ibus", totalHits, hits2, true, groupedHitsLength + startHit);
+        IngridHit[] groupedHits = (IngridHit[]) groupHits.toArray(new IngridHit[groupHits.size()]);
+        return new IngridHits(totalHits, groupedHits, groupedHitsLength + startHit);
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
@@ -295,6 +264,39 @@ public class Bus extends Thread implements IBus {
             }
         }
         return false;
+    }
+
+    private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
+        int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
+        int resultLength = 0;
+        if (hits.length == pageStart) {
+            pageStart = Math.min(((currentPage - 2) * hitsPerPage), hits.length);
+        }
+        if (hits.length > pageStart) {
+            resultLength = Math.min(hits.length - pageStart, hitsPerPage);
+        } else {
+            resultLength = Math.min(hits.length, hitsPerPage);
+        }
+        if (hits.length == resultLength) {
+            return hits;
+        }
+        IngridHit[] cuttedHits = new IngridHit[resultLength];
+        System.arraycopy(hits, pageStart, cuttedHits, 0, resultLength);
+        // System.out.println("hits: " + hits.length);
+        // System.out.println("pageStart: " + pageStart);
+        // System.out.println("newHi"+newHits.length);
+        // System.out.println("resultlenght: " + resultLength);s
+        return cuttedHits;
+    }
+
+    private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
+        int newLength = hits.length - startHit;
+        if (hits.length == newLength) {
+            return hits;
+        }
+        IngridHit[] cuttedHits = new IngridHit[newLength];
+        System.arraycopy(hits, startHit, cuttedHits, 0, newLength);
+        return cuttedHits;
     }
 
     public Record getRecord(IngridHit hit) throws Exception {

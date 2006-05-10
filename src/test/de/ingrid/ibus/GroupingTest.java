@@ -150,7 +150,6 @@ public class GroupingTest extends TestCase {
             IngridHits hits = bus.search(query, hitsPerPage, 0, foundHits, maxMilliseconds);
             assertEquals(plugCount, hits.length());
             foundHits = hits.getGoupedHitsLength();
-            System.out.println(foundHits);
             if (foundHits < plugCount) {
                 assertEquals(hitsPerPage, hits.getHits().length);
             } else {

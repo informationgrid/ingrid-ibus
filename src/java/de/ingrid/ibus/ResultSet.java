@@ -7,55 +7,62 @@
 package de.ingrid.ibus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
  */
 public class ResultSet extends ArrayList {
 
-	private static final long serialVersionUID = ResultSet.class.getName()
-			.hashCode();
+    private static final long serialVersionUID = ResultSet.class.getName().hashCode();
 
-	private int  fNumberOfConnections;
+    private int fNumberOfConnections;
 
-	private int fNumberOfFinsihedConnections = 0;
+    private int fNumberOfFinsihedConnections = 0;
 
-	private Object fMonitor;
+    private List fPlugIdsWithResult;
 
-	/**
-	 * @param numberOfConnections
-	 * @param monitor
-	 */
-	public ResultSet(int numberOfConnections, Object monitor) {
-		this.fNumberOfConnections = numberOfConnections;
-		this.fMonitor = monitor;
-	}
+    /**
+     * @param numberOfConnections
+     */
+    public ResultSet(int numberOfConnections) {
+        this.fNumberOfConnections = numberOfConnections;
+    }
 
-	/**
-	 * @return if all connections are finished
-	 */
-	public synchronized boolean isComplete() {
-		return this.fNumberOfConnections == this.fNumberOfFinsihedConnections;
-	}
+    /**
+     * @return if all connections are finished
+     */
+    public synchronized boolean isComplete() {
+        return this.fNumberOfConnections == this.fNumberOfFinsihedConnections;
+    }
 
-	/**
+    /**
      * 
      */
     public synchronized void resultsAdded() {
         this.fNumberOfFinsihedConnections += 1;
         if (isComplete()) {
-            synchronized (fMonitor) {
-                fMonitor.notify();
-            }
+            this.notify();
         }
     }
 
+    /**
+     * @param arg0
+     * @param plugId
+     * @return true
+     */
+    public synchronized boolean add(Object arg0, String plugId) {
+        if (arg0 == null) {
+            throw new IllegalArgumentException("null can not added as Hits");
+        }
+        this.fPlugIdsWithResult.add(plugId);
+        return super.add(arg0);
+    }
 
-
-	public synchronized boolean add(Object arg0) {
-		if (arg0 == null) {
-			throw new IllegalArgumentException("null can not added as Hits");
-		}
-		return super.add(arg0);
-	}
+    /**
+     * @return all plugIds from the plugs which delivers a result.
+     */
+    public String[] getPlugIdsWithResult() {
+        return (String[]) this.fPlugIdsWithResult.toArray(new String[this.fPlugIdsWithResult.size()]);
+    }
 }
