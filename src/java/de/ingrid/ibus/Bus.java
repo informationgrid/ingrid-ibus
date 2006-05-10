@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.logging.Log;
@@ -53,73 +55,17 @@ public class Bus extends Thread implements IBus {
 
     private IPlugProxyFactory fProxyFactory = null;
 
-    private static Bus fBusInstance = null;
-
-    /**
-     * For deserialization.
-     */
-    public Bus() {
-        fBusInstance = this;
-        boolean iplugAutoActivation = getAutoActivationProperty();
-        this.fRegistry = new Registry(100000, iplugAutoActivation);
-    }
-
     /**
      * @param factory
      */
     public Bus(IPlugProxyFactory factory) {
-        Bus.fBusInstance = this;
         this.fProxyFactory = factory;
         boolean iplugAutoActivation = getAutoActivationProperty();
         this.fRegistry = new Registry(100000, iplugAutoActivation);
     }
 
-    /**
-     * Returns the current IBus instance.
-     * 
-     * @return The IBus instance.
-     */
-    public static IBus getInstance() {
-        Bus result = null;
-
-        if (null != fBusInstance) {
-            result = fBusInstance;
-        } else {
-            fLogger.error("Bus not yet instantiated.");
-        }
-
-        return result;
-    }
-
-    private boolean getAutoActivationProperty() {
-        Configuration configuration = new Configuration();
-        InputStream resourceAsStream = Bus.class.getResourceAsStream("/configuration.xml");
-        boolean iplugAutoActivation = true;
-        if (resourceAsStream != null) {
-            try {
-                configuration.load(resourceAsStream);
-            } catch (IOException e) {
-                fLogger.error("unable to load existing configuration", e);
-            }
-            iplugAutoActivation = configuration.get("iplugAutoActivation", "false").equals("true");
-        }
-        return iplugAutoActivation;
-    }
-
-    /**
-     * Multicast the query to all connected IPlugs and return founded results.
-     * 
-     * @param query
-     * @param hitsPerPage
-     * @param currentPage
-     * @param length
-     * @param maxMilliseconds
-     * @return IngridHits as container for hits and meta data.
-     * @throws Exception
-     */
-    public IngridHits search(IngridQuery query, final int hitsPerPage, int currentPage, int length, int maxMilliseconds)
-            throws Exception {
-        Object monitor = new Object();
+    public IngridHits search(IngridQuery query, final int hitsPerPage, int currentPage, int startHit,
+            int maxMilliseconds) throws Exception {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("search for: " + query.toString());
         }
@@ -128,7 +74,6 @@ public class Bus extends Thread implements IBus {
         }
         this.fProcessorPipe.preProcess(query);
         boolean grouping = query.getGrouped() != null && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF);
-        // TODO add grouping
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
 
         int requestLength = 0;
@@ -138,23 +83,27 @@ public class Bus extends Thread implements IBus {
             requestLength = hitsPerPage * currentPage * 3;
         }
 
-        ResultSet resultSet = requestHits(query, maxMilliseconds, monitor, plugsForQuery, 0, requestLength);
+        ResultSet resultSet = requestHits(query, maxMilliseconds, new Object(), plugsForQuery, 0, requestLength);
+        // XXX We normalize always ? for unranked searches too ?
         IngridHits tmpHits = normalizeScores(resultSet);
         IngridHit[] hits = tmpHits.getHits();
         int totalHits = (int) tmpHits.length();
-
         if (hits.length == 0) {
-            return tmpHits;
+            return new IngridHits("ibus", hits.length, hits, true);
         }
         this.fProcessorPipe.postProcess(query, hits);
+
         if (grouping) {
-            hits = groupHits(query, hits);
+            hits = cutFirstHits(hits, startHit);
+            return groupHits(query, hits, hitsPerPage, totalHits, startHit);
         }
+        hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
+        return new IngridHits("ibus", totalHits, hits, true);
 
-        // To remove empty entries?
+    }
 
+    private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
         int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
-
         int resultLength = 0;
         if (hits.length == pageStart) {
             pageStart = Math.min(((currentPage - 2) * hitsPerPage), hits.length);
@@ -164,14 +113,26 @@ public class Bus extends Thread implements IBus {
         } else {
             resultLength = Math.min(hits.length, hitsPerPage);
         }
-        IngridHit[] newHits = new IngridHit[resultLength];
+        if (hits.length == resultLength) {
+            return hits;
+        }
+        IngridHit[] cuttedHits = new IngridHit[resultLength];
+        System.arraycopy(hits, pageStart, cuttedHits, 0, resultLength);
         // System.out.println("hits: " + hits.length);
         // System.out.println("pageStart: " + pageStart);
         // System.out.println("newHi"+newHits.length);
-        // System.out.println("resultlenght: " + resultLength);
-        System.arraycopy(hits, pageStart, newHits, 0, resultLength);
+        // System.out.println("resultlenght: " + resultLength);s
+        return cuttedHits;
+    }
 
-        return new IngridHits("ibus", totalHits, newHits, true);
+    private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
+        int newLength = hits.length - startHit;
+        if (hits.length == newLength) {
+            return hits;
+        }
+        IngridHit[] cuttedHits = new IngridHit[newLength];
+        System.arraycopy(hits, startHit, cuttedHits, 0, newLength);
+        return cuttedHits;
     }
 
     private ResultSet requestHits(IngridQuery query, int maxMilliseconds, Object monitor,
@@ -181,34 +142,16 @@ public class Bus extends Thread implements IBus {
         PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
 
         for (int i = 0; i < plugsForQueryLength; i++) {
-
             PlugDescription plugDescription = plugsForQuery[i];
             if (fLogger.isDebugEnabled()) {
                 fLogger.debug("forward query to: " + plugDescription.getPlugId() + ": "
                         + plugDescription.getOrganisation());
             }
 
-            IPlug plugProxy = this.fRegistry.getProxyFromCache(plugDescription.getPlugId());
-
-            if (null == plugProxy) {
-                if (fLogger.isDebugEnabled()) {
-                    fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
-                }
-                try {
-                    plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-                    this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
-                } catch (Exception e) {
-                    fLogger.info("removing plugdescription from repository: " + plugDescription.getPlugId() + ": "
-                            + plugDescription.getOrganisation(), e);
-                    this.fRegistry.removePlugFromCache(plugDescription.getPlugId());
-
-                    continue;
-                }
-            }
+            IPlug plugProxy = getPlugProxy(plugDescription.getPlugId());
             requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
                     query, start, requestLength);
             requests[i].start();
-
         }
         if (plugsForQueryLength > 0) {
             try {
@@ -235,7 +178,7 @@ public class Bus extends Thread implements IBus {
         float maxScore = 1.0f;
         int totalHits = 0;
         int count = resultSet.size();
-        ArrayList documents = new ArrayList();
+        List documents = new LinkedList();
         boolean ranked = true;
         for (int i = 0; i < count; i++) {
             IngridHits hits = (IngridHits) resultSet.get(i);
@@ -245,7 +188,6 @@ public class Bus extends Thread implements IBus {
                 if (ranked && hits.getHits().length > 0) {
                     Float boost = this.fRegistry.getGlobalRankingBoost(hits.getPlugId());
                     IngridHit[] resultHits = hits.getHits();
-
                     if (null != boost) {
                         for (int j = 0; j < resultHits.length; j++) {
                             float score = resultHits[j].getScore();
@@ -258,6 +200,7 @@ public class Bus extends Thread implements IBus {
                         maxScore = resultHits[0].getScore();
                     }
                 }
+
             }
             IngridHit[] toAddHits = hits.getHits();
             if (toAddHits != null) {
@@ -270,63 +213,80 @@ public class Bus extends Thread implements IBus {
 
     }
 
-    private IngridHit[] groupHits(IngridQuery query, IngridHit[] hits) {
-        String grouped = query.getGrouped();
-
-        // push grouped fields
-        if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PLUGID)) {
-            for (int i = 0; i < hits.length; i++) {
-                if (hits[i].getGroupedFileds() == null) {
-                    hits[i].addGroupedField(hits[i].getPlugId());
-                }
-            }
-
-        } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_ORGANISATION)) {
-            for (int i = 0; i < hits.length; i++) {
-                if (hits[i].getGroupedFileds() == null) {
-                    hits[i].addGroupedField(getIPlug(hits[i].getPlugId()).getOrganisation());
-                }
-            }
-
-        } else if (grouped.equalsIgnoreCase(IngridQuery.GROUPED_BY_PARTNER)) {
-            for (int i = 0; i < hits.length; i++) {
-                String[] partners = getIPlug(hits[i].getPlugId()).getPartners();
-                for (int j = 0; j < partners.length; j++) {
-                    if (hits[i].getGroupedFileds() == null) {
-                        hits[i].addGroupedField(partners[j]);
-                    }
-                }
-            }
+    private IngridHit[] sortLimitNormalize(IngridHit[] documents, boolean ranked, float maxScore) {
+        if (!ranked) {
+            return documents;
+        }
+        // first normalize
+        float scoreNorm = 1.0f / maxScore;
+        int count = documents.length;
+        for (int i = 0; i < count; i++) {
+            documents[i].setScore(documents[i].getScore() * scoreNorm);
         }
 
-        ArrayList results = new ArrayList();
+        Arrays.sort(documents, Comparators.INGRID_HIT_COMPARATOR);
+        return documents;
+    }
 
+    private IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit)
+            throws Exception {
+        List groupHits = new ArrayList(hitsPerPage);
+        int groupedHitsLength = 0;
+        boolean newGroup;
         for (int i = 0; i < hits.length; i++) {
             IngridHit hit = hits[i];
-            int size = results.size();
-            boolean found = false;
+            addGroupingInformation(hit, query);
+            newGroup = true;
+            int size = groupHits.size();
             for (int j = 0; j < size; j++) {
-                IngridHit group = (IngridHit) results.get(j);
-                if (areInSameGroup(group, hit)) {
+                IngridHit group = (IngridHit) groupHits.get(j);
+                if (areInSameGroup(hit, group)) {
                     group.addGroupHit(hit);
-                    found = true;
+                    newGroup = false;
                 }
             }
-            if (!found) {
-                results.add(hit); // we add the hit as new group
+            if (newGroup) {
+                if (groupHits.size() < hitsPerPage) {
+                    groupHits.add(hit); // we add the hit as new group
+                } else {
+                    break;
+                }
+            }
+            groupedHitsLength++;
+        }
+
+        // return group hits
+        IngridHit[] hits2 = (IngridHit[]) groupHits.toArray(new IngridHit[groupHits.size()]);
+        return new IngridHits("ibus", totalHits, hits2, true, groupedHitsLength + startHit);
+    }
+
+    private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
+        // XXX we just group for the 1st provider/partner
+        if (IngridQuery.GROUPED_BY_PLUGID.equalsIgnoreCase(query.getGrouped())) {
+            hit.addGroupedField(hit.getPlugId());
+        } else if (IngridQuery.GROUPED_BY_PARTNER.equalsIgnoreCase(query.getGrouped())) {
+            IPlug plug = getPlugProxy(hit.getPlugId());
+            IngridHitDetail detail = plug.getDetail(hit, query, new String[] { PlugDescription.PARTNER });
+            String[] partners = (String[]) detail.getArray(PlugDescription.PARTNER);
+            for (int i = 0; i < partners.length; i++) {
+                hit.addGroupedField(partners[i]);
+                break;
+            }
+        } else if (IngridQuery.GROUPED_BY_ORGANISATION.equalsIgnoreCase(query.getGrouped())) {
+            IPlug plug = getPlugProxy(hit.getPlugId());
+            IngridHitDetail detail = plug.getDetail(hit, query, new String[] { PlugDescription.PROVIDER });
+            String[] providers = (String[]) detail.getArray(PlugDescription.PROVIDER);
+            for (int i = 0; i < providers.length; i++) {
+                hit.addGroupedField(providers[i]);
+                break;
             }
         }
-        // return group hits
-        return (IngridHit[]) results.toArray(new IngridHit[results.size()]);
-
     }
 
     private boolean areInSameGroup(IngridHit group, IngridHit hit) {
         String[] groupFields = group.getGroupedFileds();
         String[] hitFields = hit.getGroupedFileds();
-        if (groupFields == null || hitFields == null) {
-            return false;
-        }
+
         for (int i = 0; i < groupFields.length; i++) {
             for (int j = 0; j < hitFields.length; j++) {
                 if (groupFields[i].equalsIgnoreCase(hitFields[j])) {
@@ -337,30 +297,9 @@ public class Bus extends Thread implements IBus {
         return false;
     }
 
-    private IngridHit[] sortLimitNormalize(IngridHit[] documents, boolean ranked, float maxScore) {
-        // sort
-        if (ranked) {
-            // first normalize
-            float scoreNorm = 1.0f / maxScore;
-            int count = documents.length;
-            for (int i = 0; i < count; i++) {
-                documents[i].setScore(documents[i].getScore() * scoreNorm);
-            }
-
-            Arrays.sort(documents, new IngridHitComparator());
-        }
-        return documents;
-    }
-
     public Record getRecord(IngridHit hit) throws Exception {
         PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(hit.getPlugId());
-        IPlug plugProxy = this.fRegistry.getProxyFromCache(hit.getPlugId());
-        if (null == plugProxy) {
-            fLogger.error("Create new connection to IPlug: " + plugDescription.getPlugId());
-            // TODO this shouldn't happen
-            plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-            this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
-        }
+        IPlug plugProxy = getPlugProxy(hit.getPlugId());
         if (plugDescription.isRecordloader()) {
             return ((IRecordLoader) plugProxy).getRecord(hit);
         }
@@ -392,7 +331,6 @@ public class Bus extends Thread implements IBus {
     }
 
     public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
-
         if (requestedFields == null) {
             requestedFields = new String[0];
         }
@@ -411,7 +349,7 @@ public class Bus extends Thread implements IBus {
         // send requests and collect response
         Iterator iterator = hashMap.keySet().iterator();
         IPlug plugProxy;
-        ArrayList resultList = new ArrayList();
+        ArrayList resultList = new ArrayList(hits.length);
         Random random = new Random(System.currentTimeMillis());
         while (iterator.hasNext()) {
             String plugId = (String) iterator.next();
@@ -420,7 +358,6 @@ public class Bus extends Thread implements IBus {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
                 plugProxy = getPlugProxy(plugId);
                 IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
-
                 for (int i = 0; i < responseDetails.length; i++) {
                     if (responseDetails[i] == null) {
                         fLogger.error(plugId + ": responded details that are null (set a pseudo responseDetail");
@@ -474,15 +411,20 @@ public class Bus extends Thread implements IBus {
      * @param plugId
      * @return a proxy from cache or if it was not cached we create a new proxy
      *         and add it to the cache.
-     * @throws Exception
      */
-    private IPlug getPlugProxy(String plugId) throws Exception {
+    private IPlug getPlugProxy(String plugId) {
         IPlug plugProxy = this.fRegistry.getProxyFromCache(plugId);
         if (null == plugProxy) {
             PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(plugId);
             fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
-            plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-            this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
+            try {
+                plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+                this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
+            } catch (Exception e) {
+                fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
+                removePlugDescription(plugDescription);
+            }
+
         }
         return plugProxy;
     }
@@ -517,7 +459,22 @@ public class Bus extends Thread implements IBus {
         return this.fRegistry.getPlugDescription(plugId);
     }
 
+    private boolean getAutoActivationProperty() {
+        Configuration configuration = new Configuration();
+        InputStream resourceAsStream = Bus.class.getResourceAsStream("/configuration.xml");
+        boolean iplugAutoActivation = true;
+        if (resourceAsStream != null) {
+            try {
+                configuration.load(resourceAsStream);
+            } catch (IOException e) {
+                fLogger.error("unable to load existing configuration", e);
+            }
+            iplugAutoActivation = configuration.get("iplugAutoActivation", "false").equals("true");
+        }
+        return iplugAutoActivation;
+    }
+
     public void close() throws Exception {
-        fBusInstance = null;
+        // nothing
     }
 }

@@ -18,16 +18,26 @@ import de.ingrid.utils.query.IngridQuery;
  */
 public class DummyIPlug implements IPlug {
 
+    /***/
     public static final String SUMMARY = "a summary";
 
+    /***/
     public static final String TITLE = "a title";
 
     private String fMyPlugId;
 
+    private PlugDescription fPlugDescription;
+
+    /**
+     * 
+     */
     public DummyIPlug() {
         // for serialisations
     }
 
+    /**
+     * @param plugId
+     */
     public DummyIPlug(String plugId) {
         this.fMyPlugId = plugId;
     }
@@ -37,11 +47,19 @@ public class DummyIPlug implements IPlug {
     }
 
     public void configure(PlugDescription arg0) throws Exception {
-        // TODO Auto-generated method stub
+        this.fPlugDescription = arg0;
     }
 
     public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery, String[] fields) throws Exception {
-        return new IngridHitDetail(hit, TITLE, SUMMARY);
+        IngridHitDetail detail = new IngridHitDetail(hit, TITLE, SUMMARY);
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i].equals(PlugDescription.PARTNER)) {
+                detail.setArray(PlugDescription.PARTNER, this.fPlugDescription.getPartners());
+            } else if (fields[i].equals(PlugDescription.PROVIDER)) {
+                detail.setArray(PlugDescription.PROVIDER, this.fPlugDescription.getProviders());
+            }
+        }
+        return detail;
 
     }
 
@@ -49,8 +67,8 @@ public class DummyIPlug implements IPlug {
         return new IngridHitDetail[] { new IngridHitDetail(hits[0], TITLE, SUMMARY) };
     }
 
-	public void close() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+    public void close() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }
