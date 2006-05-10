@@ -103,7 +103,6 @@ public class Bus extends Thread implements IBus {
                 hitContainer = new IngridHits(totalHits, hits);
             }
         }
-
         setDefaultInformations(hitContainer, resultSet, !query.isNotRanked());
         return hitContainer;
     }
