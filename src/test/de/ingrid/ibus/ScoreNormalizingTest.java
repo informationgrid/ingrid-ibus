@@ -55,7 +55,7 @@ public class ScoreNormalizingTest extends TestCase {
         IngridHit[] hitsArray = hits.getHits();
         for (int i = 0; i < hitsArray.length; i++) {
             IngridHit hit = hitsArray[i];
-            System.out.println(hit.getPlugId());
+            System.out.println("plugid:" + hit.getPlugId());
             assertTrue(hit.getScore() <= 1.0f);
         }
     }
