@@ -50,7 +50,7 @@ public class ScoreNormalizingTest extends TestCase {
         globalRanking.put("1", new Float(0.111));
         registry.setGlobalRanking(globalRanking);
 
-        IngridQuery query = QueryStringParser.parse("a Query");
+        IngridQuery query = QueryStringParser.parse("a Query rankin:score");
         IngridHits hits = bus.search(query, 10, 0, 100, 1000);
         IngridHit[] hitsArray = hits.getHits();
         for (int i = 0; i < hitsArray.length; i++) {
