@@ -56,6 +56,7 @@ public class ResultSet extends ArrayList {
         if (arg0 == null) {
             throw new IllegalArgumentException("null can not added as Hits");
         }
+        //TODO unnecessary cause id's are already contained in hits
         this.fPlugIdsWithResult.add(plugId);
         return super.add(arg0);
     }

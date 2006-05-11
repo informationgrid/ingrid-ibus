@@ -68,7 +68,7 @@ public class Bus extends Thread implements IBus {
     public IngridHits search(IngridQuery query, final int hitsPerPage, int currentPage, int startHit,
             int maxMilliseconds) throws Exception {
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("search for: " + query.toString());
+            fLogger.debug("search for: " + query.toString() + " startHit: " + startHit);
         }
         if (currentPage < 1) {
             currentPage = 1;
@@ -111,7 +111,6 @@ public class Bus extends Thread implements IBus {
         hitContainer.setPlugId("ibus");
         hitContainer.setInVolvedPlugs(resultSet.getPlugIdsWithResult().length);
         hitContainer.setRanked(ranked);
-        System.out.println("groupleng:"+hitContainer.getGoupedHitsLength());
     }
 
     private ResultSet requestHits(IngridQuery query, int maxMilliseconds, PlugDescription[] plugsForQuery, int start,
@@ -158,7 +157,11 @@ public class Bus extends Thread implements IBus {
         List orderedHits = new LinkedList();
         for (int i = 0; i < resultHitsCount; i++) {
             IngridHits hitContainer = (IngridHits) resultSet.get(i);
-            orderedHits.addAll(Arrays.asList(hitContainer.getHits()));
+            IngridHit[] hits = hitContainer.getHits();
+            if (hits != null && hits.length > 0) {
+                orderedHits.addAll(Arrays.asList(hits));
+            }
+
         }
         return new IngridHits(orderedHits.size(), (IngridHit[]) orderedHits.toArray(new IngridHit[orderedHits.size()]));
     }
@@ -169,7 +172,7 @@ public class Bus extends Thread implements IBus {
                 return i;
             }
         }
-        fLogger.warn("plug id not contained");
+        fLogger.warn("plugId '" + plugId + "' not contained");
         return Integer.MAX_VALUE;
     }
 
@@ -278,12 +281,15 @@ public class Bus extends Thread implements IBus {
                 break;
             }
         }
+        if (hit.getGroupedFileds() == null || hit.getGroupedFileds().length == 0) {
+            hit.addGroupedField("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ")");
+            fLogger.warn("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ")");
+        }
     }
 
     private boolean areInSameGroup(IngridHit group, IngridHit hit) {
         String[] groupFields = group.getGroupedFileds();
         String[] hitFields = hit.getGroupedFileds();
-
         for (int i = 0; i < groupFields.length; i++) {
             for (int j = 0; j < hitFields.length; j++) {
                 if (groupFields[i].equalsIgnoreCase(hitFields[j])) {
@@ -321,6 +327,9 @@ public class Bus extends Thread implements IBus {
         int newLength = hits.length - startHit;
         if (hits.length <= newLength) {
             return hits;
+        }
+        if (newLength < 1) {
+            return new IngridHit[0];
         }
         IngridHit[] cuttedHits = new IngridHit[newLength];
         System.arraycopy(hits, startHit, cuttedHits, 0, newLength);

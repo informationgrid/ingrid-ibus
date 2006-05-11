@@ -62,18 +62,19 @@ public class PlugQueryRequest extends Thread {
      * @see java.lang.Thread#run()
      */
     public void run() {
-        long time = 0 ;
+        long time = 0;
         try {
             if (fLog.isDebugEnabled()) {
                 fLog.debug("Search in IPlug " + this.fPlugId + " ...");
                 time = System.currentTimeMillis();
             }
             IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
+            hits.setPlugId(this.fPlugId);
             if (fLog.isDebugEnabled()) {
                 fLog.debug("adding results from: " + this.fPlugId + " size: " + hits.length() + " time: "
                         + (System.currentTimeMillis() - time) + " ms");
             }
-            this.fResultSet.add(hits,this.fPlugId);
+            this.fResultSet.add(hits, this.fPlugId);
         } catch (Exception e) {
             fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
             this.fRegestry.removePlugFromCache(this.fPlugId);
