@@ -69,12 +69,15 @@ public class PlugQueryRequest extends Thread {
                 time = System.currentTimeMillis();
             }
             IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
-            hits.setPlugId(this.fPlugId);
+            if (hits.getPlugId() == null) {
+                fLog.warn("result from '" + this.fPlugId + "' contains no plugId");
+                hits.setPlugId(this.fPlugId);
+            }
             if (fLog.isDebugEnabled()) {
                 fLog.debug("adding results from: " + this.fPlugId + " size: " + hits.length() + " time: "
                         + (System.currentTimeMillis() - time) + " ms");
             }
-            this.fResultSet.add(hits, this.fPlugId);
+            this.fResultSet.add(hits);
         } catch (Exception e) {
             fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
             this.fRegestry.removePlugFromCache(this.fPlugId);

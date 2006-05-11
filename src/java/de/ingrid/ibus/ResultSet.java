@@ -7,7 +7,10 @@
 package de.ingrid.ibus;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import de.ingrid.utils.IngridHits;
 
 /**
  * 
@@ -20,14 +23,11 @@ public class ResultSet extends ArrayList {
 
     private int fNumberOfFinsihedConnections = 0;
 
-    private List fPlugIdsWithResult;
-
     /**
      * @param numberOfConnections
      */
     public ResultSet(int numberOfConnections) {
         this.fNumberOfConnections = numberOfConnections;
-        this.fPlugIdsWithResult=new ArrayList(numberOfConnections);
     }
 
     /**
@@ -48,23 +48,28 @@ public class ResultSet extends ArrayList {
     }
 
     /**
-     * @param arg0
-     * @param plugId
+     * @param hits
      * @return true
      */
-    public synchronized boolean add(Object arg0, String plugId) {
-        if (arg0 == null) {
+    public synchronized boolean add(IngridHits hits) {
+        if (hits == null) {
             throw new IllegalArgumentException("null can not added as Hits");
         }
-        //TODO unnecessary cause id's are already contained in hits
-        this.fPlugIdsWithResult.add(plugId);
-        return super.add(arg0);
+        if (hits.getHits().length == 0) {
+            return false;
+        }
+        return super.add(hits);
     }
 
     /**
      * @return all plugIds from the plugs which delivers a result.
      */
     public String[] getPlugIdsWithResult() {
-        return (String[]) this.fPlugIdsWithResult.toArray(new String[this.fPlugIdsWithResult.size()]);
+        List plugIds=new ArrayList(size());
+        for (Iterator iter = this.iterator(); iter.hasNext();) {
+            IngridHits hits = (IngridHits) iter.next();
+            plugIds.add(hits.getPlugId());
+        }
+        return (String[]) plugIds.toArray(new String[plugIds.size()]);
     }
 }

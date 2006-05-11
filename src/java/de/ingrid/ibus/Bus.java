@@ -280,6 +280,8 @@ public class Bus extends Thread implements IBus {
                 hit.addGroupedField(providers[i]);
                 break;
             }
+        } else {
+            throw new IllegalArgumentException("unknown group operator '" + query.getGrouped() + "'");
         }
         if (hit.getGroupedFileds() == null || hit.getGroupedFileds().length == 0) {
             hit.addGroupedField("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ")");
@@ -462,6 +464,7 @@ public class Bus extends Thread implements IBus {
             } catch (Exception e) {
                 fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
                 removePlugDescription(plugDescription);
+                throw new IllegalStateException("plug with id '" + plugId + "' currently not availible");
             }
 
         }
