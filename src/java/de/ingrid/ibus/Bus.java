@@ -111,6 +111,7 @@ public class Bus extends Thread implements IBus {
         hitContainer.setPlugId("ibus");
         hitContainer.setInVolvedPlugs(resultSet.getPlugIdsWithResult().length);
         hitContainer.setRanked(ranked);
+        System.out.println("groupleng:"+hitContainer.getGoupedHitsLength());
     }
 
     private ResultSet requestHits(IngridQuery query, int maxMilliseconds, PlugDescription[] plugsForQuery, int start,
@@ -318,7 +319,7 @@ public class Bus extends Thread implements IBus {
 
     private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
         int newLength = hits.length - startHit;
-        if (hits.length == newLength) {
+        if (hits.length <= newLength) {
             return hits;
         }
         IngridHit[] cuttedHits = new IngridHit[newLength];
