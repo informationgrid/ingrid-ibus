@@ -238,7 +238,7 @@ public class SyntaxInterpreter {
         
         for (int i = 0; i < plugs.length; i++) {
             for (int j = 0; j < allowedPlugs.length; j++) {
-                if(plugs[i].getPlugId().equals(allowedPlugs[j])){
+                if(plugs[i].getPlugId().hashCode()==Integer.parseInt(allowedPlugs[j])){
                    arrayList.add(plugs[i]);
                 }
             }
