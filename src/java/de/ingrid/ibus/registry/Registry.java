@@ -114,6 +114,8 @@ public class Registry {
             try {
                 IPlug plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
+                //check connection
+                plugProxy.toString();
             } catch (Exception e) {
                 fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
                 removePlug(plugId);
