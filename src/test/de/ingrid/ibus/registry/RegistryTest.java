@@ -70,19 +70,19 @@ public class RegistryTest extends TestCase {
         PlugDescription plugDescription = new PlugDescription();
         plugDescription.setProxyServiceURL("/:aID");
         registry.addPlugDescription(plugDescription);
-        assertTrue(registry.containsPlugDescription(plugDescription.getMd5Hash()));
-        assertEquals(1,registry.getAllIPlugs().length);
-        
-        //chainged hash
-        String oldMd5=plugDescription.getMd5Hash();
+        assertTrue(registry.containsPlugDescription(plugDescription.getPlugId(), plugDescription.getMd5Hash()));
+        assertEquals(1, registry.getAllIPlugs().length);
+
+        // chainged hash
+        String oldMd5 = plugDescription.getMd5Hash();
         plugDescription = new PlugDescription();
         plugDescription.setProxyServiceURL("/:aID");
         plugDescription.setMd5Hash("newMd5");
-        assertFalse(registry.containsPlugDescription(plugDescription.getMd5Hash()));
+        assertFalse(registry.containsPlugDescription(plugDescription.getPlugId(), plugDescription.getMd5Hash()));
         registry.addPlugDescription(plugDescription);
-        assertTrue(registry.containsPlugDescription(plugDescription.getMd5Hash()));
-        assertFalse(registry.containsPlugDescription(oldMd5));
-        assertEquals(1,registry.getAllIPlugs().length);
+        assertTrue(registry.containsPlugDescription(plugDescription.getPlugId(), plugDescription.getMd5Hash()));
+        assertFalse(registry.containsPlugDescription(plugDescription.getPlugId(), oldMd5));
+        assertEquals(1, registry.getAllIPlugs().length);
         assertNotNull(registry.getPlugProxy(plugDescription.getPlugId()));
     }
 

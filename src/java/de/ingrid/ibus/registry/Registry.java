@@ -9,9 +9,7 @@ package de.ingrid.ibus.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.WetagURL;
@@ -45,8 +43,6 @@ public class Registry {
 
     private HashMap fPlugDescriptionByPlugId = new HashMap();
 
-    private Set fPlugHashs = new HashSet();
-
     private boolean fIplugAutoActivation;
 
     private long fLifeTime;
@@ -72,22 +68,25 @@ public class Registry {
     public void addPlugDescription(PlugDescription plugDescription) {
         removePlug(plugDescription.getPlugId());
         joinGroup(plugDescription.getProxyServiceURL());
-        if(plugDescription.getMd5Hash()==null){
-            throw new IllegalArgumentException("md5 hash not set - plug '"+plugDescription.getPlugId());
+        if (plugDescription.getMd5Hash() == null) {
+            throw new IllegalArgumentException("md5 hash not set - plug '" + plugDescription.getPlugId());
         }
         plugDescription.setActivate(this.fIplugAutoActivation);
         plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
-        this.fPlugHashs.add(plugDescription.getMd5Hash());
         this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
         createPlugProxy(plugDescription);
     }
 
     /**
+     * @param plugId
      * @param md5Hash
      * @return true if registry contains a plug with given hash
      */
-    public boolean containsPlugDescription(String md5Hash) {
-        return this.fPlugHashs.contains(md5Hash);
+    public boolean containsPlugDescription(String plugId, String md5Hash) {
+        PlugDescription plugDescription= getPlugDescription(plugId);
+       plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
+       
+        return plugDescription.getMd5Hash().equals(md5Hash);
     }
 
     private void joinGroup(String proxyServiceUrl) {
@@ -130,10 +129,7 @@ public class Registry {
             synchronized (this.fPlugDescriptionByPlugId) {
                 this.fPlugProxyByPlugId.remove(plugId);
             }
-            PlugDescription description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
-            if (description != null) {
-                this.fPlugHashs.remove(description.getMd5Hash());
-            }
+            this.fPlugDescriptionByPlugId.remove(plugId);
         }
     }
 
