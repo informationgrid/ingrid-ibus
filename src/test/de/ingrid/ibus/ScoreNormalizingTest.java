@@ -34,16 +34,17 @@ public class ScoreNormalizingTest extends TestCase {
     public void testScore() throws Exception {
         Bus bus = new Bus(new DummyProxyFactory());
         Registry registry = bus.getIPlugRegistry();
+        registry.setCommunication(new DummyCommunication());
 
         PlugDescription plugDescriptions0 = new PlugDescription();
-        plugDescriptions0.setProxyServiceURL("1");
+        plugDescriptions0.setProxyServiceURL("/:1");
         plugDescriptions0.setOrganisation("friedens ministerium");
-        registry.addIPlug(plugDescriptions0);
+        registry.addPlugDescription(plugDescriptions0);
 
         PlugDescription plugDescriptions1 = new PlugDescription();
-        plugDescriptions1.setProxyServiceURL("2");
+        plugDescriptions1.setProxyServiceURL("/:2");
         plugDescriptions1.setOrganisation("liebes ministerium"); // 1984
-        registry.addIPlug(plugDescriptions1);
+        registry.addPlugDescription(plugDescriptions1);
 
         HashMap globalRanking = new HashMap();
         globalRanking.put("2", new Float(0.1111));

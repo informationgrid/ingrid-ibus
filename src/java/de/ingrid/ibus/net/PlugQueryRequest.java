@@ -80,7 +80,7 @@ public class PlugQueryRequest extends Thread {
             this.fResultSet.add(hits);
         } catch (Exception e) {
             fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
-            this.fRegestry.removePlugFromCache(this.fPlugId);
+            this.fRegestry.removePlug(this.fPlugId);
         } finally {
             if (this.fResultSet != null) {
                 synchronized (this.fResultSet) {

@@ -9,6 +9,8 @@ package de.ingrid.ibus.registry;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
+import de.ingrid.ibus.DummyCommunication;
+import de.ingrid.ibus.DummyProxyFactory;
 import de.ingrid.utils.PlugDescription;
 
 /**
@@ -25,10 +27,11 @@ public class RegistryTest extends TestCase {
      * @throws Exception
      */
     public void testAddAndGet() throws Exception {
-        Registry registry = new Registry(1000, true);
+        Registry registry = new Registry(1000, true, new DummyProxyFactory());
+        registry.setCommunication(new DummyCommunication());
         PlugDescription plug1 = new PlugDescription();
-        plug1.setProxyServiceURL("a ID");
-        registry.addIPlug(plug1);
+        plug1.setProxyServiceURL("/:aID");
+        registry.addPlugDescription(plug1);
         PlugDescription plug2 = registry.getPlugDescription(plug1.getPlugId());
         assertEquals(plug1, plug2);
     }
@@ -37,24 +40,50 @@ public class RegistryTest extends TestCase {
      * @throws Exception
      */
     public void testGetAllIPlugs() throws Exception {
-        int plugLifeTime=250;
-        Registry registry = new Registry(plugLifeTime, true);
+        int plugLifeTime = 250;
+        Registry registry = new Registry(plugLifeTime, true, new DummyProxyFactory());
+        registry.setCommunication(new DummyCommunication());
         PlugDescription plug1 = new PlugDescription();
-        plug1.setProxyServiceURL("a ID");
-        registry.addIPlug(plug1);
-        
+        plug1.setProxyServiceURL("/:aID");
+        registry.addPlugDescription(plug1);
+
         assertTrue(Arrays.asList(registry.getAllIPlugs()).contains(plug1));
         assertTrue(Arrays.asList(registry.getAllIPlugsWithoutTimeLimitation()).contains(plug1));
-        
-        //kick plug1 out
-        Thread.sleep(plugLifeTime+100);
+
+        // kick plug1 out
+        Thread.sleep(plugLifeTime + 100);
         assertFalse(Arrays.asList(registry.getAllIPlugs()).contains(plug1));
         assertTrue(Arrays.asList(registry.getAllIPlugsWithoutTimeLimitation()).contains(plug1));
-        
-        //refresh plug1 
-        registry.addIPlug(plug1);
+
+        // refresh plug1
+        registry.addPlugDescription(plug1);
         assertTrue(Arrays.asList(registry.getAllIPlugs()).contains(plug1));
-        assertEquals(1,registry.getAllIPlugsWithoutTimeLimitation().length);
+        assertEquals(1, registry.getAllIPlugsWithoutTimeLimitation().length);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testContains() throws Exception {
+        Registry registry = new Registry(1000, true, new DummyProxyFactory());
+        registry.setCommunication(new DummyCommunication());
+        PlugDescription plugDescription = new PlugDescription();
+        plugDescription.setProxyServiceURL("/:aID");
+        registry.addPlugDescription(plugDescription);
+        assertTrue(registry.containsPlugDescription(plugDescription.getMd5Hash()));
+        assertEquals(1,registry.getAllIPlugs().length);
+        
+        //chainged hash
+        String oldMd5=plugDescription.getMd5Hash();
+        plugDescription = new PlugDescription();
+        plugDescription.setProxyServiceURL("/:aID");
+        plugDescription.setMd5Hash("newMd5");
+        assertFalse(registry.containsPlugDescription(plugDescription.getMd5Hash()));
+        registry.addPlugDescription(plugDescription);
+        assertTrue(registry.containsPlugDescription(plugDescription.getMd5Hash()));
+        assertFalse(registry.containsPlugDescription(oldMd5));
+        assertEquals(1,registry.getAllIPlugs().length);
+        assertNotNull(registry.getPlugProxy(plugDescription.getPlugId()));
     }
 
 }

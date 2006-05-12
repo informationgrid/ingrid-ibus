@@ -27,7 +27,7 @@ public class MultiThreadSearchTest extends TestCase {
             plugDescriptions[i] = new PlugDescription();
             plugDescriptions[i].setProxyServiceURL("" + i);
             plugDescriptions[i].setOrganisation("bla");
-            bus.getIPlugRegistry().addIPlug(plugDescriptions[i]);
+            bus.getIPlugRegistry().addPlugDescription(plugDescriptions[i]);
         }
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         new TestThread(bus, query).start();

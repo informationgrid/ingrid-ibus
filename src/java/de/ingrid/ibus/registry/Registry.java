@@ -6,16 +6,20 @@
 
 package de.ingrid.ibus.registry;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import net.weta.components.communication.ICommunication;
+import net.weta.components.communication.WetagURL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
 
@@ -27,71 +31,92 @@ import de.ingrid.utils.PlugDescription;
  * @author hs
  */
 
-public class Registry implements Serializable {
+public class Registry {
 
-    private static final long serialVersionUID = Registry.class.getName().hashCode();
+    private static final String LAST_LIFESIGN = "addedTimeStamp";
 
-    private static final String ADDING_TIMESTAMP = "addedTimeStamp";
+    private static Log fLogger = LogFactory.getLog(Registry.class);
 
-    private ArrayList fIPlugs = new ArrayList();
+    private ICommunication fCommunication;
 
-    private long fLifeTime = 10000;
+    private IPlugProxyFactory fProxyFactory;
 
-    private ArrayList fIPlugListener = new ArrayList();
+    private HashMap fPlugProxyByPlugId = new HashMap();
 
-    private HashMap fPlugProxyCache = new HashMap();
+    private HashMap fPlugDescriptionByPlugId = new HashMap();
+
+    private Set fPlugHashs = new HashSet();
 
     private boolean fIplugAutoActivation;
 
-    private ICommunication fCommunication = null;
+    private long fLifeTime;
 
-    private HashMap fGlobalRanking = null;
-
-    private static Log fLogger = LogFactory.getLog(Registry.class);
+    private HashMap fGlobalRanking;
 
     /**
      * @param lifeTimeOfPlugs
      * @param iplugAutoActivation
+     * @param factory
      */
-    public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation) {
+    public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation, IPlugProxyFactory factory) {
         this.fLifeTime = lifeTimeOfPlugs;
         this.fIplugAutoActivation = iplugAutoActivation;
+        this.fProxyFactory = factory;
     }
 
     /**
      * Adds a iplug to the registry.
      * 
-     * @param plug
+     * @param plugDescription
      */
-    public void addIPlug(PlugDescription plug) {
-        if (this.fIplugAutoActivation) {
-            plug.activate();
-        } else {
-            plug.deActivate();
+    public void addPlugDescription(PlugDescription plugDescription) {
+        removePlug(plugDescription.getPlugId());
+        joinGroup(plugDescription.getProxyServiceURL());
+        if(plugDescription.getMd5Hash()==null){
+            throw new IllegalArgumentException("md5 hash not set - plug '"+plugDescription.getPlugId());
         }
-
-        if (null != this.fCommunication) {
-            try {
-                this.fCommunication.subscribeGroup(plug.getProxyServiceURL());
-            } catch (Exception e) {
-                fLogger.error(e.getMessage(), e);
-            }
-        } else {
-            // fLogger.error("The communication isn't set in the registry.");
-        }
-
-        putToCache(plug);
+        plugDescription.setActivate(this.fIplugAutoActivation);
+        plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
+        this.fPlugHashs.add(plugDescription.getMd5Hash());
+        this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
+        createPlugProxy(plugDescription);
     }
 
-    private void putToCache(PlugDescription plug) {
-        String id = plug.getPlugId();
-        if (getPlugDescription(id) == null) {
-            removePlugFromCache(id);
-            plug.putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
-            this.fIPlugs.add(plug);
-        } else {
-            // just update time stamp
-            getPlugDescription(id).putLong(ADDING_TIMESTAMP, System.currentTimeMillis());
+    /**
+     * @param md5Hash
+     * @return true if registry contains a plug with given hash
+     */
+    public boolean containsPlugDescription(String md5Hash) {
+        return this.fPlugHashs.contains(md5Hash);
+    }
+
+    private void joinGroup(String proxyServiceUrl) {
+        if (this.fCommunication == null) {
+            // for tests
+            return;
+        }
+        try {
+            WetagURL wetagURL = new WetagURL(proxyServiceUrl);
+            this.fCommunication.subscribeGroup(wetagURL.getGroupPath());
+        } catch (Exception e) {
+            IllegalStateException exception = new IllegalStateException("could not join plug group of plug '"
+                    + proxyServiceUrl + "'");
+            exception.initCause(e);
+            throw exception;
+        }
+    }
+
+    private void createPlugProxy(PlugDescription plugDescription) {
+        String plugId = plugDescription.getPlugId();
+        synchronized (this.fPlugProxyByPlugId) {
+            try {
+                IPlug plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+                this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
+            } catch (Exception e) {
+                fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
+                removePlug(plugId);
+                throw new IllegalStateException("plug with id '" + plugId + "' currently not availible");
+            }
         }
     }
 
@@ -100,20 +125,16 @@ public class Registry implements Serializable {
      * 
      * @param plugId
      */
-    public void removePlugFromCache(String plugId) {
-        synchronized (this.fPlugProxyCache) {
-            this.fPlugProxyCache.remove(plugId);
-        }
-        for (Iterator iter = this.fIPlugs.iterator(); iter.hasNext();) {
-            PlugDescription element = (PlugDescription) iter.next();
-            String elementId = element.getPlugId();
-            if ((null != elementId) && (null != plugId)) {
-                if (elementId.equals(plugId)) {
-                    iter.remove();
-                }
+    public void removePlug(String plugId) {
+        synchronized (this.fPlugProxyByPlugId) {
+            synchronized (this.fPlugDescriptionByPlugId) {
+                this.fPlugProxyByPlugId.remove(plugId);
+            }
+            PlugDescription description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
+            if (description != null) {
+                this.fPlugHashs.remove(description.getMd5Hash());
             }
         }
-
     }
 
     /**
@@ -121,14 +142,7 @@ public class Registry implements Serializable {
      * @return the iplug by key or <code>null</code>
      */
     public PlugDescription getPlugDescription(String id) {
-        int count = this.fIPlugs.size();
-        for (int i = 0; i < count; i++) {
-            PlugDescription plug = (PlugDescription) this.fIPlugs.get(i);
-            if (plug.getPlugId().equals(id)) {
-                return plug;
-            }
-        }
-        return null;
+        return (PlugDescription) this.fPlugDescriptionByPlugId.get(id);
     }
 
     /**
@@ -136,57 +150,32 @@ public class Registry implements Serializable {
      * @deprecated
      */
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
-        return (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs.size()]);
+        Collection plugDescriptions = this.fPlugDescriptionByPlugId.values();
+        return (PlugDescription[]) plugDescriptions.toArray(new PlugDescription[plugDescriptions.size()]);
     }
 
     /**
      * @return all registed iplugs younger than given lifetime
      */
     public PlugDescription[] getAllIPlugs() {
-        ArrayList list = new ArrayList();
-        PlugDescription[] descriptions = (PlugDescription[]) this.fIPlugs.toArray(new PlugDescription[this.fIPlugs
-                .size()]);
-        long maxLifeTime = System.currentTimeMillis();
-        for (int i = 0; i < descriptions.length; i++) {
-            if (descriptions[i].getLong(ADDING_TIMESTAMP) + this.fLifeTime > maxLifeTime) {
-                list.add(descriptions[i]);
+        PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
+        List plugs = new ArrayList(plugDescriptions.length);
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < plugDescriptions.length; i++) {
+            if (plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime > now) {
+                plugs.add(plugDescriptions[i]);
             }
         }
-        return (PlugDescription[]) list.toArray(new PlugDescription[list.size()]);
-
-    }
-
-    /**
-     * @param iPlugListener
-     */
-    public void addIPlugListener(IPlugListener iPlugListener) {
-        this.fIPlugListener.add(iPlugListener);
-    }
-
-    /**
-     * @param iPlugListener
-     */
-    public void removeIPlugListener(IPlugListener iPlugListener) {
-        this.fIPlugListener.remove(iPlugListener);
+        return (PlugDescription[]) plugs.toArray(new PlugDescription[plugs.size()]);
     }
 
     /**
      * @param plugId
      * @return the plug proxy
      */
-    public IPlug getProxyFromCache(String plugId) {
-        synchronized (this.fPlugProxyCache) {
-            return (IPlug) this.fPlugProxyCache.get(plugId);
-        }
-    }
-
-    /**
-     * @param plugId
-     * @param plugProxy
-     */
-    public void addProxyToCache(String plugId, IPlug plugProxy) {
-        synchronized (this.fPlugProxyCache) {
-            this.fPlugProxyCache.put(plugId, plugProxy);
+    public IPlug getPlugProxy(String plugId) {
+        synchronized (this.fPlugProxyByPlugId) {
+            return (IPlug) this.fPlugProxyByPlugId.get(plugId);
         }
     }
 
@@ -247,16 +236,16 @@ public class Registry implements Serializable {
     }
 
     /**
-     * @param plugId A iplug id.
+     * @param plugId
+     *            A iplug id.
      * @return The boost factor to a iplug.
      */
     public Float getGlobalRankingBoost(String plugId) {
         Float result = null;
-
         if (null != this.fGlobalRanking) {
             result = (Float) this.fGlobalRanking.get(plugId);
         }
-        
+
         return result;
     }
 }

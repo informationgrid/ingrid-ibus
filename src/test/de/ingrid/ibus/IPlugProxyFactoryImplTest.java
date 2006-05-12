@@ -52,7 +52,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
             this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());
             this.plugDescriptions[i].setRecordLoader(false);
             this.plugDescriptions[i].addField("ort");
-            this.fBus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
+            this.fBus.getIPlugRegistry().addPlugDescription(this.plugDescriptions[i]);
         }
     }
 

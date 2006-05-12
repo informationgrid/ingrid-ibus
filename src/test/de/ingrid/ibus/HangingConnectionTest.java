@@ -30,7 +30,7 @@ public class HangingConnectionTest extends TestCase {
         PlugDescription plugDescriptions = new PlugDescription();
         plugDescriptions.setProxyServiceURL("");
         plugDescriptions.setOrganisation("org");
-        bus.getIPlugRegistry().addIPlug(plugDescriptions);
+        bus.getIPlugRegistry().addPlugDescription(plugDescriptions);
         long start = System.currentTimeMillis();
         bus.search(QueryStringParser.parse("hallo"), 10, 1, 100, 1000);
         assertTrue(start + 100 < System.currentTimeMillis());

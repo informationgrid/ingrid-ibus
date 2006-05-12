@@ -1,5 +1,6 @@
 package de.ingrid.ibus;
 
+import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
@@ -30,7 +31,7 @@ public class GroupingTest extends TestCase {
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setProxyServiceURL("plug:" + i);
             this.plugDescriptions[i].addProvider(ORGANISATION);
-            this.fBus.getIPlugRegistry().addIPlug(this.plugDescriptions[i]);
+            this.fBus.getIPlugRegistry().addPlugDescription(this.plugDescriptions[i]);
         }
     }
 
@@ -58,7 +59,7 @@ public class GroupingTest extends TestCase {
         PlugDescription plugDesc = new PlugDescription();
         plugDesc.setProxyServiceURL("additional plug");
         plugDesc.addProvider("other organisation");
-        this.fBus.getIPlugRegistry().addIPlug(plugDesc);
+        this.fBus.getIPlugRegistry().addPlugDescription(plugDesc);
 
         IngridQuery query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_ORGANISATION);
         int hitsPerPage = 10;
@@ -100,9 +101,9 @@ public class GroupingTest extends TestCase {
 
         // 2 organisations
         PlugDescription plugDesc = new PlugDescription();
-        plugDesc.setProxyServiceURL("additional plug");
+        plugDesc.setProxyServiceURL("0:0");
         plugDesc.addProvider("other organisation");
-        this.fBus.getIPlugRegistry().addIPlug(plugDesc);
+        this.fBus.getIPlugRegistry().addPlugDescription(plugDesc);
         query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_ORGANISATION);
         hits = this.fBus.search(query, hitsPerPage, 0, 0, maxMilliseconds);
         assertEquals(2, hits.getHits().length);
@@ -111,15 +112,30 @@ public class GroupingTest extends TestCase {
         // 2 organisations - rising hits per page
         hits = this.fBus.search(query, 1, 0, 0, maxMilliseconds);
         assertEquals(1, hits.getHits().length);
+        assertEquals(hits.getGoupedHitsLength(), countHits(hits.getHits(), 0));
         hits = this.fBus.search(query, 2, 0, 0, maxMilliseconds);
         assertEquals(2, hits.getHits().length);
+        assertEquals(this.plugDescriptions.length + 1, hits.getGoupedHitsLength());
 
         // 2 organisations - rising start page
         hits = this.fBus.search(query, 1, 0, 0, maxMilliseconds);
         assertEquals(1, hits.getHits().length);
+        int verbrateneHits = countHits(hits.getHits(), 0);
         assertFalse(hits.getHits()[0].getPlugId().equals(plugDesc.getPlugId()));
         hits = this.fBus.search(query, hitsPerPage, 0, hits.getGoupedHitsLength(), maxMilliseconds);
-        assertEquals(1, hits.getHits().length);
+        assertEquals(this.plugDescriptions.length + 1, verbrateneHits + countHits(hits.getHits(), 0));
+
+    }
+
+    private int countHits(IngridHit[] hits, int currentHits) {
+
+        for (int i = 0; i < hits.length; i++) {
+            System.out.println(hits.length + ".." + hits[i].getGroupHits().length);
+            currentHits++;
+            currentHits = countHits(hits[i].getGroupHits(), currentHits);
+        }
+
+        return currentHits;
     }
 
     /**
@@ -135,7 +151,7 @@ public class GroupingTest extends TestCase {
                 PlugDescription plugDescription = new PlugDescription();
                 plugDescription.setProxyServiceURL("" + i + "_" + j);
                 plugDescription.addProvider("" + i);
-                bus.getIPlugRegistry().addIPlug(plugDescription);
+                bus.getIPlugRegistry().addPlugDescription(plugDescription);
                 plugCount++;
             }
         }

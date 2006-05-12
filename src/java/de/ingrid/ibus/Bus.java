@@ -54,15 +54,12 @@ public class Bus extends Thread implements IBus {
 
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
-    private IPlugProxyFactory fProxyFactory = null;
-
     /**
      * @param factory
      */
     public Bus(IPlugProxyFactory factory) {
-        this.fProxyFactory = factory;
         boolean iplugAutoActivation = getAutoActivationProperty();
-        this.fRegistry = new Registry(100000, iplugAutoActivation);
+        this.fRegistry = new Registry(100000, iplugAutoActivation, factory);
     }
 
     public IngridHits search(IngridQuery query, final int hitsPerPage, int currentPage, int startHit,
@@ -121,7 +118,7 @@ public class Bus extends Thread implements IBus {
 
         for (int i = 0; i < plugsForQueryLength; i++) {
             PlugDescription plugDescription = plugsForQuery[i];
-            IPlug plugProxy = getPlugProxy(plugDescription.getPlugId());
+            IPlug plugProxy = this.fRegistry.getPlugProxy(plugDescription.getPlugId());
             requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
                     query, start, requestLength);
             requests[i].start();
@@ -261,22 +258,25 @@ public class Bus extends Thread implements IBus {
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
+        if (hit.getGroupedFileds() != null) {
+            return;
+        }
         // XXX we just group for the 1st provider/partner
         if (IngridQuery.GROUPED_BY_PLUGID.equalsIgnoreCase(query.getGrouped())) {
             hit.addGroupedField(hit.getPlugId());
         } else if (IngridQuery.GROUPED_BY_PARTNER.equalsIgnoreCase(query.getGrouped())) {
-            IPlug plug = getPlugProxy(hit.getPlugId());
+            IPlug plug = this.fRegistry.getPlugProxy(hit.getPlugId());
             IngridHitDetail detail = plug.getDetail(hit, query, new String[] { PlugDescription.PARTNER });
             String[] partners = (String[]) detail.getArray(PlugDescription.PARTNER);
-            for (int i = 0; i < partners.length; i++) {
+            for (int i = 0; partners != null && i < partners.length; i++) {
                 hit.addGroupedField(partners[i]);
                 break;
             }
         } else if (IngridQuery.GROUPED_BY_ORGANISATION.equalsIgnoreCase(query.getGrouped())) {
-            IPlug plug = getPlugProxy(hit.getPlugId());
+            IPlug plug = this.fRegistry.getPlugProxy(hit.getPlugId());
             IngridHitDetail detail = plug.getDetail(hit, query, new String[] { PlugDescription.PROVIDER });
             String[] providers = (String[]) detail.getArray(PlugDescription.PROVIDER);
-            for (int i = 0; i < providers.length; i++) {
+            for (int i = 0; providers != null && i < providers.length; i++) {
                 hit.addGroupedField(providers[i]);
                 break;
             }
@@ -340,7 +340,7 @@ public class Bus extends Thread implements IBus {
 
     public Record getRecord(IngridHit hit) throws Exception {
         PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(hit.getPlugId());
-        IPlug plugProxy = getPlugProxy(hit.getPlugId());
+        IPlug plugProxy = this.fRegistry.getPlugProxy(hit.getPlugId());
         if (plugDescription.isRecordloader()) {
             return ((IRecordLoader) plugProxy).getRecord(hit);
         }
@@ -358,7 +358,7 @@ public class Bus extends Thread implements IBus {
         if (requestedFields == null) {
             requestedFields = new String[0];
         }
-        IPlug plugProxy = getPlugProxy(hit.getPlugId());
+        IPlug plugProxy = this.fRegistry.getPlugProxy(hit.getPlugId());
         try {
             IngridHitDetail detail = plugProxy.getDetail(hit, ingridQuery, requestedFields);
             pushMetaData(detail);
@@ -397,7 +397,7 @@ public class Bus extends Thread implements IBus {
             ArrayList requestHitList = (ArrayList) hashMap.get(plugId);
             if (requestHitList != null) {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
-                plugProxy = getPlugProxy(plugId);
+                plugProxy = this.fRegistry.getPlugProxy(plugId);
                 IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
                 for (int i = 0; i < responseDetails.length; i++) {
                     if (responseDetails[i] == null) {
@@ -449,29 +449,6 @@ public class Bus extends Thread implements IBus {
     }
 
     /**
-     * @param plugId
-     * @return a proxy from cache or if it was not cached we create a new proxy
-     *         and add it to the cache.
-     */
-    private IPlug getPlugProxy(String plugId) {
-        IPlug plugProxy = this.fRegistry.getProxyFromCache(plugId);
-        if (null == plugProxy) {
-            PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(plugId);
-            fLogger.debug("Create new connection to IPlug: " + plugDescription.getPlugId());
-            try {
-                plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
-                this.fRegistry.addProxyToCache(plugDescription.getPlugId(), plugProxy);
-            } catch (Exception e) {
-                fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
-                removePlugDescription(plugDescription);
-                throw new IllegalStateException("plug with id '" + plugId + "' currently not availible");
-            }
-
-        }
-        return plugProxy;
-    }
-
-    /**
      * @return The processing pipe.
      */
     public ProcessorPipe getProccessorPipe() {
@@ -485,12 +462,18 @@ public class Bus extends Thread implements IBus {
         return this.fRegistry;
     }
 
+    public boolean containsPlugDescription(String md5Hash) {
+
+        return false;
+    }
+
     public void addPlugDescription(PlugDescription plugDescription) {
-        this.fRegistry.addIPlug(plugDescription);
+        fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "'");
+        this.fRegistry.addPlugDescription(plugDescription);
     }
 
     public void removePlugDescription(PlugDescription plugDescripion) {
-        this.fRegistry.removePlugFromCache(plugDescripion.getPlugId());
+        this.fRegistry.removePlug(plugDescripion.getPlugId());
     }
 
     public PlugDescription[] getAllIPlugs() {
