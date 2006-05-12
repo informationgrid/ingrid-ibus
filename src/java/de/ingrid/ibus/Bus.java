@@ -463,8 +463,7 @@ public class Bus extends Thread implements IBus {
     }
 
     public boolean containsPlugDescription(String md5Hash) {
-
-        return false;
+        return this.fRegistry.containsPlugDescription(md5Hash);
     }
 
     public void addPlugDescription(PlugDescription plugDescription) {
