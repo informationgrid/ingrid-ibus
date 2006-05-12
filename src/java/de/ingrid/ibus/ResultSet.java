@@ -55,7 +55,7 @@ public class ResultSet extends ArrayList {
         if (hits == null) {
             throw new IllegalArgumentException("null can not added as Hits");
         }
-        if (hits.getHits().length == 0) {
+        if (hits.getHits() == null || hits.getHits().length == 0) {
             return false;
         }
         return super.add(hits);
@@ -65,7 +65,7 @@ public class ResultSet extends ArrayList {
      * @return all plugIds from the plugs which delivers a result.
      */
     public String[] getPlugIdsWithResult() {
-        List plugIds=new ArrayList(size());
+        List plugIds = new ArrayList(size());
         for (Iterator iter = this.iterator(); iter.hasNext();) {
             IngridHits hits = (IngridHits) iter.next();
             plugIds.add(hits.getPlugId());
