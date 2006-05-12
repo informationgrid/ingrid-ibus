@@ -69,6 +69,7 @@ public class RegistryTest extends TestCase {
         registry.setCommunication(new DummyCommunication());
         PlugDescription plugDescription = new PlugDescription();
         plugDescription.setProxyServiceURL("/:aID");
+        assertFalse(registry.containsPlugDescription(plugDescription.getPlugId(), plugDescription.getMd5Hash()));
         registry.addPlugDescription(plugDescription);
         assertTrue(registry.containsPlugDescription(plugDescription.getPlugId(), plugDescription.getMd5Hash()));
         assertEquals(1, registry.getAllIPlugs().length);

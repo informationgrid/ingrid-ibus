@@ -83,9 +83,12 @@ public class Registry {
      * @return true if registry contains a plug with given hash
      */
     public boolean containsPlugDescription(String plugId, String md5Hash) {
-        PlugDescription plugDescription= getPlugDescription(plugId);
-       plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
-       
+        PlugDescription plugDescription = getPlugDescription(plugId);
+        if (plugDescription == null) {
+            return false;
+        }
+        plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
+
         return plugDescription.getMd5Hash().equals(md5Hash);
     }
 
