@@ -79,4 +79,14 @@ public class DummyCommunication implements ICommunication {
 
     }
 
+    public void closeConnection(String url) throws IOException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setPeerName(String peerName) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
