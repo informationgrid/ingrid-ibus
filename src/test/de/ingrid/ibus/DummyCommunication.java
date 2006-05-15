@@ -40,11 +40,11 @@ public class DummyCommunication implements ICommunication {
         return null;
     }
 
-    public void subscribeGroup(String url) throws Exception, IllegalArgumentException {
+    public void subscribeGroup(String url) throws IOException {
         //s
     }
 
-    public void unsubscribeGroup(String url) throws Exception {
+    public void unsubscribeGroup(String url) throws IOException {
         // TODO Auto-generated method stub
 
     }
