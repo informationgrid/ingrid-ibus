@@ -119,7 +119,9 @@ public class Registry {
             } catch (Exception e) {
                 fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
                 removePlug(plugId);
-                throw new IllegalStateException("plug with id '" + plugId + "' currently not availible");
+                IllegalStateException iste=new IllegalStateException("plug with id '" + plugId + "' currently not availible");
+                iste.initCause(e);
+                throw iste ;
             }
         }
     }
