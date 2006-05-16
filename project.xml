@@ -13,7 +13,7 @@
     <siteAddress>http://torwald.gistec-online.de/ingrid/ingrid-ibus</siteAddress>
     <siteDirectory>/srv/www/htdocs/ingrid/ingrid-ibus</siteDirectory>
     <mailingLists>
-        <mailingList>
+        <mailingList> 
             <name>${pom.name} Dev List</name>
         </mailingList>
         <mailingList>
