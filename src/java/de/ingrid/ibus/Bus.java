@@ -37,8 +37,7 @@ import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
- * The IBus a centralized Bus that routes queries and return results. Created on
- * 09.08.2005
+ * The IBus a centralized Bus that routes queries and return results. Created on 09.08.2005
  * 
  * @author sg
  * @version $Revision: 1.3 $
