@@ -139,10 +139,12 @@ public class Registry {
                 this.fPlugProxyByPlugId.remove(plugId);
             }
             PlugDescription description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
-            try {
-                this.fCommunication.closeConnection(description.getProxyServiceURL());
-            } catch (IOException e) {
-                fLogger.warn("problems on closing connection", e);
+            if (description != null) {
+                try {
+                    this.fCommunication.closeConnection(description.getProxyServiceURL());
+                } catch (IOException e) {
+                    fLogger.warn("problems on closing connection", e);
+                }
             }
         }
     }
