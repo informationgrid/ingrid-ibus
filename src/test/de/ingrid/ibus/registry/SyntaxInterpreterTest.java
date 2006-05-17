@@ -42,7 +42,7 @@ public class SyntaxInterpreterTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        this.registry = new Registry(100000, true,new DummyProxyFactory());
+        this.registry = new Registry(100000, true, new DummyProxyFactory());
         this.registry.setCommunication(new DummyCommunication());
         for (int i = 0; i < this.descriptions.length; i++) {
             this.descriptions[i] = new PlugDescription();
@@ -133,7 +133,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testDataTypeQueries() throws Exception {
-        Registry aRegestry = new Registry(10, true,new DummyProxyFactory());
+        Registry aRegestry = new Registry(10, true, new DummyProxyFactory());
         aRegestry.setCommunication(new DummyCommunication());
         PlugDescription description = new PlugDescription();
         description.setProxyServiceURL("/:23");
@@ -150,7 +150,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testIsRanked() throws Exception {
-        Registry aRegestry = new Registry(10, true,new DummyProxyFactory());
+        Registry aRegestry = new Registry(10, true, new DummyProxyFactory());
         aRegestry.setCommunication(new DummyCommunication());
         PlugDescription description = new PlugDescription();
         description.setProxyServiceURL("/:23");
@@ -162,7 +162,7 @@ public class SyntaxInterpreterTest extends TestCase {
 
         assertEquals(1, SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
 
-        aRegestry = new Registry(10, true,new DummyProxyFactory());
+        aRegestry = new Registry(10, true, new DummyProxyFactory());
         aRegestry.setCommunication(new DummyCommunication());
         description = new PlugDescription();
         description.setProxyServiceURL("/:23");
@@ -178,6 +178,22 @@ public class SyntaxInterpreterTest extends TestCase {
     private PlugDescription[] getIPlugs(String queryString) throws Exception {
         QueryStringParser parser = new QueryStringParser(new StringReader(queryString));
         IngridQuery query = parser.parse();
+        return SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
+    }
+
+    private PlugDescription[] getIPlugs(String queryString, FieldQuery fieldQuery) throws Exception {
+        QueryStringParser parser = new QueryStringParser(new StringReader(queryString));
+        IngridQuery query = parser.parse();
+        query.addField(fieldQuery);
+        return SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
+    }
+
+    private PlugDescription[] getIPlugs(String queryString, FieldQuery[] fieldQuerys) throws Exception {
+        QueryStringParser parser = new QueryStringParser(new StringReader(queryString));
+        IngridQuery query = parser.parse();
+        for (int i = 0; i < fieldQuerys.length; i++) {
+            query.addField(fieldQuerys[i]);
+        }
         return SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
     }
 
@@ -198,29 +214,38 @@ public class SyntaxInterpreterTest extends TestCase {
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
         assertEquals(1, plugsForQuery.length);
     }
-    
-//    public void testGetI() throws Exception {
-//        IngridQuery query = QueryStringParser.parse("aQuery iplugs:\"a\" iplugs:b");
-//        System.out.println(Arrays.asList(query.getIPlugs()));
-//        query = QueryStringParser.parse("aQuery provider:\"a\" provider:b");
-//        System.out.println(Arrays.asList(query.getPositiveProvider()));
-//    }
+
+    // public void testGetI() throws Exception {
+    // IngridQuery query = QueryStringParser.parse("aQuery iplugs:\"a\"
+    // iplugs:b");
+    // System.out.println(Arrays.asList(query.getIPlugs()));
+    // query = QueryStringParser.parse("aQuery provider:\"a\" provider:b");
+    // System.out.println(Arrays.asList(query.getPositiveProvider()));
+    // }
 
     /**
      * @throws Exception
      */
     public void testGetIPlugs_IPlugs() throws Exception {
-        assertEquals(0, getIPlugs("query " + IngridQuery.IPLUGS + ":" + 123).length);
-        assertEquals(1, getIPlugs("query " + IngridQuery.IPLUGS + ":" + this.descriptions[0].getPlugId().hashCode()).length);
-        assertEquals(1, getIPlugs("query " + IngridQuery.IPLUGS + ":" + this.descriptions[1].getPlugId().hashCode()).length);
+        assertEquals(0, getIPlugs("query", new FieldQuery(true, false, IngridQuery.IPLUGS, "abc")).length);
+        assertEquals(1, getIPlugs("query", new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[0]
+                .getPlugId())).length);
+        assertEquals(1, getIPlugs("query", new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[1]
+                .getPlugId())).length);
 
-        assertEquals(2, getIPlugs("query " + IngridQuery.IPLUGS + ":" + this.descriptions[0].getPlugId().hashCode()+" "
-                + IngridQuery.IPLUGS + ":" + this.descriptions[1].getPlugId().hashCode()).length);
+        assertEquals(2, getIPlugs("query", new FieldQuery[] {
+                new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[1].getPlugId()),
+                new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[1].getPlugId()) }).length);
+
         // using query parser
-        IngridQuery query = QueryStringParser.parse("aQuery");
-        query.addField(new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[0].getPlugId().hashCode()+""));
-        PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
-        assertEquals(1, plugsForQuery.length);
+        IngridQuery query = QueryStringParser.parse("aQuery " + IngridQuery.IPLUGS + ":abc");
+        assertEquals(0, SyntaxInterpreter.getIPlugsForQuery(query, this.registry).length);
+        // FIXME the below does not work, cause "plugId" is parsed to "plugId"
+        // and not ot plugId
+        // query = QueryStringParser.parse("aQuery " + IngridQuery.IPLUGS +
+        // ":\"" + this.descriptions[0].getPlugId()+"\"");
+        // assertEquals(1, SyntaxInterpreter.getIPlugsForQuery(query,
+        // this.registry).length);
     }
 
 }

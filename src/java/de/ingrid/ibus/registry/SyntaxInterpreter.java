@@ -164,7 +164,7 @@ public class SyntaxInterpreter {
     }
 
     /**
-     * @param ingridQueries 
+     * @param ingridQueries
      * @param allIPlugs
      * @return only plugs matching given datatype.
      */
@@ -230,16 +230,16 @@ public class SyntaxInterpreter {
     }
 
     private static PlugDescription[] filterForIPlugs(IngridQuery query, PlugDescription[] plugs) {
-        String[] allowedPlugs=query.getIPlugs();
-        if(allowedPlugs.length==0){
+        String[] restrictedPlugIds = query.getIPlugs();
+        if (restrictedPlugIds.length == 0) {
             return plugs;
         }
-        ArrayList arrayList = new ArrayList(allowedPlugs.length);
-        
+        ArrayList arrayList = new ArrayList(restrictedPlugIds.length);
         for (int i = 0; i < plugs.length; i++) {
-            for (int j = 0; j < allowedPlugs.length; j++) {
-                if(plugs[i].getPlugId().hashCode()==Integer.parseInt(allowedPlugs[j])){
-                   arrayList.add(plugs[i]);
+            for (int j = 0; j < restrictedPlugIds.length; j++) {
+                System.out.println(""+plugs[i].getPlugId());
+                if (plugs[i].getPlugId().equals(restrictedPlugIds[j])) {
+                    arrayList.add(plugs[i]);
                 }
             }
         }
