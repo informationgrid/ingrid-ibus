@@ -6,6 +6,7 @@
 
 package de.ingrid.ibus.registry;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -114,14 +115,15 @@ public class Registry {
             try {
                 IPlug plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
-                //check connection
+                // check connection
                 plugProxy.toString();
             } catch (Exception e) {
                 fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
                 removePlug(plugId);
-                IllegalStateException iste=new IllegalStateException("plug with id '" + plugId + "' currently not availible");
+                IllegalStateException iste = new IllegalStateException("plug with id '" + plugId
+                        + "' currently not availible");
                 iste.initCause(e);
-                throw iste ;
+                throw iste;
             }
         }
     }
@@ -136,7 +138,12 @@ public class Registry {
             synchronized (this.fPlugDescriptionByPlugId) {
                 this.fPlugProxyByPlugId.remove(plugId);
             }
-            this.fPlugDescriptionByPlugId.remove(plugId);
+            PlugDescription description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
+            try {
+                this.fCommunication.closeConnection(description.getProxyServiceURL());
+            } catch (IOException e) {
+                fLogger.warn("problems on closing connection", e);
+            }
         }
     }
 
