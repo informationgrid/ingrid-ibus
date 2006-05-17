@@ -237,7 +237,6 @@ public class SyntaxInterpreter {
         ArrayList arrayList = new ArrayList(restrictedPlugIds.length);
         for (int i = 0; i < plugs.length; i++) {
             for (int j = 0; j < restrictedPlugIds.length; j++) {
-                System.out.println(""+plugs[i].getPlugId());
                 if (plugs[i].getPlugId().equals(restrictedPlugIds[j])) {
                     arrayList.add(plugs[i]);
                 }
