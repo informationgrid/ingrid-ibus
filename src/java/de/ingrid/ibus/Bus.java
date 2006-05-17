@@ -37,7 +37,8 @@ import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
- * The IBus a centralized Bus that routes queries and return results. Created on 09.08.2005
+ * The IBus a centralized Bus that routes queries and return results. Created on
+ * 09.08.2005
  * 
  * @author sg
  * @version $Revision: 1.3 $
@@ -118,9 +119,11 @@ public class Bus extends Thread implements IBus {
         for (int i = 0; i < plugsForQueryLength; i++) {
             PlugDescription plugDescription = plugsForQuery[i];
             IPlug plugProxy = this.fRegistry.getPlugProxy(plugDescription.getPlugId());
-            requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
-                    query, start, requestLength);
-            requests[i].start();
+            if (plugProxy != null) {
+                requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
+                        query, start, requestLength);
+                requests[i].start();
+            }
         }
         if (plugsForQueryLength > 0) {
             try {
@@ -342,6 +345,9 @@ public class Bus extends Thread implements IBus {
     public Record getRecord(IngridHit hit) throws Exception {
         PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(hit.getPlugId());
         IPlug plugProxy = this.fRegistry.getPlugProxy(hit.getPlugId());
+        if (plugProxy == null) {
+            throw new IllegalStateException("plug '" + hit.getPlugId() + "' currently not availible");
+        }
         if (plugDescription.isRecordloader()) {
             return ((IRecordLoader) plugProxy).getRecord(hit);
         }
@@ -399,18 +405,21 @@ public class Bus extends Thread implements IBus {
             if (requestHitList != null) {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
                 plugProxy = this.fRegistry.getPlugProxy(plugId);
-                IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
-                for (int i = 0; i < responseDetails.length; i++) {
-                    if (responseDetails[i] == null) {
-                        fLogger.error(plugId + ": responded details that are null (set a pseudo responseDetail");
-                        responseDetails[i] = new IngridHitDetail(plugId, random.nextInt(), random.nextInt(), 0.0f, "",
-                                "");
+                if (plugProxy != null) {
+                    IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
+                    for (int i = 0; i < responseDetails.length; i++) {
+                        if (responseDetails[i] == null) {
+                            fLogger.error(plugId + ": responded details that are null (set a pseudo responseDetail");
+                            responseDetails[i] = new IngridHitDetail(plugId, random.nextInt(), random.nextInt(), 0.0f,
+                                    "", "");
+                        }
                     }
-                }
 
-                resultList.addAll(Arrays.asList(responseDetails)); // FIXME to
-                // improve performance we can use an Array instead of a list
-                // here.
+                    resultList.addAll(Arrays.asList(responseDetails)); // FIXME
+                                                                        // to
+                    // improve performance we can use an Array instead of a list
+                    // here.
+                }
             }
         }
 
