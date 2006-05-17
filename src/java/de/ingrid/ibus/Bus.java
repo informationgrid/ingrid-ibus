@@ -145,10 +145,12 @@ public class Bus extends Thread implements IBus {
 
     private IngridHits orderResults(ResultSet resultSet, PlugDescription[] plugDescriptionsForQuery) {
         int resultHitsCount = resultSet.size();
+        int totalHits = 0;
         for (int i = 0; i < resultHitsCount; i++) {
             IngridHits hitContainer = (IngridHits) resultSet.get(i);
             int pos = getPlugPosition(plugDescriptionsForQuery, hitContainer.getPlugId());
             hitContainer.putInt(Comparators.UNRANKED_HITS_COMPARATOR_POSITION, pos);
+            totalHits += hitContainer.length();
         }
         Collections.sort(resultSet, Comparators.UNRANKED_HITS_COMPARATOR);
         List orderedHits = new LinkedList();
@@ -160,7 +162,7 @@ public class Bus extends Thread implements IBus {
             }
 
         }
-        return new IngridHits(orderedHits.size(), (IngridHit[]) orderedHits.toArray(new IngridHit[orderedHits.size()]));
+        return new IngridHits(totalHits, (IngridHit[]) orderedHits.toArray(new IngridHit[orderedHits.size()]));
     }
 
     private int getPlugPosition(PlugDescription[] plugDescriptionsForQuery, String plugId) {
