@@ -139,7 +139,7 @@ public class Registry {
                 this.fPlugProxyByPlugId.remove(plugId);
             }
             PlugDescription description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
-            if (description != null) {
+            if (description != null && this.fCommunication != null) {
                 try {
                     this.fCommunication.closeConnection(description.getProxyServiceURL());
                 } catch (IOException e) {
