@@ -78,6 +78,10 @@ public class PlugQueryRequest extends Thread {
                         + (System.currentTimeMillis() - time) + " ms");
             }
             this.fResultSet.add(hits);
+        } catch (InterruptedException e) {
+            fLog.error("(REMOVING IPLUG!) Interrupted query result retrieval: " + this.fPlugId);
+            this.fRegestry.removePlug(this.fPlugId);
+
         } catch (Exception e) {
             fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
             this.fRegestry.removePlug(this.fPlugId);
