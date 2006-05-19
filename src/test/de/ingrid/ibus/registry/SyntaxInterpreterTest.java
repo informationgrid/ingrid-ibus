@@ -175,6 +175,20 @@ public class SyntaxInterpreterTest extends TestCase {
         assertEquals(0, SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
     }
 
+    /**
+     * @throws Exception
+     */
+    public void testFilterRanked() throws Exception {
+        // get unranked (1 ranked/ 5 not)
+        PlugDescription description = new PlugDescription();
+        description.setProxyServiceURL("/:23");
+        description.setRankinTypes(true, false, false);
+        this.registry.addPlugDescription(description);
+        IngridQuery query = QueryStringParser.parse("query ranking:off");
+        assertEquals(5, SyntaxInterpreter.getIPlugsForQuery(query, this.registry).length);
+
+    }
+
     private PlugDescription[] getIPlugs(String queryString) throws Exception {
         QueryStringParser parser = new QueryStringParser(new StringReader(queryString));
         IngridQuery query = parser.parse();
