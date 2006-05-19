@@ -23,7 +23,7 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
     public static final String PORTAL_METACLASS = "metaclass";
 
     /***/
-    public static final String UDK_METACLASS = "T01_object.obj_class";
+    public static final String UDK_METACLASS = "t01_object.obj_class";
 
     /***/
     public static final String PORTAL_METACLASS_DATABASE = "database";
