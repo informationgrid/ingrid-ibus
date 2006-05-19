@@ -11,6 +11,7 @@ import java.io.StringReader;
 import junit.framework.TestCase;
 import de.ingrid.ibus.DummyCommunication;
 import de.ingrid.ibus.DummyProxyFactory;
+import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
@@ -255,11 +256,21 @@ public class SyntaxInterpreterTest extends TestCase {
         IngridQuery query = QueryStringParser.parse("aQuery " + IngridQuery.IPLUGS + ":abc");
         assertEquals(0, SyntaxInterpreter.getIPlugsForQuery(query, this.registry).length);
         // FIXME the below does not work, cause "plugId" is parsed to "plugId"
-        // and not ot plugId
+        // and not ot plugIdF
         // query = QueryStringParser.parse("aQuery " + IngridQuery.IPLUGS +
         // ":\"" + this.descriptions[0].getPlugId()+"\"");
         // assertEquals(1, SyntaxInterpreter.getIPlugsForQuery(query,
         // this.registry).length);
+    }
+    
+    /**
+     * @throws Exception
+     */
+    public void testMetaclass() throws Exception {
+        for (int i = 0; i < this.descriptions.length; i++) {
+            this.descriptions[i].addField(UdkMetaclassPreProcessor.UDK_METACLASS);
+        }
+        assertEquals(this.descriptions.length, getIPlugs("query", new FieldQuery(true, false, UdkMetaclassPreProcessor.UDK_METACLASS, UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE)).length);
     }
 
 }

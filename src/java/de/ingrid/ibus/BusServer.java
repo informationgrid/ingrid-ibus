@@ -15,6 +15,7 @@ import net.weta.components.communication_sockets.SocketCommunication;
 import net.weta.components.peer.StartJxtaConfig;
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
+import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.utils.IBus;
 
@@ -88,6 +89,9 @@ public class BusServer {
         Bus bus = new Bus(proxyFactory);
         Registry registry = bus.getIPlugRegistry();
         registry.setCommunication(communication);
+        
+        //add processors
+        bus.getProccessorPipe().addPreProcessor(new UdkMetaclassPreProcessor());
 
         // read in the boost for iplugs
         InputStream is = bus.getClass().getResourceAsStream("/globalRanking.properties");
