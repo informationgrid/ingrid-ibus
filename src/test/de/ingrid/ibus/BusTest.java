@@ -178,4 +178,24 @@ public class BusTest extends TestCase {
         // }
 
     }
+
+    /**
+     * @throws Exception
+     */
+    public void testUnrankedGroupedDatatypeSearch() throws Exception {
+        this.bus = new Bus(new DummyProxyFactory());
+        this.plugDescriptions = new PlugDescription[3];
+        for (int i = 0; i < this.plugDescriptions.length; i++) {
+            this.plugDescriptions[i] = new PlugDescription();
+            this.plugDescriptions[i].setProxyServiceURL("" + i);
+            this.plugDescriptions[i].setOrganisation(ORGANISATION);
+            this.plugDescriptions[i].addDataType("g2k");
+            this.bus.addPlugDescription(this.plugDescriptions[i]);
+        }
+
+        IngridQuery query = QueryStringParser
+                .parse("fische ranking:off datatype:g2k grouped:grouped_by_organisation");
+        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000);
+        assertEquals(this.plugDescriptions.length, hits.getHits().length);
+    }
 }
