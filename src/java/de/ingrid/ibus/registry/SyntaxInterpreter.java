@@ -7,6 +7,8 @@
 package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.ClauseQuery;
@@ -31,128 +33,196 @@ public class SyntaxInterpreter {
      * @return the iplugs that have the fields the query require.
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
-        PlugDescription[] plugs = filteActivatedIplugs(registry.getAllIPlugs());
+        PlugDescription[] plugs = registry.getAllIPlugs();
+        List plugList = new ArrayList(plugs.length);
+        for (int i = 0; i < plugs.length; i++) {
+            plugList.add(plugs[i]);
+        }
 
-        plugs = filterForIPlugs(query, plugs);
+        filteActivatedIplugs(plugList);
+        filterForIPlugs(query, plugList);
+        filterForRanking(query, plugList);
+        filterForDataType(query, plugList);
+        filterForFields(query, plugList);
+        filterForProvider(query, plugList);
+        filterForPartner(query, plugList);
 
-        // filter activeded
-        plugs = filteActivatedIplugs(plugs);
-
-        // filter ranking
-        plugs = filterForRanking(query, plugs);
-
-        // filter datatype
-        plugs = filterForDataType(query, plugs);
-
-        // filter fields
-        plugs = filterForFields(query, plugs);
-
-        // filter provider
-        plugs = filterForProvider(query, plugs);
-
-        return plugs;
+        return (PlugDescription[]) plugList.toArray(new PlugDescription[plugList.size()]);
     }
 
-    private static PlugDescription[] filteActivatedIplugs(PlugDescription[] descriptions) {
-        ArrayList arrayList = new ArrayList();
-        for (int i = 0; i < descriptions.length; i++) {
-            if (descriptions[i].isActivate()) {
-                arrayList.add(descriptions[i]);
+    private static void filteActivatedIplugs(List plugDescriptions) {
+        int size = plugDescriptions.size();
+        for (int i = 0; i < size; i++) {
+            if (!((PlugDescription) plugDescriptions.get(i)).isActivate()) {
+                plugDescriptions.remove(i);
             }
         }
-        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
     }
 
-    private static PlugDescription[] filterForRanking(IngridQuery ingridQuery, PlugDescription[] descriptions) {
+    private static void filterForRanking(IngridQuery ingridQuery, List descriptions) {
         if (ingridQuery.getRankingType() == null) {
             ingridQuery.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
         }
-        ArrayList arrayList = new ArrayList();
-
-        for (int i = 0; i < descriptions.length; i++) {
-            String[] rankingTypes = descriptions[i].getRankingTypes();
-            if (rankingTypes.length > 0) {
-                for (int j = 0; j < rankingTypes.length; j++) {
-                    if (ingridQuery.isRanked(rankingTypes[j].toLowerCase())) {
-                        arrayList.add(descriptions[i]);
-                        break;
-                    }
+        for (Iterator iter = descriptions.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = (PlugDescription) iter.next();
+            String[] rankingTypes = plugDescription.getRankingTypes();
+            boolean foundRanking = false;
+            for (int i = 0; i < rankingTypes.length; i++) {
+                if (ingridQuery.isRanked(rankingTypes[i].toLowerCase())) {
+                    foundRanking = true;
+                    break;
                 }
-            } else {
-                arrayList.add(descriptions[i]);
+            }
+            if (!foundRanking && rankingTypes.length > 0) {
+                iter.remove();
+            }
+        }
+    }
+
+    private static void filterForFields(IngridQuery ingridQueries, List allIPlugs) {
+        String[] queryFieldNames = getAllFieldsNamesFromQuery(ingridQueries);
+        if (queryFieldNames.length == 0) {
+            return;
+        }
+
+        for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = (PlugDescription) iter.next();
+            String[] plugFields = plugDescription.getFields();
+            boolean toRemove = true;
+            for (int i = 0; i < plugFields.length; i++) {
+                if (containsString(queryFieldNames, plugFields[i])) {
+                    toRemove = false;
+                    break;
+                }
+            }
+            if (toRemove) {
+                iter.remove();
+            }
+        }
+    }
+
+    private static void filterForDataType(IngridQuery ingridQueries, List allIPlugs) {
+        String[] allowedDataTypes = ingridQueries.getPositiveDataTypes();
+        String[] notAllowedDataTypes = ingridQueries.getNegativeDataTypes();
+        if (allowedDataTypes.length == 0 && notAllowedDataTypes.length == 0) {
+            return;
+        }
+
+        for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = (PlugDescription) iter.next();
+            String[] dataTypes = plugDescription.getDataTypes();
+            boolean toRemove = true;
+            for (int i = 0; i < dataTypes.length; i++) {
+                if (containsString(notAllowedDataTypes, dataTypes[i])) {
+                    toRemove = true;
+                    break;
+                }
+                if (containsString(allowedDataTypes, dataTypes[i])) {
+                    toRemove = false;
+                }
+            }
+            if (toRemove) {
+                iter.remove();
             }
         }
 
-        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
+    }
 
+    private static void filterForProvider(IngridQuery ingridQueries, List allIPlugs) {
+        String[] allowedProvider = ingridQueries.getPositiveProvider();
+        String[] notAllowedProvider = ingridQueries.getNegativeProvider();
+        if (allowedProvider.length == 0 && notAllowedProvider.length == 0) {
+            return;
+        }
+
+        for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = (PlugDescription) iter.next();
+            String[] providers = plugDescription.getProviders();
+            boolean toRemove = true;
+            if (allowedProvider.length == 0) {
+                toRemove = false;
+            }
+            for (int i = 0; i < providers.length; i++) {
+                if (containsString(notAllowedProvider, providers[i])) {
+                    toRemove = true;
+                    break;
+                }
+                if (containsString(allowedProvider, providers[i])) {
+                    toRemove = false;
+                }
+            }
+            if (toRemove) {
+                iter.remove();
+            }
+        }
+
+    }
+
+    private static void filterForPartner(IngridQuery ingridQuery, List allIPlugs) {
+        String[] allowedPartner = ingridQuery.getPositivePartner();
+        String[] notAllowedPartner = ingridQuery.getNegativePartner();
+        if (allowedPartner.length == 0 && notAllowedPartner.length == 0) {
+            return;
+        }
+
+        for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = (PlugDescription) iter.next();
+            String[] partners = plugDescription.getPartners();
+            boolean toRemove = true;
+            for (int i = 0; i < partners.length; i++) {
+                if (containsString(notAllowedPartner, partners[i])) {
+                    toRemove = true;
+                    break;
+                }
+                if (containsString(allowedPartner, partners[i])) {
+                    toRemove = false;
+                }
+            }
+            if (toRemove) {
+                iter.remove();
+            }
+        }
+    }
+
+    private static void filterForIPlugs(IngridQuery query, List plugs) {
+        String[] restrictecPlugIds = query.getIPlugs();
+        if (restrictecPlugIds.length == 0) {
+            return;
+        }
+        for (Iterator iter = plugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = (PlugDescription) iter.next();
+            if (!containsString(restrictecPlugIds, plugDescription.getPlugId())) {
+                iter.remove();
+            }
+        }
     }
 
     /**
-     * @param ingridQueries
-     * @param allIPlugs
-     * @return plugs have at least one matching field
+     * @param query
+     * @return all fields of a given query and subqueries
      */
-    private static PlugDescription[] filterForFields(IngridQuery ingridQueries, PlugDescription[] allIPlugs) {
-        String[] fields = getAllFieldsFromQuery(ingridQueries);
-        if (fields.length == 0) {
-            return allIPlugs;
-        }
-
-        ArrayList arrayList = new ArrayList();
-        for (int i = 0; i < allIPlugs.length; i++) {
-            PlugDescription plug = allIPlugs[i];
-            String[] plugFields = plug.getFields();
-            for (int j = 0; j < plugFields.length; j++) {
-                String oneField = plugFields[j];
-                if (containsString(fields, oneField)) {
-                    arrayList.add(plug);
-                    break; // if this plug suuport at least one type we add it
-                    // to the list.
-                }
-            }
-        }
-        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
+    private static String[] getAllFieldsNamesFromQuery(IngridQuery query) {
+        ArrayList fieldsList = new ArrayList();
+        getFieldNamesFromQuery(query, fieldsList);
+        return (String[]) fieldsList.toArray(new String[fieldsList.size()]);
     }
 
-    // /**
-    // * @param allIPlugs
-    // * @param allowedDataTypes
-    // * @param fields
-    // * @return plugs matching datatype and have at least one matching field
-    // */
-    // private static PlugDescription[]
-    // filterForDataTypeAndFields(PlugDescription[] allIPlugs, String[]
-    // allowedDataTypes, String[] notAllowedDatatypes,
-    // String[] fields) {
-    // ArrayList arrayList = new ArrayList();
-    // HashSet requiredFields = new HashSet();
-    // requiredFields.addAll(Arrays.asList(fields));
-    // for (int i = 0; i < allIPlugs.length; i++) {
-    // PlugDescription plug = allIPlugs[i];
-    // String[] dataTypes = plug.getDataTypes();
-    // boolean added = false;
-    // for (int j = 0; j < dataTypes.length && !added; j++) {
-    // String oneType = dataTypes[j];
-    // if (containsString(allowedDataTypes, oneType) &&
-    // !containsString(notAllowedDatatypes, oneType)) {
-    // String[] plugFields = plug.getFields();
-    // for (int k = 0; k < plugFields.length; k++) {
-    // String field = plugFields[k].toLowerCase();
-    // if (requiredFields.contains(field)) {
-    // arrayList.add(plug);
-    // added = true;
-    // break; // we need if only once of the fields occures
-    // }
-    // }
-    //
-    // }
-    // }
-    //            
-    //           
-    // }
-    // return (PlugDescription[]) arrayList.toArray(new
-    // PlugDescription[arrayList.size()]);
-    // }
+    /**
+     * Recursive loop to extract field names from queries and clause subqueries
+     * 
+     * @param query
+     * @param fieldList
+     */
+    private static void getFieldNamesFromQuery(IngridQuery query, ArrayList fieldList) {
+        FieldQuery[] fields = query.getFields();
+        for (int i = 0; i < fields.length; i++) {
+            fieldList.add(fields[i].getFieldName());
+        }
+        ClauseQuery[] clauses = query.getClauses();
+        for (int i = 0; i < clauses.length; i++) {
+            getFieldNamesFromQuery(clauses[i], fieldList);
+        }
+    }
 
     private static boolean containsString(String[] allowedDataTypes, String oneType) {
         for (int i = 0; i < allowedDataTypes.length; i++) {
@@ -161,129 +231,6 @@ public class SyntaxInterpreter {
             }
         }
         return false;
-    }
-
-    /**
-     * @param ingridQueries
-     * @param allIPlugs
-     * @return only plugs matching given datatype.
-     */
-    private static PlugDescription[] filterForDataType(IngridQuery ingridQueries, PlugDescription[] allIPlugs) {
-        String[] allowedDataTypes = ingridQueries.getPositiveDataTypes();
-        String[] notAllowedDataTypes = ingridQueries.getNegativeDataTypes();
-
-        if (allowedDataTypes.length == 0 && notAllowedDataTypes.length == 0) {
-            return allIPlugs;
-        }
-
-        ArrayList arrayList = new ArrayList();
-        for (int i = 0; i < allIPlugs.length; i++) {
-            PlugDescription plug = allIPlugs[i];
-            String[] dataTypes = plug.getDataTypes();
-            for (int j = 0; j < dataTypes.length; j++) {
-                String oneType = dataTypes[j];
-                if (containsString(allowedDataTypes, oneType) && !containsString(notAllowedDataTypes, oneType)) {
-                    arrayList.add(plug);
-                    break; // if this plug suuport at least one type we add it
-                    // to the list.
-                }
-            }
-
-        }
-        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
-    }
-
-    private static PlugDescription[] filterForProvider(IngridQuery ingridQueries, PlugDescription[] allIPlugs) {
-        String[] allowedProvider = ingridQueries.getPositiveProvider();
-        String[] notAllowedProvider = ingridQueries.getNegativeProvider();
-        if (allowedProvider.length == 0 && notAllowedProvider.length == 0) {
-            return allIPlugs;
-        }
-
-        ArrayList arrayList = new ArrayList();
-        if (notAllowedProvider.length > 0) {
-            for (int i = 0; i < notAllowedProvider.length; i++) {
-                String provider = notAllowedProvider[i];
-                for (int j = 0; j < allIPlugs.length; j++) {
-                    String[] providers = allIPlugs[j].getProviders();
-                    if (!containsString(providers, provider) || providers.length > 1) {
-                        arrayList.add(allIPlugs[j]);
-                    }
-                }
-            }
-            allIPlugs = (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
-        }
-        if (allowedProvider.length > 0) {
-            arrayList = new ArrayList();
-            for (int i = 0; i < allowedProvider.length; i++) {
-                String provider = allowedProvider[i];
-                for (int j = 0; j < allIPlugs.length; j++) {
-                    String[] providers = allIPlugs[j].getProviders();
-                    if (containsString(providers, provider)) {
-                        arrayList.add(allIPlugs[j]);
-                    }
-                }
-            }
-        }
-
-        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
-    }
-
-    private static PlugDescription[] filterForIPlugs(IngridQuery query, PlugDescription[] plugs) {
-        String[] restrictedPlugIds = query.getIPlugs();
-        if (restrictedPlugIds.length == 0) {
-            return plugs;
-        }
-        ArrayList arrayList = new ArrayList(restrictedPlugIds.length);
-        for (int i = 0; i < plugs.length; i++) {
-            for (int j = 0; j < restrictedPlugIds.length; j++) {
-                if (plugs[i].getPlugId().equals(restrictedPlugIds[j])) {
-                    arrayList.add(plugs[i]);
-                }
-            }
-        }
-        return (PlugDescription[]) arrayList.toArray(new PlugDescription[arrayList.size()]);
-    }
-
-    /**
-     * @param query
-     * @return all fields of a given query and subqueries
-     */
-    private static String[] getAllFieldsFromQuery(IngridQuery query) {
-        ArrayList fieldsList = new ArrayList();
-        getFieldsFromQuery(query, fieldsList);
-        return (String[]) fieldsList.toArray(new String[fieldsList.size()]);
-    }
-
-    // private static boolean queryHasTerms(IngridQuery query) {
-    // TermQuery[] terms = query.getTerms();
-    // if (terms.length > 0) {
-    // return true;
-    // }
-    // ClauseQuery[] clauses = query.getClauses();
-    // for (int i = 0; i < clauses.length; i++) {
-    // if (queryHasTerms(clauses[i])) {
-    // return true;
-    // }
-    // }
-    // return false;
-    // }
-
-    /**
-     * Recursive loop to extract field names from queries and clause subqueries
-     * 
-     * @param query
-     * @param fieldList
-     */
-    private static void getFieldsFromQuery(IngridQuery query, ArrayList fieldList) {
-        FieldQuery[] fields = query.getFields();
-        for (int i = 0; i < fields.length; i++) {
-            fieldList.add(fields[i].getFieldName());
-        }
-        ClauseQuery[] clauses = query.getClauses();
-        for (int i = 0; i < clauses.length; i++) {
-            getFieldsFromQuery(clauses[i], fieldList);
-        }
     }
 
 }

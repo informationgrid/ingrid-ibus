@@ -68,6 +68,7 @@ public class SyntaxInterpreterTest extends TestCase {
     public void testGetIPlugs_DataTypes() throws Exception {
         this.descriptions[0].addDataType("UDK");
         this.descriptions[1].addDataType("UDK");
+        this.descriptions[1].addDataType("UDK2");
         assertEquals(2, getIPlugs("datatype:UDK aQuery").length);
         // using query parser
         assertEquals(0, getIPlugs("-datatype:UDK aQuery").length);
@@ -76,6 +77,40 @@ public class SyntaxInterpreterTest extends TestCase {
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
         assertEquals(0, plugsForQuery.length);
     }
+
+    /**
+     * @throws Exception
+     */
+    public void testGetIPlugs_DataTypesAndPartner() throws Exception {
+        this.descriptions[0].addDataType("UDK");
+        this.descriptions[0].addPartner("bund");
+        this.descriptions[1].addDataType("UDK");
+        this.descriptions[1].addPartner("he");
+
+        assertEquals(2, getIPlugs("query datatype:UDK").length);
+        assertEquals(1, getIPlugs("query datatype:UDK partner:bund").length);
+        assertEquals(1, getIPlugs("query datatype:UDK partner:he").length);
+    }
+
+    /**
+     * 3250
+     * @throws Exception
+     */
+//    public void testPerformance() throws Exception {
+//        this.descriptions[0].addDataType("UDK");
+//        this.descriptions[0].addPartner("bund");
+//        this.descriptions[1].addDataType("UDK");
+//        this.descriptions[1].addPartner("he");
+//        long time = System.currentTimeMillis();
+//        for (int i = 0; i < 10000; i++) {
+//            getIPlugs("query iplugs:plug1");
+//            getIPlugs("query datatype:UDK");
+//            getIPlugs("query datatype:UDK partner:bund");
+//            getIPlugs("query datatype:UDK partner:he");
+//        }
+//        System.out.println("tokk :"+(System.currentTimeMillis()-time));
+//
+//    }
 
     /**
      * @throws Exception
@@ -230,14 +265,6 @@ public class SyntaxInterpreterTest extends TestCase {
         assertEquals(1, plugsForQuery.length);
     }
 
-    // public void testGetI() throws Exception {
-    // IngridQuery query = QueryStringParser.parse("aQuery iplugs:\"a\"
-    // iplugs:b");
-    // System.out.println(Arrays.asList(query.getIPlugs()));
-    // query = QueryStringParser.parse("aQuery provider:\"a\" provider:b");
-    // System.out.println(Arrays.asList(query.getPositiveProvider()));
-    // }
-
     /**
      * @throws Exception
      */
@@ -249,7 +276,7 @@ public class SyntaxInterpreterTest extends TestCase {
                 .getPlugId())).length);
 
         assertEquals(2, getIPlugs("query", new FieldQuery[] {
-                new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[1].getPlugId()),
+                new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[0].getPlugId()),
                 new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[1].getPlugId()) }).length);
 
         // using query parser
@@ -262,7 +289,7 @@ public class SyntaxInterpreterTest extends TestCase {
         // assertEquals(1, SyntaxInterpreter.getIPlugsForQuery(query,
         // this.registry).length);
     }
-    
+
     /**
      * @throws Exception
      */
@@ -270,7 +297,8 @@ public class SyntaxInterpreterTest extends TestCase {
         for (int i = 0; i < this.descriptions.length; i++) {
             this.descriptions[i].addField(UdkMetaclassPreProcessor.UDK_METACLASS);
         }
-        assertEquals(this.descriptions.length, getIPlugs("query", new FieldQuery(true, false, UdkMetaclassPreProcessor.UDK_METACLASS, UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE)).length);
+        assertEquals(this.descriptions.length, getIPlugs("query", new FieldQuery(true, false,
+                UdkMetaclassPreProcessor.UDK_METACLASS, UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE)).length);
     }
 
 }
