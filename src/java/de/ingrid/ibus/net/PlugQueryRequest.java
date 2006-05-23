@@ -70,7 +70,7 @@ public class PlugQueryRequest extends Thread {
             }
             IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
             if (hits.getPlugId() == null) {
-                fLog.warn("result from '" + this.fPlugId + "' contains no plugId");
+                fLog.debug("result from '" + this.fPlugId + "' contains no plugId");
                 hits.setPlugId(this.fPlugId);
             }
             if (fLog.isDebugEnabled()) {
