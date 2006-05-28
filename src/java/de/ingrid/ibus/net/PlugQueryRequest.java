@@ -6,6 +6,8 @@
 
 package de.ingrid.ibus.net;
 
+import java.io.IOException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -81,7 +83,9 @@ public class PlugQueryRequest extends Thread {
         } catch (InterruptedException e) {
             fLog.error("(REMOVING IPLUG!) Interrupted query result retrieval: " + this.fPlugId);
             this.fRegestry.removePlug(this.fPlugId);
-
+        } catch (IOException e) {
+            fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: '" + this.fPlugId+"' - "+e.getMessage());
+            this.fRegestry.removePlug(this.fPlugId);
         } catch (Exception e) {
             fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
             this.fRegestry.removePlug(this.fPlugId);
