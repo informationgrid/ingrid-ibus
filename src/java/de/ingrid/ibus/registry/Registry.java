@@ -111,20 +111,11 @@ public class Registry {
 
     private void createPlugProxy(PlugDescription plugDescription) {
         String plugId = plugDescription.getPlugId();
+        IPlug plugProxy;
         synchronized (this.fPlugProxyByPlugId) {
             try {
-                IPlug plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+                plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
-                // establish connection
-                try {
-                    plugProxy.toString();
-                } catch (Exception e) {
-                    // sometimes there seems to be a message loss shortly after
-                    // connection establishment
-                    Thread.sleep(250);
-                    plugProxy.toString();
-                }
-
             } catch (Exception e) {
                 fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
                 removePlug(plugId);
@@ -132,6 +123,20 @@ public class Registry {
                         + "' currently not availible");
                 iste.initCause(e);
                 throw iste;
+            }
+        }
+        
+        // establish connection
+        try {
+            plugProxy.toString();
+        } catch (Exception e) {
+            // sometimes there seems to be a message loss shortly after
+            // connection establishment
+            try {
+                Thread.sleep(250);
+                plugProxy.toString();
+            } catch (InterruptedException e1) {
+                // nothing
             }
         }
     }
