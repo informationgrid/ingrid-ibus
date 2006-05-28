@@ -74,8 +74,8 @@ public class Registry {
         }
         plugDescription.setActivate(this.fIplugAutoActivation);
         plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
-        this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
         createPlugProxy(plugDescription);
+        this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
     }
 
     /**
