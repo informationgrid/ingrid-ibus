@@ -476,13 +476,13 @@ public class Bus extends Thread implements IBus {
         return this.fRegistry.containsPlugDescription(plugId, md5Hash);
     }
 
-    public void addPlugDescription(PlugDescription plugDescription) {
+    public synchronized void addPlugDescription(PlugDescription plugDescription) {
         fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
                 + getAllIPlugs().length);
         this.fRegistry.addPlugDescription(plugDescription);
     }
 
-    public void removePlugDescription(PlugDescription plugDescription) {
+    public synchronized void removePlugDescription(PlugDescription plugDescription) {
         fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:"
                 + getAllIPlugs().length);
         this.fRegistry.removePlug(plugDescription.getPlugId());
