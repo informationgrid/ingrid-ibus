@@ -62,12 +62,14 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
     public static final String UDK_METACLASS_PROJECT = "4";
 
     public void process(IngridQuery query) throws Exception {
-        FieldQuery oldField = query.removeField(PORTAL_METACLASS);
-        if (oldField != null) {
-            query.addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), UDK_METACLASS,
-                    getDbValue(oldField.getFieldValue())));
+        IngridQuery[] clauses=query.getAllClauses();
+        for (int i = 0; i < clauses.length; i++) {
+            FieldQuery oldField = clauses[i].removeField(PORTAL_METACLASS);
+            if (oldField != null) {
+                query.addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), UDK_METACLASS,
+                        getDbValue(oldField.getFieldValue())));
+            }
         }
-
     }
 
     private String getDbValue(String fieldValue) {
