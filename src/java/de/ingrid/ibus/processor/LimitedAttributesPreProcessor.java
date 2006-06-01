@@ -30,19 +30,19 @@ public class LimitedAttributesPreProcessor implements IPreProcessor {
     public static final String ATTRIBUTE_RANGE_LIMITED = "limited";
 
     /***/
-    public static final String INSTITUTION = "T02_address.institution";
+    public static final String INSTITUTION = "t02_address.institution";
 
     /***/
-    public static final String PERSON_LAST_NAME = "T02_address.lastname";
+    public static final String PERSON_LAST_NAME = "t02_address.lastname";
     
     /***/
-    public static final String PERSON_FIRST_NAME = "T02_address.lastname";
+    public static final String PERSON_FIRST_NAME = "t02_address.firstname";
 
     /***/
-    public static final String DESCRIPTION = "T02_address.descr";
+    public static final String DESCRIPTION = "t02_address.descr";
 
     /***/
-    public static final String SEARCHTERMS = "T04_search.searchterm";
+    public static final String SEARCHTERMS = "t04_search.searchterm";
 
     public void process(IngridQuery query) throws Exception {
         IngridQuery[] clauses = query.getAllClauses();
