@@ -23,20 +23,20 @@ public class AddressPreProcessorTest extends TestCase {
     /**
      * @throws Exception
      */
-    public void testProcessip() throws Exception {
+    public void testProcessZip() throws Exception {
         IngridQuery query = QueryStringParser.parse("query zip:282");
         new AddressPreProcessor().process(query);
         assertFalse(query.containsField(AddressPreProcessor.ZIP));
-        assertTrue(query.containsField(AddressPreProcessor.ZIP_UDK_NAME1));
-        assertTrue(query.containsField(AddressPreProcessor.ZIP_UDK_NAME2));
-        assertEquals("282", query.getFields()[0].getFieldValue());
-        
-        query =QueryStringParser.parse("query (ad zip:282)");
-        new AddressPreProcessor().process(query);
-        assertFalse(query.getClauses()[0].containsField(AddressPreProcessor.ZIP));
         assertTrue(query.getClauses()[0].containsField(AddressPreProcessor.ZIP_UDK_NAME1));
         assertTrue(query.getClauses()[0].containsField(AddressPreProcessor.ZIP_UDK_NAME2));
         assertEquals("282", query.getClauses()[0].getFields()[0].getFieldValue());
+        
+        query =QueryStringParser.parse("query (ad zip:282)");
+        new AddressPreProcessor().process(query);
+        assertFalse(query.getClauses()[0].getClauses()[0].containsField(AddressPreProcessor.ZIP));
+        assertTrue(query.getClauses()[0].getClauses()[0].containsField(AddressPreProcessor.ZIP_UDK_NAME1));
+        assertTrue(query.getClauses()[0].getClauses()[0].containsField(AddressPreProcessor.ZIP_UDK_NAME2));
+        assertEquals("282", query.getClauses()[0].getClauses()[0].getFields()[0].getFieldValue());
     }
     
     /**

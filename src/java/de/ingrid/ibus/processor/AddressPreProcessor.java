@@ -5,6 +5,7 @@
 package de.ingrid.ibus.processor;
 
 import de.ingrid.utils.processor.IPreProcessor;
+import de.ingrid.utils.query.ClauseQuery;
 import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
 
@@ -25,7 +26,7 @@ public class AddressPreProcessor implements IPreProcessor {
     public static final String ZIP = "zip";
 
     /***/
-    public static final String ZIP_UDK_NAME1 = "t02_address.postcode";
+    public static final String ZIP_UDK_NAME1 = "t02_address.postbox";
 
     /***/
     public static final String ZIP_UDK_NAME2 = "t02_address.postbox_pc";
@@ -71,10 +72,10 @@ public class AddressPreProcessor implements IPreProcessor {
     private void checkZip(IngridQuery query) {
         FieldQuery oldField = query.removeField(ZIP);
         if (oldField != null) {
-            query.addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), ZIP_UDK_NAME1, oldField
-                    .getFieldValue()));
-            query.addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), ZIP_UDK_NAME2, oldField
-                    .getFieldValue()));
+            ClauseQuery clauseQuery = new ClauseQuery(oldField.isRequred(), oldField.isProhibited());
+            clauseQuery.addField(new FieldQuery(false, false, ZIP_UDK_NAME1, oldField.getFieldValue()));
+            clauseQuery.addField(new FieldQuery(false, false, ZIP_UDK_NAME2, oldField.getFieldValue()));
+            query.addClause(clauseQuery);
         }
     }
 
