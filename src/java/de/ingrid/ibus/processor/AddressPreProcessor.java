@@ -26,7 +26,7 @@ public class AddressPreProcessor implements IPreProcessor {
     public static final String ZIP = "zip";
 
     /***/
-    public static final String ZIP_UDK_NAME1 = "t02_address.postbox";
+    public static final String ZIP_UDK_NAME1 = "t02_address.postcode";
 
     /***/
     public static final String ZIP_UDK_NAME2 = "t02_address.postbox_pc";
