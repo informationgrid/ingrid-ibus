@@ -21,7 +21,7 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
      */
     private static final long serialVersionUID = 1L;
 
-    public IPlug createPlugProxy(PlugDescription plug) throws Exception {
+    public IPlug createPlugProxy(PlugDescription plug, String busurl) throws Exception {
         return new HangingPlug();
     }
 

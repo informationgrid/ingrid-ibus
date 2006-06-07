@@ -39,6 +39,7 @@ public class BusServer {
         final String usage = "Wrong numbers of arguments. You must set --descriptor <filename> and --busurl "
                 + "<wetag url> for jxta or  --multicastPort <port> and --unicastPort <port> for socket communication.";
         HashMap arguments = new HashMap();
+        String busurl = null;
 
         // convert and validate the supplied arguments
         if (4 != args.length) {
@@ -71,7 +72,7 @@ public class BusServer {
             }
         } else if (arguments.containsKey("--descriptor")) {
             String filename = (String) arguments.get("--descriptor");
-            String busurl = (String) arguments.get("--busurl");
+            busurl = (String) arguments.get("--busurl");
 
             try {
                 FileInputStream fileIS = new FileInputStream(filename);
@@ -91,6 +92,7 @@ public class BusServer {
         IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl(communication);
         Bus bus = new Bus(proxyFactory);
         Registry registry = bus.getIPlugRegistry();
+        registry.setUrl(busurl);
         registry.setCommunication(communication);
         
         //add processors

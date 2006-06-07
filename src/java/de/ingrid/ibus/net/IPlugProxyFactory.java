@@ -16,9 +16,10 @@ public interface IPlugProxyFactory {
 
     /**
      * @param plug
+     * @param busurl 
      * @return The created IPlug instance.
      * @throws Exception
      */
-    public IPlug createPlugProxy(PlugDescription plug) throws Exception;
+    public IPlug createPlugProxy(PlugDescription plug, String busurl) throws Exception;
 
 }

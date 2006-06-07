@@ -50,6 +50,8 @@ public class Registry {
 
     private HashMap fGlobalRanking;
 
+    private String fBusUrl;
+
     /**
      * @param lifeTimeOfPlugs
      * @param iplugAutoActivation
@@ -68,7 +70,9 @@ public class Registry {
      */
     public void addPlugDescription(PlugDescription plugDescription) {
         removePlug(plugDescription.getPlugId());
-        joinGroup(plugDescription.getProxyServiceURL());
+        if (this.fBusUrl == null) {
+            joinGroup(plugDescription.getProxyServiceURL());
+        }
         if (plugDescription.getMd5Hash() == null) {
             throw new IllegalArgumentException("md5 hash not set - plug '" + plugDescription.getPlugId());
         }
@@ -114,10 +118,10 @@ public class Registry {
         IPlug plugProxy;
         synchronized (this.fPlugProxyByPlugId) {
             try {
-                plugProxy = this.fProxyFactory.createPlugProxy(plugDescription);
+                plugProxy = this.fProxyFactory.createPlugProxy(plugDescription, this.fBusUrl);
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
             } catch (Exception e) {
-                fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not creat proxy object: ", e);
+                fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not create proxy object: ", e);
                 removePlug(plugId);
                 IllegalStateException iste = new IllegalStateException("plug with id '" + plugId
                         + "' currently not availible");
@@ -154,7 +158,15 @@ public class Registry {
             PlugDescription description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
             if (description != null && this.fCommunication != null) {
                 try {
-                    this.fCommunication.closeConnection(description.getProxyServiceURL());
+                    String plugUrl = null;
+                    if (this.fBusUrl != null) {
+                        final String path = this.fBusUrl.replaceFirst("/(.*)?:(.*)?", "$1");
+                        final String peername = description.getProxyServiceURL().replaceFirst("/(.*)?:(.*)?", "$2");
+                        plugUrl = "/" + path + ":" + peername;
+                    } else {
+                        plugUrl = description.getProxyServiceURL();
+                    }
+                    this.fCommunication.closeConnection(plugUrl);
                 } catch (IOException e) {
                     fLogger.warn("problems on closing connection", e);
                 }
@@ -272,5 +284,12 @@ public class Registry {
         }
 
         return result;
+    }
+
+    /**
+     * @param busurl
+     */
+    public void setUrl(final String busurl) {
+        this.fBusUrl = busurl;
     }
 }
