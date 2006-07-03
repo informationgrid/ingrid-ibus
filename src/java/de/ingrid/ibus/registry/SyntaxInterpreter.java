@@ -39,7 +39,7 @@ public class SyntaxInterpreter {
             plugList.add(plugs[i]);
         }
 
-        filteActivatedIplugs(plugList);
+        filterActivatedIplugs(plugList);
         filterForIPlugs(query, plugList);
         filterForRanking(query, plugList);
         filterForDataType(query, plugList);
@@ -50,7 +50,7 @@ public class SyntaxInterpreter {
         return (PlugDescription[]) plugList.toArray(new PlugDescription[plugList.size()]);
     }
 
-    private static void filteActivatedIplugs(List plugDescriptions) {
+    private static void filterActivatedIplugs(List plugDescriptions) {
         int size = plugDescriptions.size();
         for (int i = 0; i < size; i++) {
             if (!((PlugDescription) plugDescriptions.get(i)).isActivate()) {
@@ -139,6 +139,7 @@ public class SyntaxInterpreter {
             PlugDescription plugDescription = (PlugDescription) iter.next();
             String[] providers = plugDescription.getProviders();
             boolean toRemove = true;
+            //TODO: Is this correct?
             if (allowedProvider.length == 0) {
                 toRemove = false;
             }
@@ -172,6 +173,7 @@ public class SyntaxInterpreter {
             for (int i = 0; i < partners.length; i++) {
                 if (containsString(notAllowedPartner, partners[i])) {
                     toRemove = true;
+                    //TODO: Shouldn't this be in the allowedPartner tree?
                     break;
                 }
                 if (containsString(allowedPartner, partners[i])) {

@@ -193,9 +193,30 @@ public class BusTest extends TestCase {
             this.bus.addPlugDescription(this.plugDescriptions[i]);
         }
 
-        IngridQuery query = QueryStringParser
-                .parse("fische ranking:off datatype:g2k grouped:grouped_by_organisation");
+        IngridQuery query = QueryStringParser.parse("fische ranking:off datatype:g2k grouped:grouped_by_organisation");
         IngridHits hits = this.bus.search(query, 10, 1, 0, 1000);
         assertEquals(this.plugDescriptions.length, hits.getHits().length);
+    }
+
+    /**
+     * Test query with partners in sub clauses.
+     * @throws Exception
+     */
+    public void testFilterForPartner() throws Exception {
+        this.bus = new Bus(new DummyProxyFactory());
+        this.plugDescriptions = new PlugDescription[3];
+        for (int i = 0; i < this.plugDescriptions.length; i++) {
+            this.plugDescriptions[i] = new PlugDescription();
+            this.plugDescriptions[i].setProxyServiceURL("" + i);
+            this.plugDescriptions[i].setOrganisation(ORGANISATION);
+            this.plugDescriptions[i].addDataType("g2k");
+            this.plugDescriptions[i].addPartner("he");
+            this.plugDescriptions[i].addProvider("he");
+            this.bus.addPlugDescription(this.plugDescriptions[i]);
+        }
+
+        IngridQuery query = QueryStringParser.parse("fische (partner:st OR partner:sl)");
+        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000);
+        assertEquals(0, hits.getHits().length);
     }
 }
