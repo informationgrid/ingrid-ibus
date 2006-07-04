@@ -139,7 +139,6 @@ public class SyntaxInterpreter {
             PlugDescription plugDescription = (PlugDescription) iter.next();
             String[] providers = plugDescription.getProviders();
             boolean toRemove = true;
-            //TODO: Is this correct?
             if (allowedProvider.length == 0) {
                 toRemove = false;
             }
@@ -173,7 +172,6 @@ public class SyntaxInterpreter {
             for (int i = 0; i < partners.length; i++) {
                 if (containsString(notAllowedPartner, partners[i])) {
                     toRemove = true;
-                    //TODO: Shouldn't this be in the allowedPartner tree?
                     break;
                 }
                 if (containsString(allowedPartner, partners[i])) {
