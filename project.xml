@@ -10,7 +10,7 @@
     <logo>/images/logo.gif</logo>
     <shortDescription>short description</shortDescription>
     <issueTrackingUrl>http://jira.media-style.com/browse/INGRID</issueTrackingUrl>
-    <siteAddress>http://torwald.gistec-online.de/ingrid/ingrid-ibus</siteAddress>
+    <siteAddress>http://213.144.28.209/ingrid/ingrid-ibus</siteAddress>
     <siteDirectory>/srv/www/htdocs/ingrid/ingrid-ibus</siteDirectory>
     <mailingLists>
         <mailingList>
@@ -66,10 +66,10 @@
     </developers>
     <shortDescription>todo short description</shortDescription>
     <issueTrackingUrl>http://jira.media-style.com/browse/INGRID</issueTrackingUrl>
-    <siteAddress>http://torwald.gistec-online.de/ingrid/ingrid-ibus</siteAddress>
+    <siteAddress>http://213.144.28.209/ingrid/ingrid-ibus</siteAddress>
     <siteDirectory>/srv/www/htdocs/ingrid/ingrid-ibus</siteDirectory>
     <repository>
-        <connection>scm:svn:http://torwald.gistec-online.de/svn/ingrid:ingrid-ibus</connection>
+        <connection>scm:svn:https://mb@213.144.28.209/svn/ingrid/ingrid-ibus</connection>
     </repository>
     <dependencies>
         <dependency>
