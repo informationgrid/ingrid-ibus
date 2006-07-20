@@ -69,7 +69,7 @@
     <siteAddress>http://213.144.28.209/ingrid/ingrid-ibus</siteAddress>
     <siteDirectory>/srv/www/htdocs/ingrid/ingrid-ibus</siteDirectory>
     <repository>
-        <connection>scm:svn:https://mb@127.0.0.1:444/svn/ingrid/ingrid-ibus/trunk</connection>
+        <connection>scm:svn:https://127.0.0.1:444/svn/ingrid/ingrid-ibus/trunk</connection>
     </repository>
     <dependencies>
         <dependency>
