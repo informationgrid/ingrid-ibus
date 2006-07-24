@@ -307,6 +307,7 @@ public class Bus extends Thread implements IBus {
     }
 
     private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
+        //FIXME: startHit never read. Why?
         int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
         int resultLength = 0;
         if (hits.length == pageStart) {
@@ -321,6 +322,7 @@ public class Bus extends Thread implements IBus {
             return hits;
         }
         IngridHit[] cuttedHits = new IngridHit[resultLength];
+        //FIXME: Here exception ArrayIndexOutOfBounds.
         System.arraycopy(hits, pageStart, cuttedHits, 0, resultLength);
         // System.out.println("hits: " + hits.length);
         // System.out.println("pageStart: " + pageStart);

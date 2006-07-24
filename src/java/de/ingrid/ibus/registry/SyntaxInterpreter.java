@@ -16,8 +16,7 @@ import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
- * Supports you with static methods to extract various informations out of a
- * query.
+ * Supports you with static methods to extract various informations out of a query.
  * 
  * <p/>created on 19.10.2005
  * 
@@ -161,6 +160,7 @@ public class SyntaxInterpreter {
     private static void filterForPartner(IngridQuery ingridQuery, List allIPlugs) {
         String[] allowedPartner = ingridQuery.getPositivePartner();
         String[] notAllowedPartner = ingridQuery.getNegativePartner();
+
         if (allowedPartner.length == 0 && notAllowedPartner.length == 0) {
             return;
         }
