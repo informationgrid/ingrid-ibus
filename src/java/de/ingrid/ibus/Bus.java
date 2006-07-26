@@ -77,7 +77,7 @@ public class Bus extends Thread implements IBus {
         if (!grouping) {
             requestLength = hitsPerPage * currentPage;
         } else {
-            requestLength = startHit + (hitsPerPage * 3);
+            requestLength = startHit + (hitsPerPage * 6);
         }
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         ResultSet resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
