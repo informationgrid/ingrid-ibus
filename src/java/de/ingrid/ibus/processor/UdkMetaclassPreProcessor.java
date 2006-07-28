@@ -23,9 +23,6 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
     public static final String PORTAL_METACLASS = "metaclass";
 
     /***/
-    public static final String UDK_METACLASS = "t01_object.obj_class";
-
-    /***/
     public static final String PORTAL_METACLASS_DATABASE = "database";
 
     /***/
@@ -66,7 +63,7 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
         for (int i = 0; i < clauses.length; i++) {
             FieldQuery oldField = clauses[i].removeField(PORTAL_METACLASS);
             if (oldField != null) {
-                query.addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), UDK_METACLASS,
+                clauses[i].addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), PORTAL_METACLASS,
                         getDbValue(oldField.getFieldValue())));
             }
         }
