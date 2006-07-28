@@ -21,26 +21,26 @@ import de.ingrid.utils.queryparser.QueryStringParser;
 public class UdkMetaclassPreProcessorTest extends TestCase {
 
     /**
-     * @throws Exception 
-     * 
+     * @throws Exception
      */
     public void testProcess() throws Exception {
-        IngridQuery query = QueryStringParser.parse("query "+UdkMetaclassPreProcessor.PORTAL_METACLASS+":"+UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE);
+        IngridQuery query = QueryStringParser.parse("query " + UdkMetaclassPreProcessor.PORTAL_METACLASS + ":"
+                + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE);
         new UdkMetaclassPreProcessor().process(query);
-        assertFalse(query.containsField(UdkMetaclassPreProcessor.PORTAL_METACLASS));
-        assertTrue(query.containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
-        assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE,query.getFields()[0].getFieldValue());
+        assertTrue(query.containsField(UdkMetaclassPreProcessor.PORTAL_METACLASS));
+        assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE, query.getFields()[0].getFieldValue());
     }
-    
+
     /**
      * @throws Exception
      */
     public void testProcessClauses() throws Exception {
-        IngridQuery query = QueryStringParser.parse("(query "+UdkMetaclassPreProcessor.PORTAL_METACLASS+":"+UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE+" )");
+        IngridQuery query = QueryStringParser.parse("(query " + UdkMetaclassPreProcessor.PORTAL_METACLASS + ":"
+                + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE + " )");
         new UdkMetaclassPreProcessor().process(query);
-        assertFalse(query.containsField(UdkMetaclassPreProcessor.PORTAL_METACLASS));
-        assertTrue(query.containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
-        assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE,query.getFields()[0].getFieldValue());
+        assertTrue(query.getClauses()[0].containsField(UdkMetaclassPreProcessor.PORTAL_METACLASS));
+        assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE, query.getClauses()[0].getFields()[0]
+                .getFieldValue());
     }
 
 }

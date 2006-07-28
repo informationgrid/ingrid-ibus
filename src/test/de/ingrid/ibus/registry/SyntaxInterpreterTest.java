@@ -295,10 +295,10 @@ public class SyntaxInterpreterTest extends TestCase {
      */
     public void testMetaclass() throws Exception {
         for (int i = 0; i < this.descriptions.length; i++) {
-            this.descriptions[i].addField(UdkMetaclassPreProcessor.UDK_METACLASS);
+            this.descriptions[i].addField(UdkMetaclassPreProcessor.PORTAL_METACLASS);
         }
         assertEquals(this.descriptions.length, getIPlugs("query", new FieldQuery(true, false,
-                UdkMetaclassPreProcessor.UDK_METACLASS, UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE)).length);
+                UdkMetaclassPreProcessor.PORTAL_METACLASS, UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE)).length);
     }
 
 }
