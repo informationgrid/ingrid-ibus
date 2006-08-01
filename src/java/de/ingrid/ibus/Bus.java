@@ -17,8 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.text.DefaultEditorKit.CutAction;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -320,10 +318,7 @@ public class Bus extends Thread implements IBus {
         }
         IngridHit[] cuttedHits = new IngridHit[resultLength];
         System.arraycopy(hits, pageStart, cuttedHits, 0, resultLength);
-        // System.out.println("hits: " + hits.length);
-        // System.out.println("pageStart: " + pageStart);
-        // System.out.println("newHi"+newHits.length);
-        // System.out.println("resultlenght: " + resultLength);s
+
         return cuttedHits;
     }
 
