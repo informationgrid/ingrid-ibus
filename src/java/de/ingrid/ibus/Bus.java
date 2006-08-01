@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.text.DefaultEditorKit.CutAction;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,8 +39,7 @@ import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
- * The IBus a centralized Bus that routes queries and return results. Created on
- * 09.08.2005
+ * The IBus a centralized Bus that routes queries and return results. Created on 09.08.2005
  * 
  * @author sg
  * @version $Revision: 1.3 $
@@ -306,18 +307,14 @@ public class Bus extends Thread implements IBus {
         return false;
     }
 
-    private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
+    public IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
         int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
         int resultLength = 0;
         if (hits.length <= pageStart) {
             final int preLastPage = hits.length / hitsPerPage;
             pageStart = Math.min((preLastPage * hitsPerPage), hits.length);
         }
-        if (hits.length > pageStart) {
-            resultLength = Math.min(hits.length - pageStart, hitsPerPage);
-        } else {
-            resultLength = Math.min(hits.length, hitsPerPage);
-        }
+        resultLength = Math.min(hits.length - pageStart, hitsPerPage);
         if (hits.length == resultLength) {
             return hits;
         }
@@ -482,8 +479,7 @@ public class Bus extends Thread implements IBus {
     }
 
     public synchronized void removePlugDescription(PlugDescription plugDescription) {
-        fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:"
-                + getAllIPlugs().length);
+        fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length);
         this.fRegistry.removePlug(plugDescription.getPlugId());
     }
 
