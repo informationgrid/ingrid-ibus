@@ -307,11 +307,11 @@ public class Bus extends Thread implements IBus {
     }
 
     private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
-        //FIXME: startHit never read. Why?
         int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
         int resultLength = 0;
-        if (hits.length == pageStart) {
-            pageStart = Math.min(((currentPage - 2) * hitsPerPage), hits.length);
+        if (hits.length <= pageStart) {
+            final int preLastPage = hits.length / hitsPerPage;
+            pageStart = Math.min((preLastPage * hitsPerPage), hits.length);
         }
         if (hits.length > pageStart) {
             resultLength = Math.min(hits.length - pageStart, hitsPerPage);
@@ -322,7 +322,6 @@ public class Bus extends Thread implements IBus {
             return hits;
         }
         IngridHit[] cuttedHits = new IngridHit[resultLength];
-        //FIXME: Here exception ArrayIndexOutOfBounds.
         System.arraycopy(hits, pageStart, cuttedHits, 0, resultLength);
         // System.out.println("hits: " + hits.length);
         // System.out.println("pageStart: " + pageStart);
@@ -417,10 +416,8 @@ public class Bus extends Thread implements IBus {
                         }
                     }
 
-                    resultList.addAll(Arrays.asList(responseDetails)); // FIXME
-                                                                        // to
-                    // improve performance we can use an Array instead of a list
-                    // here.
+                    resultList.addAll(Arrays.asList(responseDetails));
+                    // FIXME: to improve performance we can use an Array instead of a list here.
                 }
             }
         }
@@ -445,8 +442,8 @@ public class Bus extends Thread implements IBus {
                 }
             }
             if (!found) {
-                fLogger.error("unablefind details getDetais: " + hit.toString());
-                details[i] = new IngridHitDetail(hit, "no details found", ""); // FIXME
+                fLogger.error("unable to find details getDetails: " + hit.toString());
+                details[i] = new IngridHitDetail(hit, "no details found", "");
             }
         }
         return details;
