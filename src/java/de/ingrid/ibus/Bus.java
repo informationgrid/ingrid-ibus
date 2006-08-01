@@ -307,7 +307,7 @@ public class Bus extends Thread implements IBus {
         return false;
     }
 
-    public IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
+    private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
         int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
         int resultLength = 0;
         if (hits.length <= pageStart) {
