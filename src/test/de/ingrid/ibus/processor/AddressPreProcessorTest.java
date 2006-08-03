@@ -26,38 +26,38 @@ public class AddressPreProcessorTest extends TestCase {
     public void testProcessZip() throws Exception {
         IngridQuery query = QueryStringParser.parse("query zip:282");
         new AddressPreProcessor().process(query);
-        assertFalse(query.containsField(AddressPreProcessor.ZIP));
-        assertTrue(query.getClauses()[0].containsField(AddressPreProcessor.ZIP_UDK_NAME1));
+        // assertFalse(query.containsField(AddressPreProcessor.ZIP));
+        assertTrue(query.getClauses()[0].containsField(AddressPreProcessor.ZIP));
         assertTrue(query.getClauses()[0].containsField(AddressPreProcessor.ZIP_UDK_NAME2));
         assertEquals("282", query.getClauses()[0].getFields()[0].getFieldValue());
-        
-        query =QueryStringParser.parse("query (ad zip:282)");
+
+        query = QueryStringParser.parse("query (ad zip:282)");
         new AddressPreProcessor().process(query);
-        assertFalse(query.getClauses()[0].getClauses()[0].containsField(AddressPreProcessor.ZIP));
-        assertTrue(query.getClauses()[0].getClauses()[0].containsField(AddressPreProcessor.ZIP_UDK_NAME1));
+        // assertFalse(query.getClauses()[0].getClauses()[0].containsField(AddressPreProcessor.ZIP));
+        assertTrue(query.getClauses()[0].getClauses()[0].containsField(AddressPreProcessor.ZIP));
         assertTrue(query.getClauses()[0].getClauses()[0].containsField(AddressPreProcessor.ZIP_UDK_NAME2));
         assertEquals("282", query.getClauses()[0].getClauses()[0].getFields()[0].getFieldValue());
     }
-    
-    /**
-     * @throws Exception
-     */
-    public void testProcessStreet() throws Exception {
-        IngridQuery query = QueryStringParser.parse("query street:aStreet");
-        new AddressPreProcessor().process(query);
-        assertFalse(query.containsField(AddressPreProcessor.STREET));
-        assertTrue(query.containsField(AddressPreProcessor.STREET_UDK_NAME));
-        assertEquals("aStreet", query.getFields()[0].getFieldValue());
-    }
-    
-    /**
-     * @throws Exception
-     */
-    public void testProcessCity() throws Exception {
-        IngridQuery query = QueryStringParser.parse("query city:cityOfGod");
-        new AddressPreProcessor().process(query);
-        assertFalse(query.containsField(AddressPreProcessor.CITY));
-        assertTrue(query.containsField(AddressPreProcessor.CITY_UDK_NAME));
-        assertEquals("cityOfGod", query.getFields()[0].getFieldValue());
-    }
+
+    // /**
+    // * @throws Exception
+    // */
+    // public void testProcessStreet() throws Exception {
+    // IngridQuery query = QueryStringParser.parse("query street:aStreet");
+    // new AddressPreProcessor().process(query);
+    // assertFalse(query.containsField(AddressPreProcessor.STREET));
+    // assertTrue(query.containsField(AddressPreProcessor.STREET_UDK_NAME));
+    // assertEquals("aStreet", query.getFields()[0].getFieldValue());
+    // }
+    //    
+    // /**
+    // * @throws Exception
+    // */
+    // public void testProcessCity() throws Exception {
+    // IngridQuery query = QueryStringParser.parse("query city:cityOfGod");
+    // new AddressPreProcessor().process(query);
+    // assertFalse(query.containsField(AddressPreProcessor.CITY));
+    // assertTrue(query.containsField(AddressPreProcessor.CITY_UDK_NAME));
+    // assertEquals("cityOfGod", query.getFields()[0].getFieldValue());
+    // }
 }
