@@ -27,7 +27,7 @@ public class UdkMetaclassPreProcessorTest extends TestCase {
         IngridQuery query = QueryStringParser.parse("query " + UdkMetaclassPreProcessor.PORTAL_METACLASS + ":"
                 + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE);
         new UdkMetaclassPreProcessor().process(query);
-        assertTrue(query.containsField(UdkMetaclassPreProcessor.PORTAL_METACLASS));
+        assertTrue(query.containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
         assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE, query.getFields()[0].getFieldValue());
     }
 
@@ -38,7 +38,7 @@ public class UdkMetaclassPreProcessorTest extends TestCase {
         IngridQuery query = QueryStringParser.parse("(query " + UdkMetaclassPreProcessor.PORTAL_METACLASS + ":"
                 + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE + " )");
         new UdkMetaclassPreProcessor().process(query);
-        assertTrue(query.getClauses()[0].containsField(UdkMetaclassPreProcessor.PORTAL_METACLASS));
+        assertTrue(query.getClauses()[0].containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
         assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE, query.getClauses()[0].getFields()[0]
                 .getFieldValue());
     }
