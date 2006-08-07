@@ -137,7 +137,7 @@ public class Registry {
             // sometimes there seems to be a message loss shortly after
             // connection establishment
             try {
-                Thread.sleep(250);
+                Thread.sleep(1500);
                 plugProxy.toString();
             } catch (InterruptedException e1) {
                 // nothing
