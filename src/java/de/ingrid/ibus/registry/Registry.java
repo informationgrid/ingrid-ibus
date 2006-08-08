@@ -77,6 +77,8 @@ public class Registry {
             throw new IllegalArgumentException("md5 hash not set - plug '" + plugDescription.getPlugId());
         }
         plugDescription.setActivate(this.fIplugAutoActivation);
+        //only for debugging
+        plugDescription.put("isActive", plugDescription.isActivate()+"");
         plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
         createPlugProxy(plugDescription);
         this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
