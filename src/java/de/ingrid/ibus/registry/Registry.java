@@ -111,7 +111,9 @@ public class Registry {
         }
         plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
         createPlugProxy(plugDescription);
-        this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
+        synchronized (this.fPlugDescriptionByPlugId) {
+            this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
+        }
     }
 
     /**
@@ -148,18 +150,18 @@ public class Registry {
     private void createPlugProxy(PlugDescription plugDescription) {
         String plugId = plugDescription.getPlugId();
         IPlug plugProxy;
-        synchronized (this.fPlugProxyByPlugId) {
-            try {
-                plugProxy = this.fProxyFactory.createPlugProxy(plugDescription, this.fBusUrl);
+        try {
+            plugProxy = this.fProxyFactory.createPlugProxy(plugDescription, this.fBusUrl);
+            synchronized (this.fPlugProxyByPlugId) {
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
-            } catch (Exception e) {
-                fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not create proxy object: ", e);
-                removePlug(plugId);
-                IllegalStateException iste = new IllegalStateException("plug with id '" + plugId
-                        + "' currently not availible");
-                iste.initCause(e);
-                throw iste;
             }
+        } catch (Exception e) {
+            fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not create proxy object: ", e);
+            removePlug(plugId);
+            IllegalStateException iste = new IllegalStateException("plug with id '" + plugId
+                    + "' currently not availible");
+            iste.initCause(e);
+            throw iste;
         }
 
         // establish connection
@@ -184,24 +186,25 @@ public class Registry {
      */
     public void removePlug(String plugId) {
         synchronized (this.fPlugProxyByPlugId) {
-            synchronized (this.fPlugDescriptionByPlugId) {
-                this.fPlugProxyByPlugId.remove(plugId);
-            }
-            PlugDescription description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
-            if (description != null && this.fCommunication != null) {
-                try {
-                    String plugUrl = null;
-                    if (this.fBusUrl != null) {
-                        final String path = this.fBusUrl.replaceFirst("/(.*)?:(.*)?", "$1");
-                        final String peername = description.getProxyServiceURL().replaceFirst("/(.*)?:(.*)?", "$2");
-                        plugUrl = "/" + path + ":" + peername;
-                    } else {
-                        plugUrl = description.getProxyServiceURL();
-                    }
-                    this.fCommunication.closeConnection(plugUrl);
-                } catch (IOException e) {
-                    fLogger.warn("problems on closing connection", e);
+            this.fPlugProxyByPlugId.remove(plugId);
+        }
+        PlugDescription description;
+        synchronized (this.fPlugDescriptionByPlugId) {
+            description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
+        }
+        if (description != null && this.fCommunication != null) {
+            try {
+                String plugUrl = null;
+                if (this.fBusUrl != null) {
+                    final String path = this.fBusUrl.replaceFirst("/(.*)?:(.*)?", "$1");
+                    final String peername = description.getProxyServiceURL().replaceFirst("/(.*)?:(.*)?", "$2");
+                    plugUrl = '/' + path + ':' + peername;
+                } else {
+                    plugUrl = description.getProxyServiceURL();
                 }
+                this.fCommunication.closeConnection(plugUrl);
+            } catch (IOException e) {
+                fLogger.warn("problems on closing connection", e);
             }
         }
     }
@@ -211,15 +214,25 @@ public class Registry {
      * @return the iplug by key or <code>null</code>
      */
     public PlugDescription getPlugDescription(String id) {
-        return (PlugDescription) this.fPlugDescriptionByPlugId.get(id);
+        PlugDescription result;
+
+        synchronized (this.fPlugDescriptionByPlugId) {
+            result = (PlugDescription) this.fPlugDescriptionByPlugId.get(id);
+        }
+
+        return result;
     }
 
     /**
      * @return all registed iplugs without checking the time stamp
-     * @deprecated
      */
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
-        Collection plugDescriptions = this.fPlugDescriptionByPlugId.values();
+        Collection plugDescriptions;
+
+        synchronized (this.fPlugDescriptionByPlugId) {
+            plugDescriptions = this.fPlugDescriptionByPlugId.values();
+        }
+
         return (PlugDescription[]) plugDescriptions.toArray(new PlugDescription[plugDescriptions.size()]);
     }
 

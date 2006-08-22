@@ -57,7 +57,6 @@ public class PlugQueryRequest extends Thread {
         this.fQuery = query;
         this.fStart = start;
         this.fLength = length;
-
     }
 
     /**
@@ -72,30 +71,36 @@ public class PlugQueryRequest extends Thread {
             }
             IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
             if (hits.getPlugId() == null) {
-                fLog.debug("result from '" + this.fPlugId + "' contains no plugId");
+                if (fLog.isDebugEnabled()) {
+                    fLog.debug(("result from '".concat(this.fPlugId)).concat("' contains no plugId"));
+                }
                 hits.setPlugId(this.fPlugId);
             }
             if (fLog.isDebugEnabled()) {
                 fLog.debug("adding results from: " + this.fPlugId + " size: " + hits.length() + " time: "
                         + (System.currentTimeMillis() - time) + " ms");
             }
-            this.fResultSet.add(hits);
+            synchronized (this.fResultSet) {
+                this.fResultSet.add(hits);
+            }
         } catch (InterruptedException e) {
             fLog.error("(REMOVING IPLUG!) Interrupted query result retrieval: " + this.fPlugId);
             this.fRegestry.removePlug(this.fPlugId);
         } catch (IOException e) {
-            fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: '" + this.fPlugId+"' - "+e.getMessage());
+            fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: '" + this.fPlugId + "' - "
+                    + e.getMessage());
             this.fRegestry.removePlug(this.fPlugId);
         } catch (Exception e) {
             fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
             this.fRegestry.removePlug(this.fPlugId);
         } finally {
-            if (this.fResultSet != null) {
-                synchronized (this.fResultSet) {
+            final String plugid = this.fPlugId;
+            synchronized (this.fResultSet) {
+                if (this.fResultSet != null) {
                     this.fResultSet.resultsAdded();
+                } else {
+                    fLog.error("No ResultSet set where IPlug " + plugid + " can sent its completion.");
                 }
-            } else {
-                fLog.error("No ResultSet set where IPlug " + this.fPlugId + " can sent its completion.");
             }
         }
     }

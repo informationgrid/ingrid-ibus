@@ -44,7 +44,7 @@ public class Bus extends Thread implements IBus {
     private static final long serialVersionUID = Bus.class.getName().hashCode();
 
     private static Log fLogger = LogFactory.getLog(Bus.class);
-    
+
     private static Bus fInstance;
 
     // TODO INGRID-398 we need to made the lifetime configurable.
@@ -59,9 +59,10 @@ public class Bus extends Thread implements IBus {
         this.fRegistry = new Registry(100000, false, factory);
         fInstance = this;
     }
-    
+
     /**
      * Do not use this method.
+     * 
      * @return The bus instance, if it was initialised.
      */
     public static Bus getInstance() {
@@ -449,7 +450,8 @@ public class Bus extends Thread implements IBus {
     }
 
     private void pushMetaData(IngridHitDetail detail) {
-        PlugDescription plugDescription = this.fRegistry.getPlugDescription(detail.getPlugId());
+        PlugDescription plugDescription;
+        plugDescription = this.fRegistry.getPlugDescription(detail.getPlugId());
         detail.setOrganisation(plugDescription.getOrganisation());
         detail.setDataSourceName(plugDescription.getDataSourceName());
         detail.setIplugClassName(plugDescription.getIPlugClass());
@@ -474,13 +476,13 @@ public class Bus extends Thread implements IBus {
         return this.fRegistry.containsPlugDescription(plugId, md5Hash);
     }
 
-    public synchronized void addPlugDescription(PlugDescription plugDescription) {
+    public void addPlugDescription(PlugDescription plugDescription) {
         fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
                 + getAllIPlugs().length);
         this.fRegistry.addPlugDescription(plugDescription);
     }
 
-    public synchronized void removePlugDescription(PlugDescription plugDescription) {
+    public void removePlugDescription(PlugDescription plugDescription) {
         fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length);
         this.fRegistry.removePlug(plugDescription.getPlugId());
     }

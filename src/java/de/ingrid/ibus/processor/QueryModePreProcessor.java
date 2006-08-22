@@ -37,7 +37,7 @@ public class QueryModePreProcessor implements IPreProcessor{
         if(QUERYMODE_SUBSTRING.equals(queryModeField.getFieldValue())){
             processSubstring(query);
         }else {
-            throw new IllegalArgumentException("unknown querymode type '"+queryModeField.getFieldValue()+"'");
+            throw new IllegalArgumentException("unknown querymode type '"+queryModeField.getFieldValue()+'\'');
         }
     }
 
@@ -47,7 +47,7 @@ public class QueryModePreProcessor implements IPreProcessor{
             TermQuery[] terms = clauses[i].getTerms();
             for (int j = 0; j < terms.length; j++) {
                 //make term a prefix term
-                terms[j].put(IngridDocument.DOCUMENT_CONTENT,terms[j].getTerm()+"*");
+                terms[j].put(IngridDocument.DOCUMENT_CONTENT,terms[j].getTerm()+'*');
             }
         }
     }

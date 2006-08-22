@@ -40,7 +40,7 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
         if (busurl != null) {
             final String path = busurl.replaceFirst("/(.*)?:(.*)?", "$1");
             final String peername = plugDescription.getProxyServiceURL().replaceFirst("/(.*)?:(.*)?", "$2");
-            plugUrl = "/" + path + ":" + peername;
+            plugUrl = '/' + path + ':' + peername;
         } else {
             plugUrl = plugDescription.getProxyServiceURL();
         }

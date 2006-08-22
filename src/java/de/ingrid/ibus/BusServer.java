@@ -142,13 +142,4 @@ public class BusServer {
             BusServer.class.wait();
         }
     }
-
-    private static ICommunication startSocketCommunication(int uPort, int mPort) throws Exception {
-        SocketCommunication communication = new SocketCommunication();
-        communication.setMulticastPort(mPort);
-        communication.setUnicastPort(uPort);
-        communication.startup();
-
-        return communication;
-    }
 }

@@ -86,7 +86,7 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
         } else if (fieldValue.equalsIgnoreCase(PORTAL_METACLASS_PROJECT)) {
             return UDK_METACLASS_PROJECT;
         } else {
-            throw new IllegalArgumentException("unknown metaclass '" + fieldValue + "'");
+            throw new IllegalArgumentException("unknown metaclass '" + fieldValue + '\'');
         }
     }
 }
