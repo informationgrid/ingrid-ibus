@@ -26,4 +26,4 @@ echo %JAVA%
 echo %JAVA_HEAP_MAX%
 echo ------------------
 
-%JAVA% %JAVA_HEAP_MAX% %INGRID_OPTS% -cp "%CLASSPATH%" %1 %2 %3 %4 %5 %6
+%JAVA% %JAVA_HEAP_MAX% %INGRID_OPTS% -cp "%CLASSPATH%" %1 %2 %3 %4 %5 %6 %7 %8 %9 %10

@@ -50,10 +50,10 @@ public class SyntaxInterpreter {
     }
 
     private static void filterActivatedIplugs(List plugDescriptions) {
-        int size = plugDescriptions.size();
-        for (int i = 0; i < size; i++) {
-            if (!((PlugDescription) plugDescriptions.get(i)).isActivate()) {
-                plugDescriptions.remove(i);
+        for (Iterator iter = plugDescriptions.iterator(); iter.hasNext();) {
+            PlugDescription element = (PlugDescription) iter.next();
+            if (!element.isActivate()) {
+                iter.remove();
             }
         }
     }

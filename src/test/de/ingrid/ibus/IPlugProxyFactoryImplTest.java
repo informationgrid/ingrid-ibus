@@ -47,12 +47,12 @@ public class IPlugProxyFactoryImplTest extends TestCase {
 
             ProxyService.createProxyServer(this.fPlugComms[i], IPlug.class, new DummyIPlug());
             this.plugDescriptions[i] = new PlugDescription();
-            this.plugDescriptions[i].setProxyServiceURL("" + i);
             this.plugDescriptions[i].setProxyServiceURL(AddressUtil.getWetagURL("localhost", 60006 + i));
             this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());
             this.plugDescriptions[i].setRecordLoader(false);
             this.plugDescriptions[i].addField("ort");
             this.fBus.getIPlugRegistry().addPlugDescription(this.plugDescriptions[i]);
+            this.fBus.getIPlugRegistry().activatePlug(AddressUtil.getWetagURL("localhost", 60006 + i));
         }
     }
 

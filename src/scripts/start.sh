@@ -10,5 +10,5 @@
 
 
 CLASS=de.ingrid.ibus.BusServer
-sh starter.sh $CLASS --descriptor conf/jxta.conf.xml --busurl 
-# sh starter.sh $CLASS 11111 11112 ibus.de 11113
+sh starter.sh $CLASS --descriptor conf/jxta.properties --adminpassword --adminport --busurl 
+

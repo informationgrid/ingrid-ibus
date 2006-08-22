@@ -10,4 +10,4 @@
 #
 
 CLASS=de.ingrid.update.Update
-sh starter.sh $CLASS $1 $2 $3 $4 $5
+sh starter.sh $CLASS $*

@@ -6,11 +6,15 @@
 
 package de.ingrid.ibus.registry;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.WetagURL;
@@ -52,12 +56,30 @@ public class Registry {
 
     private String fBusUrl;
 
+    private Properties fActivatedIplugs;
+
+    private File fFile;
+
     /**
      * @param lifeTimeOfPlugs
      * @param iplugAutoActivation
      * @param factory
      */
     public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation, IPlugProxyFactory factory) {
+        try {
+            File dir = new File("conf");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            this.fFile = new File(dir, "activatedIplugs.properties");
+            if (!this.fFile.exists()) {
+                this.fFile.createNewFile();
+            }
+        } catch (Exception e) {
+            fLogger.error("Cannot open the file for saving the activation state of the iplugs.", e);
+        }
+
+        loadProperties();
         this.fLifeTime = lifeTimeOfPlugs;
         this.fIplugAutoActivation = iplugAutoActivation;
         this.fProxyFactory = factory;
@@ -76,9 +98,17 @@ public class Registry {
         if (plugDescription.getMd5Hash() == null) {
             throw new IllegalArgumentException("md5 hash not set - plug '" + plugDescription.getPlugId());
         }
-        plugDescription.setActivate(this.fIplugAutoActivation);
-        //only for debugging
-        plugDescription.put("isActive", plugDescription.isActivate()+"");
+
+        if (this.fActivatedIplugs.containsKey(plugDescription.getProxyServiceURL())) {
+            final String activated = (String) this.fActivatedIplugs.get(plugDescription.getProxyServiceURL());
+            if (activated.equals("true")) {
+                plugDescription.setActivate(true);
+            } else {
+                plugDescription.setActivate(false);
+            }
+        } else {
+            plugDescription.setActivate(this.fIplugAutoActivation);
+        }
         plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
         createPlugProxy(plugDescription);
         this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
@@ -109,7 +139,7 @@ public class Registry {
             this.fCommunication.subscribeGroup(wetagURL.getGroupPath());
         } catch (Exception e) {
             IllegalStateException exception = new IllegalStateException("could not join plug group of plug '"
-                    + proxyServiceUrl + "'");
+                    + proxyServiceUrl + '\'');
             exception.initCause(e);
             throw exception;
         }
@@ -131,7 +161,7 @@ public class Registry {
                 throw iste;
             }
         }
-        
+
         // establish connection
         try {
             plugProxy.toString();
@@ -142,7 +172,7 @@ public class Registry {
                 Thread.sleep(1500);
                 plugProxy.toString();
             } catch (InterruptedException e1) {
-                // nothing
+                fLogger.warn("The sleep during iplug connection is interrupted.");
             }
         }
     }
@@ -218,17 +248,40 @@ public class Registry {
         }
     }
 
+    private void saveProperties() {
+        try {
+            FileOutputStream fos = new FileOutputStream(this.fFile);
+            this.fActivatedIplugs.store(fos, "activated iplugs");
+            fos.close();
+        } catch (IOException e) {
+            fLogger.error("Cannot save the activation properties.", e);
+        }
+    }
+
+    private void loadProperties() {
+        try {
+            FileInputStream fis = new FileInputStream(this.fFile);
+            this.fActivatedIplugs = new Properties();
+            this.fActivatedIplugs.load(fis);
+            fis.close();
+        } catch (IOException e) {
+            fLogger.error("Cannot load the activation properties.", e);
+        }
+    }
+
     /**
-     * activate a plug
+     * Activate an IPlug.
      * 
      * @param plugId
      * @throws IllegalArgumentException
      *             if plugId is unknown
      */
-    public void activatePlug(String plugId) throws IllegalArgumentException {
+    public void activatePlug(String plugId) {
         PlugDescription plugDescription = getPlugDescription(plugId);
         if (plugDescription != null) {
             plugDescription.activate();
+            this.fActivatedIplugs.setProperty(plugId, "true");
+            saveProperties();
         } else {
             throw new IllegalArgumentException("iplug unknown");
         }
@@ -241,10 +294,12 @@ public class Registry {
      * @throws IllegalArgumentException
      *             if plugId is unknown
      */
-    public void deActivatePlug(String plugId) throws IllegalArgumentException {
+    public void deActivatePlug(String plugId) {
         PlugDescription plugDescription = getPlugDescription(plugId);
         if (plugDescription != null) {
             plugDescription.deActivate();
+            this.fActivatedIplugs.setProperty(plugId, "false");
+            saveProperties();
         } else {
             throw new IllegalArgumentException("iplug unknown");
         }

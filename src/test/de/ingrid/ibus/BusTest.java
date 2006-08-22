@@ -7,6 +7,7 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
+import de.ingrid.ibus.registry.Registry;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
@@ -36,12 +37,14 @@ public class BusTest extends TestCase {
 
     protected void setUp() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
+        Registry registry = bus.getIPlugRegistry();
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setProxyServiceURL("" + i);
             this.plugDescriptions[i].setOrganisation(ORGANISATION);
             this.plugDescriptions[i].addField("ort");
             this.bus.getIPlugRegistry().addPlugDescription(this.plugDescriptions[i]);
+            registry.activatePlug("" + i);
         }
     }
 
@@ -143,6 +146,7 @@ public class BusTest extends TestCase {
      */
     public void testUnrankedSearch() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
+        Registry registry = bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
@@ -150,6 +154,7 @@ public class BusTest extends TestCase {
             this.plugDescriptions[i].setOrganisation(ORGANISATION);
             this.plugDescriptions[i].addField("ort");
             this.bus.addPlugDescription(this.plugDescriptions[i]);
+            registry.activatePlug("" + i);
         }
 
         IngridQuery query = QueryStringParser.parse("fische");
@@ -184,6 +189,7 @@ public class BusTest extends TestCase {
      */
     public void testUnrankedGroupedDatatypeSearch() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
+        Registry registry = bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
@@ -191,6 +197,7 @@ public class BusTest extends TestCase {
             this.plugDescriptions[i].setOrganisation(ORGANISATION);
             this.plugDescriptions[i].addDataType("g2k");
             this.bus.addPlugDescription(this.plugDescriptions[i]);
+            registry.activatePlug("" + i);
         }
 
         IngridQuery query = QueryStringParser.parse("fische ranking:off datatype:g2k grouped:grouped_by_organisation");

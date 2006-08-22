@@ -73,5 +73,5 @@ if expr `uname` : 'CYGWIN*' > /dev/null; then
 fi
 
 # run it
-exec "$JAVA" $JAVA_HEAP_MAX $INGRID_OPTS -classpath "$CLASSPATH":./ $1 $2 $3 $4 $5 $6
+exec "$JAVA" $JAVA_HEAP_MAX $INGRID_OPTS -classpath "$CLASSPATH":./ $*
 

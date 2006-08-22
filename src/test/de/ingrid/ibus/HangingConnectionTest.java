@@ -31,6 +31,8 @@ public class HangingConnectionTest extends TestCase {
         plugDescriptions.setProxyServiceURL("");
         plugDescriptions.setOrganisation("org");
         bus.getIPlugRegistry().addPlugDescription(plugDescriptions);
+        bus.getIPlugRegistry().activatePlug("");
+
         long start = System.currentTimeMillis();
         bus.search(QueryStringParser.parse("hallo"), 10, 1, 100, 1000);
         assertTrue(start + 100 < System.currentTimeMillis());

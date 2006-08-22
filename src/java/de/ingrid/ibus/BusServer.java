@@ -3,6 +3,7 @@
  */
 package de.ingrid.ibus;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -13,6 +14,9 @@ import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
 import net.weta.components.communication_sockets.SocketCommunication;
 import net.weta.components.peer.StartJxtaConfig;
+
+import org.mortbay.http.HashUserRealm;
+
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.ibus.processor.AddressPreProcessor;
@@ -20,6 +24,7 @@ import de.ingrid.ibus.processor.LimitedAttributesPreProcessor;
 import de.ingrid.ibus.processor.QueryModePreProcessor;
 import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
 import de.ingrid.ibus.registry.Registry;
+import de.ingrid.iplug.AdminServer;
 import de.ingrid.utils.IBus;
 
 /**
@@ -36,56 +41,51 @@ public class BusServer {
      * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
-        final String usage = "Wrong numbers of arguments. You must set --descriptor <filename> and --busurl "
-                + "<wetag url> for jxta or  --multicastPort <port> and --unicastPort <port> for socket communication.";
+        final String usage = "You must set --descriptor <filename>, --busurl "
+                + "<wetag url>, --adminport <1000-65535> and --adminpassword <password>.";
         HashMap arguments = new HashMap();
         String busurl = null;
+        String adminpassword = "";
+        int adminport = 0;
 
         // convert and validate the supplied arguments
-        if (4 != args.length) {
+        System.out.println(args.length);
+        if (8 != args.length) {
+            System.err.println("Wrong numbers of arguments. ");
             System.err.println(usage);
-            System.exit(1);
+            return;
         }
         for (int i = 0; i < args.length; i = i + 2) {
             arguments.put(args[i], args[i + 1]);
         }
 
         ICommunication communication = null;
-        if (arguments.containsKey("--multicastPort") && arguments.containsKey("--unicastPort")) {
-            int mPort = 0;
-            int uPort = 0;
-
-            try {
-                mPort = (new Integer((String) arguments.get("--multicastPort"))).intValue();
-                uPort = (new Integer((String) arguments.get("--unicastPort"))).intValue();
-            } catch (Exception e) {
-                System.err.println("The supplied ports are no numbers. Valid ports are between 1 and 65535");
-                System.exit(1);
-            }
-
-            try {
-                communication = startSocketCommunication(uPort, mPort);
-            } catch (Exception e) {
-                System.err.println("Cannot start the communication: " + e.getMessage());
-                e.printStackTrace();
-                System.exit(1);
-            }
-        } else if (arguments.containsKey("--descriptor")) {
+        if (arguments.containsKey("--descriptor") && arguments.containsKey("--busurl")
+                && arguments.containsKey("--adminport") && arguments.containsKey("--adminpassword")) {
             String filename = (String) arguments.get("--descriptor");
             busurl = (String) arguments.get("--busurl");
+            try {
+                adminport = Integer.parseInt((String) arguments.get("--adminport"));                
+            } catch (NumberFormatException e) {
+                System.err.println("--adminport isn't a number.");
+                System.err.println(usage);
+                return;
+            }
+            adminpassword = (String) arguments.get("--adminpassword");
 
             try {
                 FileInputStream fileIS = new FileInputStream(filename);
                 communication = StartJxtaConfig.start(fileIS);
                 communication.subscribeGroup(busurl);
             } catch (Exception e) {
-                System.err.println("Cannot start the communication: " + e.getMessage());
+                System.err.println("Cannot start the communication: ".concat(e.getMessage()));
                 e.printStackTrace();
-                System.exit(1);
+                return;
             }
         } else {
+            System.err.println("Min. one argument is wrong named.");
             System.err.println(usage);
-            System.exit(1);
+            return;
         }
 
         // instatiate the IBus
@@ -94,8 +94,8 @@ public class BusServer {
         Registry registry = bus.getIPlugRegistry();
         registry.setUrl(busurl);
         registry.setCommunication(communication);
-        
-        //add processors
+
+        // add processors
         bus.getProccessorPipe().addPreProcessor(new UdkMetaclassPreProcessor());
         bus.getProccessorPipe().addPreProcessor(new LimitedAttributesPreProcessor());
         bus.getProccessorPipe().addPreProcessor(new QueryModePreProcessor());
@@ -107,15 +107,14 @@ public class BusServer {
         try {
             properties.load(is);
         } catch (Exception e) {
-            System.err.println("Problems on loading globalRanking.properties");
-            e.printStackTrace();
+            System.err.println("Problems on loading globalRanking.properties. Does it exist?");
         }
         HashMap globalRanking = new HashMap();
         for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
             String element = (String) iter.next();
             try {
                 Float value = new Float((String) properties.get(element));
-                System.out.println("add boost for iplug: " + element + " with value: " + value);
+                System.out.println(("add boost for iplug: ".concat(element)).concat(" with value: " + value));
                 globalRanking.put(element, value);
             } catch (NumberFormatException e) {
                 System.err.println("Cannot convert the value " + properties.get(element) + " from element " + element
@@ -129,6 +128,15 @@ public class BusServer {
         messageHandler.addObjectToCall(IBus.class, bus);
         communication.getMessageQueue().getProcessorRegistry().addMessageHandler(ReflectMessageHandler.MESSAGE_TYPE,
                 messageHandler);
+
+        try {
+            HashUserRealm realm = new HashUserRealm("IBus");
+            realm.put("admin", adminpassword);
+            AdminServer.startWebContainer(adminport, new File("./webapp"), true, realm);
+        } catch (Exception e) {
+            System.err.println("Cannot start the IBus admin server.");
+            e.printStackTrace();
+        }
 
         synchronized (BusServer.class) {
             BusServer.class.wait();
