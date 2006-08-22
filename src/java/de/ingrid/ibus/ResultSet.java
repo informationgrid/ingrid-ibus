@@ -21,7 +21,7 @@ public class ResultSet extends ArrayList {
 
     private int fNumberOfConnections;
 
-    private int fNumberOfFinsihedConnections = 0;
+    private int fNumberOfFinsihedConnections;
 
     /**
      * @param numberOfConnections
