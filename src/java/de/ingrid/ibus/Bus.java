@@ -6,8 +6,6 @@
 
 package de.ingrid.ibus;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +29,6 @@ import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
-import de.ingrid.utils.config.Configuration;
 import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
@@ -47,6 +44,8 @@ public class Bus extends Thread implements IBus {
     private static final long serialVersionUID = Bus.class.getName().hashCode();
 
     private static Log fLogger = LogFactory.getLog(Bus.class);
+    
+    private static Bus fInstance;
 
     // TODO INGRID-398 we need to made the lifetime configurable.
     private Registry fRegistry;
@@ -57,8 +56,16 @@ public class Bus extends Thread implements IBus {
      * @param factory
      */
     public Bus(IPlugProxyFactory factory) {
-        boolean iplugAutoActivation = getAutoActivationProperty();
-        this.fRegistry = new Registry(100000, iplugAutoActivation, factory);
+        this.fRegistry = new Registry(100000, false, factory);
+        fInstance = this;
+    }
+    
+    /**
+     * Do not use this method.
+     * @return The bus instance, if it was initialised.
+     */
+    public static Bus getInstance() {
+        return fInstance;
     }
 
     public IngridHits search(IngridQuery query, final int hitsPerPage, int currentPage, int startHit,
@@ -284,11 +291,11 @@ public class Bus extends Thread implements IBus {
                 break;
             }
         } else {
-            throw new IllegalArgumentException("unknown group operator '" + query.getGrouped() + "'");
+            throw new IllegalArgumentException("unknown group operator '" + query.getGrouped() + '\'');
         }
         if (hit.getGroupedFileds() == null || hit.getGroupedFileds().length == 0) {
-            hit.addGroupedField("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ")");
-            fLogger.warn("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ")");
+            hit.addGroupedField("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
+            fLogger.warn("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
         }
     }
 
@@ -484,21 +491,6 @@ public class Bus extends Thread implements IBus {
 
     public PlugDescription getIPlug(String plugId) {
         return this.fRegistry.getPlugDescription(plugId);
-    }
-
-    private boolean getAutoActivationProperty() {
-        Configuration configuration = new Configuration();
-        InputStream resourceAsStream = Bus.class.getResourceAsStream("/configuration.xml");
-        boolean iplugAutoActivation = true;
-        if (resourceAsStream != null) {
-            try {
-                configuration.load(resourceAsStream);
-            } catch (IOException e) {
-                fLogger.error("unable to load existing configuration", e);
-            }
-            iplugAutoActivation = configuration.get("iplugAutoActivation", "false").equals("true");
-        }
-        return iplugAutoActivation;
     }
 
     public void close() throws Exception {
