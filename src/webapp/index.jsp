@@ -2,6 +2,7 @@
 <%@ page import="de.ingrid.ibus.Bus" %>
 <%@ page import="de.ingrid.ibus.registry.Registry" %>
 <%@ page import="de.ingrid.utils.PlugDescription" %>
+<%@ page import="java.lang.Exception" %>
 <%@ page import="java.util.Enumeration" %>
 
 <%!
@@ -29,11 +30,16 @@ if ((submitted != null) && submitted.equals("true")) {
 	    	String paramValue = request.getParameter(paramName);
 	    	final String iplugName = paramName.substring(0, paramName.lastIndexOf("isActivated"));
 
-		    if (paramValue.equals("true")) {
-			    registry.activatePlug(iplugName);
-		    } else {
-			    registry.deActivatePlug(iplugName);
-		    }
+	    	try {
+		    	if (paramValue.equals("true")) {
+			    	registry.activatePlug(iplugName);
+		    	} else {
+			    	registry.deActivatePlug(iplugName);
+		    	}
+	    	} catch (Exception e) {
+	    	    final String error = "Problem während der De-/Aktivierung eines IPlugs: ".concat(e.getLocalizedMessage());
+	    	    %><div class="error"><%=error%></div><%
+	    	}
 		}
 	}
 
@@ -68,12 +74,15 @@ if ((submitted != null) && submitted.equals("true")) {
 	<tr>
 		<td class="tablecell" width="100"><%=descriptions[i].getProxyServiceURL()%></td>
 		<td class="tablecell" width="100">
-			<select name="<%=descriptions[i].getProxyServiceURL()%>isActivated">
-				<option value="true" <%if(descriptions[i].isActivate()) {%>selected<%}%> >an</option>
-				<option value="false" <%if(!descriptions[i].isActivate()) {%>selected<%}%> >aus</option>
+			<select name="<%=descriptions[i].getProxyServiceURL()%>isActivated" <%if(!descriptions[i].isActivate()) {%> style="background-color:#ED171F"<%}%> >
+				<option value="true" <%if(descriptions[i].isActivate()) {%>selected="selected"<%}%> >an</option>
+				<option value="false" <%if(!descriptions[i].isActivate()) {%>selected="selected"<%}%> >aus</option>
 			</select>
 		</td>
 	</tr>
+<%
+	}
+%>
 	<tr>
 		<td colspan="2" align="center">
 			<input type="hidden" name="submitted" value="true">
@@ -82,8 +91,5 @@ if ((submitted != null) && submitted.equals("true")) {
 	</tr>
 	</table>
 </form>
-<%
-	}
-%>
 </body>
 </html>

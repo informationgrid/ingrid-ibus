@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="utf-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance.xsd" xsi:noNamespaceSchemaLocation="http://maven.apache.org/xsd/maven-project-3.0.0.xsd">
     <pomVersion>3</pomVersion>
     <artifactId>ingrid-ibus</artifactId>
@@ -72,6 +72,24 @@
         <connection>scm:svn:https://127.0.0.1:444/svn/ingrid/ingrid-ibus/trunk</connection>
     </repository>
     <dependencies>
+        <dependency>
+            <groupId>commons-el</groupId>
+            <artifactId>commons-el</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-compiler</artifactId>
+            <version>5.5.9</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-runtime</artifactId>
+            <version>5.5.9</version>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>weta-components</groupId>
             <artifactId>communication</artifactId>
@@ -240,4 +258,3 @@
     </reports>
     <properties />
 </project>
-
