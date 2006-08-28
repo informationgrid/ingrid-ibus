@@ -296,7 +296,7 @@ public class Registry {
             this.fActivatedIplugs.setProperty(plugId, "true");
             saveProperties();
         } else {
-            throw new IllegalArgumentException("iplug unknown");
+            throw new IllegalArgumentException("iplug unknown: ".concat(plugId));
         }
     }
 
@@ -314,7 +314,7 @@ public class Registry {
             this.fActivatedIplugs.setProperty(plugId, "false");
             saveProperties();
         } else {
-            throw new IllegalArgumentException("iplug unknown");
+            throw new IllegalArgumentException("iplug unknown: ".concat(plugId));
         }
     }
 
