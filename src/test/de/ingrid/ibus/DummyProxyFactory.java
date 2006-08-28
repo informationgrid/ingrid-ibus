@@ -17,7 +17,7 @@ public class DummyProxyFactory implements IPlugProxyFactory {
 
     /**
      * @throws Exception 
-     * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription)
+     * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription, java.lang.String)
      */
     public IPlug createPlugProxy(PlugDescription plugDescription, String busurl) throws Exception {
         IPlug plug=new DummyIPlug(plugDescription.getPlugId());

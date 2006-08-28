@@ -37,7 +37,7 @@ public class BusTest extends TestCase {
 
     protected void setUp() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
-        Registry registry = bus.getIPlugRegistry();
+        Registry registry = this.bus.getIPlugRegistry();
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setProxyServiceURL("" + i);
@@ -146,7 +146,7 @@ public class BusTest extends TestCase {
      */
     public void testUnrankedSearch() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
-        Registry registry = bus.getIPlugRegistry();
+        Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
@@ -163,10 +163,6 @@ public class BusTest extends TestCase {
         assertEquals(this.plugDescriptions.length, hits.getHits().length);
         assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
         assertFalse(hits.isRanked());
-        // for (int i = 0; i < this.plugDescriptions.length; i++) {
-        // assertEquals(hits.getHits()[i].getPlugId(),
-        // this.plugDescriptions[i].getPlugId());
-        // }
 
         // invert order of plugdescriptions
         this.bus.removePlugDescription(this.plugDescriptions[0]);
@@ -176,12 +172,7 @@ public class BusTest extends TestCase {
         this.bus.addPlugDescription(this.plugDescriptions[0]);
 
         hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-        // for (int i = 0; i < this.plugDescriptions.length; i++) {
-        // assertEquals(hits.getHits()[i].getPlugId(),
-        // this.plugDescriptions[this.plugDescriptions.length - i - 1]
-        // .getPlugId());
-        // }
-
+        assertFalse(hits.isRanked());
     }
 
     /**
@@ -189,7 +180,7 @@ public class BusTest extends TestCase {
      */
     public void testUnrankedGroupedDatatypeSearch() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
-        Registry registry = bus.getIPlugRegistry();
+        Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
