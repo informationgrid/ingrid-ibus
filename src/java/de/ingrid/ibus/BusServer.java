@@ -12,7 +12,6 @@ import java.util.Properties;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
-import net.weta.components.communication_sockets.SocketCommunication;
 import net.weta.components.peer.StartJxtaConfig;
 
 import org.mortbay.http.HashUserRealm;
@@ -41,8 +40,7 @@ public class BusServer {
      * @throws InterruptedException
      */
     public static void main(String[] args) throws InterruptedException {
-        final String usage = "You must set --descriptor <filename>, --busurl "
-                + "<wetag url>, --adminport <1000-65535> and --adminpassword <password>.";
+        final String usage = "You must set --descriptor <filename>, --busurl <wetag url>, --adminport <1000-65535> and --adminpassword <password>.";
         HashMap arguments = new HashMap();
         String busurl = null;
         String adminpassword = "";
@@ -65,7 +63,7 @@ public class BusServer {
             String filename = (String) arguments.get("--descriptor");
             busurl = (String) arguments.get("--busurl");
             try {
-                adminport = Integer.parseInt((String) arguments.get("--adminport"));                
+                adminport = Integer.parseInt((String) arguments.get("--adminport"));
             } catch (NumberFormatException e) {
                 System.err.println("--adminport isn't a number.");
                 System.err.println(usage);
