@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
+import de.ingrid.utils.query.TermQuery;
 
 /**
  * 
@@ -166,7 +167,7 @@ public class Registry {
 
         // establish connection
         try {
-            plugProxy.toString();
+            plugProxy.search(new TermQuery(false,false,"plug-init-query"), 0, 1);
         } catch (Exception e) {
             // sometimes there seems to be a message loss shortly after
             // connection establishment
