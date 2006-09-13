@@ -34,8 +34,8 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
 
         public IngridHits search(IngridQuery query, int start, int length) throws Exception {
             System.out.println("i will wait for ever");
-            while (true){
-            }
+            Thread.sleep(Integer.MAX_VALUE);
+            return null;
         }
 
         public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) throws Exception {
