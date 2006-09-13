@@ -32,7 +32,13 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
 
         }
 
+        private boolean fInitQueryPassed;
+
         public IngridHits search(IngridQuery query, int start, int length) throws Exception {
+            if (!this.fInitQueryPassed) {
+                this.fInitQueryPassed = true;
+                return new IngridHits();
+            }
             System.out.println("i will wait for ever");
             Thread.sleep(Integer.MAX_VALUE);
             return null;
@@ -43,15 +49,16 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
             return null;
         }
 
-        public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
+        public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields)
+                throws Exception {
             // TODO Auto-generated method stub
             return null;
         }
 
-		public void close() throws Exception {
-			// TODO Auto-generated method stub
-			
-		}
+        public void close() throws Exception {
+            // TODO Auto-generated method stub
+
+        }
 
     }
 
