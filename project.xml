@@ -224,6 +224,25 @@
             <version>jdk14-124</version>
             <type>jar</type>
         </dependency>
+
+        <!-- for portal ibus stress test -->
+        <dependency>
+			<groupId>jwebunit</groupId>
+			<artifactId>jwebunit</artifactId>
+			<version>1.2</version>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>httpunit</groupId>
+            <artifactId>httpunit</artifactId>
+            <version>1.5.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+      <groupId>nekohtml</groupId>
+      <artifactId>nekohtml</artifactId>
+      <version>0.8.1</version>
+    </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/java</sourceDirectory>

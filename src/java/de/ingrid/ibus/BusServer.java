@@ -76,7 +76,7 @@ public class BusServer {
                 communication = StartJxtaConfig.start(fileIS);
                 communication.subscribeGroup(busurl);
             } catch (Exception e) {
-                System.err.println("Cannot start the communication: ".concat(e.getMessage()));
+                System.err.println("Cannot start the communication: " + e.getMessage());
                 e.printStackTrace();
                 return;
             }
