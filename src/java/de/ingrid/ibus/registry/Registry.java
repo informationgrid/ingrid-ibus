@@ -77,7 +77,9 @@ public class Registry {
                 this.fFile.createNewFile();
             }
         } catch (Exception e) {
-            fLogger.error("Cannot open the file for saving the activation state of the iplugs.", e);
+            if (fLogger.isErrorEnabled()) {
+                fLogger.error("Cannot open the file for saving the activation state of the iplugs.", e);
+            }
         }
 
         loadProperties();
@@ -157,7 +159,9 @@ public class Registry {
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
             }
         } catch (Exception e) {
-            fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not create proxy object: ", e);
+            if (fLogger.isErrorEnabled()) {
+                fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not create proxy object: ", e);
+            }
             removePlug(plugId);
             IllegalStateException iste = new IllegalStateException("plug with id '" + plugId
                     + "' currently not availible");
@@ -175,7 +179,9 @@ public class Registry {
                 Thread.sleep(1500);
                 plugProxy.toString();
             } catch (InterruptedException e1) {
-                fLogger.warn("The sleep during iplug connection is interrupted.");
+                if (fLogger.isWarnEnabled()) {
+                    fLogger.warn("The sleep during iplug connection is interrupted.");
+                }
             }
         }
     }
@@ -205,7 +211,9 @@ public class Registry {
                 }
                 this.fCommunication.closeConnection(plugUrl);
             } catch (IOException e) {
-                fLogger.warn("problems on closing connection", e);
+                if (fLogger.isWarnEnabled()) {
+                    fLogger.warn("problems on closing connection", e);
+                }
             }
         }
     }
@@ -268,7 +276,9 @@ public class Registry {
             this.fActivatedIplugs.store(fos, "activated iplugs");
             fos.close();
         } catch (IOException e) {
-            fLogger.error("Cannot save the activation properties.", e);
+            if (fLogger.isErrorEnabled()) {
+                fLogger.error("Cannot save the activation properties.", e);
+            }
         }
     }
 
@@ -279,7 +289,9 @@ public class Registry {
             this.fActivatedIplugs.load(fis);
             fis.close();
         } catch (IOException e) {
-            fLogger.error("Cannot load the activation properties.", e);
+            if (fLogger.isErrorEnabled()) {
+                fLogger.error("Cannot load the activation properties.", e);
+            }
         }
     }
 

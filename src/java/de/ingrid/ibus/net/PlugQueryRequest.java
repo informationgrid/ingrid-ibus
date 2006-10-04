@@ -84,14 +84,20 @@ public class PlugQueryRequest extends Thread {
                 this.fResultSet.add(hits);
             }
         } catch (InterruptedException e) {
-            fLog.error("(REMOVING IPLUG!) Interrupted query result retrieval: " + this.fPlugId);
+            if (fLog.isErrorEnabled()) {
+                fLog.error("(REMOVING IPLUG!) Interrupted query result retrieval: " + this.fPlugId);
+            }
             this.fRegestry.removePlug(this.fPlugId);
         } catch (IOException e) {
-            fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: '" + this.fPlugId + "' - "
+            if (fLog.isErrorEnabled()) {
+                fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: '" + this.fPlugId + "' - "
                     + e.getMessage());
+            }
             this.fRegestry.removePlug(this.fPlugId);
         } catch (Exception e) {
-            fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
+            if (fLog.isErrorEnabled()) {
+                fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
+            }
             this.fRegestry.removePlug(this.fPlugId);
         } finally {
             final String plugid = this.fPlugId;
@@ -99,7 +105,9 @@ public class PlugQueryRequest extends Thread {
                 if (this.fResultSet != null) {
                     this.fResultSet.resultsAdded();
                 } else {
-                    fLog.error("No ResultSet set where IPlug " + plugid + " can sent its completion.");
+                    if (fLog.isErrorEnabled()) {
+                        fLog.error("No ResultSet set where IPlug " + plugid + " can sent its completion.");
+                    }
                 }
             }
         }

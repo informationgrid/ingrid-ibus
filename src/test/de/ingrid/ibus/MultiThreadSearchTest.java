@@ -17,11 +17,13 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  */
 public class MultiThreadSearchTest extends TestCase {
 
+    private static final int fSearchCount = 600;
+
     /**
      * @throws Exception
      */
     public void testTreads() throws Exception {
-        PlugDescription[] plugDescriptions = new PlugDescription[3];
+        PlugDescription[] plugDescriptions = new PlugDescription[fSearchCount];
         Bus bus = new Bus(new DummyProxyFactory());
         for (int i = 0; i < plugDescriptions.length; i++) {
             plugDescriptions[i] = new PlugDescription();
@@ -30,11 +32,17 @@ public class MultiThreadSearchTest extends TestCase {
             bus.getIPlugRegistry().addPlugDescription(plugDescriptions[i]);
         }
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        new TestThread(bus, query).start();
-        new TestThread(bus, query).start();
+        
+        for (int i=0; i<fSearchCount/6; i++) {
+            new TestThread(bus, query).start();
+            new TestThread(bus, query).start();
+            new TestThread(bus, query).start();
+            new TestThread(bus, query).start();
+            new TestThread(bus, query).start();
+            new TestThread(bus, query).start();
+        }
 
         System.out.println("bal");
-
     }
 
     class TestThread extends Thread {

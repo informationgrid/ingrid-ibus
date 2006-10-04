@@ -140,7 +140,9 @@ public class Bus extends Thread implements IBus {
                     }
                 }
             } catch (InterruptedException e) {
-                fLogger.warn("waiting for results iterrupted");
+                if (fLogger.isWarnEnabled()) {
+                    fLogger.warn("waiting for results iterrupted");
+                }
             }
         }
         for (int i = 0; i < plugsForQueryLength; i++) {
@@ -180,7 +182,9 @@ public class Bus extends Thread implements IBus {
                 return i;
             }
         }
-        fLogger.warn("plugId '" + plugId + "' not contained");
+        if (fLogger.isWarnEnabled()) {
+            fLogger.warn("plugId '" + plugId + "' not contained");
+        }
         return Integer.MAX_VALUE;
     }
 
@@ -296,7 +300,9 @@ public class Bus extends Thread implements IBus {
         }
         if (hit.getGroupedFileds() == null || hit.getGroupedFileds().length == 0) {
             hit.addGroupedField("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
-            fLogger.warn("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
+            if (fLogger.isWarnEnabled()) {
+                fLogger.warn("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
+            }
         }
     }
 
@@ -352,8 +358,10 @@ public class Bus extends Thread implements IBus {
         if (plugDescription.isRecordloader()) {
             return ((IRecordLoader) plugProxy).getRecord(hit);
         }
-        fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
+        if (fLogger.isWarnEnabled()) {
+            fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
                 + " but was requested to load a record");
+        }
         return null;
     }
 
@@ -372,7 +380,9 @@ public class Bus extends Thread implements IBus {
             pushMetaData(detail);
             return detail;
         } catch (Exception e) {
-            fLogger.error(e.toString());
+            if (fLogger.isErrorEnabled()) {
+                fLogger.error(e.toString());
+            }
         }
         // FIXME do we still need to announce any exception in the method
         // signature now?
@@ -410,7 +420,9 @@ public class Bus extends Thread implements IBus {
                     IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
                     for (int i = 0; i < responseDetails.length; i++) {
                         if (responseDetails[i] == null) {
-                            fLogger.error(plugId + ": responded details that are null (set a pseudo responseDetail");
+                            if (fLogger.isErrorEnabled()) {
+                                fLogger.error(plugId + ": responded details that are null (set a pseudo responseDetail");
+                            }
                             responseDetails[i] = new IngridHitDetail(plugId, random.nextInt(), random.nextInt(), 0.0f,
                                     "", "");
                         }
@@ -442,7 +454,9 @@ public class Bus extends Thread implements IBus {
                 }
             }
             if (!found) {
-                fLogger.error("unable to find details getDetails: " + hit.toString());
+                if (fLogger.isErrorEnabled()) {
+                    fLogger.error("unable to find details getDetails: " + hit.toString());
+                }
                 details[i] = new IngridHitDetail(hit, "no details found", "");
             }
         }
@@ -477,13 +491,17 @@ public class Bus extends Thread implements IBus {
     }
 
     public void addPlugDescription(PlugDescription plugDescription) {
-        fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
+        if (fLogger.isInfoEnabled()) {
+            fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
                 + getAllIPlugs().length);
+        }
         this.fRegistry.addPlugDescription(plugDescription);
     }
 
     public void removePlugDescription(PlugDescription plugDescription) {
-        fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length);
+        if (fLogger.isInfoEnabled()) {
+            fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length);
+        }
         this.fRegistry.removePlug(plugDescription.getPlugId());
     }
 
