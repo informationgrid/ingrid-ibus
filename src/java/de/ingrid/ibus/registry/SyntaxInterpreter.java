@@ -107,24 +107,25 @@ public class SyntaxInterpreter {
             return;
         }
 
-        for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
-            PlugDescription plugDescription = (PlugDescription) iter.next();
-            String[] dataTypes = plugDescription.getDataTypes();
-            boolean toRemove = true;
-            for (int i = 0; i < dataTypes.length; i++) {
-                if (containsString(notAllowedDataTypes, dataTypes[i])) {
-                    toRemove = true;
-                    break;
+        if (!containsString(allowedDataTypes, "all")) {
+            for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
+                PlugDescription plugDescription = (PlugDescription) iter.next();
+                String[] dataTypes = plugDescription.getDataTypes();
+                boolean toRemove = true;
+                for (int i = 0; i < dataTypes.length; i++) {
+                    if (containsString(notAllowedDataTypes, dataTypes[i]) || containsString(notAllowedDataTypes, "all")) {
+                        toRemove = true;
+                        break;
+                    }
+                    if (containsString(allowedDataTypes, dataTypes[i])) {
+                        toRemove = false;
+                    }
                 }
-                if (containsString(allowedDataTypes, dataTypes[i])) {
-                    toRemove = false;
+                if (toRemove) {
+                    iter.remove();
                 }
-            }
-            if (toRemove) {
-                iter.remove();
             }
         }
-
     }
 
     private static void filterForProvider(IngridQuery ingridQueries, List allIPlugs) {
