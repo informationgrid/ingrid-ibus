@@ -66,7 +66,7 @@ public class SyntaxInterpreter {
         for (Iterator iter = descriptions.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = (PlugDescription) iter.next();
             String[] rankingTypes = plugDescription.getRankingTypes();
-            if ((Arrays.asList(rankingTypes)).contains("all")) {
+            if (!(Arrays.asList(rankingTypes)).contains("all")) {
                 boolean foundRanking = false;
                 for (int i = 0; i < rankingTypes.length; i++) {
                     if (ingridQuery.isRanked(rankingTypes[i].toLowerCase())) {
