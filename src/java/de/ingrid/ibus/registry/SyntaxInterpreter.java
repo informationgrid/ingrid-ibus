@@ -7,6 +7,7 @@
 package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,15 +66,17 @@ public class SyntaxInterpreter {
         for (Iterator iter = descriptions.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = (PlugDescription) iter.next();
             String[] rankingTypes = plugDescription.getRankingTypes();
-            boolean foundRanking = false;
-            for (int i = 0; i < rankingTypes.length; i++) {
-                if (ingridQuery.isRanked(rankingTypes[i].toLowerCase())) {
-                    foundRanking = true;
-                    break;
+            if ((Arrays.asList(rankingTypes)).contains("all")) {
+                boolean foundRanking = false;
+                for (int i = 0; i < rankingTypes.length; i++) {
+                    if (ingridQuery.isRanked(rankingTypes[i].toLowerCase())) {
+                        foundRanking = true;
+                        break;
+                    }
                 }
-            }
-            if (!foundRanking && rankingTypes.length > 0) {
-                iter.remove();
+                if (!foundRanking && rankingTypes.length > 0) {
+                    iter.remove();
+                }
             }
         }
     }
