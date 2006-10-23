@@ -60,13 +60,15 @@ public class SyntaxInterpreter {
     }
 
     private static void filterForRanking(IngridQuery ingridQuery, List descriptions) {
-        if (ingridQuery.getRankingType() == null) {
+        String rankingTypeInQuery = ingridQuery.getRankingType();
+        if (rankingTypeInQuery == null) {
             ingridQuery.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
         }
-        for (Iterator iter = descriptions.iterator(); iter.hasNext();) {
-            PlugDescription plugDescription = (PlugDescription) iter.next();
-            String[] rankingTypes = plugDescription.getRankingTypes();
-            if (!(Arrays.asList(rankingTypes)).contains("all")) {
+
+        if ((rankingTypeInQuery == null) || !rankingTypeInQuery.equals("any")) {
+            for (Iterator iter = descriptions.iterator(); iter.hasNext();) {
+                PlugDescription plugDescription = (PlugDescription) iter.next();
+                String[] rankingTypes = plugDescription.getRankingTypes();
                 boolean foundRanking = false;
                 for (int i = 0; i < rankingTypes.length; i++) {
                     if (ingridQuery.isRanked(rankingTypes[i].toLowerCase())) {
@@ -110,7 +112,7 @@ public class SyntaxInterpreter {
             return;
         }
 
-        if (!containsString(allowedDataTypes, "all")) {
+        if (!containsString(allowedDataTypes, "any")) {
             for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
                 PlugDescription plugDescription = (PlugDescription) iter.next();
                 String[] dataTypes = plugDescription.getDataTypes();
