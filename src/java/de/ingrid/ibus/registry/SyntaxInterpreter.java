@@ -63,9 +63,10 @@ public class SyntaxInterpreter {
         String rankingTypeInQuery = ingridQuery.getRankingType();
         if (rankingTypeInQuery == null) {
             ingridQuery.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
+            rankingTypeInQuery = ingridQuery.getRankingType();
         }
 
-        if ((rankingTypeInQuery == null) || !rankingTypeInQuery.equals("any")) {
+        if (!rankingTypeInQuery.equals("any")) {
             for (Iterator iter = descriptions.iterator(); iter.hasNext();) {
                 PlugDescription plugDescription = (PlugDescription) iter.next();
                 String[] rankingTypes = plugDescription.getRankingTypes();
