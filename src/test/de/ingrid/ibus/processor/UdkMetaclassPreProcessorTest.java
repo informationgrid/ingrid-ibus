@@ -25,10 +25,19 @@ public class UdkMetaclassPreProcessorTest extends TestCase {
      */
     public void testProcess() throws Exception {
         IngridQuery query = QueryStringParser.parse("query " + UdkMetaclassPreProcessor.PORTAL_METACLASS + ':'
-                + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE);
+                + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE + ' ' + UdkMetaclassPreProcessor.PORTAL_METACLASS
+                + ':' + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE);
         new UdkMetaclassPreProcessor().process(query);
+
         assertTrue(query.containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
         assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE, query.getFields()[0].getFieldValue());
+
+        query.removeField(UdkMetaclassPreProcessor.UDK_METACLASS);
+        assertTrue(query.containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
+        assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE, query.getFields()[0].getFieldValue());
+
+        query.removeField(UdkMetaclassPreProcessor.UDK_METACLASS);
+        assertFalse(query.containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
     }
 
     /**
@@ -36,11 +45,21 @@ public class UdkMetaclassPreProcessorTest extends TestCase {
      */
     public void testProcessClauses() throws Exception {
         IngridQuery query = QueryStringParser.parse("(query " + UdkMetaclassPreProcessor.PORTAL_METACLASS + ':'
-                + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE + " )");
+                + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE + " " + UdkMetaclassPreProcessor.PORTAL_METACLASS
+                + ':' + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE + " )");
         new UdkMetaclassPreProcessor().process(query);
+
         assertTrue(query.getClauses()[0].containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
         assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE, query.getClauses()[0].getFields()[0]
                 .getFieldValue());
+        
+        query.getClauses()[0].removeField(UdkMetaclassPreProcessor.UDK_METACLASS);
+        assertTrue(query.getClauses()[0].containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
+        assertEquals(UdkMetaclassPreProcessor.UDK_METACLASS_DATABASE, query.getClauses()[0].getFields()[0]
+                .getFieldValue());
+
+        query.getClauses()[0].removeField(UdkMetaclassPreProcessor.UDK_METACLASS);
+        assertFalse(query.getClauses()[0].containsField(UdkMetaclassPreProcessor.UDK_METACLASS));
     }
 
 }
