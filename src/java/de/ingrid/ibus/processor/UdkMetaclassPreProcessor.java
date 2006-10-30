@@ -65,9 +65,10 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
         IngridQuery[] clauses = query.getAllClauses();
         for (int i = 0; i < clauses.length; i++) {
             FieldQuery oldField = clauses[i].removeField(PORTAL_METACLASS);
-            if (oldField != null) {
+            while (oldField != null) {
                 clauses[i].addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), UDK_METACLASS,
                         getDbValue(oldField.getFieldValue())));
+                oldField = clauses[i].removeField(PORTAL_METACLASS);
             }
         }
     }

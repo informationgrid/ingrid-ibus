@@ -61,7 +61,7 @@ if ((submitted != null) && submitted.equals("true")) {
 	<div class="error">Änderungen gespeichert.</div>
 <%}%>
 
-<form method="get" action="index.jsp">
+<form method="get" action="<%=response.encodeURL("index.jsp")%>">
 	<table class="table" width="400" align="center">
 	<tr>
 		<td colspan="2" class="tablehead">An-/Abschalten von IPlugs.</td>
