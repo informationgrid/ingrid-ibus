@@ -1,12 +1,15 @@
 <project xmlns:deploy="deploy">
-    
     <goal name="binary">
         <attainGoal name="jar" />
 		<mkdir dir="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}" />
 		<mkdir dir="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}/lib" />
 		<mkdir dir="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}/conf" />
+   		<mkdir dir="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}/webapp" />
+   		<mkdir dir="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}/webapp/admin" />
         <!-- copy the shell script -->
-        <copy tofile="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}/start.sh" file="${basedir}/src/scripts/start.sh"/>
+        <copy tofile="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}/" file="${basedir}/src/scripts/*"/>
+        <!-- copy webapp -->
+        <copy tofile="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}/webapp/admin" file="${basedir}/src/webapp/*"/>
         <!-- copy the project jar -->
         <copy tofile="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}/lib/${pom.artifactId}-${pom.currentVersion}.jar" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar"/>
         <!-- copy the conf -->
