@@ -47,7 +47,6 @@ public class BusServer {
         int adminport = 0;
 
         // convert and validate the supplied arguments
-        System.out.println(args.length);
         if (8 != args.length) {
             System.err.println("Wrong numbers of arguments. ");
             System.err.println(usage);
