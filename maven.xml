@@ -20,7 +20,7 @@
 		</copy>
         <copy toDir="${maven.build.dir}/classes/webapp">
 			<fileset dir="./src/webapp">
-				<include name="*"></include>
+				<include name="**/*"></include>
 			</fileset>
 		</copy>
 	</preGoal> 
