@@ -75,7 +75,7 @@ if ((submitted != null) && submitted.equals("true")) {
 		<td class="tablecell" width="100"><%=descriptions[i].getProxyServiceURL()%></td>
 		<td class="tablecell" width="100"><%=descriptions[i].getDataSourceName()%></td>
 		<td class="tablecell" width="100">
-			<select name="<%=descriptions[i].getProxyServiceURL()%>isActivated" <%if(!descriptions[i].isActivate()) {%> style="background-color:#ED171F"<%}%> >
+			<select name="<%=descriptions[i].getProxyServiceURL()%>isActivated">
 				<option value="true" <%if(descriptions[i].isActivate()) {%>selected="selected"<%}%> >an</option>
 				<option value="false" <%if(!descriptions[i].isActivate()) {%>selected="selected"<%}%> >aus</option>
 			</select>
