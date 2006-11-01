@@ -9,5 +9,19 @@
          
          &maven1;
          &maven2;
-         
+    
+    <preGoal name="jar:jar">
+		<attainGoal name="java:compile" />
+		<echo message="add the start scripts and webapp to the jar" />
+		<copy toDir="${maven.build.dir}/classes/scripts">
+			<fileset dir="./src/scripts">
+				<include name="*"></include>
+			</fileset>
+		</copy>
+        <copy toDir="${maven.build.dir}/classes/webapp">
+			<fileset dir="./src/webapp">
+				<include name="*"></include>
+			</fileset>
+		</copy>
+	</preGoal> 
 </project>
