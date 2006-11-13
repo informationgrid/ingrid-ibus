@@ -37,7 +37,7 @@ if ((submitted != null) && submitted.equals("true")) {
 			    	registry.deActivatePlug(iplugName);
 		    	}
 	    	} catch (Exception e) {
-	    	    final String error = "Problem während der De-/Aktivierung eines IPlugs: ".concat(e.getLocalizedMessage());
+	    	    final String error = "Problem w&#x00E4;hrend der De-/Aktivierung eines IPlugs: ".concat(e.getLocalizedMessage());
 	    	    %><div class="error"><%=error%></div><%
 	    	}
 		}
@@ -64,7 +64,7 @@ if ((submitted != null) && submitted.equals("true")) {
 	</tr>
 
 <%if (saved) {%>
-<div class="error">Änderungen gespeichert.</div>
+<div class="error">&#x00C4;nderungen gespeichert.</div>
 <br/>
 <%}%>
 
@@ -90,23 +90,19 @@ if ((submitted != null) && submitted.equals("true")) {
 %>
 
 	</table>
-	</form>
 	<br/>
 	<table class="table" align="center">					
 		<tr align="center">
 		<td>
-			<form method="get" action="<%=response.encodeURL("index.jsp")%>">
-				<input type="submit" name="chancel" value="Abbrechen" onclick="<%=response.encodeURL("admin.jsp")%>"/>
-			</form>
+			<input type="submit" name="cancel" value="Abbrechen" onclick="<%=response.encodeURL("index.jsp")%>"/>
 		</td>
 		<td>
-			<form method="get" action="<%=response.encodeURL("index.jsp")%>">
-				<input type="hidden" name="submitted" value="true">
-				<input type="submit" value="Weiter"/>
-			</form>
+			<input type="hidden" name="submitted" value="true">
+			<input type="submit" value="Weiter"/>
 		</td>
 		</tr>
-	</table>	
+	</table>
+	</form>
 </center>
 </body>
 </html>
