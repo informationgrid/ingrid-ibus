@@ -53,19 +53,23 @@ if ((submitted != null) && submitted.equals("true")) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>IBus Administration</title>
-<link href="css/admin.css" rel="stylesheet" type="text/css" />
+<link href="<%=response.encodeURL("css/admin.css")%>" rel="stylesheet" type="text/css" />
 </head>
 <body>
-
-<%if (saved) {%>
-	<div class="error">Änderungen gespeichert.</div>
-<%}%>
-
+<center>
 <form method="get" action="<%=response.encodeURL("index.jsp")%>">
-	<table class="table" width="400" align="center">
+<table class="table" width="400" align="center">
 	<tr>
 		<td colspan="3" class="tablehead">An-/Abschalten von IPlugs.</td>
 	</tr>
+
+<%if (saved) {%>
+<div class="error">Änderungen gespeichert.</div>
+<br/>
+<%}%>
+
+	
+	
 <%
 	PlugDescription[] descriptions = getIPlugs();
 
@@ -84,13 +88,25 @@ if ((submitted != null) && submitted.equals("true")) {
 <%
 	}
 %>
-	<tr>
-		<td colspan="2" align="center">
-			<input type="hidden" name="submitted" value="true">
-			<input type="submit" value="Speichern"/>
-		</td>
-	</tr>
+
 	</table>
-</form>
+	</form>
+	<br/>
+	<table class="table" align="center">					
+		<tr align="center">
+		<td>
+			<form method="get" action="<%=response.encodeURL("index.jsp")%>">
+				<input type="submit" name="chancel" value="Abbrechen" onclick="<%=response.encodeURL("admin.jsp")%>"/>
+			</form>
+		</td>
+		<td>
+			<form method="get" action="<%=response.encodeURL("index.jsp")%>">
+				<input type="hidden" name="submitted" value="true">
+				<input type="submit" value="Weiter"/>
+			</form>
+		</td>
+		</tr>
+	</table>	
+</center>
 </body>
 </html>

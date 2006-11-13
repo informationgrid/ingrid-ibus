@@ -1,5 +1,5 @@
 #!/bin/sh
-# 
+#
 # Environment Variables
 #
 #   INGRID_JAVA_HOME Overrides JAVA_HOME.
