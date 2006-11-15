@@ -17,8 +17,15 @@ public PlugDescription[] getIPlugs() {
 
 <%
 String submitted = request.getParameter("submitted");
+String cancel = request.getParameter("cancel");
+
 Enumeration paramNames = request.getParameterNames();
 boolean saved = false;
+boolean canceled = false;
+
+if ((cancel != null) && cancel.equals("true")) {
+	canceled = true;
+}
 
 if ((submitted != null) && submitted.equals("true")) {
 	Bus bus = Bus.getInstance();
@@ -38,14 +45,13 @@ if ((submitted != null) && submitted.equals("true")) {
 		    	}
 	    	} catch (Exception e) {
 	    	    final String error = "Problem w&#x00E4;hrend der De-/Aktivierung eines IPlugs: ".concat(e.getLocalizedMessage());
-	    	    %><div class="error"><%=error%></div><%
+	    	    %><center><div class="error"><%=error%><br/></br></div></center><%
 	    	}
 		}
 	}
 
     saved = true;
 }
-
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -54,20 +60,26 @@ if ((submitted != null) && submitted.equals("true")) {
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>IBus Administration</title>
 <link href="<%=response.encodeURL("css/admin.css")%>" rel="stylesheet" type="text/css" />
+<style type="text/css">
+	body, td {font-family:Arial; font-size:12px}
+</style>
 </head>
 <body>
 <center>
 <form method="get" action="<%=response.encodeURL("index.jsp")%>">
+<input type="hidden" name="submitted" value="true">
 <table class="table" width="400" align="center">
 	<tr>
 		<td colspan="3" class="tablehead">An-/Abschalten von IPlugs.</td>
 	</tr>
 
-<%if (saved) {%>
-<div class="error">&#x00C4;nderungen gespeichert.</div>
+<%if (saved)  {%>
+<div style="background-color:#E4FFBC; color:#2B7E12; font-family: Arial; font-weight: bold; font-size: 12px; border: 1px solid #2B7E12; width:400px"><br/><br/>&#x00C4;nderungen gespeichert.<br/><br/></div>
+<br/>
+<%} else if (canceled) {%> 	
+<div class="error">&#x00C4;nderungen verworfen.</div>
 <br/>
 <%}%>
-
 	
 	
 <%
@@ -94,15 +106,15 @@ if ((submitted != null) && submitted.equals("true")) {
 	<table class="table" align="center">					
 		<tr align="center">
 		<td>
-			<input type="submit" name="cancel" value="Abbrechen" onclick="<%=response.encodeURL("index.jsp")%>"/>
+			<input type="hidden" name="cancel" value="true" />
+			<input type="reset" value="Abbrechen" name="cancel" />
 		</td>
 		<td>
-			<input type="hidden" name="submitted" value="true">
 			<input type="submit" value="Weiter"/>
 		</td>
 		</tr>
 	</table>
-	</form>
+</form>
 </center>
 </body>
 </html>
