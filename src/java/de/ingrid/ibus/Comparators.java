@@ -46,11 +46,13 @@ public class Comparators {
         }
     };
 
-    /***/
+    /**
+     * Constant for unranked hits comparator position. This denotes the field for comparison in unranked hits.
+     */
     public static final String UNRANKED_HITS_COMPARATOR_POSITION = "hits-position";
 
     /**
-     * 
+     * For comparing two unranked hits.
      */
     public static final Comparator UNRANKED_HITS_COMPARATOR = new Comparator() {
 
@@ -61,6 +63,5 @@ public class Comparators {
             Integer pos2 = (Integer) hits2.get(UNRANKED_HITS_COMPARATOR_POSITION);
             return pos1.compareTo(pos2);
         }
-
     };
 }

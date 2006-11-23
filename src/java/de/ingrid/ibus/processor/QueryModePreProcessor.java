@@ -23,10 +23,14 @@ import de.ingrid.utils.query.TermQuery;
  */
 public class QueryModePreProcessor implements IPreProcessor{
     
-    /***/
+    /**
+     * Name for the field that contains the query mode.
+     */
     public static final String QUERYMODE = "querymode";
 
-    /***/
+    /**
+     * The value for a query mode substring.
+     */
     public static final String QUERYMODE_SUBSTRING = "substring";
 
     public void process(IngridQuery query) throws Exception {

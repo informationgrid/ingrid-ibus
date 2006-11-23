@@ -11,7 +11,7 @@ import de.ingrid.utils.query.IngridQuery;
 
 /**
  * Substitute special field names like zip, city, street with udk specific index
- * names.
+ * names. Only the zip is substituted.
  * 
  * <p/>created on 01.06.2006
  * 
@@ -22,52 +22,23 @@ import de.ingrid.utils.query.IngridQuery;
  */
 public class AddressPreProcessor implements IPreProcessor {
 
-    /***/
+    /**
+     * String to substitute with real udk zip name.
+     */
     public static final String ZIP = "zip";
 
-    /***/
-    // public static final String ZIP_UDK_NAME1 = "t02_address.postcode";
-
-    /***/
+    /**
+     * Substitution for query zip field.
+     */
     public static final String ZIP_UDK_NAME2 = "t02_address.postbox_pc";
-
-//    /***/
-//    public static final String CITY = "city";
-//
-//    /***/
-//    public static final String CITY_UDK_NAME = "t02_address.city";
-//
-//    /***/
-//    public static final String STREET = "street";
-//
-//    /***/
-//    public static final String STREET_UDK_NAME = "t02_address.street";
 
     public void process(IngridQuery query) throws Exception {
         IngridQuery[] clauses = query.getAllClauses();
         for (int i = 0; i < clauses.length; i++) {
             checkZip(clauses[i]);
-            // checkStreet(clauses[i]);
-            //            checkCity(clauses[i]);
         }
 
     }
-
-//    private void checkCity(IngridQuery query) {
-//        FieldQuery oldField = query.removeField(CITY);
-//        if (oldField != null) {
-//            query.addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), CITY_UDK_NAME, oldField
-//                    .getFieldValue()));
-//        }
-//    }
-//
-//    private void checkStreet(IngridQuery query) {
-//        FieldQuery oldField = query.removeField(STREET);
-//        if (oldField != null) {
-//            query.addField(new FieldQuery(oldField.isRequred(), oldField.isProhibited(), STREET_UDK_NAME, oldField
-//                    .getFieldValue()));
-//        }
-//    }
 
     private void checkZip(IngridQuery query) {
         FieldQuery oldField = query.removeField(ZIP);

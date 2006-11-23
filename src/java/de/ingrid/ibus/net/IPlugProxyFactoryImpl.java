@@ -13,20 +13,27 @@ import de.ingrid.utils.IRecordLoader;
 import de.ingrid.utils.PlugDescription;
 
 /**
+ * IPlugProxyFactory implementation that uses the weta communication interface. Currently there is one with pure java
+ * sockets and one with jxta. The jxta one is used in the ingrid project.
  * 
+ * @see net.weta.components.communication.ICommunication
  */
 public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
 
     private ICommunication fCommunication;
 
     /**
+     * This constructor does nothing and is only implemented for serialization.
      */
     public IPlugProxyFactoryImpl() {
         // for serialization
     }
 
     /**
+     * This constructor sets the communication object that implements net.weta.components.communication.ICommunication.
+     * 
      * @param communication
+     *            The object for communication.
      */
     public IPlugProxyFactoryImpl(ICommunication communication) {
         this.fCommunication = communication;

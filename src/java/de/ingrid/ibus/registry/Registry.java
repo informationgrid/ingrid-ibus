@@ -28,13 +28,8 @@ import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.TermQuery;
 
 /**
- * 
- * created on 21.07.2005
- * <p>
- * 
- * @author hs
+ * A IPlug registry. All connected IPlugs are registered and by default are deactivated.
  */
-
 public class Registry {
 
     private static final String LAST_LIFESIGN = "addedTimeStamp";
@@ -62,9 +57,15 @@ public class Registry {
     private File fFile;
 
     /**
+     * Creates a registry with a given lifetime for IPlugs, a given auto activation value for new IPlugs and a IPlug
+     * factory.
+     * 
      * @param lifeTimeOfPlugs
+     *            Life time of IPlugs. If the last life sign of a IPlug is longer than this value the IPlug is removed.
      * @param iplugAutoActivation
+     *            The auto activation feature. If this is true all new IPlugs are activated by default otherwise not.
      * @param factory
+     *            The factory that creates IPlugs.
      */
     public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation, IPlugProxyFactory factory) {
         try {
@@ -89,9 +90,10 @@ public class Registry {
     }
 
     /**
-     * Adds a iplug to the registry.
+     * Adds a IPlug to the registry.
      * 
      * @param plugDescription
+     *            The PlugDescrption of the IPlug. Changed PlugDescrptions are updated.
      */
     public void addPlugDescription(PlugDescription plugDescription) {
         removePlug(plugDescription.getPlugId());
@@ -120,9 +122,13 @@ public class Registry {
     }
 
     /**
+     * Tests whether a PlugDescription already exists and sets a new value for the last life sign.
+     * 
      * @param plugId
+     *            The id of the IPlug.
      * @param md5Hash
-     * @return true if registry contains a plug with given hash
+     *            The MD5 hash of the new plugdescrption.
+     * @return True if the registry contains a IPlug with the given hash.
      */
     public boolean containsPlugDescription(String plugId, String md5Hash) {
         PlugDescription plugDescription = getPlugDescription(plugId);
@@ -171,7 +177,7 @@ public class Registry {
 
         // establish connection
         try {
-            plugProxy.search(new TermQuery(false,false,"plug-init-query"), 0, 1);
+            plugProxy.search(new TermQuery(false, false, "plug-init-query"), 0, 1);
         } catch (Exception e) {
             // sometimes there seems to be a message loss shortly after
             // connection establishment
@@ -187,9 +193,10 @@ public class Registry {
     }
 
     /**
-     * removes a iplug from cache, e.g. if the connection permanent fails.
+     * Removes a IPlug from cache, e.g. if the connection permanently fails.
      * 
      * @param plugId
+     *            The id of the IPlug that fails.
      */
     public void removePlug(String plugId) {
         synchronized (this.fPlugProxyByPlugId) {
@@ -219,8 +226,11 @@ public class Registry {
     }
 
     /**
+     * Returns a PlugDescrption to an IPlug id.
+     * 
      * @param id
-     * @return the iplug by key or <code>null</code>
+     *            The IPlug id to that a PlugDescrption should be returned.
+     * @return The IPlug to the id or <code>null</code> if doesn't exist.
      */
     public PlugDescription getPlugDescription(String id) {
         PlugDescription result;
@@ -233,7 +243,9 @@ public class Registry {
     }
 
     /**
-     * @return all registed iplugs without checking the time stamp
+     * Returns all registered IPlugs.
+     * 
+     * @return All registered IPlugs without checking the time stamp.
      */
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
         Collection plugDescriptions;
@@ -246,7 +258,9 @@ public class Registry {
     }
 
     /**
-     * @return all registed iplugs younger than given lifetime
+     * Returns all IPlugs that are still alive.
+     * 
+     * @return All registered IPlugs younger than the given life time.
      */
     public PlugDescription[] getAllIPlugs() {
         PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
@@ -261,8 +275,11 @@ public class Registry {
     }
 
     /**
+     * Returns a IPlug proxy to a given IPlug id.
+     * 
      * @param plugId
-     * @return the plug proxy
+     *            A IPlug id to that the IPlug proxy should be returned.
+     * @return The IPlug proxy.
      */
     public IPlug getPlugProxy(String plugId) {
         synchronized (this.fPlugProxyByPlugId) {
@@ -296,11 +313,12 @@ public class Registry {
     }
 
     /**
-     * Activate an IPlug.
+     * Activates the IPlug to the given IPlug id.
      * 
      * @param plugId
+     *            A IPlug id from the IPlug that should be activated.
      * @throws IllegalArgumentException
-     *             if plugId is unknown
+     *             If the IPlug is unknown.
      */
     public void activatePlug(String plugId) {
         PlugDescription plugDescription = getPlugDescription(plugId);
@@ -314,11 +332,12 @@ public class Registry {
     }
 
     /**
-     * deActivate a plug
+     * Deactivates the IPlug to the given IPlug id.
      * 
      * @param plugId
+     *            A IPlug id from the IPlug that should be deactivated.
      * @throws IllegalArgumentException
-     *             if plugId is unknown
+     *             If the IPlugId is unknown.
      */
     public void deActivatePlug(String plugId) {
         PlugDescription plugDescription = getPlugDescription(plugId);
@@ -332,33 +351,40 @@ public class Registry {
     }
 
     /**
-     * @return the communication
+     * Returns a communication object to connect the IPlugs.
+     * 
+     * @return The communication object to connect the IPlugs.
      */
     public ICommunication getCommunication() {
         return this.fCommunication;
     }
 
     /**
+     * Sets a communication object to connect the IPlugs.
+     * 
      * @param communication
+     *            The communication object to connect the IPlugs.
      */
     public void setCommunication(ICommunication communication) {
         this.fCommunication = communication;
     }
 
     /**
-     * Sets the global ranking for all iplugs.
+     * Sets the global ranking for all IPlugs.
      * 
      * @param globalRanking
-     *            A HashMap containing a boost factor to a iplug id.
+     *            A HashMap containing a boost factor to a IPlug id.
      */
     public void setGlobalRanking(HashMap globalRanking) {
         this.fGlobalRanking = globalRanking;
     }
 
     /**
+     * Returns a ranking boost for a given IPlug id.
+     * 
      * @param plugId
-     *            A iplug id.
-     * @return The boost factor to a iplug.
+     *            A boosting for IPlug id.
+     * @return The boost factor to a IPlug.
      */
     public Float getGlobalRankingBoost(String plugId) {
         Float result = null;
@@ -370,7 +396,10 @@ public class Registry {
     }
 
     /**
+     * Sets the bus url the IPlugs connected with.
+     * 
      * @param busurl
+     *            The bus url. The form looks like /<group name>:<bus name>
      */
     public void setUrl(final String busurl) {
         this.fBusUrl = busurl;

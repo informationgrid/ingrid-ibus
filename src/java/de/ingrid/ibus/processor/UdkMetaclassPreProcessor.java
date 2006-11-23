@@ -19,46 +19,74 @@ import de.ingrid.utils.query.IngridQuery;
  */
 public class UdkMetaclassPreProcessor implements IPreProcessor {
 
-    /***/
+    /**
+     * Name of the field that contains the metclass.
+     */
     public static final String PORTAL_METACLASS = "metaclass";
 
-    /***/
+    /**
+     * Substitution for metaclass field name.
+     */
     public static final String UDK_METACLASS = "t01_object.obj_class";
 
-    /***/
+    /**
+     * Name of the metaclass database value that should be substituted.
+     */
     public static final String PORTAL_METACLASS_DATABASE = "database";
 
-    /***/
+    /**
+     * Substitution for metaclass database value.
+     */
     public static final String UDK_METACLASS_DATABASE = "5";
 
-    /***/
+    /**
+     * Name of the metaclass service value that should be substituted.
+     */
     public static final String PORTAL_METACLASS_SERVICE = "service";
 
-    /***/
+    /**
+     * Substitution for metaclass service value.
+     */
     public static final String UDK_METACLASS_SERVICE = "3";
 
-    /***/
+    /**
+     * Name of the metaclass document value that should be substituted.
+     */
     public static final String PORTAL_METACLASS_DOCUMENT = "document";
 
-    /***/
+    /**
+     * Substitution for metaclass document value.
+     */
     public static final String UDK_METACLASS_DOCUMENT = "2";
 
-    /***/
+    /**
+     * Name of the metaclass map value that should be substituted.
+     */
     public static final String PORTAL_METACLASS_MAP = "map";
 
-    /***/
+    /**
+     * Substitution for metaclass map value.
+     */
     public static final String UDK_METACLASS_MAP = "1";
 
-    /***/
+    /**
+     * Name of the metaclass job value that should be substituted.
+     */
     public static final String PORTAL_METACLASS_JOB = "job";
 
-    /***/
+    /**
+     * Substitution for metaclass job value.
+     */
     public static final String UDK_METACLASS_JOB = "0";
 
-    /***/
+    /**
+     * Name of the metaclass project value that should be substituted.
+     */
     public static final String PORTAL_METACLASS_PROJECT = "project";
 
-    /***/
+    /**
+     * Substitution for metaclass project value.
+     */
     public static final String UDK_METACLASS_PROJECT = "4";
 
     public void process(IngridQuery query) throws Exception {

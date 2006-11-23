@@ -27,17 +27,19 @@ import de.ingrid.iplug.AdminServer;
 import de.ingrid.utils.IBus;
 
 /**
- * 
+ * The server that starts a bus and its admin web gui.
  */
 public class BusServer {
 
     /**
-     * This method is for starting a Proxy-Server by hand. The two required commandline options are "--multicastPort
-     * <port>" and "--unicastPort <port>". Every parameter need a different port where the proxy server listens on.
+     * This method is for starting a IBus-Server by hand. The four required commandline options are "--descriptor
+     * <filename>", "--busurl <bus url e.g. /group:bus>" --adminport <1000-65535> and --adminpassword <password>. The
+     * port and the password are for the admin web gui.
      * 
      * @param args
      *            An array of strings containing the commandline options described above.
      * @throws InterruptedException
+     *             Is thrown when the bus server is interrupted by signal.
      */
     public static void main(String[] args) throws InterruptedException {
         final String usage = "You must set --descriptor <filename>, --busurl <wetag url>, --adminport <1000-65535> and --adminpassword <password>.";

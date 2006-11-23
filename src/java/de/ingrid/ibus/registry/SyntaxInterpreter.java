@@ -7,7 +7,6 @@
 package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,19 +17,14 @@ import de.ingrid.utils.query.IngridQuery;
 
 /**
  * Supports you with static methods to extract various informations out of a query.
- * 
- * <p/>created on 19.10.2005
- * 
- * @version $Revision: $
- * @author sg
- * 
  */
 public class SyntaxInterpreter {
 
     /**
-     * @param query
-     * @param registry
-     * @return the iplugs that have the fields the query require.
+     * Returns IPlugs to a given query. Currently it filters for activated, IPlug ids, supported ranking, supported
+     * datatype, supported fields, supported providers and supported partners.
+     * 
+     * @return The IPlugs that have the fields the query requires.
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
         PlugDescription[] plugs = registry.getAllIPlugs();

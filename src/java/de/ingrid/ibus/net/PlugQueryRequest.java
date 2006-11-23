@@ -36,22 +36,31 @@ public class PlugQueryRequest extends Thread {
 
     private String fPlugId;
 
-    private Registry fRegestry;
+    private Registry fRegistry;
 
     /**
+     * Creates a request to an IPlug. This query is bound to a result set and synchronizes on it.
+     * 
      * @param query
+     *            The query to send.
      * @param start
+     *            The positon to start the search on the IPlug.
      * @param length
+     *            The length of the result from the IPlug.
      * @param plug
+     *            The IPlug instance.
      * @param registry
+     *            The registry where all IPlugs are registered.
      * @param plugId
+     *            The id of the plug.
      * @param resultSet
+     *            The ResultSet where the results should be added to.
      * @throws Exception
      */
     public PlugQueryRequest(IPlug plug, Registry registry, String plugId, ResultSet resultSet, IngridQuery query,
             int start, int length) throws Exception {
         this.fIPlug = plug;
-        this.fRegestry = registry;
+        this.fRegistry = registry;
         this.fPlugId = plugId;
         this.fResultSet = resultSet;
         this.fQuery = query;
@@ -87,18 +96,18 @@ public class PlugQueryRequest extends Thread {
             if (fLog.isErrorEnabled()) {
                 fLog.error("(REMOVING IPLUG!) Interrupted query result retrieval: " + this.fPlugId);
             }
-            this.fRegestry.removePlug(this.fPlugId);
+            this.fRegistry.removePlug(this.fPlugId);
         } catch (IOException e) {
             if (fLog.isErrorEnabled()) {
                 fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: '" + this.fPlugId + "' - "
-                    + e.getMessage());
+                        + e.getMessage());
             }
-            this.fRegestry.removePlug(this.fPlugId);
+            this.fRegistry.removePlug(this.fPlugId);
         } catch (Exception e) {
             if (fLog.isErrorEnabled()) {
                 fLog.error("(REMOVING IPLUG!) Could not retrieve query result from IPlug: " + this.fPlugId, e);
             }
-            this.fRegestry.removePlug(this.fPlugId);
+            this.fRegistry.removePlug(this.fPlugId);
         } finally {
             final String plugid = this.fPlugId;
             synchronized (this.fResultSet) {

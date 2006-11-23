@@ -24,21 +24,26 @@ public class ResultSet extends ArrayList {
     private int fNumberOfFinsihedConnections;
 
     /**
+     * Stores the result of different processes. Has functionality to show if all processes added their result.
+     * 
      * @param numberOfConnections
+     *            The number of results that ResultSet should be contain.
      */
     public ResultSet(int numberOfConnections) {
         this.fNumberOfConnections = numberOfConnections;
     }
 
     /**
-     * @return if all connections are finished
+     * Checks if all results are added.
+     * 
+     * @return True if all results are finished and false if not.
      */
     public synchronized boolean isComplete() {
         return this.fNumberOfConnections == this.fNumberOfFinsihedConnections;
     }
 
     /**
-     * 
+     * Should be called if a result is added. If all results are added it notifies waiting threads.
      */
     public synchronized void resultsAdded() {
         this.fNumberOfFinsihedConnections += 1;
@@ -48,12 +53,15 @@ public class ResultSet extends ArrayList {
     }
 
     /**
+     * This method is for adding a IngridHits object from a search run.
+     * 
      * @param hits
-     * @return true
+     *            The hits to be added. This cannot be null.
+     * @return True if a result is added otherwise false.
      */
     public synchronized boolean add(IngridHits hits) {
         if (hits == null) {
-            throw new IllegalArgumentException("null can not added as Hits");
+            throw new IllegalArgumentException("Null can not be added as hits.");
         }
         if (hits.getHits() == null || hits.getHits().length == 0) {
             return false;
@@ -62,7 +70,9 @@ public class ResultSet extends ArrayList {
     }
 
     /**
-     * @return all plugIds from the plugs which delivers a result.
+     * Is for getting a list of all plugs that should add hits to the ResultSet.
+     * 
+     * @return All plug ids from the plugs which delivers a result.
      */
     public String[] getPlugIdsWithResult() {
         List plugIds = new ArrayList(size());

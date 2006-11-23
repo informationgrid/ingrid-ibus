@@ -23,25 +23,39 @@ import de.ingrid.utils.query.TermQuery;
  */
 public class LimitedAttributesPreProcessor implements IPreProcessor {
 
-    /***/
+    /**
+     * Name for the field that contains the attribute range. 
+     */
     public static final String ATTRIBUTE_RANGE = "attribrange";
 
-    /***/
+    /**
+     * Limited value for the attribute range field.
+     */
     public static final String ATTRIBUTE_RANGE_LIMITED = "limited";
 
-    /***/
+    /**
+     * Substitution for address institution.
+     */
     public static final String INSTITUTION = "t02_address.institution";
 
-    /***/
+    /**
+     * Substitution for address person last name.
+     */
     public static final String PERSON_LAST_NAME = "t02_address.lastname";
     
-    /***/
+    /**
+     * Substitution for address person first name.
+     */
     public static final String PERSON_FIRST_NAME = "t02_address.firstname";
 
-    /***/
+    /**
+     * Substitution for address description.
+     */
     public static final String DESCRIPTION = "t02_address.descr";
 
-    /***/
+    /**
+     * Substitution for search terms.
+     */
     public static final String SEARCHTERMS = "t04_search.searchterm";
 
     public void process(IngridQuery query) throws Exception {

@@ -53,7 +53,13 @@ public class Bus extends Thread implements IBus {
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
     /**
+     * The bus. All IPlugs have to connect with the bus to be searched. It sends queries to regeistered and activated
+     * iplugs. It only sends a query to a iplug if it is able to handle the query. For all implemented criteria see
+     * de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry) .
+     * 
      * @param factory
+     *            A factroy for creating iplug proxies.
+     * @see de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry)
      */
     public Bus(IPlugProxyFactory factory) {
         this.fRegistry = new Registry(100000, false, factory);
@@ -61,9 +67,10 @@ public class Bus extends Thread implements IBus {
     }
 
     /**
-     * Do not use this method.
+     * Do not use this method. Only for internal usage.
      * 
      * @return The bus instance, if it was initialised.
+     * @deprecated
      */
     public static Bus getInstance() {
         return fInstance;
@@ -360,17 +367,12 @@ public class Bus extends Thread implements IBus {
         }
         if (fLogger.isWarnEnabled()) {
             fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
-                + " but was requested to load a record");
+                    + " but was requested to load a record");
         }
         return null;
     }
 
-    /**
-     * @param hit
-     * @return A detailed document of a hit.
-     * @throws Exception
-     */
-    public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery, String[] requestedFields) throws Exception {
+    public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery, String[] requestedFields) {
         if (requestedFields == null) {
             requestedFields = new String[0];
         }
@@ -384,8 +386,7 @@ public class Bus extends Thread implements IBus {
                 fLogger.error(e.toString());
             }
         }
-        // FIXME do we still need to announce any exception in the method
-        // signature now?
+
         return null;
     }
 
@@ -421,7 +422,9 @@ public class Bus extends Thread implements IBus {
                     for (int i = 0; i < responseDetails.length; i++) {
                         if (responseDetails[i] == null) {
                             if (fLogger.isErrorEnabled()) {
-                                fLogger.error(plugId + ": responded details that are null (set a pseudo responseDetail");
+                                fLogger
+                                        .error(plugId
+                                                + ": responded details that are null (set a pseudo responseDetail");
                             }
                             responseDetails[i] = new IngridHitDetail(plugId, random.nextInt(), random.nextInt(), 0.0f,
                                     "", "");
@@ -473,6 +476,9 @@ public class Bus extends Thread implements IBus {
     }
 
     /**
+     * A pipe with pre process and post process functionality for a query. Every query goes through the posst process
+     * pipe before the search and the pre process pipe after the search.
+     * 
      * @return The processing pipe.
      */
     public ProcessorPipe getProccessorPipe() {
@@ -480,6 +486,8 @@ public class Bus extends Thread implements IBus {
     }
 
     /**
+     * The registry for all iplugs.
+     * 
      * @return The iplug registry.
      */
     public Registry getIPlugRegistry() {
@@ -493,14 +501,15 @@ public class Bus extends Thread implements IBus {
     public void addPlugDescription(PlugDescription plugDescription) {
         if (fLogger.isInfoEnabled()) {
             fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
-                + getAllIPlugs().length);
+                    + getAllIPlugs().length);
         }
         this.fRegistry.addPlugDescription(plugDescription);
     }
 
     public void removePlugDescription(PlugDescription plugDescription) {
         if (fLogger.isInfoEnabled()) {
-            fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length);
+            fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:"
+                    + getAllIPlugs().length);
         }
         this.fRegistry.removePlug(plugDescription.getPlugId());
     }
