@@ -24,6 +24,8 @@ public class SyntaxInterpreter {
      * Returns IPlugs to a given query. Currently it filters for activated, IPlug ids, supported ranking, supported
      * datatype, supported fields, supported providers and supported partners.
      * 
+     * @param query The search query. 
+     * @param registry The plug regestry.
      * @return The IPlugs that have the fields the query requires.
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
