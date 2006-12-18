@@ -66,7 +66,7 @@ if ((submitted != null) && submitted.equals("true")) {
 </head>
 <body>
 <center>
-<form method="get" action="<%=response.encodeURL("index.jsp")%>">
+<form method="post" action="<%=response.encodeURL("index.jsp")%>">
 <input type="hidden" name="submitted" value="true">
 <table class="table" width="400" align="center">
 	<tr>
