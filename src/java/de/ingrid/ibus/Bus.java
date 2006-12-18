@@ -115,6 +115,10 @@ public class Bus extends Thread implements IBus {
             }
         }
         setDefaultInformations(hitContainer, resultSet, !query.isNotRanked());
+
+        resultSet.clear();
+        resultSet = null;
+        
         return hitContainer;
     }
 
@@ -158,6 +162,8 @@ public class Bus extends Thread implements IBus {
             }
             requests[i] = null; // for gc.
         }
+        requests = null;
+
         return resultSet;
     }
 
@@ -180,7 +186,12 @@ public class Bus extends Thread implements IBus {
             }
 
         }
-        return new IngridHits(totalHits, (IngridHit[]) orderedHits.toArray(new IngridHit[orderedHits.size()]));
+        IngridHits result = new IngridHits(totalHits, (IngridHit[]) orderedHits.toArray(new IngridHit[orderedHits.size()]));
+
+        orderedHits.clear();
+        orderedHits = null;
+        
+        return result;
     }
 
     private int getPlugPosition(PlugDescription[] plugDescriptionsForQuery, String plugId) {
@@ -229,8 +240,13 @@ public class Bus extends Thread implements IBus {
             }
         }
 
-        return new IngridHits(totalHits, sortLimitNormalize((IngridHit[]) documents.toArray(new IngridHit[documents
-                .size()]), ranked, maxScore));
+        IngridHits result = new IngridHits(totalHits, sortLimitNormalize((IngridHit[]) documents
+                .toArray(new IngridHit[documents.size()]), ranked, maxScore));
+        
+        documents.clear();
+        documents = null;
+        
+        return result;
     }
 
     private IngridHit[] sortLimitNormalize(IngridHit[] documents, boolean ranked, float maxScore) {
@@ -276,6 +292,10 @@ public class Bus extends Thread implements IBus {
         }
 
         IngridHit[] groupedHits = (IngridHit[]) groupHits.toArray(new IngridHit[groupHits.size()]);
+
+        groupHits.clear();
+        groupHits = null;
+
         return new IngridHits(totalHits, groupedHits, groupedHitsLength + startHit);
     }
 
@@ -435,11 +455,23 @@ public class Bus extends Thread implements IBus {
                     // FIXME: to improve performance we can use an Array instead of a list here.
                 }
             }
+
+            if (null != requestHitList) {
+                requestHitList.clear();
+                requestHitList = null;
+            }
         }
+
+        hashMap.clear();
+        hashMap = null;
 
         // int count = resultList.size();
         IngridHitDetail[] resultDetails = (IngridHitDetail[]) resultList
                 .toArray(new IngridHitDetail[resultList.size()]);
+        
+        resultList.clear();
+        resultList = null;
+
         // sort to be in the same order as the requested hits.
         IngridHitDetail[] details = new IngridHitDetail[hits.length];
         for (int i = 0; i < hits.length; i++) {

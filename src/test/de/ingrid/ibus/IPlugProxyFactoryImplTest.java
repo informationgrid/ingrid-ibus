@@ -107,7 +107,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         for (int i = 0; i < 3; i++) {
             IngridHits hits = this.fBus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-            assertEquals(this.plugDescriptions.length, hits.getHits().length);
+            assertEquals(this.plugDescriptions.length * 2, hits.getHits().length);
         }
     }
 }

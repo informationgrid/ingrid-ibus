@@ -57,7 +57,7 @@ public class BusTest extends TestCase {
         for (int i = 0; i < 5; i++) {
             long time = System.currentTimeMillis();
             IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000);
-            System.out.println("search took " + (System.currentTimeMillis() - time) + " ms");
+            System.out.println("search took ".concat(new Long(System.currentTimeMillis() - time).toString().concat(" ms")));
             assertEquals(this.plugDescriptions.length, hits.getHits().length);
             assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
             assertTrue(hits.isRanked());
@@ -72,7 +72,7 @@ public class BusTest extends TestCase {
         this.plugDescriptions[this.plugDescriptions.length - 1].addField("aField");
         IngridQuery query = QueryStringParser.parse("aField:halle");
         IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-        assertEquals(1, hits.getHits().length);
+        assertEquals(2, hits.getHits().length);
         assertEquals(1, hits.getInVolvedPlugs());
     }
 
@@ -160,7 +160,7 @@ public class BusTest extends TestCase {
         IngridQuery query = QueryStringParser.parse("fische");
         query.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
         IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
-        assertEquals(this.plugDescriptions.length, hits.getHits().length);
+        assertEquals((this.plugDescriptions.length) * 2, hits.getHits().length);
         assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
         assertFalse(hits.isRanked());
 
@@ -216,5 +216,28 @@ public class BusTest extends TestCase {
         IngridQuery query = QueryStringParser.parse("fische (partner:st OR partner:sl)");
         IngridHits hits = this.bus.search(query, 10, 1, 0, 1000);
         assertEquals(0, hits.getHits().length);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void testGroupByPlugId() throws Exception {
+        this.bus = new Bus(new DummyProxyFactory());
+        Registry registry = this.bus.getIPlugRegistry();
+        this.plugDescriptions = new PlugDescription[3];
+        for (int i = 0; i < this.plugDescriptions.length; i++) {
+            this.plugDescriptions[i] = new PlugDescription();
+            this.plugDescriptions[i].setProxyServiceURL("" + i);
+            this.plugDescriptions[i].setOrganisation(ORGANISATION);
+            this.plugDescriptions[i].addDataType("g2k");
+            this.bus.addPlugDescription(this.plugDescriptions[i]);
+            registry.activatePlug("" + i);
+        }
+
+        IngridQuery query = QueryStringParser.parse("fische ranking:off grouped:grouped_by_plugId");
+        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000);
+        assertEquals(this.plugDescriptions.length, hits.getHits().length);
+        System.out.println(hits);
+        System.out.println(hits.getHits()[0].size());
     }
 }

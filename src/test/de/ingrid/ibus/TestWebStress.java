@@ -20,18 +20,20 @@ import net.sourceforge.jwebunit.WebTestCase;
 public class TestWebStress extends WebTestCase {
 
     protected void setUp() throws Exception {
-        getTestContext().setBaseUrl("http://213.144.28.209/ingrid-portal");
+        getTestContext().setBaseUrl("http://192.168.200.54:8181/");
+        //getTestContext().setBaseUrl("http://213.144.28.209/");
     }
 
     /**
      * @throws Exception
      */
     public void testInfoPage() throws Exception {
-        int threadCount = 75;
-        int clickCount = 20;
+        int threadCount = 30;
+        int clickCount = 5000;
         CallThread[] callThreads = new CallThread[threadCount];
         for (int i = 0; i < callThreads.length; i++) {
-            callThreads[i] = new CallThread("/portal/main-search.psml?action=doSearch&q=wasser&ds=1", clickCount);
+            callThreads[i] = new CallThread("query?q=elbe+ranking:score", clickCount);
+            //callThreads[i] = new CallThread("ingrid-portal/portal/main-search.psml?action=doSearch&q=wasser&ds=1", clickCount);
             callThreads[i].start();
         }
         
@@ -73,12 +75,19 @@ public class TestWebStress extends WebTestCase {
 
         public void run() {
             try {
-                for (int i = 0; i < this.fCount; i++) {
+                while (true) {
+                //for (int i = 0; i < this.fCount; i++) {
                     beginAt(this.fPath);
                 }
             } catch (Exception e) {
                 this.fException = e;
             }
         }
+    }
+    
+    public static void main(String[] args) throws Exception {
+        TestWebStress tws = new TestWebStress();
+        tws.setUp();
+        tws.testInfoPage();
     }
 }

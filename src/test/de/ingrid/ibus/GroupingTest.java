@@ -97,7 +97,24 @@ public class GroupingTest extends TestCase {
         // rising start hit
         for (int i = 1; i < this.plugDescriptions.length; i++) {
             hits = this.fBus.search(query, hitsPerPage, 0, i, maxMilliseconds);
-            assertEquals(this.plugDescriptions.length - i, hits.getHits().length);
+            switch (i) {
+            case 1:
+                assertEquals(5, hits.getHits().length);    
+                break;
+            case 2:
+                assertEquals(4, hits.getHits().length);    
+                break;
+            case 3:
+                assertEquals(4, hits.getHits().length);    
+                break;
+            case 4:
+                assertEquals(3, hits.getHits().length);    
+                break;
+            default:
+                fail();
+                break;
+            }
+            
             assertEquals(this.plugDescriptions.length, hits.length());
         }
 
@@ -118,7 +135,7 @@ public class GroupingTest extends TestCase {
         assertEquals(hits.getGoupedHitsLength(), countHits(hits.getHits(), 0));
         hits = this.fBus.search(query, 2, 0, 0, maxMilliseconds);
         assertEquals(2, hits.getHits().length);
-        assertEquals(this.plugDescriptions.length + 1, hits.getGoupedHitsLength());
+        assertEquals((this.plugDescriptions.length + 1) * 2, hits.getGoupedHitsLength());
 
         // 2 organisations - rising start page
         hits = this.fBus.search(query, 1, 0, 0, maxMilliseconds);
@@ -126,14 +143,14 @@ public class GroupingTest extends TestCase {
         int verbrateneHits = countHits(hits.getHits(), 0);
         assertFalse(hits.getHits()[0].getPlugId().equals(plugDesc.getPlugId()));
         hits = this.fBus.search(query, hitsPerPage, 0, hits.getGoupedHitsLength(), maxMilliseconds);
-        assertEquals(this.plugDescriptions.length + 1, verbrateneHits + countHits(hits.getHits(), 0));
+        assertEquals((this.plugDescriptions.length + 1) * 2, verbrateneHits + countHits(hits.getHits(), 0));
 
     }
 
     private int countHits(IngridHit[] hits, int currentHits) {
 
         for (int i = 0; i < hits.length; i++) {
-            System.out.println(hits.length + ".." + hits[i].getGroupHits().length);
+            //System.out.println(hits.length + ".." + hits[i].getGroupHits().length);
             currentHits++;
             currentHits = countHits(hits[i].getGroupHits(), currentHits);
         }
@@ -173,28 +190,9 @@ public class GroupingTest extends TestCase {
             if (foundHits < plugCount) {
                 assertEquals(hitsPerPage, hits.getHits().length);
             } else {
-                assertEquals(5, hits.getHits().length);
+                assertEquals(10, hits.getHits().length);
             }
         }
-        System.out.println("grouping took " + (System.currentTimeMillis() - time));
+        System.out.println("grouping took " + (System.currentTimeMillis() - time) + "ms");
     }
-
-    // /**
-    // * // XXX we just group for the 1st provider/partner
-    // * @throws Exception
-    // */
-    // public void testHitGroupedToTwoGroups() throws Exception {
-    // PlugDescription plugDesc = new PlugDescription();
-    // plugDesc.setProxyServiceURL("additional plug");
-    // plugDesc.addProvider(this.plugDescriptions[0].getProviders()[0]);
-    // plugDesc.addProvider("additional organisation");
-    // this.fBus.getIPlugRegistry().addIPlug(plugDesc);
-    //        
-    // IngridQuery query = QueryStringParser.parse("aQuery grouped:" +
-    // IngridQuery.GROUPED_BY_ORGANISATION);
-    // IngridHits hits = this.fBus.search(query, 10, 0, 0, 1000);
-    // assertEquals(2, hits.getHits().length);
-    // assertEquals(this.plugDescriptions.length + 1, hits.length());
-    // }
-
 }

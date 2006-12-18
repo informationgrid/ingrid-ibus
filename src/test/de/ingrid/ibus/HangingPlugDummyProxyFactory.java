@@ -14,6 +14,9 @@ import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
 
+/**
+ * 
+ */
 public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
 
     /**
