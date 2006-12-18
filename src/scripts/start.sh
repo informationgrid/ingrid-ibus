@@ -87,7 +87,7 @@ startIplug()
   fi
   
   JAVA=$JAVA_HOME/bin/java
-  JAVA_HEAP_MAX=-Xmx128m
+  JAVA_HEAP_MAX="-Xmx1024m Xss512k"
   
   # check envvars which might override default args
   if [ "$INGRID_HEAPSIZE" != "" ]; then
