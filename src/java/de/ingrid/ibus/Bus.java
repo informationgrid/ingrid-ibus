@@ -118,7 +118,7 @@ public class Bus extends Thread implements IBus {
 
         resultSet.clear();
         resultSet = null;
-        
+
         return hitContainer;
     }
 
@@ -186,11 +186,12 @@ public class Bus extends Thread implements IBus {
             }
 
         }
-        IngridHits result = new IngridHits(totalHits, (IngridHit[]) orderedHits.toArray(new IngridHit[orderedHits.size()]));
+        IngridHits result = new IngridHits(totalHits, (IngridHit[]) orderedHits.toArray(new IngridHit[orderedHits
+                .size()]));
 
         orderedHits.clear();
         orderedHits = null;
-        
+
         return result;
     }
 
@@ -242,10 +243,10 @@ public class Bus extends Thread implements IBus {
 
         IngridHits result = new IngridHits(totalHits, sortLimitNormalize((IngridHit[]) documents
                 .toArray(new IngridHit[documents.size()]), ranked, maxScore));
-        
+
         documents.clear();
         documents = null;
-        
+
         return result;
     }
 
@@ -468,7 +469,7 @@ public class Bus extends Thread implements IBus {
         // int count = resultList.size();
         IngridHitDetail[] resultDetails = (IngridHitDetail[]) resultList
                 .toArray(new IngridHitDetail[resultList.size()]);
-        
+
         resultList.clear();
         resultList = null;
 
@@ -531,11 +532,17 @@ public class Bus extends Thread implements IBus {
     }
 
     public void addPlugDescription(PlugDescription plugDescription) {
-        if (fLogger.isInfoEnabled()) {
-            fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
-                    + getAllIPlugs().length);
+        if (null != plugDescription) {
+            if (fLogger.isInfoEnabled()) {
+                fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
+                        + getAllIPlugs().length);
+            }
+            this.fRegistry.addPlugDescription(plugDescription);
+        } else {
+            if (fLogger.isErrorEnabled()) {
+                fLogger.error("Cannot add IPlug: plugdescription is null.");
+            }
         }
-        this.fRegistry.addPlugDescription(plugDescription);
     }
 
     public void removePlugDescription(PlugDescription plugDescription) {
