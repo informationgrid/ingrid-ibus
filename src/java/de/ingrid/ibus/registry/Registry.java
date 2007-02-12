@@ -96,28 +96,34 @@ public class Registry {
      *            The PlugDescrption of the IPlug. Changed PlugDescrptions are updated.
      */
     public void addPlugDescription(PlugDescription plugDescription) {
-        removePlug(plugDescription.getPlugId());
-        if (this.fBusUrl == null) {
-            joinGroup(plugDescription.getProxyServiceURL());
-        }
-        if (plugDescription.getMd5Hash() == null) {
-            throw new IllegalArgumentException("md5 hash not set - plug '" + plugDescription.getPlugId());
-        }
+        if (null != plugDescription) {
+            removePlug(plugDescription.getPlugId());
+            if (this.fBusUrl == null) {
+                joinGroup(plugDescription.getProxyServiceURL());
+            }
+            if (plugDescription.getMd5Hash() == null) {
+                throw new IllegalArgumentException("md5 hash not set - plug '" + plugDescription.getPlugId());
+            }
 
-        if (this.fActivatedIplugs.containsKey(plugDescription.getProxyServiceURL())) {
-            final String activated = (String) this.fActivatedIplugs.get(plugDescription.getProxyServiceURL());
-            if (activated.equals("true")) {
-                plugDescription.setActivate(true);
+            if (this.fActivatedIplugs.containsKey(plugDescription.getProxyServiceURL())) {
+                final String activated = (String) this.fActivatedIplugs.get(plugDescription.getProxyServiceURL());
+                if (activated.equals("true")) {
+                    plugDescription.setActivate(true);
+                } else {
+                    plugDescription.setActivate(false);
+                }
             } else {
-                plugDescription.setActivate(false);
+                plugDescription.setActivate(this.fIplugAutoActivation);
+            }
+            plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
+            createPlugProxy(plugDescription);
+            synchronized (this.fPlugDescriptionByPlugId) {
+                this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
             }
         } else {
-            plugDescription.setActivate(this.fIplugAutoActivation);
-        }
-        plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
-        createPlugProxy(plugDescription);
-        synchronized (this.fPlugDescriptionByPlugId) {
-            this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
+            if (fLogger.isErrorEnabled()) {
+                fLogger.error("Cannot add IPlug: plugdescription is null.");
+            }
         }
     }
 
@@ -170,7 +176,7 @@ public class Registry {
             }
             removePlug(plugId);
             IllegalStateException iste = new IllegalStateException("plug with id '" + plugId
-                    + "' currently not availible");
+                    + "' currently not available");
             iste.initCause(e);
             throw iste;
         }
