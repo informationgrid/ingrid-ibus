@@ -131,7 +131,7 @@ public class BusServer {
         try {
             HashUserRealm realm = new HashUserRealm("IBus");
             realm.put("admin", adminpassword);
-            AdminServer.startWebContainer(adminport, new File("./webapp"), true, realm, null);
+            AdminServer.startWebContainer(new HashMap(), adminport, new File("./webapp"), true, realm, null);
         } catch (Exception e) {
             System.err.println("Cannot start the IBus admin server.");
             e.printStackTrace();
