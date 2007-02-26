@@ -179,7 +179,7 @@ public class GroupingTest extends TestCase {
 
         IngridQuery query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_ORGANISATION);
         int hitsPerPage = 10;
-        int maxMilliseconds = 1000;
+        int maxMilliseconds = 10000;
 
         int foundHits = 0;
         long time = System.currentTimeMillis();
