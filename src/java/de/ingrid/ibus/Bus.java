@@ -8,7 +8,6 @@ package de.ingrid.ibus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,8 +47,6 @@ public class Bus extends Thread implements IBus {
 
     private static Bus fInstance;
     
-    private HashMap fPlugDescriptionByPlugId = new HashMap();
-
     // TODO INGRID-398 we need to made the lifetime configurable.
     private Registry fRegistry;
 
@@ -561,7 +558,7 @@ public class Bus extends Thread implements IBus {
     }
 
     public PlugDescription[] getAllIPlugs() {
-        return this.fRegistry.getAllIPlugsWithoutTimeLimitation();
+        return this.fRegistry.getAllIPlugs();
     }
     
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
