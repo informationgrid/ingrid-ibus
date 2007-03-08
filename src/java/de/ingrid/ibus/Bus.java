@@ -565,13 +565,7 @@ public class Bus extends Thread implements IBus {
     }
     
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
-        Collection plugDescriptions;
-
-        synchronized (this.fPlugDescriptionByPlugId) {
-            plugDescriptions = this.fPlugDescriptionByPlugId.values();
-        }
-
-        return (PlugDescription[]) plugDescriptions.toArray(new PlugDescription[plugDescriptions.size()]);
+        return this.fRegistry.getAllIPlugsWithoutTimeLimitation();
     }
 
     public PlugDescription getIPlug(String plugId) {
