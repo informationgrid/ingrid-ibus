@@ -53,7 +53,7 @@ public class Bus extends Thread implements IBus {
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
     /**
-     * The bus. All IPlugs have to connect with the bus to be searched. It sends queries to regeistered and activated
+     * The bus. All IPlugs have to connect with the bus to be searched. It sends queries to registered and activated
      * iplugs. It only sends a query to a iplug if it is able to handle the query. For all implemented criteria see
      * de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry) .
      * 
@@ -93,8 +93,14 @@ public class Bus extends Thread implements IBus {
         } else {
             requestLength = startHit + (hitsPerPage * 6);
         }
+        
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
-        ResultSet resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
+        ResultSet resultSet;
+        if (plugDescriptionsForQuery.length > 1) {
+            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
+        } else {
+            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, requestLength);
+        } 
 
         IngridHits hitContainer;
         if (query.isNotRanked()) {
