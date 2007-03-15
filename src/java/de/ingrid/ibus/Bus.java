@@ -95,11 +95,14 @@ public class Bus extends Thread implements IBus {
         }
         
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
+        boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
+        
         ResultSet resultSet;
-        if (plugDescriptionsForQuery.length > 1) {
+        if (!oneIPlugOnly) {
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
         } else {
-            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, requestLength);
+            // request only one iplug! request from "startHit" position with length "hitsPerPage", because no ranking is required
+            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, hitsPerPage);
         } 
 
         IngridHits hitContainer;
@@ -113,10 +116,16 @@ public class Bus extends Thread implements IBus {
         if (hits.length > 0) {
             this.fProcessorPipe.postProcess(query, hits);
             if (grouping) {
-                hits = cutFirstHits(hits, startHit);
+                // prevent array cutting with only one requested iplug, assuming we already have the right number of hits in the result array
+                if (!oneIPlugOnly) {
+                    hits = cutFirstHits(hits, startHit);
+                }
                 hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
             } else {
-                hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
+                // prevent array cutting with only one requested iplug, assuming we already have the right number of hits in the result array
+                if (!oneIPlugOnly) {
+                    hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
+                }
                 hitContainer = new IngridHits(totalHits, hits);
             }
         }
