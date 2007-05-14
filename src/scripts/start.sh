@@ -123,6 +123,14 @@ startIplug()
   echo $! > $PID
 }
 
+# make sure the current user has the privilege to execute that script
+INGRID_USER="ingrid"
+
+STARTING_USER=`whoami`
+if [ "$STARTING_USER" != "$INGRID_USER" ]; then
+  echo "you must be user '$INGRID_USER' to start that script!"
+  exit 1
+fi 
 
 case "$1" in
   start)
