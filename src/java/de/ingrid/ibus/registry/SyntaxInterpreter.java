@@ -136,9 +136,16 @@ public class SyntaxInterpreter {
         if (allowedProvider.length == 0 && notAllowedProvider.length == 0) {
             return;
         }
-
         for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = (PlugDescription) iter.next();
+            
+            // FIX: INGRID-1463
+            String iPlugClass = plugDescription.getIPlugClass(); 
+            if ((null != iPlugClass) && (iPlugClass.equals("de.ingrid.iplug.se.NutchSearcher"))) {
+                continue;
+            }
+            //
+            
             String[] providers = plugDescription.getProviders();
             boolean toRemove = true;
             if (allowedProvider.length == 0) {
@@ -157,7 +164,6 @@ public class SyntaxInterpreter {
                 iter.remove();
             }
         }
-
     }
 
     private static void filterForPartner(IngridQuery ingridQuery, List allIPlugs) {
@@ -170,6 +176,14 @@ public class SyntaxInterpreter {
 
         for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = (PlugDescription) iter.next();
+            
+            // FIX: INGRID-1463
+            String iPlugClass = plugDescription.getIPlugClass(); 
+            if ((null != iPlugClass) && (iPlugClass.equals("de.ingrid.iplug.se.NutchSearcher"))) {
+                continue;
+            }
+            //
+            
             String[] partners = plugDescription.getPartners();
             boolean toRemove = true;
             for (int i = 0; i < partners.length; i++) {
