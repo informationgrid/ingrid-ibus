@@ -102,7 +102,7 @@ startIplug()
   fi  
 
   # run it
-  exec nohup "$JAVA" $JAVA_HEAP_MAX -Xss512K $INGRID_OPTS -classpath "$CLASSPATH" $CLASS --descriptor conf/jxta.properties --busurl /torwald-ibus:ibus-torwald --adminpassword ibussubi --adminport 9781 > console.log &
+  exec nohup "$JAVA" $JAVA_HEAP_MAX -Xss512K $INGRID_OPTS -classpath "$CLASSPATH" $CLASS --descriptor conf/communication.properties --busurl /torwald-ibus:ibus-torwald --adminpassword ibussubi --adminport 9781 > console.log &
   
   echo "ingrid component ($INGRID_HOME) started."
 }

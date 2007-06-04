@@ -117,7 +117,7 @@ startIplug()
   CLASS=de.ingrid.ibus.BusServer
   
   # run it
-  exec nohup "$JAVA" $JAVA_HEAP_MAX $INGRID_OPTS -classpath "$CLASSPATH" $CLASS --descriptor conf/jxta.properties --adminpassword --adminport --busurl > console.log &
+  exec nohup "$JAVA" $JAVA_HEAP_MAX $INGRID_OPTS -classpath "$CLASSPATH" $CLASS --descriptor conf/communication.properties --adminpassword --adminport --busurl > console.log &
   
   echo "ingrid component ($INGRID_HOME) started."
   echo $! > $PID
