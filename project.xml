@@ -4,7 +4,7 @@
     <artifactId>ingrid-ibus</artifactId>
     <name>ingrid-ibus</name>
     <groupId>ingrid</groupId>
-    <currentVersion>0.1-SNAPSHOT</currentVersion>
+    <currentVersion>0.2.0-SNAPSHOT</currentVersion>
     <organization />
     <inceptionYear>2005</inceptionYear>
     <logo>/images/logo.gif</logo>
@@ -69,7 +69,7 @@
     <siteAddress>http://213.144.28.209/ingrid/ingrid-ibus</siteAddress>
     <siteDirectory>/srv/www/htdocs/ingrid/ingrid-ibus</siteDirectory>
     <repository>
-        <connection>scm:svn:https://127.0.0.1:444/svn/ingrid/ingrid-ibus/trunk</connection>
+        <connection>scm:svn:https://127.0.0.1:444/svn/ingrid/ingrid-ibus/branches/ingrid-ibus-sockets</connection>
     </repository>
     <dependencies>
         <dependency>
@@ -88,18 +88,6 @@
             <groupId>tomcat</groupId>
             <artifactId>jasper-runtime</artifactId>
             <version>5.5.9</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>weta-components</groupId>
-            <artifactId>communication</artifactId>
-            <version>SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>weta-components</groupId>
-            <artifactId>communication-sockets</artifactId>
-            <version>SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -213,23 +201,10 @@
             <url>http://ibiblio.org/maven</url>
         </dependency>
         <dependency>
-            <groupId>weta-components</groupId>
-            <artifactId>communication-jxta</artifactId>
-            <version>SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>jxta</groupId>
-            <artifactId>jxta</artifactId>
-            <version>2.3.6</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>bouncycastle</groupId>
-            <artifactId>bcprov</artifactId>
-            <version>jdk14-124</version>
-            <type>jar</type>
-        </dependency>
+			<groupId>ingrid</groupId>
+			<artifactId>ingrid-communication</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
 
         <!-- for portal ibus stress test -->
         <dependency>

@@ -8,8 +8,7 @@ package de.ingrid.ibus;
 
 import junit.framework.TestCase;
 import net.weta.components.communication.reflect.ProxyService;
-import net.weta.components.communication_sockets.SocketCommunication;
-import net.weta.components.communication_sockets.util.AddressUtil;
+import net.weta.components.communication.tcp.TcpCommunication;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridHits;
@@ -28,31 +27,33 @@ public class IPlugProxyFactoryImplTest extends TestCase {
 
     private PlugDescription[] plugDescriptions = new PlugDescription[this.fHowMuchPlugs];
 
-    private SocketCommunication[] fPlugComms = new SocketCommunication[this.fHowMuchPlugs];
+    private TcpCommunication[] fPlugComms = new TcpCommunication[this.fHowMuchPlugs];
 
-    private SocketCommunication fBusComm;
+    private TcpCommunication fBusComm;
 
     protected void setUp() throws Exception {
-        this.fBusComm = new SocketCommunication();
-        this.fBusComm.setMulticastPort(9191);
-        this.fBusComm.setUnicastPort(9192);
+        this.fBusComm = new TcpCommunication();
+        this.fBusComm.setIsCommunicationServer(true);
+        this.fBusComm.addServer("127.0.0.1:9191");
+        this.fBusComm.setPeerName("/101tec-group:ibus");
         this.fBusComm.startup();
 
         this.fBus = new Bus(new IPlugProxyFactoryImpl(this.fBusComm));
         for (int i = 0; i < this.plugDescriptions.length; i++) {
-            this.fPlugComms[i] = new SocketCommunication();
-            this.fPlugComms[i].setMulticastPort(59005 + i);
-            this.fPlugComms[i].setUnicastPort(60006 + i);
+            this.fPlugComms[i] = new TcpCommunication();
+            this.fPlugComms[i].setIsCommunicationServer(false);
+            this.fPlugComms[i].addServer("127.0.0.1:9191");
+            this.fPlugComms[i].setPeerName("/101tec-group:iplug" + i);
             this.fPlugComms[i].startup();
 
             ProxyService.createProxyServer(this.fPlugComms[i], IPlug.class, new DummyIPlug());
             this.plugDescriptions[i] = new PlugDescription();
-            this.plugDescriptions[i].setProxyServiceURL(AddressUtil.getWetagURL("localhost", 60006 + i));
+            this.plugDescriptions[i].setProxyServiceURL("/101tec-group:iplug" + i);
             this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());
             this.plugDescriptions[i].setRecordLoader(false);
             this.plugDescriptions[i].addField("ort");
             this.fBus.getIPlugRegistry().addPlugDescription(this.plugDescriptions[i]);
-            this.fBus.getIPlugRegistry().activatePlug(AddressUtil.getWetagURL("localhost", 60006 + i));
+            this.fBus.getIPlugRegistry().activatePlug("/101tec-group:iplug"+i);
         }
     }
 

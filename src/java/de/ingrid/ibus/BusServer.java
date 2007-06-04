@@ -12,7 +12,7 @@ import java.util.Properties;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
-import net.weta.components.peer.StartJxtaConfig;
+import net.weta.components.communication.tcp.StartCommunication;
 
 import org.mortbay.http.HashUserRealm;
 
@@ -74,7 +74,8 @@ public class BusServer {
 
             try {
                 FileInputStream fileIS = new FileInputStream(filename);
-                communication = StartJxtaConfig.start(fileIS);
+                communication = StartCommunication.create(fileIS);
+                communication.startup();
                 communication.subscribeGroup(busurl);
             } catch (Exception e) {
                 System.err.println("Cannot start the communication: " + e.getMessage());

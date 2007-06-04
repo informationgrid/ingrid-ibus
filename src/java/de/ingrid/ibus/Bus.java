@@ -34,7 +34,8 @@ import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
- * The IBus a centralized Bus that routes queries and return results. Created on 09.08.2005
+ * The IBus a centralized Bus that routes queries and return results. Created on
+ * 09.08.2005
  * 
  * @author sg
  * @version $Revision: 1.3 $
@@ -46,20 +47,23 @@ public class Bus extends Thread implements IBus {
     private static Log fLogger = LogFactory.getLog(Bus.class);
 
     private static Bus fInstance;
-    
+
     // TODO INGRID-398 we need to made the lifetime configurable.
     private Registry fRegistry;
 
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
     /**
-     * The bus. All IPlugs have to connect with the bus to be searched. It sends queries to registered and activated
-     * iplugs. It only sends a query to a iplug if it is able to handle the query. For all implemented criteria see
-     * de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry) .
+     * The bus. All IPlugs have to connect with the bus to be searched. It sends
+     * queries to registered and activated iplugs. It only sends a query to a
+     * iplug if it is able to handle the query. For all implemented criteria see
+     * de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery,
+     * Registry) .
      * 
      * @param factory
      *            A factroy for creating iplug proxies.
-     * @see de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry)
+     * @see de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery,
+     *      Registry)
      */
     public Bus(IPlugProxyFactory factory) {
         this.fRegistry = new Registry(100000, false, factory);
@@ -103,7 +107,7 @@ public class Bus extends Thread implements IBus {
         } else {
             // request only one iplug! request from "startHit" position with length "hitsPerPage", because no ranking is required
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, hitsPerPage);
-        } 
+        }        
 
         IngridHits hitContainer;
         if (query.isNotRanked()) {
@@ -528,8 +532,9 @@ public class Bus extends Thread implements IBus {
     }
 
     /**
-     * A pipe with pre process and post process functionality for a query. Every query goes through the posst process
-     * pipe before the search and the pre process pipe after the search.
+     * A pipe with pre process and post process functionality for a query. Every query goes through the posst process 
+     * pipe before the search and the pre
+     * process pipe after the search.
      * 
      * @return The processing pipe.
      */
