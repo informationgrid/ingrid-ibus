@@ -6,6 +6,10 @@
 
 package de.ingrid.ibus;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
+
 import net.sourceforge.jwebunit.WebTestCase;
 
 /**
@@ -19,25 +23,55 @@ import net.sourceforge.jwebunit.WebTestCase;
  */
 public class TestWebStress extends WebTestCase {
 
+    private static final String SEPERATOR = "\t";
+
+    private static final String URL = "http://213.144.28.209/opensearch";
+
+    private static final String URI = "/query?q=1+OR+3+datatype:default+ranking:score";
+
+    private int _responseCode200 = 0;
+
+    private int _responseCodeUnknown = 0;
+
     protected void setUp() throws Exception {
-        getTestContext().setBaseUrl("http://192.168.200.54:8181/");
-        //getTestContext().setBaseUrl("http://213.144.28.209/");
+        getTestContext().setBaseUrl(URL);
+    }
+
+    public void testOpensearch() throws Exception {
+        DecimalFormat format = new DecimalFormat(".00");
+        PrintWriter writer = new PrintWriter(new File("webStress.csv"));
+        int threadCount = 150;
+        int clickCount = 3;
+        for (int i = 1; i < threadCount + 1; i++) {
+            for (int j = 1; j < clickCount + 1; j++) {
+                long time = click(i, j);
+                // assertEquals(i, _responseCode200);
+                // assertEquals(0, _responseCodeUnknown);
+
+                String line = i + SEPERATOR + j + SEPERATOR + format.format((time / 1000.0)) + SEPERATOR
+                        + format.format(((time / 1000.0) / i)) + SEPERATOR + format.format(((i * j) / (time / 1000.0)))
+                        + SEPERATOR + _responseCode200 + SEPERATOR + _responseCodeUnknown;
+                System.out.println(line);
+                writer.println(line);
+                writer.flush();
+                _responseCode200 = 0;
+                _responseCodeUnknown = 0;
+            }
+        }
+        writer.close();
     }
 
     /**
      * @throws Exception
      */
-    public void testInfoPage() throws Exception {
-        int threadCount = 30;
-        int clickCount = 5000;
+    public long click(int threadCount, int clickCount) throws Exception {
+
+        long start = System.currentTimeMillis();
         CallThread[] callThreads = new CallThread[threadCount];
         for (int i = 0; i < callThreads.length; i++) {
-            callThreads[i] = new CallThread("query?q=elbe+ranking:score", clickCount);
-            //callThreads[i] = new CallThread("ingrid-portal/portal/main-search.psml?action=doSearch&q=wasser&ds=1", clickCount);
+            callThreads[i] = new CallThread(URI, clickCount);
             callThreads[i].start();
         }
-        
-        System.out.println("All query threads started.");
 
         for (int i = 0; i < callThreads.length; i++) {
             callThreads[i].join();
@@ -45,8 +79,9 @@ public class TestWebStress extends WebTestCase {
                 System.out.println(callThreads[i].getException().getMessage());
             }
         }
-        
-        System.out.println("All query threads finished.");
+
+        long end = System.currentTimeMillis();
+        return end - start;
     }
 
     private class CallThread extends Thread {
@@ -75,19 +110,18 @@ public class TestWebStress extends WebTestCase {
 
         public void run() {
             try {
-                while (true) {
-                //for (int i = 0; i < this.fCount; i++) {
+                for (int i = 0; i < this.fCount; i++) {
                     beginAt(this.fPath);
+                    if (tester.getDialog().getResponse().getResponseCode() == 200) {
+                        _responseCode200++;
+                    } else {
+                        _responseCodeUnknown++;
+                    }
                 }
             } catch (Exception e) {
                 this.fException = e;
             }
         }
     }
-    
-    public static void main(String[] args) throws Exception {
-        TestWebStress tws = new TestWebStress();
-        tws.setUp();
-        tws.testInfoPage();
-    }
+
 }
