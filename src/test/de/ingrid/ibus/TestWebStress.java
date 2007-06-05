@@ -7,6 +7,7 @@
 package de.ingrid.ibus;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
@@ -39,7 +40,7 @@ public class TestWebStress extends WebTestCase {
 
     public void testOpensearch() throws Exception {
         DecimalFormat format = new DecimalFormat(".00");
-        PrintWriter writer = new PrintWriter(new File("webStress.csv"));
+        PrintWriter writer = new PrintWriter(new FileOutputStream(new File("webStress.csv")));
         int threadCount = 150;
         int clickCount = 3;
         for (int i = 1; i < threadCount + 1; i++) {
