@@ -175,6 +175,7 @@ public class Registry {
                 fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not create proxy object: ", e);
             }
             removePlug(plugId);
+            closeConnectionToIplug(plugDescription);
             IllegalStateException iste = new IllegalStateException("plug with id '" + plugId
                     + "' currently not available");
             iste.initCause(e);
@@ -208,19 +209,21 @@ public class Registry {
         synchronized (this.fPlugProxyByPlugId) {
             this.fPlugProxyByPlugId.remove(plugId);
         }
-        PlugDescription description;
         synchronized (this.fPlugDescriptionByPlugId) {
-            description = (PlugDescription) this.fPlugDescriptionByPlugId.remove(plugId);
+            this.fPlugDescriptionByPlugId.remove(plugId);
         }
-        if (description != null && this.fCommunication != null) {
+    }
+    
+    private void closeConnectionToIplug(PlugDescription plugDescription) {
+        if (plugDescription != null && this.fCommunication != null) {
             try {
                 String plugUrl = null;
                 if (this.fBusUrl != null) {
                     final String path = this.fBusUrl.replaceFirst("/(.*)?:(.*)?", "$1");
-                    final String peername = description.getProxyServiceURL().replaceFirst("/(.*)?:(.*)?", "$2");
+                    final String peername = plugDescription.getProxyServiceURL().replaceFirst("/(.*)?:(.*)?", "$2");
                     plugUrl = '/' + path + ':' + peername;
                 } else {
-                    plugUrl = description.getProxyServiceURL();
+                    plugUrl = plugDescription.getProxyServiceURL();
                 }
                 this.fCommunication.closeConnection(plugUrl);
             } catch (IOException e) {
@@ -228,7 +231,7 @@ public class Registry {
                     fLogger.warn("problems on closing connection", e);
                 }
             }
-        }
+        }        
     }
 
     /**
@@ -275,6 +278,9 @@ public class Registry {
         for (int i = 0; i < plugDescriptions.length; i++) {
             if (plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime > now) {
                 plugs.add(plugDescriptions[i]);
+            } else {
+                removePlug(plugDescriptions[i].getPlugId());
+                closeConnectionToIplug(plugDescriptions[i]);
             }
         }
         return (PlugDescription[]) plugs.toArray(new PlugDescription[plugs.size()]);
