@@ -8,6 +8,8 @@ package de.ingrid.ibus.net;
 
 import java.io.IOException;
 
+import net.weta.components.communication.tcp.TimeoutException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -91,6 +93,13 @@ public class PlugQueryRequest extends Thread {
             }
             synchronized (this.fResultSet) {
                 this.fResultSet.add(hits);
+            }
+        } catch (TimeoutException e) {
+            if (fLog.isWarnEnabled()) {
+                fLog
+                        .warn("IPlug: "
+                                + this.fPlugId
+                                + " sent timeout. Set the timeout for the search lower than the communication timeout for the IPlug or vice versa.");
             }
         } catch (InterruptedException e) {
             if (fLog.isErrorEnabled()) {
