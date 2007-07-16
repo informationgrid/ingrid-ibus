@@ -167,7 +167,7 @@ public class BusTest extends TestCase {
         // invert order of plugdescriptions
         this.bus.removePlugDescription(this.plugDescriptions[0]);
         this.bus.removePlugDescription(this.plugDescriptions[1]);
-        assertEquals(1, this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000).length());
+        assertEquals(2, this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000).length());
         this.bus.addPlugDescription(this.plugDescriptions[1]);
         this.bus.addPlugDescription(this.plugDescriptions[0]);
 

@@ -1,5 +1,7 @@
 package de.ingrid.ibus;
 
+import java.util.Iterator;
+
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
@@ -39,20 +41,37 @@ public class GroupingTest extends TestCase {
     /**
      * @throws Exception
      */
+    public void  testGroupingForDatasource() throws Exception {
+	IngridQuery ingridQuery = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_DATASOURCE);
+	int hitsPerPage = 10;
+	int maxMilliseconds = 1000;
+	
+	IngridHits hits = this.fBus.search(ingridQuery, hitsPerPage, 0, 0, maxMilliseconds);
+	
+	assertEquals(5, hits.getHits().length);
+	IngridHit[] hits2 = hits.getHits();
+	for (int i = 0; i< hits2.length; i++) {
+	    assertEquals(2, hits2[i].getGroupTotalHitLength());
+	}
+    }
+
+    /**
+     * @throws Exception
+     */
     public void testGrouping() throws Exception {
         IngridQuery query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_ORGANISATION);
         int hitsPerPage = 10;
         int maxMilliseconds = 1000;
         IngridHits hits = this.fBus.search(query, hitsPerPage, 0, 0, maxMilliseconds);
-        assertEquals(5, hits.length());
+        assertEquals(10, hits.length());
         assertEquals(1, hits.getHits().length);
 
         query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_PLUGID);
         hits = this.fBus.search(query, hitsPerPage, 0, 0, maxMilliseconds);
-        assertEquals(5, hits.length());
+        assertEquals(10, hits.length());
         assertEquals(5, hits.getHits().length);
     }
-
+    
     /**
      * @throws Exception
      */
@@ -67,12 +86,12 @@ public class GroupingTest extends TestCase {
         int hitsPerPage = 10;
         int maxMilliseconds = 1000;
         IngridHits hits = this.fBus.search(query, hitsPerPage, 0, 0, maxMilliseconds);
-        assertEquals(6, hits.length());
+        assertEquals(12, hits.length());
         assertEquals(2, hits.getHits().length);
 
         query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_PLUGID);
         hits = this.fBus.search(query, hitsPerPage, 0, 0, maxMilliseconds);
-        assertEquals(6, hits.length());
+        assertEquals(12, hits.length());
         assertEquals(6, hits.getHits().length);
     }
 
@@ -84,14 +103,14 @@ public class GroupingTest extends TestCase {
         int hitsPerPage = 10;
         int maxMilliseconds = 1000;
         IngridHits hits = this.fBus.search(query, hitsPerPage, 0, 0, maxMilliseconds);
-        assertEquals(this.plugDescriptions.length, hits.length());
+        assertEquals(this.plugDescriptions.length * 2, hits.length());
         assertEquals(this.plugDescriptions.length, hits.getHits().length);
 
         // rising hits per page
         for (int i = 1; i < this.plugDescriptions.length; i++) {
             hits = this.fBus.search(query, i, 0, 0, maxMilliseconds);
             assertEquals(i, hits.getHits().length);
-            assertEquals(this.plugDescriptions.length, hits.length());
+            assertEquals(this.plugDescriptions.length * 2, hits.length());
         }
 
         // rising start hit
@@ -115,7 +134,7 @@ public class GroupingTest extends TestCase {
                 break;
             }
             
-            assertEquals(this.plugDescriptions.length, hits.length());
+            assertEquals(this.plugDescriptions.length * 2, hits.length());
         }
 
         // 2 organisations
@@ -127,7 +146,7 @@ public class GroupingTest extends TestCase {
         query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_ORGANISATION);
         hits = this.fBus.search(query, hitsPerPage, 0, 0, maxMilliseconds);
         assertEquals(2, hits.getHits().length);
-        assertEquals(this.plugDescriptions.length + 1, hits.length());
+        assertEquals(12, hits.length());
 
         // 2 organisations - rising hits per page
         hits = this.fBus.search(query, 1, 0, 0, maxMilliseconds);
@@ -185,7 +204,7 @@ public class GroupingTest extends TestCase {
         long time = System.currentTimeMillis();
         while (foundHits < plugCount) {
             IngridHits hits = bus.search(query, hitsPerPage, 0, foundHits, maxMilliseconds);
-            assertEquals(plugCount, hits.length());
+            assertEquals(plugCount * 2, hits.length());
             foundHits = hits.getGoupedHitsLength();
             if (foundHits < plugCount) {
                 assertEquals(hitsPerPage, hits.getHits().length);

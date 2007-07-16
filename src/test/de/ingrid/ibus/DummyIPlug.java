@@ -32,43 +32,55 @@ public class DummyIPlug implements IPlug {
      * 
      */
     public DummyIPlug() {
-        // for serialisations
+	// for serialisations
     }
 
     /**
      * @param plugId
      */
     public DummyIPlug(String plugId) {
-        this.fMyPlugId = plugId;
+	this.fMyPlugId = plugId;
     }
 
     public IngridHits search(IngridQuery query, int start, int lenght) {
-        return new IngridHits(this.fMyPlugId, 1, new IngridHit[] { new IngridHit(this.fMyPlugId, 23, 23, 23f), new IngridHit(this.fMyPlugId, 23, 23, 23f) }, true);
+	IngridHit[] hit = null;
+	if (query.getGrouped() != null && query.getGrouped().equals(IngridQuery.GROUPED_BY_DATASOURCE)) {
+	    hit = new IngridHit[1];
+	    hit[0] = new IngridHit(this.fMyPlugId, 23, 23, 23f);
+	    hit[0].setGroupTotalHitLength(2);
+	} else {
+	    hit = new IngridHit[2];
+	    hit[0] = new IngridHit(this.fMyPlugId, 23, 23, 23f);
+	    hit[0].setGroupTotalHitLength(2);
+	    hit[1] = new IngridHit(this.fMyPlugId, 23, 23, 23f);
+	    hit[1].setGroupTotalHitLength(2);
+	}
+	return new IngridHits(this.fMyPlugId, hit.length, hit, true);
     }
 
     public void configure(PlugDescription arg0) throws Exception {
-        this.fPlugDescription = arg0;
+	this.fPlugDescription = arg0;
     }
 
     public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery, String[] fields) throws Exception {
-        IngridHitDetail detail = new IngridHitDetail(hit, TITLE, SUMMARY);
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i].equals(PlugDescription.PARTNER)) {
-                detail.setArray(PlugDescription.PARTNER, this.fPlugDescription.getPartners());
-            } else if (fields[i].equals(PlugDescription.PROVIDER)) {
-                detail.setArray(PlugDescription.PROVIDER, this.fPlugDescription.getProviders());
-            }
-        }
-        return detail;
+	IngridHitDetail detail = new IngridHitDetail(hit, TITLE, SUMMARY);
+	for (int i = 0; i < fields.length; i++) {
+	    if (fields[i].equals(PlugDescription.PARTNER)) {
+		detail.setArray(PlugDescription.PARTNER, this.fPlugDescription.getPartners());
+	    } else if (fields[i].equals(PlugDescription.PROVIDER)) {
+		detail.setArray(PlugDescription.PROVIDER, this.fPlugDescription.getProviders());
+	    }
+	}
+	return detail;
 
     }
 
     public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
-        return new IngridHitDetail[] { new IngridHitDetail(hits[0], TITLE, SUMMARY) };
+	return new IngridHitDetail[] { new IngridHitDetail(hits[0], TITLE, SUMMARY) };
     }
 
     public void close() throws Exception {
-        // TODO Auto-generated method stub
+	// TODO Auto-generated method stub
 
     }
 }

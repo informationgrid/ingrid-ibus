@@ -89,7 +89,8 @@ public class Bus extends Thread implements IBus {
             currentPage = 1;
         }
         this.fProcessorPipe.preProcess(query);
-        boolean grouping = query.getGrouped() != null && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF);
+        boolean grouping = query.getGrouped() != null && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF)
+                && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_BY_DATASOURCE);
 
         int requestLength;
         if (!grouping) {
@@ -97,17 +98,18 @@ public class Bus extends Thread implements IBus {
         } else {
             requestLength = startHit + (hitsPerPage * 6);
         }
-        
+
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
-        
+
         ResultSet resultSet;
         if (!oneIPlugOnly) {
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
         } else {
-            // request only one iplug! request from "startHit" position with length "hitsPerPage", because no ranking is required
+            // request only one iplug! request from "startHit" position with
+            // length "hitsPerPage", because no ranking is required
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, hitsPerPage);
-        }        
+        }
 
         IngridHits hitContainer;
         if (query.isNotRanked()) {
@@ -120,13 +122,15 @@ public class Bus extends Thread implements IBus {
         if (hits.length > 0) {
             this.fProcessorPipe.postProcess(query, hits);
             if (grouping) {
-                // prevent array cutting with only one requested iplug, assuming we already have the right number of hits in the result array
+                // prevent array cutting with only one requested iplug, assuming
+                // we already have the right number of hits in the result array
                 if (!oneIPlugOnly) {
                     hits = cutFirstHits(hits, startHit);
                 }
                 hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
             } else {
-                // prevent array cutting with only one requested iplug, assuming we already have the right number of hits in the result array
+                // prevent array cutting with only one requested iplug, assuming
+                // we already have the right number of hits in the result array
                 if (!oneIPlugOnly) {
                     hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
                 }
@@ -141,7 +145,7 @@ public class Bus extends Thread implements IBus {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " ended");
         }
-        
+
         return hitContainer;
     }
 
@@ -324,7 +328,7 @@ public class Bus extends Thread implements IBus {
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
-        if (hit.getGroupedFileds() != null) {
+        if (hit.getGroupedFields() != null) {
             return;
         }
         // XXX we just group for the 1st provider/partner
@@ -349,7 +353,7 @@ public class Bus extends Thread implements IBus {
         } else {
             throw new IllegalArgumentException("unknown group operator '" + query.getGrouped() + '\'');
         }
-        if (hit.getGroupedFileds() == null || hit.getGroupedFileds().length == 0) {
+        if (hit.getGroupedFields() == null || hit.getGroupedFields().length == 0) {
             hit.addGroupedField("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
             if (fLogger.isWarnEnabled()) {
                 fLogger.warn("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
@@ -358,8 +362,8 @@ public class Bus extends Thread implements IBus {
     }
 
     private boolean areInSameGroup(IngridHit group, IngridHit hit) {
-        String[] groupFields = group.getGroupedFileds();
-        String[] hitFields = hit.getGroupedFileds();
+        String[] groupFields = group.getGroupedFields();
+        String[] hitFields = hit.getGroupedFields();
         for (int i = 0; i < groupFields.length; i++) {
             for (int j = 0; j < hitFields.length; j++) {
                 if (groupFields[i].equalsIgnoreCase(hitFields[j])) {
@@ -476,7 +480,8 @@ public class Bus extends Thread implements IBus {
                     }
 
                     resultList.addAll(Arrays.asList(responseDetails));
-                    // FIXME: to improve performance we can use an Array instead of a list here.
+                    // FIXME: to improve performance we can use an Array instead
+                    // of a list here.
                 }
             }
 
@@ -532,8 +537,8 @@ public class Bus extends Thread implements IBus {
     }
 
     /**
-     * A pipe with pre process and post process functionality for a query. Every query goes through the posst process 
-     * pipe before the search and the pre
+     * A pipe with pre process and post process functionality for a query. Every
+     * query goes through the posst process pipe before the search and the pre
      * process pipe after the search.
      * 
      * @return The processing pipe.
@@ -580,7 +585,7 @@ public class Bus extends Thread implements IBus {
     public PlugDescription[] getAllIPlugs() {
         return this.fRegistry.getAllIPlugs();
     }
-    
+
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
         return this.fRegistry.getAllIPlugsWithoutTimeLimitation();
     }
