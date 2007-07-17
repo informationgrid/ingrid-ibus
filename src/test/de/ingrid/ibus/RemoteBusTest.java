@@ -36,6 +36,7 @@ public class RemoteBusTest extends TestCase {
         com2.setIsCommunicationServer(false);
         com2.setPeerName("/101tec-group:iplug");
         com2.addServer("127.0.0.1:9191");
+        com2.addServerName("/101tec-group:ibus");
         com2.startup();
         
         IBus bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);

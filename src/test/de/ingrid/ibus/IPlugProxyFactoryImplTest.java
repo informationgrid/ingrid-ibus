@@ -43,6 +43,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
             this.fPlugComms[i] = new TcpCommunication();
             this.fPlugComms[i].setIsCommunicationServer(false);
             this.fPlugComms[i].addServer("127.0.0.1:9191");
+            this.fPlugComms[i].addServerName("/101tec-group:ibus");
             this.fPlugComms[i].setPeerName("/101tec-group:iplug" + i);
             this.fPlugComms[i].startup();
 
