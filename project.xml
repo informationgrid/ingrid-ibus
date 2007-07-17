@@ -4,7 +4,7 @@
     <artifactId>ingrid-ibus</artifactId>
     <name>ingrid-ibus</name>
     <groupId>ingrid</groupId>
-    <currentVersion>0.2.0-SNAPSHOT</currentVersion>
+    <currentVersion>1.1.0-SNAPSHOT</currentVersion>
     <organization />
     <inceptionYear>2005</inceptionYear>
     <logo>/images/logo.gif</logo>
@@ -93,26 +93,26 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.8</version>
+            <version>1.2.9</version>
             <type>jar</type>
             <url>http://ibiblio.org/maven</url>
         </dependency>
         <dependency>
             <groupId>ingrid</groupId>
             <artifactId>ingrid-iplug</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>ingrid</groupId>
             <artifactId>ingrid-utils</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>ingrid</groupId>
             <artifactId>ingrid-ibus-client</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -130,19 +130,19 @@
         <dependency>
             <groupId>ingrid</groupId>
             <artifactId>ingrid-iplug-dsc</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>ingrid</groupId>
             <artifactId>ingrid-iplug-se</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>ingrid</groupId>
             <artifactId>ingrid-iplug-sns</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>1.1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -203,7 +203,7 @@
         <dependency>
 			<groupId>ingrid</groupId>
 			<artifactId>ingrid-communication</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>1.1.0-SNAPSHOT</version>
 		</dependency>
 
         <!-- for portal ibus stress test -->
