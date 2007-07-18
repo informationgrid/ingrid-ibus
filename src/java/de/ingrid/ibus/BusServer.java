@@ -23,7 +23,7 @@ import de.ingrid.ibus.processor.LimitedAttributesPreProcessor;
 import de.ingrid.ibus.processor.QueryModePreProcessor;
 import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
 import de.ingrid.ibus.registry.Registry;
-import de.ingrid.iplug.AdminServer;
+import de.ingrid.ibus.web.AdminServer;
 import de.ingrid.utils.IBus;
 
 /**
@@ -132,7 +132,7 @@ public class BusServer {
         try {
             HashUserRealm realm = new HashUserRealm("IBus");
             realm.put("admin", adminpassword);
-            AdminServer.startWebContainer(new HashMap(), adminport, new File("./webapp"), true, realm, null);
+            AdminServer.startWebContainer(new HashMap(), adminport, new File("./webapp"), true, realm);
         } catch (Exception e) {
             System.err.println("Cannot start the IBus admin server.");
             e.printStackTrace();
