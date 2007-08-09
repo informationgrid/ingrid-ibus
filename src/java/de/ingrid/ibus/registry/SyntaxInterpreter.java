@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.ClauseQuery;
 import de.ingrid.utils.query.FieldQuery;
@@ -20,6 +22,8 @@ import de.ingrid.utils.query.IngridQuery;
  */
 public class SyntaxInterpreter {
 
+    private static final Logger LOG = Logger.getLogger(SyntaxInterpreter.class);
+    
     /**
      * Returns IPlugs to a given query. Currently it filters for activated, IPlug ids, supported ranking, supported
      * datatype, supported fields, supported providers and supported partners.
@@ -31,7 +35,13 @@ public class SyntaxInterpreter {
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
         PlugDescription[] plugs = registry.getAllIPlugs();
         List plugList = new ArrayList(plugs.length);
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("plugs before filtering");
+        }
         for (int i = 0; i < plugs.length; i++) {
+            if(LOG.isDebugEnabled()) {
+                LOG.debug(i+ ".) " + plugs[i].getPlugId());
+            }
             plugList.add(plugs[i]);
         }
 
@@ -42,8 +52,17 @@ public class SyntaxInterpreter {
         filterForFields(query, plugList);
         filterForProvider(query, plugList);
         filterForPartner(query, plugList);
+        
+        PlugDescription[] filteredPlugs = (PlugDescription[]) plugList.toArray(new PlugDescription[plugList.size()]);
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("plugs after filtering");
+            for (int j = 0; j < filteredPlugs.length; j++) {
+                PlugDescription plugDescription = filteredPlugs[j];
+                LOG.debug(j+ ".) " + plugDescription.getPlugId());    
+            }
+        }
 
-        return (PlugDescription[]) plugList.toArray(new PlugDescription[plugList.size()]);
+        return filteredPlugs;
     }
 
     private static void filterActivatedIplugs(List plugDescriptions) {
@@ -61,19 +80,27 @@ public class SyntaxInterpreter {
             ingridQuery.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
             rankingTypeInQuery = ingridQuery.getRankingType();
         }
-
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("rankingType in Query: " + rankingTypeInQuery);
+        }
         if (!rankingTypeInQuery.equals("any")) {
             for (Iterator iter = descriptions.iterator(); iter.hasNext();) {
                 PlugDescription plugDescription = (PlugDescription) iter.next();
                 String[] rankingTypes = plugDescription.getRankingTypes();
                 boolean foundRanking = false;
                 for (int i = 0; i < rankingTypes.length; i++) {
+                    if(LOG.isDebugEnabled()) {
+                        LOG.debug("rankingType in plugdescription: " + rankingTypes[i] + " / " + plugDescription.getPlugId());
+                    }
                     if (ingridQuery.isRanked(rankingTypes[i].toLowerCase())) {
                         foundRanking = true;
                         break;
                     }
                 }
                 if (!foundRanking && rankingTypes.length > 0) {
+                    if(LOG.isDebugEnabled()) {
+                        LOG.debug("remove plugescription: " + plugDescription.getPlugId());
+                    }
                     iter.remove();
                 }
             }
