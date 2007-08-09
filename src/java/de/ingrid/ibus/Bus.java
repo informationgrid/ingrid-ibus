@@ -257,31 +257,29 @@ public class Bus extends Thread implements IBus {
         int totalHits = 0;
         int count = resultSet.size();
         List documents = new LinkedList();
-        boolean ranked = true;
         for (int i = 0; i < count; i++) {
             IngridHits hitContainer = (IngridHits) resultSet.get(i);
-            fLogger.debug("hitContainer : " + hitContainer.getPlugId() + " ranked?: " + hitContainer.isRanked()
-                    + " size: " + hitContainer.size() + " length: " + hitContainer.length());
+            if (!hitContainer.isRanked()) {
+                fLogger.warn("unranked hitcontainer, skip it: " + hitContainer.getPlugId());
+                continue;
+            }
             totalHits += hitContainer.length();
-            if (ranked) {
-                ranked = hitContainer.isRanked();
-                if (ranked && hitContainer.getHits().length > 0) {
-                    Float boost = this.fRegistry.getGlobalRankingBoost(hitContainer.getPlugId());
-                    IngridHit[] resultHits = hitContainer.getHits();
-                    if (null != boost) {
-                        for (int j = 0; j < resultHits.length; j++) {
-                            float score = resultHits[j].getScore();
-                            score = score * boost.floatValue();
-                            hitContainer.getHits()[j].setScore(score);
-                        }
-                    }
-
-                    if (maxScore < resultHits[0].getScore()) {
-                        maxScore = resultHits[0].getScore();
+            if (hitContainer.getHits().length > 0) {
+                Float boost = this.fRegistry.getGlobalRankingBoost(hitContainer.getPlugId());
+                IngridHit[] resultHits = hitContainer.getHits();
+                if (null != boost) {
+                    for (int j = 0; j < resultHits.length; j++) {
+                        float score = resultHits[j].getScore();
+                        score = score * boost.floatValue();
+                        hitContainer.getHits()[j].setScore(score);
                     }
                 }
 
+                if (maxScore < resultHits[0].getScore()) {
+                    maxScore = resultHits[0].getScore();
+                }
             }
+
             IngridHit[] toAddHits = hitContainer.getHits();
             if (toAddHits != null) {
                 documents.addAll(Arrays.asList(toAddHits));
@@ -289,7 +287,7 @@ public class Bus extends Thread implements IBus {
         }
 
         IngridHits result = new IngridHits(totalHits, sortLimitNormalize((IngridHit[]) documents
-                .toArray(new IngridHit[documents.size()]), ranked, maxScore));
+                .toArray(new IngridHit[documents.size()]), maxScore));
 
         documents.clear();
         documents = null;
@@ -297,13 +295,7 @@ public class Bus extends Thread implements IBus {
         return result;
     }
 
-    private IngridHit[] sortLimitNormalize(IngridHit[] documents, boolean ranked, float maxScore) {
-        if (!ranked) {
-            if(fLogger.isDebugEnabled()) {
-                fLogger.debug("return because not ranked!");
-            }
-            return documents;
-        }
+    private IngridHit[] sortLimitNormalize(IngridHit[] documents, float maxScore) {
         // first normalize
         float scoreNorm = 1.0f / maxScore;
         int count = documents.length;
