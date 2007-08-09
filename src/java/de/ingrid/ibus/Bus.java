@@ -263,6 +263,9 @@ public class Bus extends Thread implements IBus {
             totalHits += hitContainer.length();
             if (ranked) {
                 ranked = hitContainer.isRanked();
+                if(hitContainer.isRanked()){
+                    fLogger.warn("hitContainer not ranked: "+hitContainer.getPlugId());
+                }
                 if (ranked && hitContainer.getHits().length > 0) {
                     Float boost = this.fRegistry.getGlobalRankingBoost(hitContainer.getPlugId());
                     IngridHit[] resultHits = hitContainer.getHits();
