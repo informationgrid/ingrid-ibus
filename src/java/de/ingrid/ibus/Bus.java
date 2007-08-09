@@ -261,7 +261,7 @@ public class Bus extends Thread implements IBus {
         for (int i = 0; i < count; i++) {
             IngridHits hitContainer = (IngridHits) resultSet.get(i);
             fLogger.debug("hitContainer : " + hitContainer.getPlugId() + " ranked?: " + hitContainer.isRanked()
-                    + " size: " + hitContainer.size());
+                    + " size: " + hitContainer.size() + " length: " + hitContainer.length());
             totalHits += hitContainer.length();
             if (ranked) {
                 ranked = hitContainer.isRanked();
