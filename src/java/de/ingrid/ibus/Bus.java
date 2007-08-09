@@ -291,12 +291,18 @@ public class Bus extends Thread implements IBus {
 
     private IngridHit[] sortLimitNormalize(IngridHit[] documents, boolean ranked, float maxScore) {
         if (!ranked) {
+            if(fLogger.isDebugEnabled()) {
+                fLogger.debug("return because not ranked!");
+            }
             return documents;
         }
         // first normalize
         float scoreNorm = 1.0f / maxScore;
         int count = documents.length;
         for (int i = 0; i < count; i++) {
+            if(fLogger.isDebugEnabled()) {
+                fLogger.debug("documentScore: " + documents[i].getScore() + " scoreNorm: "+ scoreNorm + " = "+ documents[i].getScore() * scoreNorm);
+            }
             documents[i].setScore(documents[i].getScore() * scoreNorm);
         }
 
