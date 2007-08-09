@@ -260,12 +260,11 @@ public class Bus extends Thread implements IBus {
         boolean ranked = true;
         for (int i = 0; i < count; i++) {
             IngridHits hitContainer = (IngridHits) resultSet.get(i);
+            fLogger.debug("hitContainer : " + hitContainer.getPlugId() + " ranked?: " + hitContainer.isRanked()
+                    + " size: " + hitContainer.size());
             totalHits += hitContainer.length();
             if (ranked) {
                 ranked = hitContainer.isRanked();
-                if(hitContainer.isRanked()){
-                    fLogger.warn("hitContainer not ranked: "+hitContainer.getPlugId());
-                }
                 if (ranked && hitContainer.getHits().length > 0) {
                     Float boost = this.fRegistry.getGlobalRankingBoost(hitContainer.getPlugId());
                     IngridHit[] resultHits = hitContainer.getHits();
