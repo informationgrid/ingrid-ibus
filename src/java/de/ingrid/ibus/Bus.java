@@ -92,6 +92,10 @@ public class Bus extends Thread implements IBus {
         boolean grouping = query.getGrouped() != null && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF)
                 && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_BY_DATASOURCE);
 
+        
+        if(fLogger.isDebugEnabled()) {
+            fLogger.debug("Grouping: " + grouping);
+        }
         int requestLength;
         if (!grouping) {
             requestLength = hitsPerPage * currentPage;
@@ -195,6 +199,10 @@ public class Bus extends Thread implements IBus {
     }
 
     private IngridHits orderResults(ResultSet resultSet, PlugDescription[] plugDescriptionsForQuery) {
+        if(fLogger.isDebugEnabled()) {
+            fLogger.debug("order the results");
+        }
+
         int resultHitsCount = resultSet.size();
         int totalHits = 0;
         for (int i = 0; i < resultHitsCount; i++) {
@@ -235,6 +243,10 @@ public class Bus extends Thread implements IBus {
     }
 
     private IngridHits normalizeScores(ArrayList resultSet) {
+        if(fLogger.isDebugEnabled()) {
+            fLogger.debug("normalize the results");
+        }
+
         float maxScore = 1.0f;
         int totalHits = 0;
         int count = resultSet.size();
