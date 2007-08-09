@@ -148,6 +148,12 @@ public class Bus extends Thread implements IBus {
 
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " ended");
+            
+            IngridHit[] ingridHits = hitContainer.getHits();
+            for (int i = 0; i < ingridHits.length; i++) {
+                IngridHit ingridHit = ingridHits[i];
+                fLogger.debug("documentId: " + ingridHit.getDocumentId() + " score: " + ingridHit.getScore());
+            }
         }
 
         return hitContainer;
