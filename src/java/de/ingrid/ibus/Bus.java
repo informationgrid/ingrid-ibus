@@ -301,7 +301,7 @@ public class Bus extends Thread implements IBus {
         int count = documents.length;
         for (int i = 0; i < count; i++) {
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("documentScore: " + documents[i].getDataSourceId() + " -> " + documents[i].getScore()
+                fLogger.debug("documentScore: " + documents[i].getPlugId() + " -> " + documents[i].getScore()
                         + " scoreNorm: " + scoreNorm + " = " + documents[i].getScore() * scoreNorm);
             }
             documents[i].setScore(documents[i].getScore() * scoreNorm);
