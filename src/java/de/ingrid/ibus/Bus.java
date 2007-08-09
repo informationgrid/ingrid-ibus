@@ -300,8 +300,9 @@ public class Bus extends Thread implements IBus {
         float scoreNorm = 1.0f / maxScore;
         int count = documents.length;
         for (int i = 0; i < count; i++) {
-            if(fLogger.isDebugEnabled()) {
-                fLogger.debug("documentScore: " + documents[i].getScore() + " scoreNorm: "+ scoreNorm + " = "+ documents[i].getScore() * scoreNorm);
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("documentScore: " + documents[i].getDataSourceId() + " -> " + documents[i].getScore()
+                        + " scoreNorm: " + scoreNorm + " = " + documents[i].getScore() * scoreNorm);
             }
             documents[i].setScore(documents[i].getScore() * scoreNorm);
         }
