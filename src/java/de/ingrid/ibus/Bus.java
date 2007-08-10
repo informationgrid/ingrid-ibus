@@ -17,7 +17,6 @@ import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Level;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryRequest;
@@ -109,9 +108,9 @@ public class Bus extends Thread implements IBus {
 
         ResultSet resultSet;
         if (!oneIPlugOnly) {
-            logDebug("(search) request starts");
+            logDebug("(search) request starts: " + query.hashCode());
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
-            logDebug("(search) request ends");
+            logDebug("(search) request ends: " + query.hashCode());
         } else {
             // request only one iplug! request from "startHit" position with
             // length "hitsPerPage", because no ranking is required
@@ -123,13 +122,13 @@ public class Bus extends Thread implements IBus {
 
         IngridHits hitContainer;
         if (query.isNotRanked()) {
-            logDebug("(search) order starts");
+            logDebug("(search) order starts: " + query.hashCode());
             hitContainer = orderResults(resultSet, plugDescriptionsForQuery);
-            logDebug("(search) order ends");
+            logDebug("(search) order ends: " + query.hashCode());
         } else {
-            logDebug("(search) normalize starts");
+            logDebug("(search) normalize starts: " + query.hashCode());
             hitContainer = normalizeScores(resultSet);
-            logDebug("(search) normalize ends");
+            logDebug("(search) normalize ends: " + query.hashCode());
         }
         IngridHit[] hits = hitContainer.getHits();
         int totalHits = (int) hitContainer.length();
@@ -141,9 +140,9 @@ public class Bus extends Thread implements IBus {
                 if (!oneIPlugOnly) {
                     hits = cutFirstHits(hits, startHit);
                 }
-                logDebug("(search) grouping starts");
+                logDebug("(search) grouping starts: " + query.hashCode());
                 hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
-                logDebug("(search) grouping ends");
+                logDebug("(search) grouping ends: " + query.hashCode());
             } else {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
@@ -456,7 +455,9 @@ public class Bus extends Thread implements IBus {
         }
         IPlug plugProxy = this.fRegistry.getPlugProxy(hit.getPlugId());
         try {
+            logDebug("(search) detail start " + hit.getPlugId() + " " + ingridQuery.hashCode());
             IngridHitDetail detail = plugProxy.getDetail(hit, ingridQuery, requestedFields);
+            logDebug("(search) detail end " + hit.getPlugId() + " " + ingridQuery.hashCode());
             pushMetaData(detail);
             return detail;
         } catch (Exception e) {
@@ -496,7 +497,9 @@ public class Bus extends Thread implements IBus {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
                 plugProxy = this.fRegistry.getPlugProxy(plugId);
                 if (plugProxy != null) {
+                    logDebug("(search) details start " + plugId + " " + query.hashCode());
                     IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
+                    logDebug("(search) details ends (" + responseDetails.length + ")" + plugId+ " " + query.hashCode());
                     for (int i = 0; i < responseDetails.length; i++) {
                         if (responseDetails[i] == null) {
                             if (fLogger.isErrorEnabled()) {
