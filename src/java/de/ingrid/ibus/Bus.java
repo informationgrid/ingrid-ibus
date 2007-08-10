@@ -259,24 +259,25 @@ public class Bus extends Thread implements IBus {
         List documents = new LinkedList();
         for (int i = 0; i < count; i++) {
             IngridHits hitContainer = (IngridHits) resultSet.get(i);
-            if (!hitContainer.isRanked()) {
-                fLogger.warn("unranked hitcontainer, skip it: " + hitContainer.getPlugId());
-                continue;
-            }
             totalHits += hitContainer.length();
             if (hitContainer.getHits().length > 0) {
                 Float boost = this.fRegistry.getGlobalRankingBoost(hitContainer.getPlugId());
                 IngridHit[] resultHits = hitContainer.getHits();
                 if (null != boost) {
                     for (int j = 0; j < resultHits.length; j++) {
-                        float score = resultHits[j].getScore();
-                        score = score * boost.floatValue();
+                        float score = 1.0f;
+                        if (hitContainer.isRanked()) {
+                            score = resultHits[j].getScore();
+                            score = score * boost.floatValue();
+                        }                         
                         hitContainer.getHits()[j].setScore(score);
                     }
                 }
 
-                if (maxScore < resultHits[0].getScore()) {
-                    maxScore = resultHits[0].getScore();
+                if (hitContainer.isRanked()) {
+                    if (maxScore < resultHits[0].getScore()) {
+                        maxScore = resultHits[0].getScore();
+                    }
                 }
             }
 
