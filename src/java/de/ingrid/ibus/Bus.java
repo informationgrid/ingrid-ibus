@@ -17,6 +17,7 @@ import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryRequest;
@@ -108,18 +109,27 @@ public class Bus extends Thread implements IBus {
 
         ResultSet resultSet;
         if (!oneIPlugOnly) {
+            logDebug("(search) request starts");
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
+            logDebug("(search) request ends");
         } else {
             // request only one iplug! request from "startHit" position with
             // length "hitsPerPage", because no ranking is required
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " started");
+            }
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, hitsPerPage);
         }
 
         IngridHits hitContainer;
         if (query.isNotRanked()) {
+            logDebug("(search) order starts");
             hitContainer = orderResults(resultSet, plugDescriptionsForQuery);
+            logDebug("(search) order ends");
         } else {
+            logDebug("(search) normalize starts");
             hitContainer = normalizeScores(resultSet);
+            logDebug("(search) normalize ends");
         }
         IngridHit[] hits = hitContainer.getHits();
         int totalHits = (int) hitContainer.length();
@@ -131,7 +141,9 @@ public class Bus extends Thread implements IBus {
                 if (!oneIPlugOnly) {
                     hits = cutFirstHits(hits, startHit);
                 }
+                logDebug("(search) grouping starts");
                 hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
+                logDebug("(search) grouping ends");
             } else {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
@@ -614,5 +626,11 @@ public class Bus extends Thread implements IBus {
 
     public void close() throws Exception {
         // nothing
+    }
+    
+    private void logDebug(String string) {
+        if (fLogger.isDebugEnabled()) {
+            fLogger.debug(string);
+        }
     }
 }
