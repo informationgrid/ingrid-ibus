@@ -497,7 +497,7 @@ public class Bus extends Thread implements IBus {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
                 plugProxy = this.fRegistry.getPlugProxy(plugId);
                 if (plugProxy != null) {
-                    logDebug("(search) details start " + plugId + " " + query.hashCode());
+                    logDebug("(search) details start " + plugId + " ("+requestHits.length+") " + query.hashCode());
                     IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
                     logDebug("(search) details ends (" + responseDetails.length + ")" + plugId+ " " + query.hashCode());
                     for (int i = 0; i < responseDetails.length; i++) {
