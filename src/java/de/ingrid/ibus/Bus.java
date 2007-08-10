@@ -274,10 +274,8 @@ public class Bus extends Thread implements IBus {
                     }
                 }
 
-                if (hitContainer.isRanked()) {
-                    if (maxScore < resultHits[0].getScore()) {
-                        maxScore = resultHits[0].getScore();
-                    }
+                if (maxScore < resultHits[0].getScore()) {
+                    maxScore = resultHits[0].getScore();
                 }
             }
 
