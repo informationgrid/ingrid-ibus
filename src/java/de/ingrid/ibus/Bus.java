@@ -34,8 +34,7 @@ import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
 /**
- * The IBus a centralized Bus that routes queries and return results. Created on
- * 09.08.2005
+ * The IBus a centralized Bus that routes queries and return results. Created on 09.08.2005
  * 
  * @author sg
  * @version $Revision: 1.3 $
@@ -54,16 +53,13 @@ public class Bus extends Thread implements IBus {
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
     /**
-     * The bus. All IPlugs have to connect with the bus to be searched. It sends
-     * queries to registered and activated iplugs. It only sends a query to a
-     * iplug if it is able to handle the query. For all implemented criteria see
-     * de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery,
-     * Registry) .
+     * The bus. All IPlugs have to connect with the bus to be searched. It sends queries to registered and activated
+     * iplugs. It only sends a query to a iplug if it is able to handle the query. For all implemented criteria see
+     * de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry) .
      * 
      * @param factory
      *            A factroy for creating iplug proxies.
-     * @see de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery,
-     *      Registry)
+     * @see de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry)
      */
     public Bus(IPlugProxyFactory factory) {
         this.fRegistry = new Registry(100000, false, factory);
@@ -89,11 +85,11 @@ public class Bus extends Thread implements IBus {
             currentPage = 1;
         }
         this.fProcessorPipe.preProcess(query);
-        boolean grouping = query.getGrouped() != null && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF)
-                && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_BY_DATASOURCE);
+        boolean grouping = query.getGrouped() != null &&
+                !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF) &&
+                !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_BY_DATASOURCE);
 
-        
-        if(fLogger.isDebugEnabled()) {
+        if (fLogger.isDebugEnabled()) {
             fLogger.debug("Grouping: " + grouping);
         }
         int requestLength;
@@ -108,9 +104,13 @@ public class Bus extends Thread implements IBus {
 
         ResultSet resultSet;
         if (!oneIPlugOnly) {
-            logDebug("(search) request starts: " + query.hashCode());
+            if (fLogger.isDebugEnabled()) {
+                logDebug("(search) request starts: " + query.hashCode());
+            }
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
-            logDebug("(search) request ends: " + query.hashCode());
+            if (fLogger.isDebugEnabled()) {
+                logDebug("(search) request ends: " + query.hashCode());
+            }
         } else {
             // request only one iplug! request from "startHit" position with
             // length "hitsPerPage", because no ranking is required
@@ -122,13 +122,21 @@ public class Bus extends Thread implements IBus {
 
         IngridHits hitContainer;
         if (query.isNotRanked()) {
-            logDebug("(search) order starts: " + query.hashCode());
+            if (fLogger.isDebugEnabled()) {
+                logDebug("(search) order starts: " + query.hashCode());
+            }
             hitContainer = orderResults(resultSet, plugDescriptionsForQuery);
-            logDebug("(search) order ends: " + query.hashCode());
+            if (fLogger.isDebugEnabled()) {
+                logDebug("(search) order ends: " + query.hashCode());
+            }
         } else {
-            logDebug("(search) normalize starts: " + query.hashCode());
+            if (fLogger.isDebugEnabled()) {
+                logDebug("(search) normalize starts: " + query.hashCode());
+            }
             hitContainer = normalizeScores(resultSet);
-            logDebug("(search) normalize ends: " + query.hashCode());
+            if (fLogger.isDebugEnabled()) {
+                logDebug("(search) normalize ends: " + query.hashCode());
+            }
         }
         IngridHit[] hits = hitContainer.getHits();
         int totalHits = (int) hitContainer.length();
@@ -140,9 +148,13 @@ public class Bus extends Thread implements IBus {
                 if (!oneIPlugOnly) {
                     hits = cutFirstHits(hits, startHit);
                 }
-                logDebug("(search) grouping starts: " + query.hashCode());
+                if(fLogger.isDebugEnabled()) {
+                    logDebug("(search) grouping starts: " + query.hashCode());
+                }
                 hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
-                logDebug("(search) grouping ends: " + query.hashCode());
+                if(fLogger.isDebugEnabled()) {
+                    logDebug("(search) grouping ends: " + query.hashCode());
+                }
             } else {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
@@ -159,7 +171,7 @@ public class Bus extends Thread implements IBus {
 
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " ended");
-            
+
             IngridHit[] ingridHits = hitContainer.getHits();
             for (int i = 0; i < ingridHits.length; i++) {
                 IngridHit ingridHit = ingridHits[i];
@@ -216,7 +228,7 @@ public class Bus extends Thread implements IBus {
     }
 
     private IngridHits orderResults(ResultSet resultSet, PlugDescription[] plugDescriptionsForQuery) {
-        if(fLogger.isDebugEnabled()) {
+        if (fLogger.isDebugEnabled()) {
             fLogger.debug("order the results");
         }
 
@@ -260,7 +272,7 @@ public class Bus extends Thread implements IBus {
     }
 
     private IngridHits normalizeScores(ArrayList resultSet) {
-        if(fLogger.isDebugEnabled()) {
+        if (fLogger.isDebugEnabled()) {
             fLogger.debug("normalize the results");
         }
 
@@ -280,7 +292,7 @@ public class Bus extends Thread implements IBus {
                         if (hitContainer.isRanked()) {
                             score = resultHits[j].getScore();
                             score = score * boost.floatValue();
-                        }                         
+                        }
                         hitContainer.getHits()[j].setScore(score);
                     }
                 }
@@ -311,8 +323,8 @@ public class Bus extends Thread implements IBus {
         int count = documents.length;
         for (int i = 0; i < count; i++) {
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("documentScore: " + documents[i].getPlugId() + " -> " + documents[i].getScore()
-                        + " scoreNorm: " + scoreNorm + " = " + documents[i].getScore() * scoreNorm);
+                fLogger.debug("documentScore: " + documents[i].getPlugId() + " -> " + documents[i].getScore() +
+                        " scoreNorm: " + scoreNorm + " = " + documents[i].getScore() * scoreNorm);
             }
             documents[i].setScore(documents[i].getScore() * scoreNorm);
         }
@@ -443,8 +455,8 @@ public class Bus extends Thread implements IBus {
             return ((IRecordLoader) plugProxy).getRecord(hit);
         }
         if (fLogger.isWarnEnabled()) {
-            fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
-                    + " but was requested to load a record");
+            fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId() +
+                    " but was requested to load a record");
         }
         return null;
     }
@@ -497,15 +509,15 @@ public class Bus extends Thread implements IBus {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
                 plugProxy = this.fRegistry.getPlugProxy(plugId);
                 if (plugProxy != null) {
-                    logDebug("(search) details start " + plugId + " ("+requestHits.length+") " + query.hashCode());
+                    logDebug("(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode());
                     IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
-                    logDebug("(search) details ends (" + responseDetails.length + ")" + plugId+ " " + query.hashCode());
+                    logDebug("(search) details ends (" + responseDetails.length + ")" + plugId + " " + query.hashCode());
                     for (int i = 0; i < responseDetails.length; i++) {
                         if (responseDetails[i] == null) {
                             if (fLogger.isErrorEnabled()) {
                                 fLogger
-                                        .error(plugId
-                                                + ": responded details that are null (set a pseudo responseDetail");
+                                        .error(plugId +
+                                                ": responded details that are null (set a pseudo responseDetail");
                             }
                             responseDetails[i] = new IngridHitDetail(plugId, random.nextInt(), random.nextInt(), 0.0f,
                                     "", "");
@@ -570,9 +582,8 @@ public class Bus extends Thread implements IBus {
     }
 
     /**
-     * A pipe with pre process and post process functionality for a query. Every
-     * query goes through the posst process pipe before the search and the pre
-     * process pipe after the search.
+     * A pipe with pre process and post process functionality for a query. Every query goes through the posst process
+     * pipe before the search and the pre process pipe after the search.
      * 
      * @return The processing pipe.
      */
@@ -596,8 +607,8 @@ public class Bus extends Thread implements IBus {
     public void addPlugDescription(PlugDescription plugDescription) {
         if (null != plugDescription) {
             if (fLogger.isInfoEnabled()) {
-                fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
-                        + getAllIPlugs().length);
+                fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:" +
+                        getAllIPlugs().length);
             }
             this.fRegistry.addPlugDescription(plugDescription);
         } else {
@@ -609,8 +620,8 @@ public class Bus extends Thread implements IBus {
 
     public void removePlugDescription(PlugDescription plugDescription) {
         if (fLogger.isInfoEnabled()) {
-            fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:"
-                    + getAllIPlugs().length);
+            fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:" +
+                    getAllIPlugs().length);
         }
         this.fRegistry.removePlug(plugDescription.getPlugId());
     }
@@ -630,7 +641,7 @@ public class Bus extends Thread implements IBus {
     public void close() throws Exception {
         // nothing
     }
-    
+
     private void logDebug(String string) {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug(string);
