@@ -86,8 +86,7 @@ public class Bus extends Thread implements IBus {
         }
         this.fProcessorPipe.preProcess(query);
         boolean grouping = query.getGrouped() != null &&
-                !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF) &&
-                !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_BY_DATASOURCE);
+                !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF);
 
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("Grouping: " + grouping);
@@ -391,6 +390,8 @@ public class Bus extends Thread implements IBus {
                 hit.addGroupedField(providers[i]);
                 break;
             }
+        } else if (IngridQuery.GROUPED_BY_DATASOURCE.equalsIgnoreCase(query.getGrouped())) {
+            hit.addGroupedField(hit.getPlugId());
         } else {
             throw new IllegalArgumentException("unknown group operator '" + query.getGrouped() + '\'');
         }
