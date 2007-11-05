@@ -364,6 +364,9 @@ public class Bus extends Thread implements IBus {
         groupHits.clear();
         groupHits = null;
 
+        if(fLogger.isDebugEnabled()) {
+            fLogger.debug("totalHits: " + totalHits + " groupedHitsLength: " + groupedHitsLength + " startHit: " + startHit);
+        }
         return new IngridHits(totalHits, groupedHits, groupedHitsLength + startHit);
     }
 
