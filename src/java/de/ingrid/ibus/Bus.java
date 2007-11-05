@@ -338,6 +338,7 @@ public class Bus extends Thread implements IBus {
         List groupHits = new ArrayList(hitsPerPage);
         int groupedHitsLength = 0;
         boolean newGroup;
+        int groupCount = 0;
         for (int i = 0; i < hits.length; i++) {
             IngridHit hit = hits[i];
             addGroupingInformation(hit, query);
@@ -353,23 +354,23 @@ public class Bus extends Thread implements IBus {
             if (newGroup) {
                 if (groupHits.size() < hitsPerPage) {
                     groupHits.add(hit); // we add the hit as new group
-                } else {
-                    break;
                 }
+                groupCount++;
             }
-            groupedHitsLength++;
+            if (groupHits.size() < hitsPerPage) {
+                groupedHitsLength++;
+            }
         }
 
         IngridHit[] groupedHits = (IngridHit[]) groupHits.toArray(new IngridHit[groupHits.size()]);
 
-        if(fLogger.isDebugEnabled()) {
-            fLogger.debug("hits.length: " + hits.length + " groupedHits.length: " + groupedHits.length + " groupHits.size: " + (groupHits != null ? groupHits.size() : 0) + " totalHits: " + totalHits + " groupedHitsLength: " + groupedHitsLength + " startHit: " + startHit);
-        }
-
         groupHits.clear();
         groupHits = null;
 
-        return new IngridHits(groupedHits.length, groupedHits, groupedHitsLength + startHit);
+        if(fLogger.isDebugEnabled()) {
+            fLogger.debug("groupCount: " + groupCount + " groupedHits.length: " + groupedHits.length + " groupedHitsLength: " + groupedHitsLength);
+        }
+        return new IngridHits(groupCount, groupedHits, groupedHitsLength + startHit);
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
