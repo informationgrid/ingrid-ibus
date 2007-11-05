@@ -92,11 +92,12 @@ public class Bus extends Thread implements IBus {
             fLogger.debug("Grouping: " + grouping);
         }
         int requestLength;
-        if (!grouping) {
-            requestLength = hitsPerPage * currentPage;
-        } else {
-            requestLength = startHit + (hitsPerPage * 6);
-        }
+//        if (!grouping) {
+//            requestLength = hitsPerPage * currentPage;
+//        } else {
+//            requestLength = startHit + (hitsPerPage * 6);
+//        }
+        requestLength = hitsPerPage * currentPage;
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
@@ -150,7 +151,7 @@ public class Bus extends Thread implements IBus {
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping starts: " + query.hashCode());
                 }
-                //hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
+                hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping ends: " + query.hashCode());
                 }
@@ -368,7 +369,7 @@ public class Bus extends Thread implements IBus {
         groupHits.clear();
         groupHits = null;
 
-        return new IngridHits(totalHits, groupedHits, groupedHitsLength + startHit);
+        return new IngridHits(groupedHits.length, groupedHits, groupedHitsLength + startHit);
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
