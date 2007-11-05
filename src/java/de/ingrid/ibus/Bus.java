@@ -361,12 +361,13 @@ public class Bus extends Thread implements IBus {
 
         IngridHit[] groupedHits = (IngridHit[]) groupHits.toArray(new IngridHit[groupHits.size()]);
 
-        groupHits.clear();
-        groupHits = null;
-
         if(fLogger.isDebugEnabled()) {
             fLogger.debug("hits.length: " + hits.length + " groupedHits.length: " + groupedHits.length + " groupHits.size: " + (groupHits != null ? groupHits.size() : 0) + " totalHits: " + totalHits + " groupedHitsLength: " + groupedHitsLength + " startHit: " + startHit);
         }
+
+        groupHits.clear();
+        groupHits = null;
+
         return new IngridHits(totalHits, groupedHits, groupedHitsLength + startHit);
     }
 
