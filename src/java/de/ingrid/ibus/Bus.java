@@ -346,14 +346,10 @@ public class Bus extends Thread implements IBus {
                 }
             }
             if (newGroup) {
-                if (groupHitList.size() < hitsPerPage) {
-                        groupHitList.add(hit); // we add the hit as new group
-                }
+                groupHitList.add(hit); // we add the hit as new group
                 groupCount++;
             }
-            if (groupHitList.size() < hitsPerPage) {
-                groupedHitsLength++;
-            }
+            groupedHitsLength++;
         }
 
         IngridHit[] groupedHits = (IngridHit[]) groupHitList.toArray(new IngridHit[groupHitList.size()]);
