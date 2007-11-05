@@ -329,7 +329,7 @@ public class Bus extends Thread implements IBus {
 
     private IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit)
             throws Exception {
-        List groupHits = new ArrayList(hitsPerPage);
+        List groupHitList = new ArrayList(hitsPerPage);
         int groupedHitsLength = 0;
         boolean newGroup;
         int groupCount = 0;
@@ -337,36 +337,34 @@ public class Bus extends Thread implements IBus {
             IngridHit hit = hits[i];
             addGroupingInformation(hit, query);
             newGroup = true;
-            int size = groupHits.size();
+            int size = groupHitList.size();
             for (int j = 0; j < size; j++) {
-                IngridHit group = (IngridHit) groupHits.get(j);
+                IngridHit group = (IngridHit) groupHitList.get(j);
                 if (areInSameGroup(hit, group)) {
                     group.addGroupHit(hit);
                     newGroup = false;
                 }
             }
             if (newGroup) {
-                if(groupCount >= startHit) {
-                    if (groupHits.size() < hitsPerPage) {
-                        groupHits.add(hit); // we add the hit as new group
-                    }
+                if (groupHitList.size() < hitsPerPage) {
+                        groupHitList.add(hit); // we add the hit as new group
                 }
                 groupCount++;
             }
-            if (groupHits.size() < hitsPerPage) {
+            if (groupHitList.size() < hitsPerPage) {
                 groupedHitsLength++;
             }
         }
 
-        IngridHit[] groupedHits = (IngridHit[]) groupHits.toArray(new IngridHit[groupHits.size()]);
-
-        groupHits.clear();
-        groupHits = null;
+        IngridHit[] groupedHits = (IngridHit[]) groupHitList.toArray(new IngridHit[groupHitList.size()]);
+        IngridHit[] cuttedHits = cutFirstHits(groupedHits, startHit);
+        groupHitList.clear();
+        groupHitList = null;
 
         if(fLogger.isDebugEnabled()) {
-            fLogger.debug("groupCount: " + groupCount + " groupedHits.length: " + groupedHits.length + " groupedHitsLength: " + groupedHitsLength);
+            fLogger.debug("groupCount: " + groupCount + " cuttedHits.length: " + cuttedHits.length + " groupedHitsLength: " + groupedHitsLength);
         }
-        return new IngridHits(groupCount, groupedHits, groupedHitsLength + startHit);
+        return new IngridHits(groupCount, cuttedHits, groupedHitsLength);
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
