@@ -91,13 +91,7 @@ public class Bus extends Thread implements IBus {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("Grouping: " + grouping);
         }
-        int requestLength;
-//        if (!grouping) {
-//            requestLength = hitsPerPage * currentPage;
-//        } else {
-//            requestLength = startHit + (hitsPerPage * 6);
-//        }
-        requestLength = hitsPerPage * currentPage;
+        int requestLength = hitsPerPage * currentPage;
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
@@ -145,9 +139,9 @@ public class Bus extends Thread implements IBus {
             if (grouping) {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
-                if (!oneIPlugOnly) {
-                    hits = cutFirstHits(hits, startHit);
-                }
+//                if (!oneIPlugOnly) {
+//                    hits = cutFirstHits(hits, startHit);
+//                }
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping starts: " + query.hashCode());
                 }
@@ -352,8 +346,10 @@ public class Bus extends Thread implements IBus {
                 }
             }
             if (newGroup) {
-                if (groupHits.size() < hitsPerPage) {
-                    groupHits.add(hit); // we add the hit as new group
+                if(groupCount >= startHit) {
+                    if (groupHits.size() < hitsPerPage) {
+                        groupHits.add(hit); // we add the hit as new group
+                    }
                 }
                 groupCount++;
             }
