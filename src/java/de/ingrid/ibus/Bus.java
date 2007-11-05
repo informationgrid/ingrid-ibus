@@ -349,7 +349,10 @@ public class Bus extends Thread implements IBus {
                 groupHitList.add(hit); // we add the hit as new group
                 groupCount++;
             }
-            groupedHitsLength++;
+            if(groupCount >= startHit && (groupCount - startHit) < hitsPerPage) {
+                groupedHitsLength++;    
+            }
+            
         }
 
         IngridHit[] groupedHits = (IngridHit[]) groupHitList.toArray(new IngridHit[groupHitList.size()]);
@@ -360,7 +363,7 @@ public class Bus extends Thread implements IBus {
         if(fLogger.isDebugEnabled()) {
             fLogger.debug("groupCount: " + groupCount + " cuttedHits.length: " + cuttedHits.length + " groupedHitsLength: " + groupedHitsLength);
         }
-        return new IngridHits(groupCount, cuttedHits, groupedHitsLength);
+        return new IngridHits(groupCount, cuttedHits, groupedHitsLength + startHit);
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
