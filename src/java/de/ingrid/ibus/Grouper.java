@@ -45,9 +45,7 @@ public class Grouper implements IGrouper {
             }
             if (newGroup) {
                 // if new -> add to list
-                if (groupHitList.size() <= hitsPerPage) {
-                    groupHitList.add(hit); // we add the hit as new group
-                }
+                groupHitList.add(hit); // we add the hit as new group
                 // increase group count
                 groupCount++;
             }
@@ -60,14 +58,16 @@ public class Grouper implements IGrouper {
         }
 
         IngridHit[] groupedHits = (IngridHit[]) groupHitList.toArray(new IngridHit[groupHitList.size()]);
+        IngridHit[] cuttedHits = cutFirstHits(groupedHits, startHit);
         groupHitList.clear();
         groupHitList = null;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("hits.length:" + hits.length + " groupCount: " + groupCount + " groupedHits.length: "
-                    + groupedHits.length + " groupedHitsLength: " + groupedHitsLength);
+            LOG.debug("hits.length:" + hits.length + " groupCount: " + groupCount + "groupedHits.length: "
+                    + groupedHits.length + " cuttedHits.length: " + cuttedHits.length + " processedHits: "
+                    + groupedHitsLength);
         }
-        return new IngridHits(groupCount, groupedHits, groupedHitsLength);
+        return new IngridHits(groupCount, cuttedHits, groupedHitsLength);
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
@@ -117,6 +117,19 @@ public class Grouper implements IGrouper {
             }
         }
         return false;
+    }
+
+    private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
+        int newLength = hits.length - startHit;
+        if (hits.length <= newLength) {
+            return hits;
+        }
+        if (newLength < 1) {
+            return new IngridHit[0];
+        }
+        IngridHit[] cuttedHits = new IngridHit[newLength];
+        System.arraycopy(hits, startHit, cuttedHits, 0, newLength);
+        return cuttedHits;
     }
 
 }
