@@ -62,8 +62,8 @@ public class Grouper implements IGrouper {
         groupHitList = null;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("groupCount: " + groupCount + " groupedHits.length: " + groupedHits.length
-                    + " groupedHitsLength: " + groupedHitsLength);
+            LOG.debug("hits.length:" + hits.length + " groupCount: " + groupCount + " groupedHits.length: "
+                    + groupedHits.length + " groupedHitsLength: " + groupedHitsLength);
         }
         return new IngridHits(groupCount, groupedHits, groupedHitsLength + startHit);
     }
