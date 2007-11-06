@@ -94,7 +94,12 @@ public class Bus extends Thread implements IBus {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("Grouping: " + grouping);
         }
-        int requestLength = hitsPerPage * currentPage;
+        int requestLength;
+        if (!grouping) {
+            requestLength = hitsPerPage * currentPage;
+        } else {
+            requestLength = startHit + (hitsPerPage * 6);
+        }
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
@@ -142,9 +147,9 @@ public class Bus extends Thread implements IBus {
             if (grouping) {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
-//                if (!oneIPlugOnly) {
-//                    hits = cutFirstHits(hits, startHit);
-//                }
+                if (!oneIPlugOnly) {
+                    hits = cutFirstHits(hits, startHit);
+                }
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping starts: " + query.hashCode());
                 }
@@ -330,11 +335,18 @@ public class Bus extends Thread implements IBus {
         return documents;
     }
 
-    
-
-    
-
-   
+    private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
+        int newLength = hits.length - startHit;
+        if (hits.length <= newLength) {
+            return hits;
+        }
+        if (newLength < 1) {
+            return new IngridHit[0];
+        }
+        IngridHit[] cuttedHits = new IngridHit[newLength];
+        System.arraycopy(hits, startHit, cuttedHits, 0, newLength);
+        return cuttedHits;
+    }
 
     private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
         int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
