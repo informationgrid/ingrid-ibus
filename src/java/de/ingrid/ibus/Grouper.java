@@ -24,7 +24,8 @@ public class Grouper implements IGrouper {
         _registry = registry;
     }
 
-    public IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit) throws Exception {
+    public IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit)
+            throws Exception {
         List groupHits = new ArrayList(hitsPerPage);
         int groupedHitsLength = 0;
         boolean newGroup;
@@ -55,6 +56,10 @@ public class Grouper implements IGrouper {
         groupHits.clear();
         groupHits = null;
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("totalHits: " + totalHits + " groupedHits.lengh: " + groupedHits.length + " processedHits: "
+                    + (groupedHitsLength + startHit));
+        }
         return new IngridHits(totalHits, groupedHits, groupedHitsLength + startHit);
     }
 
