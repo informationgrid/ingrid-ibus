@@ -153,7 +153,7 @@ public class Bus extends Thread implements IBus {
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping starts: " + query.hashCode());
                 }
-                hitContainer = _grouper.groupHits(query, hits, hitsPerPage, startHit);
+                hitContainer = _grouper.groupHits(query, hits, hitsPerPage, totalHits, startHit);
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping ends: " + query.hashCode());
                 }

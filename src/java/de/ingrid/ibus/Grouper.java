@@ -24,50 +24,38 @@ public class Grouper implements IGrouper {
         _registry = registry;
     }
 
-    public IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int startHit) throws Exception {
-        // the hits are already cutted by the iplugs
-        // list for collecting groups
-        List groupHitList = new ArrayList(hitsPerPage);
-        int groupedHitsLength = startHit;
+    public IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit) throws Exception {
+        List groupHits = new ArrayList(hitsPerPage);
+        int groupedHitsLength = 0;
         boolean newGroup;
-        int groupCount = 0;
-        // loop over every hit
         for (int i = 0; i < hits.length; i++) {
             IngridHit hit = hits[i];
             addGroupingInformation(hit, query);
             newGroup = true;
-            int size = groupHitList.size();
+            int size = groupHits.size();
             for (int j = 0; j < size; j++) {
-                IngridHit group = (IngridHit) groupHitList.get(j);
+                IngridHit group = (IngridHit) groupHits.get(j);
                 if (areInSameGroup(hit, group)) {
                     group.addGroupHit(hit);
                     newGroup = false;
                 }
             }
             if (newGroup) {
-                // if new -> add to list
-                groupHitList.add(hit); // we add the hit as new group
-                // increase group count
-                groupCount++;
+                if (groupHits.size() < hitsPerPage) {
+                    groupHits.add(hit); // we add the hit as new group
+                } else {
+                    break;
+                }
             }
-            // we collect only hits greater than the startHit, because we search
-            // from 0
-            if (newGroup && groupCount <= hitsPerPage) {
-                groupedHitsLength++;
-            }
-
+            groupedHitsLength++;
         }
 
-        IngridHit[] groupedHits = (IngridHit[]) groupHitList.toArray(new IngridHit[groupHitList.size()]);
-        // IngridHit[] cuttedHits = cutFirstHits(groupedHits, startHit);
-        groupHitList.clear();
-        groupHitList = null;
+        IngridHit[] groupedHits = (IngridHit[]) groupHits.toArray(new IngridHit[groupHits.size()]);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("hits.length:" + hits.length + " groupCount: " + groupCount + " groupedHits.length: "
-                    + groupedHits.length + " processedHits: " + groupedHitsLength);
-        }
-        return new IngridHits(groupCount, groupedHits, groupedHitsLength);
+        groupHits.clear();
+        groupHits = null;
+
+        return new IngridHits(totalHits, groupedHits, groupedHitsLength + startHit);
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
