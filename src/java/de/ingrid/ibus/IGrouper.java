@@ -6,5 +6,5 @@ import de.ingrid.utils.query.IngridQuery;
 
 public interface IGrouper {
 
-    IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int startHit) throws Exception;
+    IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit) throws Exception;
 }
