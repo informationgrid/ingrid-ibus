@@ -45,7 +45,9 @@ public class Grouper implements IGrouper {
             }
             if (newGroup) {
                 // if new -> add to list
-                groupHitList.add(hit); // we add the hit as new group
+                if (groupHitList.size() <= hitsPerPage) {
+                    groupHitList.add(hit); // we add the hit as new group
+                }
                 // increase group count
                 groupCount++;
             }
