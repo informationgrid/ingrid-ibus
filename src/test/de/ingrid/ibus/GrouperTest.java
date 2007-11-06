@@ -13,14 +13,17 @@ public class GrouperTest extends TestCase {
         for (int i = 0; i < hits.length; i++) {
             hits[i] = new IngridHit();
             String group = "partner";
-            if (i % 3 == 0) {
+            if (i % 4 == 0) {
                 group = "provider";
             }
             hits[i].addGroupedField(group);
             hits[i].setDocumentId(i);
         }
+        int startHit = 1;
         int hitsPerPage = 10;
-        int startHit = 0;
-        IngridHits groupHits = grouper.groupHits(null, hits, hitsPerPage, startHit);
+        IngridHits groupHits = grouper.groupHits(null, hits, hitsPerPage, 23, startHit);
+        System.out.println(groupHits.getGoupedHitsLength());
+        System.out.println(groupHits.getHits().length);
+        System.out.println(groupHits.length());
     }
 }
