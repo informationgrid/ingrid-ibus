@@ -142,9 +142,9 @@ public class Bus extends Thread implements IBus {
             if (grouping) {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
-                if (!oneIPlugOnly) {
-                    hits = cutFirstHits(hits, startHit);
-                }
+//                if (!oneIPlugOnly) {
+//                    hits = cutFirstHits(hits, startHit);
+//                }
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping starts: " + query.hashCode());
                 }
@@ -350,19 +350,6 @@ public class Bus extends Thread implements IBus {
         IngridHit[] cuttedHits = new IngridHit[resultLength];
         System.arraycopy(hits, pageStart, cuttedHits, 0, resultLength);
 
-        return cuttedHits;
-    }
-
-    private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
-        int newLength = hits.length - startHit;
-        if (hits.length <= newLength) {
-            return hits;
-        }
-        if (newLength < 1) {
-            return new IngridHit[0];
-        }
-        IngridHit[] cuttedHits = new IngridHit[newLength];
-        System.arraycopy(hits, startHit, cuttedHits, 0, newLength);
         return cuttedHits;
     }
 

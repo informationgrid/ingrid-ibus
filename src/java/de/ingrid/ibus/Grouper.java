@@ -25,6 +25,7 @@ public class Grouper implements IGrouper {
     }
 
     public IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int startHit) throws Exception {
+        // the hits are already cutted by the iplugs
         // list for collecting groups
         List groupHitList = new ArrayList(hitsPerPage);
         int groupedHitsLength = startHit;
@@ -58,16 +59,15 @@ public class Grouper implements IGrouper {
         }
 
         IngridHit[] groupedHits = (IngridHit[]) groupHitList.toArray(new IngridHit[groupHitList.size()]);
-        IngridHit[] cuttedHits = cutFirstHits(groupedHits, startHit);
+        // IngridHit[] cuttedHits = cutFirstHits(groupedHits, startHit);
         groupHitList.clear();
         groupHitList = null;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("hits.length:" + hits.length + " groupCount: " + groupCount + "groupedHits.length: "
-                    + groupedHits.length + " cuttedHits.length: " + cuttedHits.length + " processedHits: "
-                    + groupedHitsLength);
+            LOG.debug("hits.length:" + hits.length + " groupCount: " + groupCount + " groupedHits.length: "
+                    + groupedHits.length + " processedHits: " + groupedHitsLength);
         }
-        return new IngridHits(groupCount, cuttedHits, groupedHitsLength);
+        return new IngridHits(groupCount, groupedHits, groupedHitsLength);
     }
 
     private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
