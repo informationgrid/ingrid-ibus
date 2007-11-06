@@ -50,6 +50,8 @@ public class Bus extends Thread implements IBus {
     // TODO INGRID-398 we need to made the lifetime configurable.
     private Registry fRegistry;
 
+    private IGrouper _grouper;
+    
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
     /**
@@ -64,6 +66,7 @@ public class Bus extends Thread implements IBus {
     public Bus(IPlugProxyFactory factory) {
         this.fRegistry = new Registry(100000, false, factory);
         fInstance = this;
+        _grouper = new Grouper(this.fRegistry);
     }
 
     /**
@@ -139,13 +142,13 @@ public class Bus extends Thread implements IBus {
             if (grouping) {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
-//                if (!oneIPlugOnly) {
-//                    hits = cutFirstHits(hits, startHit);
-//                }
+                if (!oneIPlugOnly) {
+                    hits = cutFirstHits(hits, startHit);
+                }
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping starts: " + query.hashCode());
                 }
-                hitContainer = groupHits(query, hits, hitsPerPage, totalHits, startHit);
+                hitContainer = _grouper.groupHits(query, hits, hitsPerPage, startHit);
                 if(fLogger.isDebugEnabled()) {
                     logDebug("(search) grouping ends: " + query.hashCode());
                 }
@@ -327,93 +330,11 @@ public class Bus extends Thread implements IBus {
         return documents;
     }
 
-    private IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit)
-            throws Exception {
-        List groupHitList = new ArrayList(hitsPerPage);
-        int groupedHitsLength = 0;
-        boolean newGroup;
-        int groupCount = 0;
-        for (int i = 0; i < hits.length; i++) {
-            IngridHit hit = hits[i];
-            addGroupingInformation(hit, query);
-            newGroup = true;
-            int size = groupHitList.size();
-            for (int j = 0; j < size; j++) {
-                IngridHit group = (IngridHit) groupHitList.get(j);
-                if (areInSameGroup(hit, group)) {
-                    group.addGroupHit(hit);
-                    newGroup = false;
-                }
-            }
-            if (newGroup) {
-                groupHitList.add(hit); // we add the hit as new group
-                groupCount++;
-            }
-            if(groupCount >= startHit && (groupCount - startHit) < hitsPerPage) {
-                groupedHitsLength++;    
-            }
-            
-        }
+    
 
-        IngridHit[] groupedHits = (IngridHit[]) groupHitList.toArray(new IngridHit[groupHitList.size()]);
-        IngridHit[] cuttedHits = cutFirstHits(groupedHits, startHit);
-        groupHitList.clear();
-        groupHitList = null;
+    
 
-        if(fLogger.isDebugEnabled()) {
-            fLogger.debug("groupCount: " + groupCount + " cuttedHits.length: " + cuttedHits.length + " groupedHitsLength: " + groupedHitsLength);
-        }
-        return new IngridHits(groupCount, cuttedHits, groupedHitsLength + startHit);
-    }
-
-    private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
-        if (hit.getGroupedFields() != null) {
-            return;
-        }
-        // XXX we just group for the 1st provider/partner
-        if (IngridQuery.GROUPED_BY_PLUGID.equalsIgnoreCase(query.getGrouped())) {
-            hit.addGroupedField(hit.getPlugId());
-        } else if (IngridQuery.GROUPED_BY_PARTNER.equalsIgnoreCase(query.getGrouped())) {
-            IPlug plug = this.fRegistry.getPlugProxy(hit.getPlugId());
-            IngridHitDetail detail = plug.getDetail(hit, query, new String[] { PlugDescription.PARTNER });
-            String[] partners = (String[]) detail.getArray(PlugDescription.PARTNER);
-            for (int i = 0; partners != null && i < partners.length; i++) {
-                hit.addGroupedField(partners[i]);
-                break;
-            }
-        } else if (IngridQuery.GROUPED_BY_ORGANISATION.equalsIgnoreCase(query.getGrouped())) {
-            IPlug plug = this.fRegistry.getPlugProxy(hit.getPlugId());
-            IngridHitDetail detail = plug.getDetail(hit, query, new String[] { PlugDescription.PROVIDER });
-            String[] providers = (String[]) detail.getArray(PlugDescription.PROVIDER);
-            for (int i = 0; providers != null && i < providers.length; i++) {
-                hit.addGroupedField(providers[i]);
-                break;
-            }
-        } else if (IngridQuery.GROUPED_BY_DATASOURCE.equalsIgnoreCase(query.getGrouped())) {
-            hit.addGroupedField(hit.getPlugId());
-        } else {
-            throw new IllegalArgumentException("unknown group operator '" + query.getGrouped() + '\'');
-        }
-        if (hit.getGroupedFields() == null || hit.getGroupedFields().length == 0) {
-            hit.addGroupedField("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
-            if (fLogger.isWarnEnabled()) {
-                fLogger.warn("no-detail-information:" + hit.getPlugId() + " (" + query.getGrouped() + ')');
-            }
-        }
-    }
-
-    private boolean areInSameGroup(IngridHit group, IngridHit hit) {
-        String[] groupFields = group.getGroupedFields();
-        String[] hitFields = hit.getGroupedFields();
-        for (int i = 0; i < groupFields.length; i++) {
-            for (int j = 0; j < hitFields.length; j++) {
-                if (groupFields[i].equalsIgnoreCase(hitFields[j])) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+   
 
     private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
         int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
