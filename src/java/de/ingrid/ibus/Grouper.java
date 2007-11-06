@@ -51,7 +51,7 @@ public class Grouper implements IGrouper {
             }
             // we collect only hits greater than the startHit, because we search
             // from 0
-            if (groupCount >= startHit) {
+            if (newGroup && groupCount >= startHit) {
                 groupedHitsLength++;
             }
 
