@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
+import de.ingrid.utils.query.IngridQuery;
 
 public class GrouperTest extends TestCase {
 
@@ -21,7 +22,9 @@ public class GrouperTest extends TestCase {
         }
         int startHit = 1;
         int hitsPerPage = 10;
-        IngridHits groupHits = grouper.groupHits(null, hits, hitsPerPage, 23, startHit);
+        IngridQuery query = new IngridQuery(true, false, -1, "abc");
+        query.put("grouped", IngridQuery.GROUPED_BY_DATASOURCE);
+        IngridHits groupHits = grouper.groupHits(query, hits, hitsPerPage, 23, startHit);
         System.out.println(groupHits.getGoupedHitsLength());
         System.out.println(groupHits.getHits().length);
         System.out.println(groupHits.length());

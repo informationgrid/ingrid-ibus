@@ -103,9 +103,8 @@ public class Bus extends Thread implements IBus {
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
-
         ResultSet resultSet;
-        if (!oneIPlugOnly) {
+        if (!oneIPlugOnly || (oneIPlugOnly && "de.ingrid.iplug.se.NutchSearcher".equals(plugDescriptionsForQuery[0].getIPlugClass()))) {
             if (fLogger.isDebugEnabled()) {
                 logDebug("(search) request starts: " + query.hashCode());
             }

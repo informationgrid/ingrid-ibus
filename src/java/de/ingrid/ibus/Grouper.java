@@ -33,12 +33,22 @@ public class Grouper implements IGrouper {
             IngridHit hit = hits[i];
             addGroupingInformation(hit, query);
             newGroup = true;
-            int size = groupHits.size();
-            for (int j = 0; j < size; j++) {
-                IngridHit group = (IngridHit) groupHits.get(j);
-                if (areInSameGroup(hit, group)) {
-                    group.addGroupHit(hit);
-                    newGroup = false;
+            if (IngridQuery.GROUPED_BY_DATASOURCE.equalsIgnoreCase(query.getGrouped())) {
+                if (i > 0) {
+                    if (areInSameGroup(hits[i - 1], hit)) {
+                        IngridHit group = (IngridHit) groupHits.get(groupHits.size() - 1);
+                        group.addGroupHit(hit);
+                        newGroup = false;
+                    }
+                }
+            } else {
+                int size = groupHits.size();
+                for (int j = 0; j < size; j++) {
+                    IngridHit group = (IngridHit) groupHits.get(j);
+                    if (areInSameGroup(hit, group)) {
+                        group.addGroupHit(hit);
+                        newGroup = false;
+                    }
                 }
             }
             if (newGroup) {
@@ -110,19 +120,6 @@ public class Grouper implements IGrouper {
             }
         }
         return false;
-    }
-
-    private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
-        int newLength = hits.length - startHit;
-        if (hits.length <= newLength) {
-            return hits;
-        }
-        if (newLength < 1) {
-            return new IngridHit[0];
-        }
-        IngridHit[] cuttedHits = new IngridHit[newLength];
-        System.arraycopy(hits, startHit, cuttedHits, 0, newLength);
-        return cuttedHits;
     }
 
 }
