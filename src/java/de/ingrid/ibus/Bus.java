@@ -103,7 +103,7 @@ public class Bus extends Thread implements IBus {
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
-        boolean forceManyResults = (oneIPlugOnly && "de.ingrid.iplug.se.NutchSearcher".equals(plugDescriptionsForQuery[0].getIPlugClass())); 
+        boolean forceManyResults = grouping && (oneIPlugOnly && "de.ingrid.iplug.se.NutchSearcher".equals(plugDescriptionsForQuery[0].getIPlugClass())); 
         ResultSet resultSet;
         if (!oneIPlugOnly) {
             if (fLogger.isDebugEnabled()) {
@@ -161,7 +161,7 @@ public class Bus extends Thread implements IBus {
             } else {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
-                if (!oneIPlugOnly || forceManyResults) {
+                if (!oneIPlugOnly) {
                     hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
                 }
                 hitContainer = new IngridHits(totalHits, hits);
