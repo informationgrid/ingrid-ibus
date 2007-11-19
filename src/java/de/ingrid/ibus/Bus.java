@@ -79,7 +79,7 @@ public class Bus extends Thread implements IBus {
         return fInstance;
     }
 
-    public IngridHits search(IngridQuery query, final int hitsPerPage, int currentPage, int startHit,
+    public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int startHit,
             int maxMilliseconds) throws Exception {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " started");
@@ -119,7 +119,8 @@ public class Bus extends Thread implements IBus {
             if (fLogger.isDebugEnabled()) {
                 fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " started");
             }
-            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, forceManyResults ? hitsPerPage*6 : hitsPerPage);
+            hitsPerPage = forceManyResults ? hitsPerPage*6 : hitsPerPage;
+            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, hitsPerPage);
         }
 
         IngridHits hitContainer;
