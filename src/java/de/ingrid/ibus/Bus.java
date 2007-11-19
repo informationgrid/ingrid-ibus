@@ -161,7 +161,7 @@ public class Bus extends Thread implements IBus {
             } else {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
-                if (!oneIPlugOnly) {
+                if (!oneIPlugOnly || forceManyResults) {
                     hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
                 }
                 hitContainer = new IngridHits(totalHits, hits);
