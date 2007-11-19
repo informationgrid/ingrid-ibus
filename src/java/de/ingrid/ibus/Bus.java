@@ -103,8 +103,9 @@ public class Bus extends Thread implements IBus {
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
         boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
+        boolean forceManyResults = (oneIPlugOnly && "de.ingrid.iplug.se.NutchSearcher".equals(plugDescriptionsForQuery[0].getIPlugClass())); 
         ResultSet resultSet;
-        if (!oneIPlugOnly || (oneIPlugOnly && "de.ingrid.iplug.se.NutchSearcher".equals(plugDescriptionsForQuery[0].getIPlugClass()))) {
+        if (!oneIPlugOnly) {
             if (fLogger.isDebugEnabled()) {
                 logDebug("(search) request starts: " + query.hashCode());
             }
@@ -118,7 +119,7 @@ public class Bus extends Thread implements IBus {
             if (fLogger.isDebugEnabled()) {
                 fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " started");
             }
-            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, hitsPerPage);
+            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, forceManyResults ? hitsPerPage*6 : hitsPerPage);
         }
 
         IngridHits hitContainer;
