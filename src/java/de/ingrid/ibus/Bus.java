@@ -108,7 +108,7 @@ public class Bus extends Thread implements IBus {
             if (fLogger.isDebugEnabled()) {
                 logDebug("(search) request starts: " + query.hashCode());
             }
-            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, requestLength);
+            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
             if (fLogger.isDebugEnabled()) {
                 logDebug("(search) request ends: " + query.hashCode());
             }
