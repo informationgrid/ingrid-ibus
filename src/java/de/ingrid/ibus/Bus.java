@@ -119,8 +119,7 @@ public class Bus extends Thread implements IBus {
             if (fLogger.isDebugEnabled()) {
                 fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " started");
             }
-            hitsPerPage = forceManyResults ? hitsPerPage*6 : hitsPerPage;
-            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, hitsPerPage);
+            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit, forceManyResults ? hitsPerPage*6 : hitsPerPage);
         }
 
         IngridHits hitContainer;
