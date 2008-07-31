@@ -43,15 +43,7 @@ public class IPlugProxyFactoryImpl implements IPlugProxyFactory {
      * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription, String)
      */
     public IPlug createPlugProxy(PlugDescription plugDescription, String busurl) throws Exception {
-        String plugUrl = null;
-        if (busurl != null) {
-            final String path = busurl.replaceFirst("/(.*)?:(.*)?", "$1");
-            final String peername = plugDescription.getProxyServiceURL().replaceFirst("/(.*)?:(.*)?", "$2");
-            plugUrl = '/' + path + ':' + peername;
-        } else {
-            plugUrl = plugDescription.getProxyServiceURL();
-        }
-
+        String plugUrl = plugDescription.getProxyServiceURL();
         if (plugDescription.isRecordloader()) {
             return (IPlug) ProxyService.createProxy(this.fCommunication,
                     new Class[] { IPlug.class, IRecordLoader.class }, plugUrl);

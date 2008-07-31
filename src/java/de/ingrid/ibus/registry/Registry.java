@@ -186,6 +186,7 @@ public class Registry {
         try {
             plugProxy.search(new TermQuery(false, false, "plug-init-query"), 0, 1);
         } catch (Exception e) {
+            fLogger.error("error by sending a init query to " + plugId, e);
             // sometimes there seems to be a message loss shortly after
             // connection establishment
             try {
@@ -217,14 +218,7 @@ public class Registry {
     private void closeConnectionToIplug(PlugDescription plugDescription) {
         if (plugDescription != null && this.fCommunication != null) {
             try {
-                String plugUrl = null;
-                if (this.fBusUrl != null) {
-                    final String path = this.fBusUrl.replaceFirst("/(.*)?:(.*)?", "$1");
-                    final String peername = plugDescription.getProxyServiceURL().replaceFirst("/(.*)?:(.*)?", "$2");
-                    plugUrl = '/' + path + ':' + peername;
-                } else {
-                    plugUrl = plugDescription.getProxyServiceURL();
-                }
+                String plugUrl = plugDescription.getProxyServiceURL();
                 this.fCommunication.closeConnection(plugUrl);
             } catch (IOException e) {
                 if (fLogger.isWarnEnabled()) {
