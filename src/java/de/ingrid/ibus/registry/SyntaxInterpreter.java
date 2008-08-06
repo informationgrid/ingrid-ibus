@@ -7,15 +7,15 @@
 package de.ingrid.ibus.registry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.log4j.Logger;
 
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.ClauseQuery;
 import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
+import org.apache.log4j.Logger;
 
 /**
  * Supports you with static methods to extract various informations out of a query.
@@ -133,6 +133,8 @@ public class SyntaxInterpreter {
             if (toRemove) {
                 if(LOG.isDebugEnabled()) {
                   LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                  LOG.debug(ms+" queryFieldNames: " + Arrays.asList(queryFieldNames));
+                  LOG.debug(ms+" plugfields: " + Arrays.asList(plugFields));
                 }
                 iter.remove();
             }
