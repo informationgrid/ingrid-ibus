@@ -45,13 +45,14 @@ public class SyntaxInterpreter {
             plugList.add(plugs[i]);
         }
 
-        filterActivatedIplugs(plugList);
-        filterForIPlugs(query, plugList);
-        filterForRanking(query, plugList);
-        filterForDataType(query, plugList);
-        filterForFields(query, plugList);
-        filterForProvider(query, plugList);
-        filterForPartner(query, plugList);
+        long ms = System.currentTimeMillis();
+        filterActivatedIplugs(ms, plugList);
+        filterForIPlugs(ms, query, plugList);
+        filterForRanking(ms, query, plugList);
+        filterForDataType(ms, query, plugList);
+        filterForFields(ms, query, plugList);
+        filterForProvider(ms, query, plugList);
+        filterForPartner(ms, query, plugList);
         
         PlugDescription[] filteredPlugs = (PlugDescription[]) plugList.toArray(new PlugDescription[plugList.size()]);
         if(LOG.isDebugEnabled()) {
@@ -65,16 +66,19 @@ public class SyntaxInterpreter {
         return filteredPlugs;
     }
 
-    private static void filterActivatedIplugs(List plugDescriptions) {
+    private static void filterActivatedIplugs(long ms, List plugDescriptions) {
         for (Iterator iter = plugDescriptions.iterator(); iter.hasNext();) {
             PlugDescription element = (PlugDescription) iter.next();
             if (!element.isActivate()) {
+                if(LOG.isDebugEnabled()) {
+                  LOG.debug(ms+ " remove iplug: " + element.getProxyServiceURL());
+                }
                 iter.remove();
             }
         }
     }
 
-    private static void filterForRanking(IngridQuery ingridQuery, List descriptions) {
+    private static void filterForRanking(long ms, IngridQuery ingridQuery, List descriptions) {
         String rankingTypeInQuery = ingridQuery.getRankingType();
         if (rankingTypeInQuery == null) {
             ingridQuery.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
@@ -102,7 +106,7 @@ public class SyntaxInterpreter {
                 }
                 if (!foundRanking && rankingTypes.length > 0) {
                     if(LOG.isDebugEnabled()) {
-                        LOG.debug("remove plugescription: " + plugDescription.getPlugId());
+                        LOG.debug(ms + " remove plugescription: " + plugDescription.getPlugId());
                     }
                     iter.remove();
                 }
@@ -110,7 +114,7 @@ public class SyntaxInterpreter {
         }
     }
 
-    private static void filterForFields(IngridQuery ingridQueries, List allIPlugs) {
+    private static void filterForFields(long ms, IngridQuery ingridQueries, List allIPlugs) {
         String[] queryFieldNames = getAllFieldsNamesFromQuery(ingridQueries);
         if (queryFieldNames.length == 0) {
             return;
@@ -127,12 +131,15 @@ public class SyntaxInterpreter {
                 }
             }
             if (toRemove) {
+                if(LOG.isDebugEnabled()) {
+                  LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                }
                 iter.remove();
             }
         }
     }
 
-    private static void filterForDataType(IngridQuery ingridQueries, List allIPlugs) {
+    private static void filterForDataType(long ms, IngridQuery ingridQueries, List allIPlugs) {
         String[] allowedDataTypes = ingridQueries.getPositiveDataTypes();
         String[] notAllowedDataTypes = ingridQueries.getNegativeDataTypes();
         if (allowedDataTypes.length == 0 && notAllowedDataTypes.length == 0) {
@@ -154,13 +161,16 @@ public class SyntaxInterpreter {
                     }
                 }
                 if (toRemove) {
+                    if(LOG.isDebugEnabled()) {
+                      LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                    }
                     iter.remove();
                 }
             }
         }
     }
 
-    private static void filterForProvider(IngridQuery ingridQueries, List allIPlugs) {
+    private static void filterForProvider(long ms, IngridQuery ingridQueries, List allIPlugs) {
         String[] allowedProvider = ingridQueries.getPositiveProvider();
         String[] notAllowedProvider = ingridQueries.getNegativeProvider();
         if (allowedProvider.length == 0 && notAllowedProvider.length == 0) {
@@ -191,12 +201,15 @@ public class SyntaxInterpreter {
                 }
             }
             if (toRemove) {
+                if(LOG.isDebugEnabled()) {
+                  LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                }
                 iter.remove();
             }
         }
     }
 
-    private static void filterForPartner(IngridQuery ingridQuery, List allIPlugs) {
+    private static void filterForPartner(long ms, IngridQuery ingridQuery, List allIPlugs) {
         String[] allowedPartner = ingridQuery.getPositivePartner();
         String[] notAllowedPartner = ingridQuery.getNegativePartner();
 
@@ -226,12 +239,15 @@ public class SyntaxInterpreter {
                 }
             }
             if (toRemove) {
+                if(LOG.isDebugEnabled()) {
+                  LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                }
                 iter.remove();
             }
         }
     }
 
-    private static void filterForIPlugs(IngridQuery query, List plugs) {
+    private static void filterForIPlugs(long ms, IngridQuery query, List plugs) {
         String[] restrictecPlugIds = query.getIPlugs();
         if (restrictecPlugIds.length == 0) {
             return;
@@ -239,6 +255,9 @@ public class SyntaxInterpreter {
         for (Iterator iter = plugs.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = (PlugDescription) iter.next();
             if (!containsString(restrictecPlugIds, plugDescription.getPlugId())) {
+                if(LOG.isDebugEnabled()) {
+                  LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                }
                 iter.remove();
             }
         }
