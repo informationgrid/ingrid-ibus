@@ -11,9 +11,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -140,7 +142,28 @@ public class Bus extends Thread implements IBus {
                 logDebug("(search) normalize ends: " + query.hashCode());
             }
         }
+        
+        
         IngridHit[] hits = hitContainer.getHits();
+        int oldSize = hits.length;
+        //remove duplicates after normalizing and ordering to keep duplicates with highest score
+		Set set = new LinkedHashSet();
+		for (int i = 0; i < hits.length; i++) {
+			set.add(hits[i]);
+		}
+		hitContainer = new IngridHits(set.size(), (IngridHit[]) set
+				.toArray(new IngridHit[set.size()]));
+		hits = hitContainer.getHits();
+        // re-search if duplicates are removed
+		if (oldSize > hits.length) {
+			// re-search recursiv but only 3 times, (hitsPerPage = 60, 120, 240)
+			if (hits.length < hitsPerPage && hitsPerPage < 300) {
+				search(query, hitsPerPage * 2, currentPage, startHit,
+						maxMilliseconds);
+			}
+		}
+		
+		
         int totalHits = (int) hitContainer.length();
         if (hits.length > 0) {
             this.fProcessorPipe.postProcess(query, hits);
