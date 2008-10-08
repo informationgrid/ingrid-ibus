@@ -6,6 +6,8 @@
 
 package de.ingrid.ibus;
 
+import java.util.Random;
+
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
@@ -27,6 +29,8 @@ public class DummyIPlug implements IPlug {
     private String fMyPlugId;
 
     private PlugDescription fPlugDescription;
+    
+    private Random _random = new Random(System.currentTimeMillis());
 
     /**
      * 
@@ -50,9 +54,9 @@ public class DummyIPlug implements IPlug {
 	    hit[0].setGroupTotalHitLength(2);
 	} else {
 	    hit = new IngridHit[2];
-	    hit[0] = new IngridHit(this.fMyPlugId, 23, 23, 23f);
+	    hit[0] = new IngridHit(this.fMyPlugId, 23, 23, _random.nextInt());
 	    hit[0].setGroupTotalHitLength(2);
-	    hit[1] = new IngridHit(this.fMyPlugId, 23, 23, 23f);
+	    hit[1] = new IngridHit(this.fMyPlugId, 23, 23, _random.nextInt());
 	    hit[1].setGroupTotalHitLength(2);
 	}
 	return new IngridHits(this.fMyPlugId, hit.length, hit, true);
