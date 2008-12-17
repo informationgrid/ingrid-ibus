@@ -6,12 +6,27 @@
 <%@ page import="java.util.Enumeration" %>
 
 <%!
-public PlugDescription[] getIPlugs() {
+public Map getIPlugs() {
 	Bus bus = Bus.getInstance();
 	Registry registry = bus.getIPlugRegistry();
 	PlugDescription[] description = registry.getAllIPlugsWithoutTimeLimitation();
-
-	return description;
+	Map map = new HashMap(); 
+	
+	for(int i = 0; i < description.length; i++) {
+		PlugDescription plugDescription = description[i];
+		Metadata metadata = new Metadata(IPlugType.OTHER, new Date(0), "Unknown");
+		if(plugDescription.containsKey("DEFAULT_METADATA")) {
+			metadata = (Metadata) plugDescription.get("DEFAULT_METADATA");
+		} else {
+			plugDescription.put("DEFAULT_METADATA", metadata);
+		}
+	    if(!map.containsKey(metadata.getPlugType())) {
+	    	map.put(metadata.getPlugType(), new ArrayList());
+	    }
+	    List list = (List) map.get(metadata.getPlugType());
+	    list.add(plugDescription);
+	}
+	return map;
 }
 %>
 
@@ -55,7 +70,17 @@ if ((submitted != null) && submitted.equals("true")) {
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+
+<%@page import="de.ingrid.utils.metadata.Metadata"%>
+<%@page import="de.ingrid.utils.metadata.IPlugType"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Set"%>
+<%@page import="java.util.Iterator"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%><html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>IBus Administration</title>
@@ -68,9 +93,9 @@ if ((submitted != null) && submitted.equals("true")) {
 <center>
 <form method="post" action="<%=response.encodeURL("index.jsp")%>">
 <input type="hidden" name="submitted" value="true">
-<table class="table" width="400" align="center">
+<table class="table" width="900" align="center">
 	<tr>
-		<td colspan="3" class="tablehead">An-/Abschalten von IPlugs.</td>
+		<td colspan="5" class="tablehead">An-/Abschalten von IPlugs.</td>
 	</tr>
 
 <%if (saved)  {%>
@@ -80,26 +105,65 @@ if ((submitted != null) && submitted.equals("true")) {
 <div class="error">&#x00C4;nderungen verworfen.</div>
 <br/>
 <%}%>
-	
-	
-<%
-	PlugDescription[] descriptions = getIPlugs();
 
-	for (int i=0; i<descriptions.length; i++) {
-%>
-	<tr>
-		<td class="tablecell" width="100"><%=descriptions[i].getProxyServiceURL()%></td>
-		<td class="tablecell" width="100"><%=descriptions[i].getDataSourceName()%></td>
-		<td class="tablecell" width="100">
-			<select name="<%=descriptions[i].getProxyServiceURL()%>isActivated">
-				<option value="true" <%if(descriptions[i].isActivate()) {%>selected="selected"<%}%> >an</option>
-				<option value="false" <%if(!descriptions[i].isActivate()) {%>selected="selected"<%}%> >aus</option>
-			</select>
-		</td>
-	</tr>
+
 <%
+	Map descriptions = getIPlugs();
+	Set keySet = descriptions.keySet();
+	Iterator it = keySet.iterator();
+	while(it.hasNext()){
+		IPlugType plugType = (IPlugType) it.next();
+		%>
+		<tr>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+		</tr>
+		<tr>
+			<td><%=plugType%></td>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+			<td>&nbsp</td>
+		</tr>
+		<tr>
+			<td class="tablecell">Proxy Service Url</td>
+			<td class="tablecell">Name der Datenquelle</td>
+			<td class="tablecell">Version</td>
+			<td class="tablecell">Release Datum</td>
+			<td class="tablecell">An /Aus</td>
+		</tr>
+		<%
+		List plugs = (List) descriptions.get(plugType);
+		for (int i=0; i<plugs.size(); i++) {
+			PlugDescription plugDescription = (PlugDescription) plugs.get(i);
+			Metadata metadata = (Metadata) plugDescription.get("DEFAULT_METADATA");
+			%>
+				<tr>
+					<td class="tablecell" width="100"><%=plugDescription.getProxyServiceURL()%></td>
+					<td class="tablecell" width="100"><%=plugDescription.getDataSourceName()%></td>
+					<td class="tablecell" width="100"><%=metadata.getVersion()%></td>
+					<td class="tablecell" width="100"><%=new SimpleDateFormat("yyyy-MM-dd").format(metadata.getReleaseDate())%></td>
+					<td class="tablecell" width="100">
+						<select name="<%=plugDescription.getProxyServiceURL()%>isActivated">
+							<option value="true" <%if(plugDescription.isActivate()) {%>selected="selected"<%}%> >an</option>
+							<option value="false" <%if(!plugDescription.isActivate()) {%>selected="selected"<%}%> >aus</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp</td>
+					<td>&nbsp</td>
+					<td>&nbsp</td>
+					<td>&nbsp</td>
+					<td>&nbsp</td>
+				</tr>
+			<%
+		}
 	}
-%>
+%>		
 
 	</table>
 	<br/>
