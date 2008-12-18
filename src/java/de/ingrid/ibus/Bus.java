@@ -597,12 +597,13 @@ public class Bus extends Thread implements IBus {
 
 	@Override
 	public Serializable getMetadata(String plugId, String metadataKey) {
-		Serializable ret = null;
-		PlugDescription plug = getIPlug(plugId);
-		if (plug != null) {
-			Metadata metadata = plug.getMetadata();
-			ret = metadata != null ? metadata.getMetadata(metadataKey) : null;
-		}
-		return ret;
+		Metadata metadata = getMetadata(plugId);
+		return metadata != null ? metadata.getMetadata(metadataKey) : null;
+	}
+	
+	@Override
+	public Metadata getMetadata(String plugId) {
+		PlugDescription plugDescription = getIPlug(plugId);
+		return plugDescription != null ? plugDescription.getMetadata() : null;
 	}
 }
