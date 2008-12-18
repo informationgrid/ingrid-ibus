@@ -7,6 +7,9 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
+import net.weta.components.communication.configuration.ClientConfiguration;
+import net.weta.components.communication.configuration.ServerConfiguration;
+import net.weta.components.communication.configuration.ClientConfiguration.ClientConnection;
 import net.weta.components.communication.reflect.ProxyService;
 import net.weta.components.communication.tcp.TcpCommunication;
 import de.ingrid.utils.IBus;
@@ -26,17 +29,22 @@ public class RemoteBusTest extends TestCase {
         String iBusUrl = "/101tec-group:ibus";
         
         TcpCommunication com = new TcpCommunication();
-        com.setIsCommunicationServer(true);
+        ServerConfiguration serverConfiguration = new ServerConfiguration();
+		serverConfiguration.setPort(9191);
+		com.configure(serverConfiguration);
         com.setPeerName(iBusUrl);
-        com.addServer("127.0.0.1:9191");
         com.startup();
         ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
 
         TcpCommunication com2 = new TcpCommunication();
-        com2.setIsCommunicationServer(false);
-        com2.setPeerName("/101tec-group:iplug");
-        com2.addServer("127.0.0.1:9191");
-        com2.addServerName("/101tec-group:ibus");
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+		clientConfiguration.setName("/101tec-group:iplug");
+		ClientConnection clientConnection = clientConfiguration.new ClientConnection();
+		clientConnection.setServerIp("127.0.0.1");
+		clientConnection.setServerPort(9191);
+		clientConnection.setServerName("/101tec-group:ibus");
+		clientConfiguration.addClientConnection(clientConnection);
+		com2.configure(clientConfiguration);
         com2.startup();
         
         IBus bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);

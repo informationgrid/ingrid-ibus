@@ -7,6 +7,9 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
+import net.weta.components.communication.configuration.ClientConfiguration;
+import net.weta.components.communication.configuration.ServerConfiguration;
+import net.weta.components.communication.configuration.ClientConfiguration.ClientConnection;
 import net.weta.components.communication.reflect.ProxyService;
 import net.weta.components.communication.tcp.TcpCommunication;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
@@ -33,17 +36,24 @@ public class IPlugProxyFactoryImplTest extends TestCase {
 
     protected void setUp() throws Exception {
         this.fBusComm = new TcpCommunication();
-        this.fBusComm.setIsCommunicationServer(true);
-        this.fBusComm.addServer("127.0.0.1:9191");
+        ServerConfiguration serverConfiguration = new ServerConfiguration();
+		serverConfiguration.setPort(9191);
+		serverConfiguration.setName("/101tec-group:ibus");
+		this.fBusComm.configure(serverConfiguration);
         this.fBusComm.setPeerName("/101tec-group:ibus");
         this.fBusComm.startup();
 
         this.fBus = new Bus(new IPlugProxyFactoryImpl(this.fBusComm));
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.fPlugComms[i] = new TcpCommunication();
-            this.fPlugComms[i].setIsCommunicationServer(false);
-            this.fPlugComms[i].addServer("127.0.0.1:9191");
-            this.fPlugComms[i].addServerName("/101tec-group:ibus");
+            ClientConfiguration clientConfiguration = new ClientConfiguration();
+			clientConfiguration.setName("/101tec-group:iplug" + i);
+			ClientConnection clientConnection = clientConfiguration.new ClientConnection();
+			clientConnection.setServerIp("127.0.0.1");
+			clientConnection.setServerPort(9191);
+			clientConnection.setServerName("/101tec-group:ibus");
+			clientConfiguration.addClientConnection(clientConnection);
+			this.fPlugComms[i].configure(clientConfiguration);
             this.fPlugComms[i].setPeerName("/101tec-group:iplug" + i);
             this.fPlugComms[i].startup();
 
@@ -68,40 +78,6 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         this.fBusComm.shutdown();
     }
 
-    // public void testConnectIBus() throws Throwable {
-    // // SocketCommunication com0 = new SocketCommunication();
-    // // com0.setMulticastPort(9191);
-    // // com0.setUnicastPort(9192);
-    // // com0.startup();
-    // Bus myBus = new Bus();
-    //        
-    // for (int i = 0; i < 10; i++) {
-    // SocketCommunication com1 = new SocketCommunication();
-    // com1.setMulticastPort(9193);
-    // com1.setUnicastPort(9194);
-    // com1.startup();
-    //
-    // ProxyService proxyService = new ProxyService();
-    // proxyService.setCommunication(com1);
-    // proxyService.startup();
-    // RemoteInvocationController controller = proxyService
-    // .createRemoteInvocationController(AddressUtil.getWetagURL(
-    // "localhost", 9192));
-    // Bus bus = (Bus) controller.invoke(Bus.class, Bus.class.getMethod(
-    // "getInstance", null), null);
-    //            
-    //            
-    //
-    // IngridQuery query = QueryStringParser.parse("fische ort:halle");
-    // System.out.println(i);
-    // IngridHits hits = bus.search(query, 10, 1, 10, 1000);
-    // assertEquals(this.plugDescriptions.length, hits.getHits().length);
-    // proxyService.shutdown();
-    // com1.shutdown();
-    // }
-    //
-    // }
-    //
     /**
      * @throws Exception
      */
