@@ -6,6 +6,7 @@
 
 package de.ingrid.ibus;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.dsc.Record;
+import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 
@@ -592,4 +594,15 @@ public class Bus extends Thread implements IBus {
             fLogger.debug(string);
         }
     }
+
+	@Override
+	public Serializable getMetadata(String plugId, String metadataKey) {
+		Serializable ret = null;
+		PlugDescription plug = getIPlug(plugId);
+		if (plug != null) {
+			Metadata metadata = plug.getMetadata();
+			ret = metadata != null ? metadata.getMetadata(metadataKey) : null;
+		}
+		return ret;
+	}
 }

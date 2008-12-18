@@ -14,11 +14,11 @@ public Map getIPlugs() {
 	
 	for(int i = 0; i < description.length; i++) {
 		PlugDescription plugDescription = description[i];
-		Metadata metadata = new Metadata(IPlugType.OTHER, new Date(0), "Unknown");
-		if(plugDescription.containsKey("DEFAULT_METADATA")) {
-			metadata = (Metadata) plugDescription.get("DEFAULT_METADATA");
-		} else {
-			plugDescription.put("DEFAULT_METADATA", metadata);
+		
+		Metadata metadata = plugDescription.getMetadata();
+		if(metadata == null) {
+			metadata = new Metadata(IPlugType.OTHER, new Date(0), "Unknown");
+			plugDescription.setMetadata(metadata);
 		}
 	    if(!map.containsKey(metadata.getPlugType())) {
 	    	map.put(metadata.getPlugType(), new ArrayList());
@@ -139,7 +139,7 @@ if ((submitted != null) && submitted.equals("true")) {
 		List plugs = (List) descriptions.get(plugType);
 		for (int i=0; i<plugs.size(); i++) {
 			PlugDescription plugDescription = (PlugDescription) plugs.get(i);
-			Metadata metadata = (Metadata) plugDescription.get("DEFAULT_METADATA");
+			Metadata metadata = plugDescription.getMetadata();
 			%>
 				<tr>
 					<td class="tablecell" width="100"><%=plugDescription.getProxyServiceURL()%></td>
