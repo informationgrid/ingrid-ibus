@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import net.weta.components.communication.ICommunication;
@@ -25,6 +26,9 @@ import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.web.AdminServer;
 import de.ingrid.utils.IBus;
+import de.ingrid.utils.metadata.IMetadataInjector;
+import de.ingrid.utils.metadata.Metadata;
+import de.ingrid.utils.metadata.MetadataInjectorFactory;
 
 /**
  * The server that starts a bus and its admin web gui.
@@ -90,7 +94,10 @@ public class BusServer {
 
         // instatiate the IBus
         IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl(communication);
-        Bus bus = new Bus(proxyFactory);
+        Metadata metadata = new Metadata();
+		injectMetadatas(metadata);
+		Bus bus = new Bus(proxyFactory);
+		bus.setMetadata(metadata);
         Registry registry = bus.getIPlugRegistry();
         registry.setUrl(busurl);
         registry.setCommunication(communication);
@@ -142,4 +149,13 @@ public class BusServer {
             BusServer.class.wait();
         }
     }
+    
+	private static void injectMetadatas(Metadata metadata) {
+		List<IMetadataInjector> metadataInjectors = MetadataInjectorFactory
+				.getMetadataInjectors();
+		for (IMetadataInjector metadataInjector : metadataInjectors) {
+			metadataInjector.injectMetaDatas(metadata);
+		}
+	}
+
 }

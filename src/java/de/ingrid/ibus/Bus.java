@@ -58,6 +58,8 @@ public class Bus extends Thread implements IBus {
     
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
+	private Metadata _metadata;
+
     /**
      * The bus. All IPlugs have to connect with the bus to be searched. It sends queries to registered and activated
      * iplugs. It only sends a query to a iplug if it is able to handle the query. For all implemented criteria see
@@ -68,7 +70,7 @@ public class Bus extends Thread implements IBus {
      * @see de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry)
      */
     public Bus(IPlugProxyFactory factory) {
-        this.fRegistry = new Registry(100000, false, factory);
+		this.fRegistry = new Registry(100000, false, factory);
         fInstance = this;
         _grouper = new Grouper(this.fRegistry);
     }
@@ -605,5 +607,14 @@ public class Bus extends Thread implements IBus {
 	public Metadata getMetadata(String plugId) {
 		PlugDescription plugDescription = getIPlug(plugId);
 		return plugDescription != null ? plugDescription.getMetadata() : null;
+	}
+	
+	@Override
+	public Metadata getMetadata() {
+		return _metadata;
+	}
+	
+	public void setMetadata(Metadata metadata) {
+		_metadata = metadata;
 	}
 }
