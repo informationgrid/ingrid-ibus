@@ -97,9 +97,9 @@ public class BusServer {
 
         // instatiate the IBus
         IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl(communication);
-        Metadata metadata = new Metadata();
-		injectMetadatas(metadata);
 		Bus bus = new Bus(proxyFactory);
+        Metadata metadata = new Metadata();
+        injectMetadatas(metadata, bus);
 		bus.setMetadata(metadata);
         Registry registry = bus.getIPlugRegistry();
         registry.setUrl(busurl);
@@ -153,13 +153,13 @@ public class BusServer {
         }
     }
     
-	private static void injectMetadatas(Metadata metadata) throws Exception {
+	private static void injectMetadatas(Metadata metadata, IBus bus) throws Exception {
         // iBus has no plugdescription-file.
         PlugDescription plugDescription = new PlugDescription();
         List<String> list = new ArrayList<String>();
         list.add(DefaultMetadataInjector.class.getName());
         plugDescription.put(PlugDescription.METADATA_INJECTORS, list);
-        MetadataInjectorFactory factory = new MetadataInjectorFactory(plugDescription);
+        MetadataInjectorFactory factory = new MetadataInjectorFactory(plugDescription, bus);
         List<IMetadataInjector> metadataInjectors = factory.getMetadataInjectors();
         for (IMetadataInjector metadataInjector : metadataInjectors) {
             metadataInjector.injectMetaDatas(metadata);
