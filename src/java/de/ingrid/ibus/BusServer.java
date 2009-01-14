@@ -6,6 +6,7 @@ package de.ingrid.ibus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +27,8 @@ import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.web.AdminServer;
 import de.ingrid.utils.IBus;
+import de.ingrid.utils.PlugDescription;
+import de.ingrid.utils.metadata.DefaultMetadataInjector;
 import de.ingrid.utils.metadata.IMetadataInjector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.metadata.MetadataInjectorFactory;
@@ -45,7 +48,7 @@ public class BusServer {
      * @throws InterruptedException
      *             Is thrown when the bus server is interrupted by signal.
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
         final String usage = "You must set --descriptor <filename>, --busurl <wetag url>, --adminport <1000-65535> and --adminpassword <password>.";
         HashMap arguments = new HashMap();
         String busurl = null;
@@ -150,12 +153,17 @@ public class BusServer {
         }
     }
     
-	private static void injectMetadatas(Metadata metadata) {
-		List<IMetadataInjector> metadataInjectors = MetadataInjectorFactory
-				.getMetadataInjectors();
-		for (IMetadataInjector metadataInjector : metadataInjectors) {
-			metadataInjector.injectMetaDatas(metadata);
-		}
-	}
+	private static void injectMetadatas(Metadata metadata) throws Exception {
+        // iBus has no plugdescription-file.
+        PlugDescription plugDescription = new PlugDescription();
+        List<String> list = new ArrayList<String>();
+        list.add(DefaultMetadataInjector.class.getName());
+        plugDescription.put(PlugDescription.METADATA_INJECTORS, list);
+        MetadataInjectorFactory factory = new MetadataInjectorFactory(plugDescription);
+        List<IMetadataInjector> metadataInjectors = factory.getMetadataInjectors();
+        for (IMetadataInjector metadataInjector : metadataInjectors) {
+            metadataInjector.injectMetaDatas(metadata);
+        }
+    }
 
 }
