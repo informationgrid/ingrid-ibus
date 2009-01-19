@@ -6,7 +6,6 @@ package de.ingrid.ibus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +27,6 @@ import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.web.AdminServer;
 import de.ingrid.utils.IBus;
 import de.ingrid.utils.PlugDescription;
-import de.ingrid.utils.metadata.DefaultMetadataInjector;
 import de.ingrid.utils.metadata.IMetadataInjector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.metadata.MetadataInjectorFactory;
@@ -154,11 +152,8 @@ public class BusServer {
     }
     
 	private static void injectMetadatas(Metadata metadata, IBus bus) throws Exception {
-        // iBus has no plugdescription-file.
+	    // ibus has no plugdescription
         PlugDescription plugDescription = new PlugDescription();
-        List<String> list = new ArrayList<String>();
-        list.add(DefaultMetadataInjector.class.getName());
-        plugDescription.put(PlugDescription.METADATA_INJECTORS, list);
         MetadataInjectorFactory factory = new MetadataInjectorFactory(plugDescription, bus);
         List<IMetadataInjector> metadataInjectors = factory.getMetadataInjectors();
         for (IMetadataInjector metadataInjector : metadataInjectors) {
