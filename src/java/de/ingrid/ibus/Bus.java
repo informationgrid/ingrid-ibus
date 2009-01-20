@@ -148,26 +148,20 @@ public class Bus extends Thread implements IBus {
         }
 
 		IngridHit[] hits = hitContainer.getHits();
-		int oldSize = hits.length;
-		// remove duplicates after normalizing and ordering to keep duplicates
-		// with highest score
-		Set set = new LinkedHashSet();
-		for (int i = 0; i < hits.length; i++) {
-			set.add(hits[i]);
-		}
-		hitContainer = new IngridHits(set.size(), (IngridHit[]) set
-				.toArray(new IngridHit[set.size()]));
-		hits = hitContainer.getHits();
-		// re-search if duplicates are removed
-		if (oldSize > hits.length) {
-			// re-search recursiv but only 3 times, (hitsPerPage = 60, 120, 240)
-			if (hits.length < hitsPerPage && hitsPerPage < 300) {
-				this.fLogger.info("research with hitsPerPage: " + hitsPerPage
-						* 2);
-				search(query, hitsPerPage * 2, currentPage, startHit,
-						maxMilliseconds);
-			}
-		}
+        int oldSize = hits.length;
+        // remove duplicates after normalizing and ordering to keep duplicates
+        // with highest score
+        Set set = new LinkedHashSet(Arrays.asList(hits));
+        hitContainer = new IngridHits((int) hitContainer.length(), (IngridHit[]) set.toArray(new IngridHit[set.size()]));
+        hits = hitContainer.getHits();
+        // re-search if duplicates are removed
+        if (oldSize > hits.length) {
+            // re-search recursiv but only 3 times, (hitsPerPage = 60, 120, 240)
+            if (hits.length < hitsPerPage && hitsPerPage < 300) {
+                this.fLogger.info("research with hitsPerPage: " + hitsPerPage * 2);
+                search(query, hitsPerPage * 2, currentPage, startHit, maxMilliseconds);
+            }
+        }
 		
 		
         int totalHits = (int) hitContainer.length();
