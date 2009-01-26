@@ -159,7 +159,8 @@ public class Bus extends Thread implements IBus {
             // re-search recursiv but only 3 times, (hitsPerPage = 60, 120, 240)
             if (hits.length < hitsPerPage && hitsPerPage < 300) {
                 this.fLogger.info("research with hitsPerPage: " + hitsPerPage * 2);
-                search(query, hitsPerPage * 2, currentPage, startHit, maxMilliseconds);
+                hitContainer = search(query, hitsPerPage * 2, currentPage, startHit, maxMilliseconds);
+                hits = hitContainer.getHits();
             }
         }
 		
