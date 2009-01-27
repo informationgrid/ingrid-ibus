@@ -20,6 +20,7 @@ import org.mortbay.http.HashUserRealm;
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.IPlugProxyFactoryImpl;
 import de.ingrid.ibus.processor.AddressPreProcessor;
+import de.ingrid.ibus.processor.BusUrlPreProcessor;
 import de.ingrid.ibus.processor.LimitedAttributesPreProcessor;
 import de.ingrid.ibus.processor.QueryModePreProcessor;
 import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
@@ -108,6 +109,7 @@ public class BusServer {
         bus.getProccessorPipe().addPreProcessor(new LimitedAttributesPreProcessor());
         bus.getProccessorPipe().addPreProcessor(new QueryModePreProcessor());
         bus.getProccessorPipe().addPreProcessor(new AddressPreProcessor());
+        bus.getProccessorPipe().addPreProcessor(new BusUrlPreProcessor(busurl));
 
         // read in the boost for iplugs
         InputStream is = bus.getClass().getResourceAsStream("/globalRanking.properties");
