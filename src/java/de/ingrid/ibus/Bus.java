@@ -613,16 +613,20 @@ public class Bus extends Thread implements IBus {
 		_metadata = metadata;
 	}
 	
-	public IngridHitDetail[] searchAndDetail(IngridQuery query,
+	public IngridHits searchAndDetail(IngridQuery query,
 			int hitsPerPage,
 			int currentPage, int startHit, int maxMilliseconds,
 			String[] requestedFields) throws Exception {
-
 		IngridHits searchedHits = search(query, hitsPerPage, currentPage,
 				startHit,
 				maxMilliseconds);
 		IngridHit[] hits = searchedHits.getHits();
 		IngridHitDetail[] details = getDetails(hits, query, requestedFields);
-		return details;
+		for (int i = 0; i < hits.length; i++) {
+            IngridHit ingridHit = hits[i];
+            IngridHitDetail ingridHitDetail = details[i];
+            ingridHit.setHitDetail(ingridHitDetail);
+        }
+        return searchedHits;
 	}
 }
