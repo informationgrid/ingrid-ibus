@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
-import de.ingrid.utils.query.TermQuery;
 
 /**
  * A IPlug registry. All connected IPlugs are registered and by default are deactivated.
@@ -184,19 +183,9 @@ public class Registry {
 
         // establish connection
         try {
-            plugProxy.search(new TermQuery(false, false, "plug-init-query"), 0, 1);
+            fLogger.info("establish connection: " + plugProxy.toString());
         } catch (Exception e) {
-            fLogger.error("error by sending a init query to " + plugId, e);
-            // sometimes there seems to be a message loss shortly after
-            // connection establishment
-            try {
-                Thread.sleep(1500);
-                plugProxy.toString();
-            } catch (InterruptedException e1) {
-                if (fLogger.isWarnEnabled()) {
-                    fLogger.warn("The sleep during iplug connection is interrupted.");
-                }
-            }
+            fLogger.error("error establish connection " + plugId, e);
         }
     }
 
