@@ -519,9 +519,11 @@ public class Bus extends Thread implements IBus {
     private void pushMetaData(IngridHitDetail detail) {
         PlugDescription plugDescription;
         plugDescription = this.fRegistry.getPlugDescription(detail.getPlugId());
-        detail.setOrganisation(plugDescription.getOrganisation());
-        detail.setDataSourceName(plugDescription.getDataSourceName());
-        detail.setIplugClassName(plugDescription.getIPlugClass());
+        if (plugDescription != null) {
+            detail.setOrganisation(plugDescription.getOrganisation());
+            detail.setDataSourceName(plugDescription.getDataSourceName());
+            detail.setIplugClassName(plugDescription.getIPlugClass());
+        }
 
     }
 
