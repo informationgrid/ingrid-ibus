@@ -70,7 +70,7 @@ public class Bus extends Thread implements IBus {
      * @see de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery, Registry)
      */
     public Bus(IPlugProxyFactory factory) {
-		this.fRegistry = new Registry(100000, false, factory);
+		this.fRegistry = new Registry(120000, false, factory);
         fInstance = this;
         _grouper = new Grouper(this.fRegistry);
     }
