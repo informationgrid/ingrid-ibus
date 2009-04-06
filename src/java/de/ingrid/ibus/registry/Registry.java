@@ -139,6 +139,9 @@ public class Registry {
     public boolean containsPlugDescription(String plugId, String md5Hash) {
         PlugDescription plugDescription = getPlugDescription(plugId);
         if (plugDescription == null) {
+        	fLogger
+					.warn("plugdescription not found. do not update last lifesign: "
+							+ plugId);
             return false;
         }
         plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
