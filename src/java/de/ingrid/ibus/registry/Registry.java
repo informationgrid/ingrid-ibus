@@ -183,9 +183,11 @@ public class Registry {
 
         // establish connection
         try {
-            fLogger.info("establish connection: " + plugProxy.toString());
+            fLogger.info("establish connection [" + plugId + "] ...");
+            plugProxy.toString();
+            fLogger.info("... success [" + plugId + "]");
         } catch (Exception e) {
-            fLogger.error("error establish connection " + plugId, e);
+            fLogger.error("... fails [" + plugId + "]", e);
         }
     }
 
