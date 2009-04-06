@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -210,6 +211,7 @@ public class Registry {
         if (plugDescription != null && this.fCommunication != null) {
             try {
                 String plugUrl = plugDescription.getProxyServiceURL();
+                fLogger.info("close connection to iplug: " + plugUrl);
                 this.fCommunication.closeConnection(plugUrl);
             } catch (IOException e) {
                 if (fLogger.isWarnEnabled()) {
@@ -261,9 +263,14 @@ public class Registry {
         List plugs = new ArrayList(plugDescriptions.length);
         long now = System.currentTimeMillis();
         for (int i = 0; i < plugDescriptions.length; i++) {
-            if (plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime > now) {
+            long plugLifeSign = plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime;
+			if (plugLifeSign > now) {
                 plugs.add(plugDescriptions[i]);
             } else {
+                this.fLogger.warn("remove iplug '"
+						+ plugDescriptions[i].getPlugId()
+						+ "' because last life sign is too old ("
+						+ new Date(plugLifeSign) + " < " + new Date(now) + ")");
                 removePlug(plugDescriptions[i].getPlugId());
                 closeConnectionToIplug(plugDescriptions[i]);
             }
