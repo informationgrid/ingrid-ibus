@@ -63,9 +63,13 @@ public class ResultSet extends ArrayList {
         if (hits == null) {
             throw new IllegalArgumentException("Null can not be added as hits.");
         }
+        // ALWAYS ADD !!!! So we can analyze hits later on (e.g. for adding dummy hit if
+        // ranked iPlugs with no results should be displayed in frontend !)
+/*
         if (hits.getHits() == null || hits.getHits().length == 0) {
             return false;
         }
+*/
         return super.add(hits);
     }
 

@@ -133,7 +133,7 @@ public class Bus extends Thread implements IBus {
             if (fLogger.isDebugEnabled()) {
                 logDebug("(search) order starts: " + query.hashCode());
             }
-            hitContainer = orderResults(resultSet, plugDescriptionsForQuery);
+            hitContainer = orderResults(resultSet, plugDescriptionsForQuery, query);
             if (fLogger.isDebugEnabled()) {
                 logDebug("(search) order ends: " + query.hashCode());
             }
@@ -253,9 +253,17 @@ public class Bus extends Thread implements IBus {
         return resultSet;
     }
 
-    private IngridHits orderResults(ResultSet resultSet, PlugDescription[] plugDescriptionsForQuery) {
+    private IngridHits orderResults(ResultSet resultSet, PlugDescription[] plugDescriptionsForQuery,
+    		IngridQuery query) {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("order the results");
+        }
+
+        // deliver also dummy hit for iPlugs with NO RESULTS !
+        boolean addIPlugsWithNoResults = query.isGetUnrankedIPlugsWithNoResults();
+        if (fLogger.isDebugEnabled()) {
+            fLogger.debug("orderResults: addIPlugsWithNoResults = " + addIPlugsWithNoResults);
+            fLogger.debug("orderResults: resultSet.size() = " + resultSet.size());
         }
 
         int resultHitsCount = resultSet.size();
@@ -265,6 +273,20 @@ public class Bus extends Thread implements IBus {
             int pos = getPlugPosition(plugDescriptionsForQuery, hitContainer.getPlugId());
             hitContainer.putInt(Comparators.UNRANKED_HITS_COMPARATOR_POSITION, pos);
             totalHits += hitContainer.length();
+            
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("orderResults: hitContainer, plugId = " + hitContainer.getPlugId() +
+                	", pos = " + pos +
+                	", hitContainer.length = " + hitContainer.length());
+            }
+
+            if (hitContainer.length() <= 0 && addIPlugsWithNoResults) {
+                // care for correct number. Dummy hit will be added if no results !
+                if (fLogger.isDebugEnabled()) {
+                	fLogger.debug("orderResults: add 1 to total num hits (dummy hit)");
+                }
+            	totalHits++;
+            }
         }
         Collections.sort(resultSet, Comparators.UNRANKED_HITS_COMPARATOR);
         List orderedHits = new LinkedList();
@@ -273,6 +295,14 @@ public class Bus extends Thread implements IBus {
             IngridHit[] hits = hitContainer.getHits();
             if (hits != null && hits.length > 0) {
                 orderedHits.addAll(Arrays.asList(hits));
+            } else if (addIPlugsWithNoResults) {
+                // add dummy hit !
+            	IngridHit dummyHit = new IngridHit(hitContainer.getPlugId(), -1, -1, 0.0f);
+            	dummyHit.setDummyHit(true);
+                orderedHits.add(dummyHit);
+                if (fLogger.isDebugEnabled()) {
+                    fLogger.debug("orderResults: added dummy hit " + dummyHit);
+                }
             }
 
         }
@@ -434,6 +464,13 @@ public class Bus extends Thread implements IBus {
         IngridHit hit = null;
         for (int i = 0; i < hits.length; i++) {
             hit = hits[i];
+        	// ignore hit if hit is "placeholder"
+            if (hit.isDummyHit()) {
+                if (fLogger.isDebugEnabled()) {
+                    fLogger.debug("getDetails: do NOT call iPlug for dummy hit: " + hit);
+                }
+            	continue;
+            }
             ArrayList requestHitList = (ArrayList) hashMap.get(hit.getPlugId());
             if (requestHitList == null) {
                 requestHitList = new ArrayList();
@@ -493,6 +530,16 @@ public class Bus extends Thread implements IBus {
         // sort to be in the same order as the requested hits.
         IngridHitDetail[] details = new IngridHitDetail[hits.length];
         for (int i = 0; i < hits.length; i++) {
+        	// set dummy detail if hit is "placeholder"
+        	if (hits[i].isDummyHit()) {
+        		details[i] = new IngridHitDetail(hit, "dummy hit", "");
+        		details[i].setDummyHit(true);
+                if (fLogger.isDebugEnabled()) {
+                    fLogger.debug("getDetails: dummy hit, add dummy detail: " + details[i]);
+                }
+        		continue;
+        	}
+
             String plugId = hits[i].getPlugId();
             int documentId = hits[i].getDocumentId();
 
