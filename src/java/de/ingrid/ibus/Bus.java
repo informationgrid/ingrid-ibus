@@ -217,7 +217,9 @@ public class Bus extends Thread implements IBus {
     private ResultSet requestHits(IngridQuery query, int maxMilliseconds, PlugDescription[] plugsForQuery, int start,
             int requestLength) throws Exception {
         int plugsForQueryLength = plugsForQuery.length;
-        ResultSet resultSet = new ResultSet(plugsForQueryLength);
+		boolean allowEmptyResults = query.isGetUnrankedIPlugsWithNoResults();
+		ResultSet resultSet = new ResultSet(allowEmptyResults,
+				plugsForQueryLength);
         PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
 
         for (int i = 0; i < plugsForQueryLength; i++) {

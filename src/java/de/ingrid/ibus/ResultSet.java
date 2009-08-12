@@ -23,14 +23,20 @@ public class ResultSet extends ArrayList {
 
     private int fNumberOfFinsihedConnections;
 
+	private final boolean fAllowEmptyResults;
+
     /**
-     * Stores the result of different processes. Has functionality to show if all processes added their result.
-     * 
-     * @param numberOfConnections
-     *            The number of results that ResultSet should be contain.
-     */
-    public ResultSet(int numberOfConnections) {
-        this.fNumberOfConnections = numberOfConnections;
+	 * Stores the result of different processes. Has functionality to show if
+	 * all processes added their result.
+	 * 
+	 * @param allowEmptyResults
+	 * 
+	 * @param numberOfConnections
+	 *            The number of results that ResultSet should be contain.
+	 */
+    public ResultSet(boolean allowEmptyResults, int numberOfConnections) {
+		this.fAllowEmptyResults = allowEmptyResults;
+		this.fNumberOfConnections = numberOfConnections;
     }
 
     /**
@@ -63,14 +69,14 @@ public class ResultSet extends ArrayList {
         if (hits == null) {
             throw new IllegalArgumentException("Null can not be added as hits.");
         }
-        // ALWAYS ADD !!!! So we can analyze hits later on (e.g. for adding dummy hit if
-        // ranked iPlugs with no results should be displayed in frontend !)
-/*
-        if (hits.getHits() == null || hits.getHits().length == 0) {
-            return false;
+		boolean ret = false;
+		boolean empty = hits.getHits() == null || hits.getHits().length == 0;
+		if (empty && !fAllowEmptyResults) {
+			ret = false;
+		} else {
+			ret = super.add(hits);
         }
-*/
-        return super.add(hits);
+		return ret;
     }
 
     /**
