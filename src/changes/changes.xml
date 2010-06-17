@@ -5,6 +5,18 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="1.3.0" date="2010-06-17" description="Optimierung Release">
+      <action type="update">
+        Optimierung Erkennungsmechanismus iPlugs (timed out iPlug scanner)  
+      </action>
+      <action type="update">
+        Optimierung Abarbeitung Nachrichten (Thread Pool) 
+      </action>
+      <action type="update">
+        Anpassung an überarbeitete Kommunikation (isConnected())
+      </action>
+    </release>
+
     <release version="1.2.2" date="2009-08-13" description="Bugfix Release">
       <action type="fix">
         Rechte Spalte: iPlugs ohne Treffer werden jetzt in der Gesamtanzahl nicht berücksichtigt
