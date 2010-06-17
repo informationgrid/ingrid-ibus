@@ -9,6 +9,8 @@
 #
 #   INGRID_OPTS      addtional java runtime options
 #
+#		INGRID_USER 		 starting user, default ist "ingrid"
+#
 
 THIS="$0"
 
@@ -22,20 +24,28 @@ stopIplug()
 {
   echo "Try stopping ingrid component ($INGRID_HOME)..."
   if [ -f $PID ]; then
-      procid=`cat $PID`
-      idcount=`ps -p $procid | wc -l`
-      if [ $idcount -eq 2 ]; then
-        echo stopping $command
-        kill `cat $PID`
-        echo "process ($procid) has been terminated."
-      else
-        echo "process is not running. Exit."
-        exit 1
-      fi
-    else
-      echo "process is not running. Exit."
-      exit 1
-    fi
+		procid=`cat $PID`
+		idcount=`ps -p $procid | wc -l`
+		if [ $idcount -eq 2 ]; then
+			echo stopping $command
+			kill `cat $PID`
+			sleep 3
+			idcount=`ps -p $procid | wc -l`
+			if [ $idcount -eq 1 ]; then
+				echo "process ($procid) has been terminated."
+				unlink $PID
+				exit 0
+			else
+				echo "process is still running. Exit."
+				exit 1
+			fi 
+		else
+			echo "process is not running. Exit."
+			unlink $PID 
+		fi
+	else
+		echo "process is not running. Exit."
+	fi
 }
 
 stopNoExitIplug()
@@ -96,7 +106,7 @@ startIplug()
   fi
 
   # CLASSPATH initially contains $INGRID_CONF_DIR, or defaults to $INGRID_HOME/conf
-  CLASSPATH=${INGRID_CONF_DIR:=$INGRID_HOME/conf}
+  CLASSPATH=${CLASSPATH}:${INGRID_CONF_DIR:=$INGRID_HOME/conf}
   CLASSPATH=${CLASSPATH}:$JAVA_HOME/lib/tools.jar
   CLASSPATH=${CLASSPATH}:${INGRID_HOME}
   
@@ -114,21 +124,25 @@ startIplug()
     CLASSPATH=`cygpath -p -w "$CLASSPATH"`
   fi
 
+  export CLASSPATH="$CLASSPATH"
+  INGRID_OPTS="$INGRID_OPTS -Dingrid_home=$INGRID_HOME"
   CLASS=de.ingrid.ibus.BusServer
   
   # run it
-  exec nohup "$JAVA" $JAVA_HEAP_MAX $INGRID_OPTS -classpath "$CLASSPATH" $CLASS --descriptor conf/communication.xml --adminpassword --adminport --busurl > console.log &
+  exec nohup "$JAVA" $JAVA_HEAP_MAX $INGRID_OPTS $CLASS --descriptor conf/communication.xml --adminpassword @ADMIN_PASSWORD@ --adminport @ADMIN_PORT@ --busurl @BUS_URL@ > console.log &
   
   echo "ingrid component ($INGRID_HOME) started."
   echo $! > $PID
 }
 
 # make sure the current user has the privilege to execute that script
-INGRID_USER="ingrid"
+if [ "$INGRID_USER" = "" ]; then
+  INGRID_USER="ingrid"
+fi
 
 STARTING_USER=`whoami`
 if [ "$STARTING_USER" != "$INGRID_USER" ]; then
-  echo "you must be user '$INGRID_USER' to start that script!"
+  echo "You must be user '$INGRID_USER' to start that script! Set INGRID_USER in environment to overwrite this."
   exit 1
 fi 
 

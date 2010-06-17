@@ -17,6 +17,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Future;
+
+import net.weta.components.communication.util.PooledThreadExecutor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +62,7 @@ public class Bus extends Thread implements IBus {
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
 	private Metadata _metadata;
+	
 
     /**
      * The bus. All IPlugs have to connect with the bus to be searched. It sends queries to registered and activated
@@ -158,7 +162,7 @@ public class Bus extends Thread implements IBus {
         if (oldSize > hits.length) {
             // re-search recursiv but only 3 times, (hitsPerPage = 60, 120, 240)
             if (hits.length < hitsPerPage && hitsPerPage < 300) {
-                this.fLogger.info("research with hitsPerPage: " + hitsPerPage * 2);
+                fLogger.info("research with hitsPerPage: " + hitsPerPage * 2);
                 hitContainer = search(query, hitsPerPage * 2, currentPage, startHit, maxMilliseconds);
                 hits = hitContainer.getHits();
             }
@@ -221,36 +225,42 @@ public class Bus extends Thread implements IBus {
 		ResultSet resultSet = new ResultSet(allowEmptyResults,
 				plugsForQueryLength);
         PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
-
-        for (int i = 0; i < plugsForQueryLength; i++) {
-            PlugDescription plugDescription = plugsForQuery[i];
-            IPlug plugProxy = this.fRegistry.getPlugProxy(plugDescription.getPlugId());
-            if (plugProxy != null) {
-                requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
-                        query, start, requestLength);
-                requests[i].start();
-            }
+        Future<?>[] requestFutures = new Future[plugsForQueryLength];
+        
+        try {
+	        for (int i = 0; i < plugsForQueryLength; i++) {
+	            PlugDescription plugDescription = plugsForQuery[i];
+	            IPlug plugProxy = this.fRegistry.getPlugProxy(plugDescription.getPlugId());
+	            if (plugProxy != null) {
+	                requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
+	                        query, start, requestLength);
+	                requestFutures[i] = PooledThreadExecutor.getInstance().submit(requests[i]);
+	            }
+	        }
+	        if (plugsForQueryLength > 0) {
+	            try {
+	                synchronized (resultSet) {
+	                    if (!resultSet.isComplete()) {
+	                        resultSet.wait(maxMilliseconds);
+	                    }
+	                }
+	            } catch (InterruptedException e) {
+	                if (fLogger.isWarnEnabled()) {
+	                    fLogger.warn("waiting for results iterrupted");
+	                }
+	            }
+	        }
         }
-        if (plugsForQueryLength > 0) {
-            try {
-                synchronized (resultSet) {
-                    if (!resultSet.isComplete()) {
-                        resultSet.wait(maxMilliseconds);
-                    }
-                }
-            } catch (InterruptedException e) {
-                if (fLogger.isWarnEnabled()) {
-                    fLogger.warn("waiting for results iterrupted");
-                }
-            }
+        // make sure the threads are canceled after 
+        finally {
+	        for (int i = 0; i < plugsForQueryLength; i++) {
+	        	if (requestFutures[i] != null) {
+	        		requestFutures[i].cancel(true);
+	            }
+	            requests[i] = null; // for gc.
+	        }
+	        requests = null;
         }
-        for (int i = 0; i < plugsForQueryLength; i++) {
-            if (requests[i] != null) {
-                requests[i].interrupt();
-            }
-            requests[i] = null; // for gc.
-        }
-        requests = null;
 
         return resultSet;
     }

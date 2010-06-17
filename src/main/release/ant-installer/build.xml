@@ -1,0 +1,58 @@
+<project name="PortalU Installation">
+    <description>
+        iBus Installation Script
+    </description>
+	<!-- set global properties for this build -->
+	<property name="componentName" value="${project.artifactId}-${project.version}"/>
+	<property name="xml-communication" value="${installDir}/conf/communication.xml"/>
+	<property name="start-script" value="${installDir}/start.sh"/>
+	
+	<target name="extract" description="Extract all files to the installation directory.">
+		<unzip src="${antinstaller.jar}" dest="${installDir}">
+			<patternset>
+				<include name="${componentName}/**/*.*"/>
+			</patternset>
+		</unzip>
+		
+		<move toDir="${installDir}">
+			<fileset dir="${installDir}/${componentName}"/>
+		</move>
+	</target>
+	
+	<target name="ibus" description="Set configuration correctly for the iBus.">
+		<echo>Schreibe iBus Konfiguration in communication.xml</echo>
+		<xmlproperty file="${xml-communication}" prefix="plugXML"/>
+		<replace file="${xml-communication}" token="${plugXML.communication.server(name)}" 	value="${serverName}"/>
+		<replace file="${xml-communication}" token="${plugXML.communication.server.socket(port)}" 	value="${serverPort}"/>		
+	</target>
+
+	<target name="startscript" description="Set ibus properties in startscript.">
+		<echo>Schreibe Konfiguration in start.sh</echo>
+		<replace file="${start-script}" token="@ADMIN_PASSWORD@" value="${adminPasswort}"/>
+		<replace file="${start-script}" token="@ADMIN_PORT@" value="${adminPort}"/>
+		<replace file="${start-script}" token="@BUS_URL@" value="${serverName}"/>
+	</target>
+	
+	<target name="startComponent">
+		<echo>
+=================
+Weiteres Vorgehen
+=================
+
+		</echo>
+		<echo>
+Gehen Sie ins Verzeichnis:
+${installDir}
+und rufen sie von der Kommandozeile folgendes auf
+"sh start.sh start", um den iBus zu starten.
+
+Die iBus-Administration starten Sie im Webbrowser unter
+der folgenden Adresse "http://localhost:${adminPort}/admin".
+Anstelle von localhost koennen Sie auch die IP-Adresse
+des Computers eingeben!
+Authentifizieren Sie sich als 'admin' mit dem von Ihnen 
+vergebenen Passwort.
+		</echo>
+	</target>
+	
+</project>

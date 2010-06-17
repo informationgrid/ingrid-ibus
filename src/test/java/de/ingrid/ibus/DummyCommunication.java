@@ -75,4 +75,10 @@ public class DummyCommunication implements ICommunication {
         
     }
 
+    @Override
+    public boolean isConnected(String arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

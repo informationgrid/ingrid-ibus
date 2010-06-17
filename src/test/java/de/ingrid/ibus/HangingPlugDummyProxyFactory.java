@@ -64,20 +64,20 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
         }
 
         @Override
-        public String toString() {
-              if (!this.fInitQueryPassed) {
-                this.fInitQueryPassed = true;
-                return super.toString();
-            }
-            System.out.println("i will wait for ever");
-            try {
-                Thread.sleep(Integer.MAX_VALUE);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            return null;
-        }
+		public String toString() {
+        	  if (!this.fInitQueryPassed) {
+				this.fInitQueryPassed = true;
+				return super.toString();
+			}
+			System.out.println("i will wait for ever");
+			try {
+				Thread.sleep(Integer.MAX_VALUE);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
     }
 
 }

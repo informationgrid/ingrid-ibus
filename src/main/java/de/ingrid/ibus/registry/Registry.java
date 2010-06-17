@@ -19,6 +19,7 @@ import java.util.Properties;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.WetagURL;
+import net.weta.components.communication.util.PooledThreadExecutor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,21 +41,40 @@ public class Registry {
 
     private IPlugProxyFactory fProxyFactory;
 
-    private HashMap fPlugProxyByPlugId = new HashMap();
+    private HashMap<String, IPlug> fPlugProxyByPlugId = new HashMap<String, IPlug>();
 
-    private HashMap fPlugDescriptionByPlugId = new HashMap();
+    private HashMap<String, PlugDescription> fPlugDescriptionByPlugId = new HashMap<String, PlugDescription>();
 
     private boolean fIplugAutoActivation;
 
     private long fLifeTime;
 
-    private HashMap fGlobalRanking;
+    private HashMap<String, Float> fGlobalRanking;
 
     private String fBusUrl;
 
     private Properties fActivatedIplugs;
 
     private File fFile;
+    
+    private class RegistryIPlugTimeoutScanner extends Thread {
+    	
+		@Override
+		public void run() {
+			while (!this.isInterrupted()) {
+				try {
+					sleep(fLifeTime);
+					if (fLogger.isInfoEnabled()) {
+						fLogger.info("Check for timed out iPlugs.");
+					}
+					removeIPlugsWithTimeout();
+				} catch (InterruptedException e) {
+					fLogger.warn("Timeout iPlug scanner has been interrupted and shut down!");
+				}
+			}
+		}
+    }
+    
 
     /**
      * Creates a registry with a given lifetime for IPlugs, a given auto activation value for new IPlugs and a IPlug
@@ -87,6 +107,9 @@ public class Registry {
         this.fLifeTime = lifeTimeOfPlugs;
         this.fIplugAutoActivation = iplugAutoActivation;
         this.fProxyFactory = factory;
+        
+        // start iplug timeout scanner
+        PooledThreadExecutor.getInstance().execute(new RegistryIPlugTimeoutScanner());
     }
 
     /**
@@ -187,11 +210,11 @@ public class Registry {
 
         // establish connection
         try {
-            fLogger.info("establish connection [" + plugId + "] ...");
-            plugProxy.toString();
-            fLogger.info("... success [" + plugId + "]");
+        	fLogger.info("establish connection [" + plugId + "] ...");
+			plugProxy.toString();
+			fLogger.info("... success [" + plugId + "]");
         } catch (Exception e) {
-            fLogger.error("... fails [" + plugId + "]", e);
+        	fLogger.error("... fails [" + plugId + "]", e);
         }
     }
 
@@ -247,7 +270,7 @@ public class Registry {
      * @return All registered IPlugs without checking the time stamp.
      */
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
-        Collection plugDescriptions;
+        Collection<PlugDescription> plugDescriptions;
 
         synchronized (this.fPlugDescriptionByPlugId) {
             plugDescriptions = this.fPlugDescriptionByPlugId.values();
@@ -263,14 +286,29 @@ public class Registry {
      */
     public PlugDescription[] getAllIPlugs() {
         PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
-        List plugs = new ArrayList(plugDescriptions.length);
+        List<PlugDescription> plugs = new ArrayList<PlugDescription>(plugDescriptions.length);
         long now = System.currentTimeMillis();
         for (int i = 0; i < plugDescriptions.length; i++) {
             long plugLifeSign = plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime;
 			if (plugLifeSign > now) {
                 plugs.add(plugDescriptions[i]);
-            } else {
-                this.fLogger.warn("remove iplug '"
+            }
+        }
+        return (PlugDescription[]) plugs.toArray(new PlugDescription[plugs.size()]);
+    }
+    
+    /**
+     * Removes all iPlugs that have timed out. The timeout is derived from 
+     * the last life sign of the iPlug + a 120 sec timeout. 
+     * 
+     */
+    public void removeIPlugsWithTimeout() {
+        PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < plugDescriptions.length; i++) {
+            long plugLifeSign = plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime;
+			if (plugLifeSign <= now) {
+                fLogger.warn("remove iplug '"
 						+ plugDescriptions[i].getPlugId()
 						+ "' because last life sign is too old ("
 						+ new Date(plugLifeSign) + " < " + new Date(now) + ")");
@@ -278,8 +316,8 @@ public class Registry {
                 closeConnectionToIplug(plugDescriptions[i]);
             }
         }
-        return (PlugDescription[]) plugs.toArray(new PlugDescription[plugs.size()]);
     }
+    
 
     /**
      * Returns a IPlug proxy to a given IPlug id.
@@ -382,7 +420,7 @@ public class Registry {
      * @param globalRanking
      *            A HashMap containing a boost factor to a IPlug id.
      */
-    public void setGlobalRanking(HashMap globalRanking) {
+    public void setGlobalRanking(HashMap<String, Float> globalRanking) {
         this.fGlobalRanking = globalRanking;
     }
 

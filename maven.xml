@@ -14,12 +14,12 @@
 		<attainGoal name="java:compile" />
 		<echo message="add the start scripts and webapp to the jar" />
 		<copy toDir="${maven.build.dir}/classes/scripts">
-			<fileset dir="./src/scripts">
+			<fileset dir="./src/main/release/scripts">
 				<include name="*"></include>
 			</fileset>
 		</copy>
         <copy toDir="${maven.build.dir}/classes/webapp">
-			<fileset dir="./src/webapp">
+			<fileset dir="./src/main/release/webapp">
 				<include name="**/*"></include>
 			</fileset>
 		</copy>

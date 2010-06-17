@@ -35,6 +35,10 @@ public class BusTest extends TestCase {
 
     private PlugDescription[] plugDescriptions = new PlugDescription[30];
 
+    public BusTest() throws Exception {
+        setUp();
+    }
+    
     protected void setUp() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
         Registry registry = this.bus.getIPlugRegistry();

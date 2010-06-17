@@ -22,7 +22,7 @@ import de.ingrid.utils.query.IngridQuery;
 /**
  * A thread for one query to one IPlug. Created on 24.10.2005
  */
-public class PlugQueryRequest extends Thread {
+public class PlugQueryRequest implements Runnable {
 
     private final static Log fLog = LogFactory.getLog(PlugQueryRequest.class);
 
@@ -99,7 +99,7 @@ public class PlugQueryRequest extends Thread {
                 fLog
                         .warn("IPlug: "
                                 + this.fPlugId
-                                + " sent timeout. Set the timeout for the search lower than the communication timeout for the IPlug or vice versa.");
+                                + " sent timeout. Set the timeout for the search lower than the communication timeout for the IPlug or vice versa. TimeoutException: " + e.getMessage());
             }
         } catch (InterruptedException e) {
             if (fLog.isErrorEnabled()) {
