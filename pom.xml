@@ -139,7 +139,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-4</version>
         <!-- Add Type of Component to Manifest of Installer for Upgrade Server -->
         <configuration>
             <archive>
