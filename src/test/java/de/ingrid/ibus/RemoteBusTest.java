@@ -51,4 +51,99 @@ public class RemoteBusTest extends TestCase {
         IngridHits hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
         assertNotNull(hits);
     }
+
+
+    public void testRestartServer() throws Throwable {
+        
+        String iBusUrl = "/101tec-group:ibus";
+        
+        TcpCommunication com = new TcpCommunication();
+        ServerConfiguration serverConfiguration = new ServerConfiguration();
+		serverConfiguration.setPort(9192);
+		com.configure(serverConfiguration);
+        com.setPeerName(iBusUrl);
+        com.startup();
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
+
+        TcpCommunication com2 = new TcpCommunication();
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+		clientConfiguration.setName("/101tec-group:iplug");
+		ClientConnection clientConnection = clientConfiguration.new ClientConnection();
+		clientConnection.setServerIp("127.0.0.1");
+		clientConnection.setServerPort(9192);
+		clientConnection.setServerName("/101tec-group:ibus");
+		clientConfiguration.addClientConnection(clientConnection);
+		com2.configure(clientConfiguration);
+        com2.startup();
+        
+        IBus bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);
+        IngridHits hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
+        assertNotNull(hits);
+        
+        System.out.println("Shuting down iBus...");
+        com.shutdown();
+        System.out.println("Shuting down iBus...done.");
+        
+        Thread.sleep(5000);
+        
+        System.out.println("Restart iBus...");
+        com = new TcpCommunication();
+		com.configure(serverConfiguration);
+        com.setPeerName(iBusUrl);
+        com.startup();
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
+        System.out.println("Restart iBus... done.");
+        
+        hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
+        assertNotNull(hits);
+    }
+
+    
+    public void testRestartClient() throws Throwable {
+        
+        String iBusUrl = "/101tec-group:ibus";
+        
+        TcpCommunication com = new TcpCommunication();
+        ServerConfiguration serverConfiguration = new ServerConfiguration();
+		serverConfiguration.setPort(9193);
+		com.configure(serverConfiguration);
+        com.setPeerName(iBusUrl);
+        com.startup();
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
+
+        TcpCommunication com2 = new TcpCommunication();
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+		clientConfiguration.setName("/101tec-group:iplug");
+		ClientConnection clientConnection = clientConfiguration.new ClientConnection();
+		clientConnection.setServerIp("127.0.0.1");
+		clientConnection.setServerPort(9193);
+		clientConnection.setServerName("/101tec-group:ibus");
+		clientConfiguration.addClientConnection(clientConnection);
+		com2.configure(clientConfiguration);
+        com2.startup();
+        
+        IBus bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);
+        IngridHits hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
+        assertNotNull(hits);
+        
+        System.out.println("Shuting down client...");
+        bus.close();
+        com2.shutdown();
+        System.out.println("Shuting down client...done.");
+        
+        Thread.sleep(5000);
+        
+        System.out.println("Restart client...");
+        com2 = new TcpCommunication();
+		com2.configure(clientConfiguration);
+        com2.startup();
+        bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);
+        System.out.println("Restart client... done.");
+        
+        hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
+        assertNotNull(hits);
+
+        
+    }    
+
 }
