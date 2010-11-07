@@ -40,6 +40,16 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
     public static final String UDK_METACLASS_DATABASE = "5";
 
     /**
+     * Name of the metaclass geo service value that should be substituted.
+     */
+    public static final String PORTAL_METACLASS_GEOSERVICE = "geoservice";
+
+    /**
+     * Substitution for metaclass geo service value.
+     */
+    public static final String UDK_METACLASS_GEOSERVICE = "3";
+
+    /**
      * Name of the metaclass service value that should be substituted.
      */
     public static final String PORTAL_METACLASS_SERVICE = "service";
@@ -47,8 +57,8 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
     /**
      * Substitution for metaclass service value.
      */
-    public static final String UDK_METACLASS_SERVICE = "3";
-
+    public static final String UDK_METACLASS_SERVICE = "6";
+    
     /**
      * Name of the metaclass document value that should be substituted.
      */
@@ -104,8 +114,10 @@ public class UdkMetaclassPreProcessor implements IPreProcessor {
     private String getDbValue(String fieldValue) {
         if (fieldValue.equalsIgnoreCase(PORTAL_METACLASS_DATABASE)) {
             return UDK_METACLASS_DATABASE;
+        } else if (fieldValue.equalsIgnoreCase(PORTAL_METACLASS_GEOSERVICE)) {
+            return UDK_METACLASS_GEOSERVICE;
         } else if (fieldValue.equalsIgnoreCase(PORTAL_METACLASS_SERVICE)) {
-            return UDK_METACLASS_SERVICE;
+          return UDK_METACLASS_SERVICE;
         } else if (fieldValue.equalsIgnoreCase(PORTAL_METACLASS_DOCUMENT)) {
             return UDK_METACLASS_DOCUMENT;
         } else if (fieldValue.equalsIgnoreCase(PORTAL_METACLASS_MAP)) {
