@@ -5,7 +5,7 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="1.4.0-SNAPSHOT" date="2010-xx-xx" description="Release">
+    <release version="2.3.0-SNAPSHOT" date="2010-12-20" description="Release">
       <action type="update">
         Add mapping of new UDK class 6 (Splitting of "Service" into "Geodata Service" and other services)  
       </action>
