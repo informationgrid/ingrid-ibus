@@ -5,6 +5,11 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="2.3.1" date="2011-01-xx" description="Release">
+      <action type="fix">
+        Fix filtering iPlugs by partner: if only negative filter were defined in the query, no iPlug other than SE iPlugs were included in the query.  
+      </action>
+    </release>
     <release version="2.3.0" date="2010-12-20" description="Release">
       <action type="update">
         Add mapping of new UDK class 6 (Splitting of "Service" into "Geodata Service" and other services)  

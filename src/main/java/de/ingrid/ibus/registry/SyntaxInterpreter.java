@@ -11,11 +11,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.ClauseQuery;
 import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
-import org.apache.log4j.Logger;
 
 /**
  * Supports you with static methods to extract various informations out of a query.
@@ -231,6 +232,9 @@ public class SyntaxInterpreter {
             
             String[] partners = plugDescription.getPartners();
             boolean toRemove = true;
+            if (allowedPartner.length == 0) {
+                toRemove = false;
+            }
             for (int i = 0; i < partners.length; i++) {
                 if (containsString(notAllowedPartner, partners[i])) {
                     toRemove = true;

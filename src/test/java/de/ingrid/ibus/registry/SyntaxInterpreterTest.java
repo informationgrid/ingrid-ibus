@@ -90,6 +90,8 @@ public class SyntaxInterpreterTest extends TestCase {
         assertEquals(2, getIPlugs("query datatype:UDK").length);
         assertEquals(1, getIPlugs("query datatype:UDK partner:bund").length);
         assertEquals(1, getIPlugs("query datatype:UDK partner:he").length);
+        assertEquals(1, getIPlugs("query datatype:UDK -partner:he").length);
+        assertEquals(0, getIPlugs("query datatype:UDK -partner:he -partner:bund").length);
     }
 
     /**
