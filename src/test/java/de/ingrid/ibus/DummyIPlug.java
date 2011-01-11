@@ -31,6 +31,8 @@ public class DummyIPlug implements IPlug {
     private PlugDescription fPlugDescription;
     
     private Random _random = new Random(System.currentTimeMillis());
+    
+    private float[] useScores = null;
 
     /**
      * 
@@ -43,7 +45,12 @@ public class DummyIPlug implements IPlug {
      * @param plugId
      */
     public DummyIPlug(String plugId) {
-	this.fMyPlugId = plugId;
+        this.fMyPlugId = plugId;
+    }
+    
+    public DummyIPlug(String plugId, float[] scores) {
+        this.fMyPlugId = plugId;
+        this.useScores = scores;
     }
 
     public IngridHits search(IngridQuery query, int start, int lenght) {
@@ -59,7 +66,18 @@ public class DummyIPlug implements IPlug {
 	    hit[1] = new IngridHit(this.fMyPlugId, 23, 23, _random.nextInt());
 	    hit[1].setGroupTotalHitLength(2);
 	}
+	
+	if (this.useScores != null)
+	    addScores(hit);
+	
 	return new IngridHits(this.fMyPlugId, hit.length, hit, true);
+    }
+
+    private void addScores(IngridHit[] hit) {
+        int loopSize = useScores.length <= hit.length ? useScores.length : hit.length;
+        for (int i=0; i < loopSize; i++) {
+            hit[i].setScore(useScores[i]);
+        }
     }
 
     public void configure(PlugDescription arg0) throws Exception {

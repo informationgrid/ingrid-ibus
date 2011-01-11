@@ -339,17 +339,17 @@ public class Bus extends Thread implements IBus {
         return Integer.MAX_VALUE;
     }
 
-    private IngridHits normalizeScores(ArrayList resultSet) {
+    private IngridHits normalizeScores(List<IngridHits> resultSet) {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("normalize the results");
         }
 
-        float maxScore = 1.0f;
         int totalHits = 0;
         int count = resultSet.size();
-        List documents = new LinkedList();
+        List<IngridHit> documents = new LinkedList<IngridHit>();
         for (int i = 0; i < count; i++) {
-            IngridHits hitContainer = (IngridHits) resultSet.get(i);
+            float maxScore = 1.0f;
+            IngridHits hitContainer = resultSet.get(i);
             totalHits += hitContainer.length();
             if (hitContainer.getHits().length > 0) {
                 Float boost = this.fRegistry.getGlobalRankingBoost(hitContainer.getPlugId());
@@ -364,9 +364,11 @@ public class Bus extends Thread implements IBus {
                         hitContainer.getHits()[j].setScore(score);
                     }
                 }
-
+                
+                // normalize scores of the results of this iPlug
+                // so maxScore will never get bigger than 1 now!
                 if (maxScore < resultHits[0].getScore()) {
-                    maxScore = resultHits[0].getScore();
+                    normalizeHits(hitContainer, resultHits[0].getScore());
                 }
             }
 
@@ -376,31 +378,27 @@ public class Bus extends Thread implements IBus {
             }
         }
 
-        IngridHits result = new IngridHits(totalHits, sortLimitNormalize((IngridHit[]) documents
-                .toArray(new IngridHit[documents.size()]), maxScore));
+        IngridHits result = new IngridHits(totalHits, 
+                sortHits((IngridHit[]) documents.toArray(new IngridHit[documents.size()])));
 
         documents.clear();
         documents = null;
 
         return result;
     }
-
-    private IngridHit[] sortLimitNormalize(IngridHit[] documents, float maxScore) {
-        // first normalize
-        float scoreNorm = 1.0f / maxScore;
-        int count = documents.length;
-        for (int i = 0; i < count; i++) {
-            if (fLogger.isDebugEnabled()) {
-                fLogger.debug("documentScore: " + documents[i].getPlugId() + " -> " + documents[i].getScore() +
-                        " scoreNorm: " + scoreNorm + " = " + documents[i].getScore() * scoreNorm);
-            }
-            documents[i].setScore(documents[i].getScore() * scoreNorm);
+    
+    private void normalizeHits(IngridHits hits, float maxScore) {
+        // normalize Score
+        for (IngridHit hit : hits.getHits()) {
+            hit.setScore(hit.getScore()/maxScore);
         }
+    }
 
+    private IngridHit[] sortHits(IngridHit[] documents) {
         Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
         return documents;
     }
-
+    
     private IngridHit[] cutFirstHits(IngridHit[] hits, int startHit) {
         int newLength = hits.length - startHit;
         if (hits.length <= newLength) {

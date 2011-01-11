@@ -38,9 +38,9 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         this.fBusComm = new TcpCommunication();
         ServerConfiguration serverConfiguration = new ServerConfiguration();
 		serverConfiguration.setPort(9191);
-		serverConfiguration.setName("/101tec-group:ibus");
+		serverConfiguration.setName("/101tec-group:ibus1");
 		this.fBusComm.configure(serverConfiguration);
-        this.fBusComm.setPeerName("/101tec-group:ibus");
+        this.fBusComm.setPeerName("/101tec-group:ibus1");
         this.fBusComm.startup();
 
         this.fBus = new Bus(new IPlugProxyFactoryImpl(this.fBusComm));
@@ -51,7 +51,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
 			ClientConnection clientConnection = clientConfiguration.new ClientConnection();
 			clientConnection.setServerIp("127.0.0.1");
 			clientConnection.setServerPort(9191);
-			clientConnection.setServerName("/101tec-group:ibus");
+			clientConnection.setServerName("/101tec-group:ibus1");
 			clientConfiguration.addClientConnection(clientConnection);
 			this.fPlugComms[i].configure(clientConfiguration);
             this.fPlugComms[i].setPeerName("/101tec-group:iplug" + i);
@@ -76,6 +76,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
             this.fPlugComms[i].shutdown();
         }
         this.fBusComm.shutdown();
+        this.fBus.close();
     }
 
     /**

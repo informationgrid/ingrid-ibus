@@ -28,11 +28,8 @@ import junit.framework.TestCase;
  */
 public class ScoreNormalizingTest extends TestCase {
 
-    /**
-     * @throws Exception
-     */
-    public void testScore() throws Exception {
-        Bus bus = new Bus(new DummyProxyFactory());
+    private Bus setUp(float[][] scores) {
+        Bus bus = new Bus(new DummyProxyFactory(scores));
         Registry registry = bus.getIPlugRegistry();
         registry.setCommunication(new DummyCommunication());
 
@@ -40,24 +37,75 @@ public class ScoreNormalizingTest extends TestCase {
         plugDescriptions0.setProxyServiceURL("/:1");
         plugDescriptions0.setOrganisation("friedens ministerium");
         registry.addPlugDescription(plugDescriptions0);
+        registry.activatePlug("/:1");
 
         PlugDescription plugDescriptions1 = new PlugDescription();
         plugDescriptions1.setProxyServiceURL("/:2");
         plugDescriptions1.setOrganisation("liebes ministerium"); // 1984
         registry.addPlugDescription(plugDescriptions1);
+        registry.activatePlug("/:2");
 
-        HashMap globalRanking = new HashMap();
+        HashMap<String, Float> globalRanking = new HashMap<String, Float>();
         globalRanking.put("2", new Float(0.1111));
         globalRanking.put("1", new Float(0.111));
         registry.setGlobalRanking(globalRanking);
-
-        IngridQuery query = QueryStringParser.parse("a Query rankin:score");
+        return bus;
+    }
+    
+    /**
+     * @throws Exception
+     */
+    public void testScore() throws Exception {
+        System.out.println("testScore");
+        // scores have to be sorted in descending order (like from a real iPlug)
+        float[][] scores = {{2.5f, 0.5f},{0.5f, 0.31f}};
+        float[] expectedScores = {1.0f, 0.5f, 0.31f, 0.2f};
+        
+        Bus bus = setUp(scores);
+        
+        IngridQuery query = QueryStringParser.parse("a Query ranking:score");
         IngridHits hits = bus.search(query, 10, 0, 100, 1000);
         IngridHit[] hitsArray = hits.getHits();
         for (int i = 0; i < hitsArray.length; i++) {
             IngridHit hit = hitsArray[i];
-            System.out.println("plugid:" + hit.getPlugId());
-            assertTrue(hit.getScore() <= 1.0f);
+            System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
+            assertTrue(hit.getScore() == expectedScores[i]);
+        }
+    }
+    
+    public void testScoreAllBelowOne() throws Exception {
+        System.out.println("testScoreAllBelowOne");
+        // scores have to be sorted in descending order (like from a real iPlug)
+        float[][] scores = {{0.8f, 0.5f},{0.9f, 0.61f}};
+        float[] expectedScores = {0.9f, 0.8f, 0.61f, 0.5f};
+        
+        Bus bus = setUp(scores);
+        
+        IngridQuery query = QueryStringParser.parse("a Query ranking:score");
+        IngridHits hits = bus.search(query, 10, 0, 100, 1000);
+        IngridHit[] hitsArray = hits.getHits();
+        for (int i = 0; i < hitsArray.length; i++) {
+            IngridHit hit = hitsArray[i];
+            System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
+            assertTrue(hit.getScore() == expectedScores[i]);
+        }
+    }
+    
+    public void testScoreAllAboveOne() throws Exception {
+        System.out.println("testScoreAllAboveOne");
+        // scores have to be sorted in descending order (like from a real iPlug)
+        float[][] scores = {{2.0f, 1.5f},{1.25f, 1.1f}};
+        float[] expectedScores = {1.0f, 1.0f, 0.88f, 0.75f};
+        
+        Bus bus = setUp(scores);
+        
+        IngridQuery query = QueryStringParser.parse("a Query ranking:score");
+        IngridHits hits = bus.search(query, 10, 0, 100, 1000);
+        IngridHit[] hitsArray = hits.getHits();
+        for (int i = 0; i < hitsArray.length; i++) {
+            IngridHit hit = hitsArray[i];
+            System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
+            assertTrue(hit.getScore() == expectedScores[i]);
         }
     }
 }

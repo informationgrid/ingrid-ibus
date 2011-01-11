@@ -25,7 +25,6 @@ public class RemoteBusTest extends TestCase {
      * @throws Throwable
      */
     public void testSearch() throws Throwable {
-        
         String iBusUrl = "/101tec-group:ibus";
         
         TcpCommunication com = new TcpCommunication();
@@ -76,6 +75,8 @@ public class RemoteBusTest extends TestCase {
 		com2.configure(clientConfiguration);
         com2.startup();
         
+        Thread.sleep(5000);
+        
         IBus bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);
         IngridHits hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
         assertNotNull(hits);
@@ -109,8 +110,10 @@ public class RemoteBusTest extends TestCase {
 		com.configure(serverConfiguration);
         com.setPeerName(iBusUrl);
         com.startup();
+        
+        Thread.sleep(5000);
+        
         ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
-
         TcpCommunication com2 = new TcpCommunication();
         ClientConfiguration clientConfiguration = new ClientConfiguration();
 		clientConfiguration.setName("/101tec-group:iplug");
