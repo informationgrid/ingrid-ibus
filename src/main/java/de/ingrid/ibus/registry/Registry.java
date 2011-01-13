@@ -274,9 +274,9 @@ public class Registry {
 
         synchronized (this.fPlugDescriptionByPlugId) {
             plugDescriptions = this.fPlugDescriptionByPlugId.values();
+            PlugDescription[] plugArray = plugDescriptions.toArray(new PlugDescription[plugDescriptions.size()]);
+            return plugArray;
         }
-
-        return (PlugDescription[]) plugDescriptions.toArray(new PlugDescription[plugDescriptions.size()]);
     }
 
     /**
