@@ -5,16 +5,21 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="2.3.1" date="2011-01-xx" description="Release">
+    <release version="2.3.1-SNAPSHOT" date="2011-01-xx" description="Release">
+      <action type="fix">
+        Modified normalization: The results of each iPlug are normalized, if there is a score greater than '1' within these results
+      </action>
       <action type="fix">
         Fix filtering iPlugs by partner: if only negative filter were defined in the query, no iPlug other than SE iPlugs were included in the query.  
       </action>
     </release>
+
     <release version="2.3.0" date="2010-12-20" description="Release">
       <action type="update">
         Add mapping of new UDK class 6 (Splitting of "Service" into "Geodata Service" and other services)  
       </action>
     </release>
+
     <release version="1.3.0" date="2010-07-07" description="Optimierung Release">
       <action type="update">
         Optimierung Erkennungsmechanismus iPlugs (timed out iPlug scanner)  
