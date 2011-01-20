@@ -138,4 +138,25 @@ public class ScoreNormalizingTest extends TestCase {
             assertTrue(hitsArray2[i].getScore() == expectedScores2[i]);
         }
     }
+    
+    public void testScoreOneIPlugOnly() throws Exception {
+        float[][] scores = {
+                {6.0f, 4.5f, 3.75f, 3.0f, 1.5f, 0.75f, 0.5f, 0.4f, 0.3f},
+                {5.0f, 0.8f, 0.7f, 0.5f, 0.45f, 0.4f, 0.3f, 0.2f, 0.1f}
+        };
+        float[] expectedScores1 = {6.0f, 4.5f, 3.75f, 3.0f, 1.5f, 0.75f, 0.5f, 0.4f, 0.3f};
+        
+        Bus bus = setUp(scores);
+        bus.getIPlugRegistry().removePlug("/:2");
+        
+        IngridQuery query = QueryStringParser.parse("a Query ranking:score");
+        
+        IngridHits hits = bus.search(query, 5, 1, 0, 1000);
+        IngridHit[] hitsArray = hits.getHits();
+        
+        for (int i = 0; i < hitsArray.length; i++) {
+            System.out.println("plugid:" + hitsArray[i].getPlugId() + " score: " + hitsArray[i].getScore());
+            assertTrue(hitsArray[i].getScore() == expectedScores1[i]);
+        }
+    }
 }

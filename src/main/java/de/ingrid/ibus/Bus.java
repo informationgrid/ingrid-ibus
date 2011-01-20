@@ -145,7 +145,11 @@ public class Bus extends Thread implements IBus {
             if (fLogger.isDebugEnabled()) {
                 logDebug("(search) normalize starts: " + query.hashCode());
             }
-            hitContainer = normalizeScores(resultSet);
+            // normalize only if there were more than one iplugs queried
+            // if we only query one, than it doesn't matter how high the score is
+            // since we don't need to merge the results with other ones
+            hitContainer = normalizeScores(resultSet, oneIPlugOnly ? true : false);
+            
             if (fLogger.isDebugEnabled()) {
                 logDebug("(search) normalize ends: " + query.hashCode());
             }
@@ -339,7 +343,7 @@ public class Bus extends Thread implements IBus {
         return Integer.MAX_VALUE;
     }
 
-    private IngridHits normalizeScores(List<IngridHits> resultSet) {
+    private IngridHits normalizeScores(List<IngridHits> resultSet, boolean skipNormalization) {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("normalize the results");
         }
@@ -367,7 +371,7 @@ public class Bus extends Thread implements IBus {
                 
                 // normalize scores of the results of this iPlug
                 // so maxScore will never get bigger than 1 now!
-                if (maxScore < resultHits[0].getScore()) {
+                if (!skipNormalization && maxScore < resultHits[0].getScore()) {
                     normalizeHits(hitContainer, resultHits[0].getScore());
                 }
             }
