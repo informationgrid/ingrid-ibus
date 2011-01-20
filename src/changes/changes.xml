@@ -5,7 +5,7 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="2.3.1-SNAPSHOT" date="2011-01-xx" description="Release">
+    <release version="2.3.1" date="2011-01-20" description="Release">
       <action type="fix">
         Modified normalization: The results of each iPlug are normalized, if there is a score greater than '1' within these results
       </action>
