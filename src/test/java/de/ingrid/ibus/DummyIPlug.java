@@ -60,11 +60,18 @@ public class DummyIPlug implements IPlug {
 	    hit[0] = new IngridHit(this.fMyPlugId, 23, 23, 23f);
 	    hit[0].setGroupTotalHitLength(2);
 	} else {
-	    hit = new IngridHit[2];
-	    hit[0] = new IngridHit(this.fMyPlugId, 23, 23, _random.nextInt());
-	    hit[0].setGroupTotalHitLength(2);
-	    hit[1] = new IngridHit(this.fMyPlugId, 23, 23, _random.nextInt());
-	    hit[1].setGroupTotalHitLength(2);
+	    if (this.useScores != null) {
+	        hit = new IngridHit[this.useScores.length];
+	        for (int i=0; i<this.useScores.length; i++) {
+	            hit[i] = new IngridHit(this.fMyPlugId, 23, 23, _random.nextInt());
+	        }
+	    } else {
+    	    hit = new IngridHit[2];
+    	    hit[0] = new IngridHit(this.fMyPlugId, 23, 23, _random.nextInt());
+    	    hit[0].setGroupTotalHitLength(2);
+    	    hit[1] = new IngridHit(this.fMyPlugId, 23, 23, _random.nextInt());
+    	    hit[1].setGroupTotalHitLength(2);
+	    }
 	}
 	
 	if (this.useScores != null)

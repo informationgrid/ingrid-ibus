@@ -45,13 +45,13 @@ public class ScoreNormalizingTest extends TestCase {
         registry.addPlugDescription(plugDescriptions1);
         registry.activatePlug("/:2");
 
-        HashMap<String, Float> globalRanking = new HashMap<String, Float>();
-        globalRanking.put("2", new Float(0.1111));
-        globalRanking.put("1", new Float(0.111));
-        registry.setGlobalRanking(globalRanking);
+//        HashMap<String, Float> globalRanking = new HashMap<String, Float>();
+//        globalRanking.put("/:2", new Float(0.1111));
+//        globalRanking.put("/:1", new Float(0.111));
+//        registry.setGlobalRanking(globalRanking);
         return bus;
     }
-    
+  
     /**
      * @throws Exception
      */
@@ -106,6 +106,36 @@ public class ScoreNormalizingTest extends TestCase {
             IngridHit hit = hitsArray[i];
             System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
             assertTrue(hit.getScore() == expectedScores[i]);
+        }
+    }
+   
+    public void testScorePaging() throws Exception {
+        System.out.println("testScoreMoreResultsAvailable");
+        // scores have to be sorted in descending order (like from a real iPlug)
+        float[][] scores = {
+                {6.0f, 4.5f, 3.75f, 3.0f, 1.5f, 0.75f, 0.5f, 0.4f, 0.3f},
+                {5.0f, 0.8f, 0.7f, 0.5f, 0.45f, 0.4f, 0.3f, 0.2f, 0.1f}
+        };
+        float[] expectedScores1 = {1.0f, 1.0f, 0.75f, 0.625f, 0.5f};
+        float[] expectedScores2 = {0.25f, 0.16f, 0.14f, 0.125f, 0.1f};
+        
+        Bus bus = setUp(scores);
+        
+        IngridQuery query = QueryStringParser.parse("a Query ranking:score");
+        
+        IngridHits hits = bus.search(query, 5, 1, 0, 1000);
+        IngridHit[] hitsArray = hits.getHits();
+        
+        IngridHits hits2 = bus.search(query, 5, 2, 0, 1000);
+        IngridHit[] hitsArray2 = hits2.getHits();
+        
+        for (int i = 0; i < hitsArray.length; i++) {
+            System.out.println("plugid:" + hitsArray[i].getPlugId() + " score: " + hitsArray[i].getScore());
+            assertTrue(hitsArray[i].getScore() == expectedScores1[i]);
+        }
+        for (int i = 0; i < hitsArray2.length; i++) {
+            System.out.println("plugid:" + hitsArray2[i].getPlugId() + " score: " + hitsArray2[i].getScore());
+            assertTrue(hitsArray2[i].getScore() == expectedScores2[i]);
         }
     }
 }

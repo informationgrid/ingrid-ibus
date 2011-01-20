@@ -361,7 +361,7 @@ public class Bus extends Thread implements IBus {
                             score = resultHits[j].getScore();
                             score = score * boost.floatValue();
                         }
-                        hitContainer.getHits()[j].setScore(score);
+                        resultHits[j].setScore(score);
                     }
                 }
                 
