@@ -75,9 +75,12 @@ public class RemoteBusTest extends TestCase {
 		com2.configure(clientConfiguration);
         com2.startup();
         
-        Thread.sleep(5000);
+        Thread.sleep(3000);
         
         IBus bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);
+
+        Thread.sleep(1000);
+        
         IngridHits hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
         assertNotNull(hits);
         
@@ -85,7 +88,7 @@ public class RemoteBusTest extends TestCase {
         com.shutdown();
         System.out.println("Shuting down iBus...done.");
         
-        Thread.sleep(5000);
+        Thread.sleep(3000);
         
         System.out.println("Restart iBus...");
         com = new TcpCommunication();
@@ -95,6 +98,8 @@ public class RemoteBusTest extends TestCase {
         ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
         System.out.println("Restart iBus... done.");
         
+        Thread.sleep(1000);
+
         hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
         assertNotNull(hits);
     }
@@ -111,7 +116,7 @@ public class RemoteBusTest extends TestCase {
         com.setPeerName(iBusUrl);
         com.startup();
         
-        Thread.sleep(5000);
+        Thread.sleep(3000);
         
         ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
         TcpCommunication com2 = new TcpCommunication();
@@ -126,6 +131,9 @@ public class RemoteBusTest extends TestCase {
         com2.startup();
         
         IBus bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);
+
+        Thread.sleep(1000);
+        
         IngridHits hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
         assertNotNull(hits);
         
@@ -134,7 +142,7 @@ public class RemoteBusTest extends TestCase {
         com2.shutdown();
         System.out.println("Shuting down client...done.");
         
-        Thread.sleep(5000);
+        Thread.sleep(3000);
         
         System.out.println("Restart client...");
         com2 = new TcpCommunication();
@@ -142,6 +150,8 @@ public class RemoteBusTest extends TestCase {
         com2.startup();
         bus = (IBus) ProxyService.createProxy(com2, IBus.class, iBusUrl);
         System.out.println("Restart client... done.");
+
+        Thread.sleep(1000);
         
         hits = bus.search(QueryStringParser.parse("fische"), 10, 0, 10, 1000);
         assertNotNull(hits);
