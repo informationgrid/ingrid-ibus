@@ -16,6 +16,8 @@
   </scm>
 
   <!-- DEPENDENCY MANAGEMENT FOR USING OLDER RELEASE VERSIONS (needed for assembly). COMMENT IF USING VERSIONS FROM PARENT -->
+	<!-- the iPlug DSC is needed for PlugDescriptions that can contain class-tags from a DSC-class (Construct!). This should be put 
+			 into IngridUtils actually!!! -->
   <dependencyManagement>
     <dependencies>
       <dependency>
