@@ -434,6 +434,10 @@ public class Bus extends Thread implements IBus {
     }
 
     public Record getRecord(IngridHit hit) throws Exception {
+        if (fLogger.isDebugEnabled()) {
+            fLogger.debug("get record for: " + hit.getId() + " from iPlug : " + hit.getPlugId() + " started");
+        }
+
         PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(hit.getPlugId());
         IPlug plugProxy = this.fRegistry.getPlugProxy(hit.getPlugId());
         if (plugProxy == null) {
