@@ -5,6 +5,12 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="3.0.1-SNAPSHOT" date="2011-?-?" description="Release InGrid 3.0.1">
+      <action type="update" issue="INGRID-1940">
+        Introduced new field "metainfo" in query for various control info to be handled by iBus / iPlugs. 
+      </action>
+    </release>
+
     <release version="3.0.0" date="2011-05-05" description="Release InGrid 3.0">
       <action type="update">
 		Use most current dependencies (jars), NO FUNCTIONAL CHANGES !

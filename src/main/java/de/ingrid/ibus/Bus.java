@@ -39,6 +39,8 @@ import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
+import de.ingrid.utils.tool.PlugDescriptionUtil;
+import de.ingrid.utils.tool.QueryUtil;
 
 /**
  * The IBus a centralized Bus that routes queries and return results. Created on 09.08.2005
@@ -230,12 +232,36 @@ public class Bus extends Thread implements IBus {
 				plugsForQueryLength);
         PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
         Future<?>[] requestFutures = new Future[plugsForQueryLength];
-        
+
+        // check whether query contains "metainfo"
+        boolean queryHasMetainfo = query.containsField(QueryUtil.FIELDNAME_METAINFO);
+
+        // orig query and cloned query (if necessary)
+        IngridQuery origQuery = query;
+        IngridQuery clonedQuery = null;
+
         try {
 	        for (int i = 0; i < plugsForQueryLength; i++) {
 	            PlugDescription plugDescription = plugsForQuery[i];
 	            IPlug plugProxy = this.fRegistry.getPlugProxy(plugDescription.getPlugId());
 	            if (plugProxy != null) {
+
+	            	// check whether iplug can process "metainfo" and manipulate query accordingly.
+	            	if (queryHasMetainfo) {
+	                    if (!PlugDescriptionUtil.hasField(plugDescription, QueryUtil.FIELDNAME_METAINFO)) {
+	                    	// iplug cannot process "metainfo". Remove "metainfo" from query.
+	                    	// We have to do deep copy and remove to avoid conflicts (asynchronous call to iplugs !)
+	                    	if (clonedQuery == null) {
+	                    		clonedQuery = QueryUtil.deepCopy(query);
+	                    		QueryUtil.removeFieldFromQuery(clonedQuery, QueryUtil.FIELDNAME_METAINFO);
+	                    	}
+	                    	query = clonedQuery;
+	                    } else {
+	                    	// iplug can process "metainfo". Use original query
+	                    	query = origQuery;
+	                    }
+	            	}
+
 	                requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet,
 	                        query, start, requestLength);
 	                requestFutures[i] = PooledThreadExecutor.getInstance().submit(requests[i]);

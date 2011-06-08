@@ -14,9 +14,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import de.ingrid.utils.PlugDescription;
-import de.ingrid.utils.query.ClauseQuery;
-import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
+import de.ingrid.utils.tool.QueryUtil;
+import de.ingrid.utils.tool.StringUtil;
 
 /**
  * Supports you with static methods to extract various informations out of a query.
@@ -35,7 +35,7 @@ public class SyntaxInterpreter {
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
         PlugDescription[] plugs = registry.getAllIPlugs();
-        List plugList = new ArrayList(plugs.length);
+        List<PlugDescription> plugList = new ArrayList<PlugDescription>(plugs.length);
         if(LOG.isDebugEnabled()) {
             LOG.debug("plugs before filtering");
         }
@@ -67,9 +67,9 @@ public class SyntaxInterpreter {
         return filteredPlugs;
     }
 
-    private static void filterActivatedIplugs(long ms, List plugDescriptions) {
-        for (Iterator iter = plugDescriptions.iterator(); iter.hasNext();) {
-            PlugDescription element = (PlugDescription) iter.next();
+    private static void filterActivatedIplugs(long ms, List<PlugDescription> plugDescriptions) {
+        for (Iterator<PlugDescription> iter = plugDescriptions.iterator(); iter.hasNext();) {
+            PlugDescription element = iter.next();
             if (!element.isActivate()) {
                 if(LOG.isDebugEnabled()) {
                   LOG.debug(ms+ " remove iplug: " + element.getProxyServiceURL());
@@ -79,7 +79,7 @@ public class SyntaxInterpreter {
         }
     }
 
-    private static void filterForRanking(long ms, IngridQuery ingridQuery, List descriptions) {
+    private static void filterForRanking(long ms, IngridQuery ingridQuery, List<PlugDescription> descriptions) {
         String rankingTypeInQuery = ingridQuery.getRankingType();
         if (rankingTypeInQuery == null) {
             ingridQuery.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
@@ -89,8 +89,8 @@ public class SyntaxInterpreter {
             LOG.debug("rankingType in Query: " + rankingTypeInQuery);
         }
         if (!rankingTypeInQuery.equals("any")) {
-            for (Iterator iter = descriptions.iterator(); iter.hasNext();) {
-                PlugDescription plugDescription = (PlugDescription) iter.next();
+            for (Iterator<PlugDescription> iter = descriptions.iterator(); iter.hasNext();) {
+                PlugDescription plugDescription = iter.next();
                 String[] rankingTypes = plugDescription.getRankingTypes();
                 if(LOG.isDebugEnabled()) {
                     LOG.debug("plugdescription/rankingTypes.length: " + plugDescription.getPlugId() + " / " + rankingTypes.length);
@@ -115,14 +115,19 @@ public class SyntaxInterpreter {
         }
     }
 
-    private static void filterForFields(long ms, IngridQuery ingridQueries, List allIPlugs) {
+    private static void filterForFields(long ms, IngridQuery ingridQueries, List<PlugDescription> allIPlugs) {
         String[] queryFieldNames = getAllFieldsNamesFromQuery(ingridQueries);
+
+        // Query may contain "metainfo" field not supported by all iplugs !
+        // Remove "metainfo" field from field list for checking ! So old iplugs won't be removed !
+    	queryFieldNames = StringUtil.removeStringFromStringArray(queryFieldNames, QueryUtil.FIELDNAME_METAINFO);
+
         if (queryFieldNames.length == 0) {
             return;
         }
 
-        for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
-            PlugDescription plugDescription = (PlugDescription) iter.next();
+        for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = iter.next();
             String[] plugFields = plugDescription.getFields();
             boolean toRemove = true;
             for (int i = 0; i < plugFields.length; i++) {
@@ -142,7 +147,7 @@ public class SyntaxInterpreter {
         }
     }
 
-    private static void filterForDataType(long ms, IngridQuery ingridQueries, List allIPlugs) {
+    private static void filterForDataType(long ms, IngridQuery ingridQueries, List<PlugDescription> allIPlugs) {
         String[] allowedDataTypes = ingridQueries.getPositiveDataTypes();
         String[] notAllowedDataTypes = ingridQueries.getNegativeDataTypes();
         if (allowedDataTypes.length == 0 && notAllowedDataTypes.length == 0) {
@@ -150,8 +155,8 @@ public class SyntaxInterpreter {
         }
 
         if (!containsString(allowedDataTypes, "any")) {
-            for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
-                PlugDescription plugDescription = (PlugDescription) iter.next();
+            for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
+                PlugDescription plugDescription = iter.next();
                 String[] dataTypes = plugDescription.getDataTypes();
                 boolean toRemove = true;
                 for (int i = 0; i < dataTypes.length; i++) {
@@ -173,14 +178,14 @@ public class SyntaxInterpreter {
         }
     }
 
-    private static void filterForProvider(long ms, IngridQuery ingridQueries, List allIPlugs) {
+    private static void filterForProvider(long ms, IngridQuery ingridQueries, List<PlugDescription> allIPlugs) {
         String[] allowedProvider = ingridQueries.getPositiveProvider();
         String[] notAllowedProvider = ingridQueries.getNegativeProvider();
         if (allowedProvider.length == 0 && notAllowedProvider.length == 0) {
             return;
         }
-        for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
-            PlugDescription plugDescription = (PlugDescription) iter.next();
+        for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = iter.next();
             
             // FIX: INGRID-1463
             String iPlugClass = plugDescription.getIPlugClass(); 
@@ -212,7 +217,7 @@ public class SyntaxInterpreter {
         }
     }
 
-    private static void filterForPartner(long ms, IngridQuery ingridQuery, List allIPlugs) {
+    private static void filterForPartner(long ms, IngridQuery ingridQuery, List<PlugDescription> allIPlugs) {
         String[] allowedPartner = ingridQuery.getPositivePartner();
         String[] notAllowedPartner = ingridQuery.getNegativePartner();
 
@@ -220,8 +225,8 @@ public class SyntaxInterpreter {
             return;
         }
 
-        for (Iterator iter = allIPlugs.iterator(); iter.hasNext();) {
-            PlugDescription plugDescription = (PlugDescription) iter.next();
+        for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = iter.next();
             
             // FIX: INGRID-1463
             String iPlugClass = plugDescription.getIPlugClass(); 
@@ -253,13 +258,13 @@ public class SyntaxInterpreter {
         }
     }
 
-    private static void filterForIPlugs(long ms, IngridQuery query, List plugs) {
+    private static void filterForIPlugs(long ms, IngridQuery query, List<PlugDescription> plugs) {
         String[] restrictecPlugIds = query.getIPlugs();
         if (restrictecPlugIds.length == 0) {
             return;
         }
-        for (Iterator iter = plugs.iterator(); iter.hasNext();) {
-            PlugDescription plugDescription = (PlugDescription) iter.next();
+        for (Iterator<PlugDescription> iter = plugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = iter.next();
             if (!containsString(restrictecPlugIds, plugDescription.getPlugId())) {
                 if(LOG.isDebugEnabled()) {
                   LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
@@ -274,26 +279,9 @@ public class SyntaxInterpreter {
      * @return all fields of a given query and subqueries
      */
     private static String[] getAllFieldsNamesFromQuery(IngridQuery query) {
-        ArrayList fieldsList = new ArrayList();
-        getFieldNamesFromQuery(query, fieldsList);
+        ArrayList<String> fieldsList = new ArrayList<String>();
+        QueryUtil.getFieldNamesFromQuery(query, fieldsList);
         return (String[]) fieldsList.toArray(new String[fieldsList.size()]);
-    }
-
-    /**
-     * Recursive loop to extract field names from queries and clause subqueries
-     * 
-     * @param query
-     * @param fieldList
-     */
-    private static void getFieldNamesFromQuery(IngridQuery query, ArrayList fieldList) {
-        FieldQuery[] fields = query.getFields();
-        for (int i = 0; i < fields.length; i++) {
-            fieldList.add(fields[i].getFieldName());
-        }
-        ClauseQuery[] clauses = query.getClauses();
-        for (int i = 0; i < clauses.length; i++) {
-            getFieldNamesFromQuery(clauses[i], fieldList);
-        }
     }
 
     private static boolean containsString(String[] allowedDataTypes, String oneType) {
