@@ -24,7 +24,7 @@ public class Grouper implements IGrouper {
         _registry = registry;
     }
 
-    public IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit)
+    public IngridHits groupHits(IngridQuery query, IngridHit[] hits, int hitsPerPage, int totalHits, int startHit, ResultSet resultSet)
             throws Exception {
         List groupHits = new ArrayList(hitsPerPage);
         int groupedHitsLength = 0;
@@ -53,7 +53,8 @@ public class Grouper implements IGrouper {
             }
             if (newGroup) {
                 if (groupHits.size() < hitsPerPage) {
-                    groupHits.add(hit); // we add the hit as new group
+                	addGroupHitsLengthForIPlug(resultSet, hit);
+                	groupHits.add(hit); // we add the hit as new group
                 } else {
                     break;
                 }
@@ -73,7 +74,19 @@ public class Grouper implements IGrouper {
         return new IngridHits(totalHits, groupedHits, groupedHitsLength + startHit);
     }
 
-    private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
+    private void addGroupHitsLengthForIPlug(ResultSet resultSet, IngridHit hit) {
+		String hitPlugId = hit.getPlugId();
+		for(int i = 0; i<resultSet.size(); i++){
+			IngridHits hits = (IngridHits) resultSet.get(i);
+			if(hits.getPlugId() != null){
+				if(hits.getPlugId().equals(hitPlugId)){
+					hit.setGroupTotalHitLength((int)hits.length());
+				}
+			}
+		}
+    }
+
+	private void addGroupingInformation(IngridHit hit, IngridQuery query) throws Exception {
         if (hit.getGroupedFields() != null) {
             return;
         }
