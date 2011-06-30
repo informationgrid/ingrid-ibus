@@ -51,7 +51,9 @@ public class GroupingTest extends TestCase {
 	assertEquals(5, hits.getHits().length);
 	IngridHit[] hits2 = hits.getHits();
 	for (int i = 0; i< hits2.length; i++) {
-	    assertEquals(2, hits2[i].getGroupTotalHitLength());
+		// was 2 now 1 ??????????? with changes svn Rev 17741
+//	    assertEquals(2, hits2[i].getGroupTotalHitLength());
+	    assertEquals(1, hits2[i].getGroupTotalHitLength());
 	}
     }
 
