@@ -228,18 +228,27 @@ public class Bus extends Thread implements IBus {
 
     @SuppressWarnings("unchecked")
     private void addFacetInfo(IngridHits hitContainer, ResultSet resultSet) {
-        IngridDocument allFacets = null;
+        IngridDocument allFacetClasses = null;
         for (IngridHits hits : (ArrayList<IngridHits>) resultSet) {
-            IngridDocument facets = (IngridDocument) hits.get("FACETS");
-            if (facets != null && facets.size() > 0) {
-                if (allFacets == null) {
-                    allFacets = new IngridDocument();
+            IngridDocument facetClasses = (IngridDocument) hits.get("FACETS");
+            if (facetClasses != null && facetClasses.size() > 0) {
+                if (allFacetClasses == null) {
+                    allFacetClasses = new IngridDocument();
+                    allFacetClasses.putAll(facetClasses);
+                } else {
+                    for (Object o : facetClasses.keySet()) {
+                        String facetClassString = (String)o;
+                        if (allFacetClasses.containsKey(facetClassString)) {
+                            allFacetClasses.put(facetClassString, allFacetClasses.getLong(facetClassString) + facetClasses.getLong(facetClassString));
+                        } else {
+                            allFacetClasses.put(facetClassString, facetClasses.getLong(facetClassString));
+                        }
+                    }
                 }
-                allFacets.putAll(facets);
             }
         }
-        if (allFacets != null) {
-            hitContainer.put("FACETS", allFacets);
+        if (allFacetClasses != null) {
+            hitContainer.put("FACETS", allFacetClasses);
         }
     }
 
