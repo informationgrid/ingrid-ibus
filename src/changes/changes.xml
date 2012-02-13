@@ -6,6 +6,9 @@
   </properties>
   <body>
     <release version="3.2.0-SNAPSHOT" date="2011-??-??" description="Feature Release">
+      <action type="add" dev="wemove">
+        Add simple query manipulation via a property file (conf/querymodifier.properties).
+      </action>
       <action type="update" dev="wemove" issue="INGRID-1885">
         Updated start.sh, which had an issue when being batch-invoked, deleted RSYNC which is no longer used, see https://dev.wemove.com/jira/browse/INGRID-1885
       </action>

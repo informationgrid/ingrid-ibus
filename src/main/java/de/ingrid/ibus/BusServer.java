@@ -23,6 +23,7 @@ import de.ingrid.ibus.processor.AddressPreProcessor;
 import de.ingrid.ibus.processor.BusUrlPreProcessor;
 import de.ingrid.ibus.processor.LimitedAttributesPreProcessor;
 import de.ingrid.ibus.processor.QueryModePreProcessor;
+import de.ingrid.ibus.processor.QueryModifierPreProcessor;
 import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.ibus.web.AdminServer;
@@ -110,9 +111,12 @@ public class BusServer {
         bus.getProccessorPipe().addPreProcessor(new QueryModePreProcessor());
         bus.getProccessorPipe().addPreProcessor(new AddressPreProcessor());
         bus.getProccessorPipe().addPreProcessor(new BusUrlPreProcessor(busurl));
+        bus.getProccessorPipe().addPreProcessor(new QueryModifierPreProcessor("/querymodifier.properties"));
+        
 
         // read in the boost for iplugs
         InputStream is = bus.getClass().getResourceAsStream("/globalRanking.properties");
+       
         Properties properties = new Properties();
         try {
             properties.load(is);

@@ -56,6 +56,14 @@
 		      <groupId>lucene</groupId>
 		      <artifactId>lucene</artifactId>
 	      </exclusion>
+          <exclusion>
+              <groupId>de.ingrid</groupId>
+              <artifactId>ingrid-utils-geo</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>ojdbc</groupId>
+              <artifactId>ojdbc</artifactId>
+          </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -116,6 +124,36 @@
 		      <artifactId>axis-wsdl4j</artifactId>
 	      </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>commons-configuration</groupId>
+        <artifactId>commons-configuration</artifactId>
+        <exclusions>
+            <exclusion>
+                <groupId>commons-jxpath</groupId>
+                <artifactId>commons-jxpath</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils-core</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
   </dependencies>
   <repositories>
