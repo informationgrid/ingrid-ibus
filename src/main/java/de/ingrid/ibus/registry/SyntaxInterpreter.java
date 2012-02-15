@@ -158,7 +158,9 @@ public class SyntaxInterpreter {
             for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
                 PlugDescription plugDescription = iter.next();
                 String[] dataTypes = plugDescription.getDataTypes();
-                boolean toRemove = true;
+                // if only negative datatypes are supplied, exclude only iplugs with negative datatype and keep others
+                // if positive datatypes are supplied, exclude all except those with the positive datatype
+                boolean toRemove = allowedDataTypes.length == 0 ? false : true;
                 for (int i = 0; i < dataTypes.length; i++) {
                     if (containsString(notAllowedDataTypes, dataTypes[i]) || containsString(notAllowedDataTypes, "all")) {
                         toRemove = true;
