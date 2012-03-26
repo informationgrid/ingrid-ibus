@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -142,6 +143,10 @@ public class Registry {
             createPlugProxy(plugDescription);
             synchronized (this.fPlugDescriptionByPlugId) {
                 this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
+                if (fLogger.isDebugEnabled()) {
+                    fLogger.debug("Plugdescription added for iPlug: " + plugDescription.getProxyServiceURL());
+                    fLogger.debug("plugfields: " + Arrays.asList(plugDescription.getFields()));
+                }
             }
         } else {
             if (fLogger.isErrorEnabled()) {
