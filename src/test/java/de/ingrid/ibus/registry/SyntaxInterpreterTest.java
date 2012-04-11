@@ -69,13 +69,16 @@ public class SyntaxInterpreterTest extends TestCase {
         this.descriptions[0].addDataType("UDK");
         this.descriptions[1].addDataType("UDK");
         this.descriptions[1].addDataType("UDK2");
+        this.descriptions[2].addDataType("UDK2");
+        this.descriptions[3].addDataType("UDK2");
+        this.descriptions[4].addDataType("UDK2");
         assertEquals(2, getIPlugs("datatype:UDK aQuery").length);
         // using query parser
-        assertEquals(0, getIPlugs("-datatype:UDK aQuery").length);
+        assertEquals(3, getIPlugs("-datatype:UDK aQuery").length);
         IngridQuery query = QueryStringParser.parse("aQuery");
         query.addField(new FieldQuery(false, true, "datatype", "UDK"));
         PlugDescription[] plugsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
-        assertEquals(0, plugsForQuery.length);
+        assertEquals(3, plugsForQuery.length);
     }
 
     /**
