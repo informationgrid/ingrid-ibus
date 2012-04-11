@@ -230,6 +230,9 @@ public class Bus extends Thread implements IBus {
     private void addFacetInfo(IngridHits hitContainer, ResultSet resultSet) {
         IngridDocument allFacetClasses = null;
         for (IngridHits hits : (ArrayList<IngridHits>) resultSet) {
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("Add facets for iPlug: " + hits.getPlugId());
+            }
             IngridDocument facetClasses = (IngridDocument) hits.get("FACETS");
             if (facetClasses != null && facetClasses.size() > 0) {
                 if (allFacetClasses == null) {
@@ -237,12 +240,19 @@ public class Bus extends Thread implements IBus {
                     allFacetClasses.putAll(facetClasses);
                 } else {
                     for (Object o : facetClasses.keySet()) {
-                        String facetClassString = (String)o;
+                        String facetClassString = (String) o;
                         if (allFacetClasses.containsKey(facetClassString)) {
-                            allFacetClasses.put(facetClassString, allFacetClasses.getLong(facetClassString) + facetClasses.getLong(facetClassString));
+                            allFacetClasses.put(facetClassString, allFacetClasses.getLong(facetClassString)
+                                    + facetClasses.getLong(facetClassString));
                         } else {
                             allFacetClasses.put(facetClassString, facetClasses.getLong(facetClassString));
                         }
+                    }
+                }
+                if (fLogger.isDebugEnabled()) {
+                    for (Object o : facetClasses.keySet()) {
+                        String facetClassString = (String) o;
+                        fLogger.debug("facet '" + facetClassString + "' : " + facetClasses.getLong(facetClassString));
                     }
                 }
             }
