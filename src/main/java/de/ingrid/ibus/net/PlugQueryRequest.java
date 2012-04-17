@@ -7,6 +7,7 @@
 package de.ingrid.ibus.net;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import net.weta.components.communication.tcp.TimeoutException;
 
@@ -41,7 +42,8 @@ public class PlugQueryRequest implements Runnable {
     private Registry fRegistry;
 
     /**
-     * Creates a request to an IPlug. This query is bound to a result set and synchronizes on it.
+     * Creates a request to an IPlug. This query is bound to a result set and
+     * synchronizes on it.
      * 
      * @param query
      *            The query to send.
@@ -74,11 +76,10 @@ public class PlugQueryRequest implements Runnable {
      * @see java.lang.Thread#run()
      */
     public void run() {
-        long time = 0;
+        final long time = System.currentTimeMillis();
         try {
             if (fLog.isDebugEnabled()) {
                 fLog.debug("Search in IPlug " + this.fPlugId + " ...");
-                time = System.currentTimeMillis();
             }
             IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
             if (hits.getPlugId() == null) {
@@ -91,15 +92,18 @@ public class PlugQueryRequest implements Runnable {
                 fLog.debug("adding results from: " + this.fPlugId + " size: " + hits.length() + " time: "
                         + (System.currentTimeMillis() - time) + " ms");
             }
+            hits.setSearchTimings(new HashMap<String, Long>() {{put(fPlugId, (System.currentTimeMillis() - time));}});
             synchronized (this.fResultSet) {
                 this.fResultSet.add(hits);
+
             }
         } catch (TimeoutException e) {
             if (fLog.isWarnEnabled()) {
                 fLog
                         .warn("IPlug: "
                                 + this.fPlugId
-                                + " sent timeout. Set the timeout for the search lower than the communication timeout for the IPlug or vice versa. TimeoutException: " + e.getMessage());
+                                + " sent timeout. Set the timeout for the search lower than the communication timeout for the IPlug or vice versa. TimeoutException: "
+                                + e.getMessage());
             }
         } catch (InterruptedException e) {
             if (fLog.isErrorEnabled()) {

@@ -124,11 +124,11 @@ public class Bus extends Thread implements IBus {
         ResultSet resultSet;
         if (!oneIPlugOnly) {
             if (fLogger.isDebugEnabled()) {
-                logDebug("(search) request starts: " + query.hashCode());
+                fLogger.debug("(search) request starts: " + query.hashCode());
             }
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
             if (fLogger.isDebugEnabled()) {
-                logDebug("(search) request ends: " + query.hashCode());
+                fLogger.debug("(search) request ends: " + query.hashCode());
             }
         } else {
             // request only one iplug! request from "startHit" position with
@@ -143,15 +143,15 @@ public class Bus extends Thread implements IBus {
         IngridHits hitContainer;
         if (query.isNotRanked()) {
             if (fLogger.isDebugEnabled()) {
-                logDebug("(search) order starts: " + query.hashCode());
+                fLogger.debug("(search) order starts: " + query.hashCode());
             }
             hitContainer = orderResults(resultSet, plugDescriptionsForQuery, query);
             if (fLogger.isDebugEnabled()) {
-                logDebug("(search) order ends: " + query.hashCode());
+                fLogger.debug("(search) order ends: " + query.hashCode());
             }
         } else {
             if (fLogger.isDebugEnabled()) {
-                logDebug("(search) normalize starts: " + query.hashCode());
+                fLogger.debug("(search) normalize starts: " + query.hashCode());
             }
             // normalize only if there were more than one iplugs queried
             // if we only query one, than it doesn't matter how high the score
@@ -160,7 +160,7 @@ public class Bus extends Thread implements IBus {
             hitContainer = normalizeScores(resultSet, oneIPlugOnly ? true : false);
 
             if (fLogger.isDebugEnabled()) {
-                logDebug("(search) normalize ends: " + query.hashCode());
+                fLogger.debug("(search) normalize ends: " + query.hashCode());
             }
         }
 
@@ -191,11 +191,11 @@ public class Bus extends Thread implements IBus {
                     hits = cutFirstHits(hits, startHit);
                 }
                 if (fLogger.isDebugEnabled()) {
-                    logDebug("(search) grouping starts: " + query.hashCode());
+                    fLogger.debug("(search) grouping starts: " + query.hashCode());
                 }
                 hitContainer = _grouper.groupHits(query, hits, hitsPerPage, totalHits, startHit, resultSet);
                 if (fLogger.isDebugEnabled()) {
-                    logDebug("(search) grouping ends: " + query.hashCode());
+                    fLogger.debug("(search) grouping ends: " + query.hashCode());
                 }
             } else {
                 // prevent array cutting with only one requested iplug, assuming
@@ -455,6 +455,13 @@ public class Bus extends Thread implements IBus {
 
         IngridHits result = new IngridHits(totalHits, sortHits((IngridHit[]) documents.toArray(new IngridHit[documents
                 .size()])));
+        
+        // add timings for the corresponding iplugs
+        HashMap<String, Long> timings = new HashMap<String, Long>();
+        for (IngridHits hits : resultSet) {
+            timings.putAll(hits.getSearchTimings());
+        }
+        result.setSearchTimings(timings);
 
         documents.clear();
         documents = null;
@@ -530,9 +537,15 @@ public class Bus extends Thread implements IBus {
         }
         IPlug plugProxy = this.fRegistry.getPlugProxy(hit.getPlugId());
         try {
-            logDebug("(search) detail start " + hit.getPlugId() + " " + ingridQuery.hashCode());
+            long time = System.currentTimeMillis();
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("(search) detail start " + hit.getPlugId() + " " + ingridQuery.hashCode());
+            }
             IngridHitDetail detail = plugProxy.getDetail(hit, ingridQuery, requestedFields);
-            logDebug("(search) detail end " + hit.getPlugId() + " " + ingridQuery.hashCode());
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("(search) detail end " + hit.getPlugId() + " " + ingridQuery.hashCode() + " within " + (System.currentTimeMillis() - time) + " ms.");
+            }
+            detail.put(IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time));
             pushMetaData(detail);
             return detail;
         } catch (Exception e) {
@@ -572,6 +585,7 @@ public class Bus extends Thread implements IBus {
         IPlug plugProxy;
         ArrayList resultList = new ArrayList(hits.length);
         Random random = new Random(System.currentTimeMillis());
+        long time = 0;
         while (iterator.hasNext()) {
             String plugId = (String) iterator.next();
             ArrayList requestHitList = (ArrayList) hashMap.get(plugId);
@@ -579,9 +593,14 @@ public class Bus extends Thread implements IBus {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
                 plugProxy = this.fRegistry.getPlugProxy(plugId);
                 if (plugProxy != null) {
-                    logDebug("(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode());
+                    if (fLogger.isDebugEnabled()) {
+                        fLogger.debug("(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode());
+                    }
+                    time = System.currentTimeMillis();
                     IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
-                    logDebug("(search) details ends (" + responseDetails.length + ")" + plugId + " " + query.hashCode());
+                    if (fLogger.isDebugEnabled()) {
+                        fLogger.debug("(search) details ends (" + responseDetails.length + ")" + plugId + " " + query.hashCode() + " within " + (System.currentTimeMillis() - time) + " ms.");
+                    }
                     for (int i = 0; i < responseDetails.length; i++) {
                         if (responseDetails[i] == null) {
                             if (fLogger.isErrorEnabled()) {
@@ -592,6 +611,7 @@ public class Bus extends Thread implements IBus {
                             responseDetails[i] = new IngridHitDetail(plugId, random.nextInt(), random.nextInt(), 0.0f,
                                     "", "");
                         }
+                        responseDetails[i].put(IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time));
                     }
 
                     resultList.addAll(Arrays.asList(responseDetails));
@@ -723,12 +743,6 @@ public class Bus extends Thread implements IBus {
 
     public void close() throws Exception {
         // nothing
-    }
-
-    private void logDebug(String string) {
-        if (fLogger.isDebugEnabled()) {
-            fLogger.debug(string);
-        }
     }
 
     @Override
