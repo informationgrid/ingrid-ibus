@@ -617,7 +617,7 @@ public class Bus extends Thread implements IBus {
                     time = System.currentTimeMillis();
                     IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
                     if (fLogger.isDebugEnabled()) {
-                        fLogger.debug("(search) details ends (" + responseDetails.length + ")" + plugId + " " + query.hashCode() + " within " + (System.currentTimeMillis() - time) + " ms.");
+                        fLogger.debug("(search) details ends (" + responseDetails.length + ")" + plugId + " query:" + query.hashCode() + " within " + (System.currentTimeMillis() - time) + " ms.");
                     }
                     for (int i = 0; i < responseDetails.length; i++) {
                         if (responseDetails[i] == null) {

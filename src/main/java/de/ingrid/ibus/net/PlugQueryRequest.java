@@ -89,7 +89,7 @@ public class PlugQueryRequest implements Runnable {
                 hits.setPlugId(this.fPlugId);
             }
             if (fLog.isDebugEnabled()) {
-                fLog.debug("adding results from: " + this.fPlugId + " size: " + hits.length() + " time: "
+                fLog.debug("adding results from: " + this.fPlugId + " for query (" + this.fQuery.hashCode() + ") size: " + hits.length() + " time: "
                         + (System.currentTimeMillis() - time) + " ms");
             }
             hits.setSearchTimings(new HashMap<String, Long>() {{put(fPlugId, (System.currentTimeMillis() - time));}});
