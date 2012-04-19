@@ -102,7 +102,7 @@ public class Bus extends Thread implements IBus {
             startSearch = System.currentTimeMillis();
         }
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " started");
+            fLogger.debug("search for: " + query.toString() + "(" + query.hashCode() + ") startHit: " + startHit + " started");
         }
         if (currentPage < 1) {
             currentPage = 1;
@@ -138,7 +138,7 @@ public class Bus extends Thread implements IBus {
             // request only one iplug! request from "startHit" position with
             // length "hitsPerPage", because no ranking is required
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " started");
+                fLogger.debug("search for: " + query.toString() + "(" + query.hashCode() + " startHit: " + startHit + " started");
             }
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit,
                     forceManyResults ? hitsPerPage * 6 : hitsPerPage);
@@ -218,7 +218,7 @@ public class Bus extends Thread implements IBus {
         resultSet = null;
 
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " ended");
+            fLogger.debug("search for: " + query.toString() + "(" + query.hashCode() + " startHit: " + startHit + " ended");
 
             IngridHit[] ingridHits = hitContainer.getHits();
             for (int i = 0; i < ingridHits.length; i++) {
