@@ -97,6 +97,10 @@ public class Bus extends Thread implements IBus {
 
     public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds)
             throws Exception {
+        long startSearch = 0;
+        if (fLogger.isDebugEnabled()) {
+            startSearch = System.currentTimeMillis();
+        }
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("search for: " + query.toString() + " startHit: " + startHit + " started");
         }
@@ -221,6 +225,9 @@ public class Bus extends Thread implements IBus {
                 IngridHit ingridHit = ingridHits[i];
                 fLogger.debug("documentId: " + ingridHit.getDocumentId() + " score: " + ingridHit.getScore());
             }
+        }
+        if (fLogger.isDebugEnabled()) {
+            fLogger.debug("TIMING: Search for Query (" + query.hashCode() + ") took " + (System.currentTimeMillis() - startSearch) + "ms.");
         }
 
         return hitContainer;
@@ -532,6 +539,10 @@ public class Bus extends Thread implements IBus {
     }
 
     public IngridHitDetail getDetail(IngridHit hit, IngridQuery ingridQuery, String[] requestedFields) {
+        long startGetDetail = 0;
+        if (fLogger.isDebugEnabled()) {
+            startGetDetail = System.currentTimeMillis();
+        }
         if (requestedFields == null) {
             requestedFields = new String[0];
         }
@@ -547,6 +558,9 @@ public class Bus extends Thread implements IBus {
             }
             detail.put(IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time));
             pushMetaData(detail);
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("TIMING: Create detail for Query (" + ingridQuery.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetail) + "ms.");
+            }
             return detail;
         } catch (Exception e) {
             if (fLogger.isErrorEnabled()) {
@@ -558,6 +572,10 @@ public class Bus extends Thread implements IBus {
     }
 
     public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
+        long startGetDetails = 0;
+        if (fLogger.isDebugEnabled()) {
+            startGetDetails = System.currentTimeMillis();
+        }
         if (requestedFields == null) {
             requestedFields = new String[0];
         }
@@ -669,6 +687,10 @@ public class Bus extends Thread implements IBus {
                 details[i] = new IngridHitDetail(hit, "no details found", "");
             }
         }
+        if (fLogger.isDebugEnabled()) {
+            fLogger.debug("TIMING: Create details for Query (" + query.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetails) + "ms.");
+        }
+        
         return details;
     }
 
