@@ -7,12 +7,40 @@
 	<property name="xml-communication" value="${installDir}/conf/communication.xml"/>
 	<property name="start-script" value="${installDir}/start.sh"/>
 	
+    <target name="setUpdateProperty" depends="extractUpdate">
+        <property name="installType" value="update" />
+        <property name="updateProcedure" value="true" />
+    </target>
+    
+    <target name="setInstallProperty" depends="extract">
+        <property name="installProcedure" value="true" />
+    </target>
+    
 	<target name="extract" description="Extract all files to the installation directory.">
 		<unzip src="${antinstaller.jar}" dest="${installDir}">
 			<patternset>
 				<include name="${componentName}/**/*.*"/>
 			</patternset>
 		</unzip>
+		
+		<move toDir="${installDir}">
+			<fileset dir="${installDir}/${componentName}"/>
+		</move>
+	</target>
+    
+    <target name="extractUpdate">
+		<unzip src="${antinstaller.jar}" dest="${installDir}">
+			<patternset>
+				<include name="${componentName}/**/*.*"/>
+                <exclude name="${componentName}/conf/communication.xml" />
+                <exclude name="${componentName}/conf/activatedIplugs.properties" />
+                <exclude name="${componentName}/conf/globalRanking.properties" />
+                <exclude name="${componentName}/conf/querymodifier.properties" />
+                <exclude name="${componentName}/start.sh" />
+			</patternset>
+		</unzip>
+        
+        <delete dir="${installDir}/lib"/>
 		
 		<move toDir="${installDir}">
 			<fileset dir="${installDir}/${componentName}"/>
