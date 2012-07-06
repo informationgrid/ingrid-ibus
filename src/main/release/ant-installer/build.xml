@@ -45,6 +45,8 @@
 		<move toDir="${installDir}">
 			<fileset dir="${installDir}/${componentName}"/>
 		</move>
+        
+        <touch file="${installDir}/conf/querymodifier.properties" />
 	</target>
 	
 	<target name="ibus" description="Set configuration correctly for the iBus.">
