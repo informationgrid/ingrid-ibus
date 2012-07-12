@@ -5,7 +5,7 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="3.2.0-SNAPSHOT" date="2011-??-??" description="Feature Release">
+    <release version="3.2.0" date="2012-07-12" description="Release InGrid 3.2">
       <action type="add" dev="wemove">
         Add simple query manipulation via a property file (conf/querymodifier.properties).
       </action>
