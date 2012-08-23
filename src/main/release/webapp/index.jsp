@@ -87,6 +87,8 @@ if ((submitted != null) && submitted.equals("true")) {
 <link href="<%=response.encodeURL("css/admin.css")%>" rel="stylesheet" type="text/css" />
 <style type="text/css">
 	body, td {font-family:Arial; font-size:12px}
+    .section { font-weight: bold; background-color: #666; color: white; padding-left: 5px;}
+    .header { font-weight: bold; }
 </style>
 </head>
 <body>
@@ -95,7 +97,7 @@ if ((submitted != null) && submitted.equals("true")) {
 <input type="hidden" name="submitted" value="true">
 <table class="table" width="900" align="center">
 	<tr>
-		<td colspan="5" class="tablehead">An-/Abschalten von IPlugs.</td>
+		<td colspan="6" class="tablehead">An-/Abschalten von IPlugs.</td>
 	</tr>
 
 <%if (saved)  {%>
@@ -115,6 +117,7 @@ if ((submitted != null) && submitted.equals("true")) {
 		IPlugType plugType = (IPlugType) it.next();
 		%>
 		<tr>
+            <td>&nbsp</td>
 			<td>&nbsp</td>
 			<td>&nbsp</td>
 			<td>&nbsp</td>
@@ -122,13 +125,10 @@ if ((submitted != null) && submitted.equals("true")) {
 			<td>&nbsp</td>
 		</tr>
 		<tr>
-			<td><%=plugType%></td>
-			<td>&nbsp</td>
-			<td>&nbsp</td>
-			<td>&nbsp</td>
-			<td>&nbsp</td>
+			<td colspan="6" class="section"><%=plugType%></td>
 		</tr>
-		<tr>
+		<tr class="header">
+            <td class="tablecell"></td>
 			<td class="tablecell">Proxy Service Url</td>
 			<td class="tablecell">Name der Datenquelle</td>
 			<td class="tablecell">Version</td>
@@ -142,6 +142,7 @@ if ((submitted != null) && submitted.equals("true")) {
 			Metadata metadata = plugDescription.getMetadata();
 			%>
 				<tr>
+                    <td class="tablecell" width="50"><a href="detail.jsp?id=<%=plugDescription.getPlugId()%>">info</a></td>
 					<td class="tablecell" width="100"><%=plugDescription.getProxyServiceURL()%></td>
 					<td class="tablecell" width="100"><%=plugDescription.getDataSourceName()%></td>
 					<td class="tablecell" width="100"><%=metadata.getVersion()%></td>
