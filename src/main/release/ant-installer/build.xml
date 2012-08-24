@@ -26,6 +26,8 @@
 		<move toDir="${installDir}">
 			<fileset dir="${installDir}/${componentName}"/>
 		</move>
+        
+        <mkdir dir="${installDir}/webapp/WEB-INF/work"/>
 	</target>
     
     <target name="extractUpdate">
@@ -46,6 +48,7 @@
 			<fileset dir="${installDir}/${componentName}"/>
 		</move>
         
+        <mkdir dir="${installDir}/webapp/admin/WEB-INF/work"/>
         <touch file="${installDir}/conf/querymodifier.properties" />
 	</target>
 	
