@@ -6,6 +6,9 @@
   </properties>
   <body>
     <release version="3.3.0-SNAPSHOT" date="2012-08-xx" description="Release InGrid 3.3">
+	  <action type="add" dev="wemove" issue="INGRID-2150">
+		Add java parameter "-Dfile.encoding=UTF8" to start script.
+	  </action>
       <action type="add" dev="wemove">
         Improved administration page which shows more information about the connected iPlugs now.
       </action>
