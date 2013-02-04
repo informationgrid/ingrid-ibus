@@ -6,6 +6,8 @@
 
 package de.ingrid.ibus;
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.utils.IngridHit;
@@ -243,5 +245,32 @@ public class BusTest extends TestCase {
         assertEquals(this.plugDescriptions.length, hits.getHits().length);
         System.out.println(hits);
         System.out.println(hits.getHits()[0].size());
+    }
+    
+    /**
+     * Comparison tests
+     * With Java7 comparisons are more strict and can throw exceptions if
+     * the comparator is not valid (reflexive, symmetrical and transitive)
+     */
+    @SuppressWarnings("unchecked")
+	public void testSortHits() {
+    	IngridHit[] documents = new IngridHit[32];
+    	for (int i = 0; i < documents.length; i++) {
+    		if (i%2 == 0) {
+    			documents[i] = null;
+    			continue;
+    		}
+			documents[i] = new IngridHit();
+			documents[i].setScore(1.0f);
+		}
+    	documents[29].setScore(1.4f);
+    	
+        Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
+        
+        assertEquals(1.4f, documents[0].getScore());
+        for (int i = 1; i < documents.length/2; i++) {
+        	assertEquals(1.0f, documents[i].getScore());
+        }
+        assertNull(documents[documents.length-1]);
     }
 }

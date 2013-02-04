@@ -27,22 +27,18 @@ public class Comparators {
     public static final Comparator SCORE_HIT_COMPARATOR = new Comparator() {
 
         public int compare(Object arg0, Object arg1) {
-            if (null == arg0) {
-                return -1;
-            }
-
-            if (null == arg1) {
+        	if (null == arg0 && null == arg1) {
+        		return 0;
+        	} else if (null == arg0) {
                 return 1;
+            } else if (null == arg1) {
+                return -1;
             }
 
             IngridHit hit0 = (IngridHit) arg0;
             IngridHit hit1 = (IngridHit) arg1;
 
-            float score0 = hit0.getScore();
-            float score1 = hit1.getScore();
-            float scoreDiff = score0 - score1;
-
-            return (scoreDiff < 0) ? 1 : -1;
+            return Float.compare(hit1.getScore(), hit0.getScore());
         }
     };
 
