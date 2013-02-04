@@ -253,7 +253,7 @@ public class BusTest extends TestCase {
      * the comparator is not valid (reflexive, symmetrical and transitive)
      */
     @SuppressWarnings("unchecked")
-	public void testSortHits() {
+	public void testSortHitsSpecial() {
     	IngridHit[] documents = new IngridHit[32];
     	for (int i = 0; i < documents.length; i++) {
     		if (i%2 == 0) {
@@ -272,5 +272,84 @@ public class BusTest extends TestCase {
         	assertEquals(1.0f, documents[i].getScore());
         }
         assertNull(documents[documents.length-1]);
+    }
+    
+    @SuppressWarnings("unchecked")
+	public void testSortHits() {
+    	IngridHit[] documents = new IngridHit[32];
+        // *******************************
+    	// 16 -> NULL, 15 -> 1.0, 1 -> 1.4
+        // *******************************
+    	for (int i = 0; i < documents.length; i++) {
+    		if (i<documents.length/2) {
+    			documents[i] = null;
+    			continue;
+    		}
+			documents[i] = new IngridHit();
+			documents[i].setScore(1.0f);
+		}
+    	documents[29].setScore(1.4f);
+    	
+        Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
+        checkSortedDocuments(documents);
+        
+        // *******************************
+        // 15 -> 1.0, 1 -> 1.4, 16 -> NULL
+        // *******************************
+    	for (int i = 0; i < documents.length; i++) {
+    		if (i>=documents.length/2) {
+    			documents[i] = null;
+    			continue;
+    		}
+			documents[i] = new IngridHit();
+			documents[i].setScore(1.0f);
+		}
+    	documents[11].setScore(1.4f);
+    	
+        Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
+        checkSortedDocuments(documents);
+        
+        // *******************************
+        // 15 -> 1.0, 16 -> NULL, 1 -> 1.4
+        // *******************************
+    	for (int i = 0; i < documents.length; i++) {
+    		if (i>=documents.length/2) {
+    			documents[i] = null;
+    			continue;
+    		}
+			documents[i] = new IngridHit();
+			documents[i].setScore(1.0f);
+		}
+    	documents[31] = new IngridHit();
+    	documents[31].setScore(1.4f);
+    	
+        Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
+        checkSortedDocuments(documents);
+        
+        // *******************************
+        // 1 -> 1.4, 15 -> 1.0, 16 -> NULL
+        // *******************************
+    	for (int i = 0; i < documents.length; i++) {
+    		if (i>=documents.length/2) {
+    			documents[i] = null;
+    			continue;
+    		}
+			documents[i] = new IngridHit();
+			documents[i].setScore(1.0f);
+		}
+    	documents[0].setScore(1.4f);
+    	
+        Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
+        checkSortedDocuments(documents);
+    }
+    
+    private void checkSortedDocuments(IngridHit[] documents) {
+    	assertEquals(1.4f, documents[0].getScore());
+        for (int i = 1; i < documents.length/2; i++) {
+        	assertEquals(1.0f, documents[i].getScore());
+        }
+        for (int i = documents.length/2; i < documents.length; i++) {
+        	assertNull(documents[documents.length-1]);
+        }
     }
 }
