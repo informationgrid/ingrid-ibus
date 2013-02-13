@@ -27,7 +27,7 @@
 			<fileset dir="${installDir}/${componentName}"/>
 		</move>
         
-        <mkdir dir="${installDir}/webapp/WEB-INF/work"/>
+        <mkdir dir="${installDir}/webapp/admin/WEB-INF/work"/>
 	</target>
     
     <target name="extractUpdate">

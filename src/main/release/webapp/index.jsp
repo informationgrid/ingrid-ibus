@@ -133,7 +133,7 @@ if ((submitted != null) && submitted.equals("true")) {
 			<td class="tablecell">Name der Datenquelle</td>
 			<td class="tablecell">Version</td>
 			<td class="tablecell">Release Datum</td>
-			<td class="tablecell">An /Aus</td>
+			<td class="tablecell">An / Aus</td>
 		</tr>
 		<%
 		List plugs = (List) descriptions.get(plugType);
