@@ -5,7 +5,7 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="3.4.0-SNAPSHOT" date="??" description="??">
+    <release version="3.3.0.1" date="2013-03-15" description="Bugfix Release 3.3.0">
         <action type="fix" dev="wemove">
             Handle new iPlug Type IPLUG_DSC_MAPCLIENT.
         </action>
