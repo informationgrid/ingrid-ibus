@@ -4,7 +4,7 @@
             ui                  ="swing,text,swing-auto,text-auto"
             loadDefaults        ="prompt"
             verbose		        ="true"
-            debug		        ="true"
+            debug		        ="false"
             lookAndFeel	        ="org.tp23.jgoodies.plaf.plastic.PlasticXPLookAndFeel"
             name		        ="InGrid iBus Installation"
             windowIcon	        ="/resources/icons/logoIcon.gif"
@@ -71,11 +71,12 @@
             type        ="input"
             name        ="properties"
             displayText ="Benötigte Installationsoptionen"
-            target      ="startComponent">
+            target      ="patchFiles"
+            postDisplayTarget = "antinstaller-determineVersion">
         <directory
             property            ="installDir"
             defaultValue        ="/opt/ingrid/${project.artifactId}-${project.version}"
-			defaultValueWin	    ="${env.ProgramFiles}\${project.artifactId}-${project.version}"
+            defaultValueWin     ="${env.ProgramFiles}\${project.artifactId}-${project.version}"
             displayText         ="Altes Installationsverzeichnis"
             create              ="false"
             checkExists         ="true" />

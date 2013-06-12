@@ -1,4 +1,4 @@
-<project name="PortalU Installation">
+<project name="PortalU Installation" basedir=".">
     <description>
         iBus Installation Script
     </description>
@@ -7,6 +7,16 @@
 	<property name="xml-communication" value="${installDir}/conf/communication.xml"/>
 	<property name="start-script" value="${installDir}/start.sh"/>
 	
+	<!-- THIS PORPERTIES ARE NECESSARY FOR UPDATES -->
+    <property name="libraryDir"         value="lib" />
+    <property name="libraryIdent"       value="ingrid-ibus-" />
+    <!-- <property name="libraryIdent"       value="MANIFEST.MF" /> -->
+    <property name="versionsWithConfigurations"  value="3.3.0" />
+    <property name="minSupportedVersion" value="3.3.0" />
+
+    <import file="build-installer-utils.xml"  as="utils" />
+    <import file="build-patch.xml"            as="patch" />
+
     <target name="setUpdateProperty" depends="extractUpdate">
         <property name="installType" value="update" />
         <property name="updateProcedure" value="true" />
@@ -31,25 +41,24 @@
 	</target>
     
     <target name="extractUpdate">
-		<unzip src="${antinstaller.jar}" dest="${installDir}">
-			<patternset>
-				<include name="${componentName}/**/*.*"/>
+        <unzip src="${antinstaller.jar}" dest=".">
+            <patternset>
+                <include name="**/*.*"/>
                 <exclude name="${componentName}/conf/communication.xml" />
                 <exclude name="${componentName}/conf/activatedIplugs.properties" />
                 <exclude name="${componentName}/conf/globalRanking.properties" />
                 <exclude name="${componentName}/conf/querymodifier.properties" />
                 <exclude name="${componentName}/start.sh" />
-			</patternset>
-		</unzip>
+            </patternset>
+        </unzip>
         
-        <delete dir="${installDir}/lib"/>
-		
-		<move toDir="${installDir}">
-			<fileset dir="${installDir}/${componentName}"/>
-		</move>
+        <delete>
+            <fileset dir="${installDir}/lib" includes="**/*"/>
+        </delete>
         
-        <mkdir dir="${installDir}/webapp/admin/WEB-INF/work"/>
-        <touch file="${installDir}/conf/querymodifier.properties" />
+        <move toDir="${installDir}">
+            <fileset dir="./${componentName}"/>
+        </move>
 	</target>
 	
 	<target name="ibus" description="Set configuration correctly for the iBus.">
