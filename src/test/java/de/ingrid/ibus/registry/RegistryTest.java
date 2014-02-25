@@ -51,7 +51,7 @@ public class RegistryTest extends TestCase {
         assertTrue(Arrays.asList(registry.getAllIPlugsWithoutTimeLimitation()).contains(plug1));
 
         // kick plug1 out
-        Thread.sleep(plugLifeTime + 250);
+        Thread.sleep(plugLifeTime + 1000);
         assertFalse(Arrays.asList(registry.getAllIPlugs()).contains(plug1));
         assertFalse(Arrays.asList(registry.getAllIPlugsWithoutTimeLimitation()).contains(plug1));
 
