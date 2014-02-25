@@ -2,7 +2,7 @@
   <parent>
     <artifactId>ingrid-releases-pom</artifactId>
     <groupId>de.ingrid</groupId>
-    <version>3.4.0-SNAPSHOT</version>
+    <version>3.4.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.ingrid</groupId>
@@ -31,12 +31,6 @@
         <artifactId>ingrid-iplug-tamino</artifactId>
         <version>3.2.0</version>
       </dependency>
-            <!-- ADD TO base pom when 3.3.0 RELEASE process finished ! -->
-          <dependency>
-            <groupId>de.ingrid</groupId>
-            <artifactId>ingrid-utils</artifactId>
-            <version>3.3.0.1</version>
-          </dependency>
     </dependencies>
   </dependencyManagement>
 
