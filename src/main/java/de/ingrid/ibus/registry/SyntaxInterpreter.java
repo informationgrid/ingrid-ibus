@@ -72,7 +72,7 @@ public class SyntaxInterpreter {
             PlugDescription element = iter.next();
             if (!element.isActivate()) {
                 if(LOG.isDebugEnabled()) {
-                  LOG.debug(ms+ " remove iplug: " + element.getProxyServiceURL());
+                  LOG.debug(ms+ ": Not activated! Remove iplug: " + element.getProxyServiceURL());
                 }
                 iter.remove();
             }

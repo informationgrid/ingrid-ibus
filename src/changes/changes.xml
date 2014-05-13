@@ -5,6 +5,12 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="3.5.0-SNAPSHOT" date="2014-xx-xx" description="Release 3.5.0">
+        <action type="update" dev="wemove">
+            Increased timeout for iPlug requests (e.g. SNS-iPlug might need more time).
+        </action>
+    </release>
+    
     <release version="3.4.0" date="2014-02-25" description="Release 3.4.0">
         <action type="add" dev="wemove">
             Added patch update strategy for easier installation.
