@@ -191,7 +191,7 @@ public class SyntaxInterpreter {
             
             // FIX: INGRID-1463
             String iPlugClass = plugDescription.getIPlugClass(); 
-            if ((null != iPlugClass) && (iPlugClass.equals("de.ingrid.iplug.se.NutchSearcher"))) {
+            if ((null != iPlugClass) && (iPlugClass.equalsIgnoreCase("de.ingrid.iplug.se.NutchSearcher") || iPlugClass.equalsIgnoreCase("de.ingrid.iplug.se.seiplug"))) {
                 continue;
             }
             //
@@ -232,7 +232,7 @@ public class SyntaxInterpreter {
             
             // FIX: INGRID-1463
             String iPlugClass = plugDescription.getIPlugClass(); 
-            if ((null != iPlugClass) && (iPlugClass.equals("de.ingrid.iplug.se.NutchSearcher"))) {
+            if ((null != iPlugClass) && (iPlugClass.equals("de.ingrid.iplug.se.NutchSearcher") || iPlugClass.equals("de.ingrid.iplug.se.seiplug"))) {
                 continue;
             }
             //

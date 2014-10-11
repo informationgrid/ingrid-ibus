@@ -7,6 +7,9 @@
   <body>
     <release version="3.5.0-SNAPSHOT" date="2014-xx-xx" description="Release 3.5.0">
         <action type="update" dev="wemove">
+            Add compatibility with new SE iPlug.
+        </action>
+        <action type="update" dev="wemove">
             Increased timeout for iPlug requests (e.g. SNS-iPlug might need more time).
         </action>
     </release>
