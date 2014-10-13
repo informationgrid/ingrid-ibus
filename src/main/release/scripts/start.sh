@@ -19,8 +19,15 @@ THIS_DIR=`dirname "$THIS"`
 INGRID_HOME=`cd "$THIS_DIR" ; pwd`
 PID=$INGRID_HOME/ingrid.pid
 
-# include a jmx script, if available, i.e. to specify jmx port, etc.
+# include a debug script, if available, i.e. to specify debug port, etc.
 # caution: the debug script must echo the actual command to be able to work in the current environment
+if [ -f $INGRID_HOME/debug.sh ]; then
+  eval `sh $INGRID_HOME/debug.sh`
+fi
+
+
+# include a jmx script, if available, i.e. to specify jmx port, etc.
+# caution: the script must echo the actual command to be able to work in the current environment
 if [ -f $INGRID_HOME/jmx.sh ]; then
   eval `sh $INGRID_HOME/jmx.sh`
 fi
