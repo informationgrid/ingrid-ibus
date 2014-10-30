@@ -174,7 +174,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testDataTypeQueries() throws Exception {
-        Registry aRegestry = new Registry(10, true, new DummyProxyFactory());
+        Registry aRegestry = new Registry(100, true, new DummyProxyFactory());
         aRegestry.setCommunication(new DummyCommunication());
         PlugDescription description = new PlugDescription();
         description.setProxyServiceURL("/:23");
