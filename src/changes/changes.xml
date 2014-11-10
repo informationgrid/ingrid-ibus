@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  **************************************************-
+  Ingrid iBus
+  ==================================================
+  Copyright (C) 2014 wemove digital solutions GmbH
+  ==================================================
+  Licensed under the EUPL, Version 1.1 or – as soon they will be
+  approved by the European Commission - subsequent versions of the
+  EUPL (the "Licence");
+
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at:
+
+  http://ec.europa.eu/idabc/eupl5
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the Licence is distributed on an "AS IS" basis,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the Licence for the specific language governing permissions and
+  limitations under the Licence.
+  **************************************************#
+  -->
+
 <document>
   <properties>
     <title>History Ingrid iBus</title>
@@ -6,6 +29,9 @@
   </properties>
   <body>
     <release version="3.5.0-SNAPSHOT" date="2014-xx-xx" description="Release 3.5.0">
+        <action type="add" dev="wemove" issue="REDMINE-524">
+            Added license header to all source files for Open Source migration.
+        </action>
         <action type="update" dev="wemove">
             Add compatibility with new SE iPlug.
         </action>
@@ -13,7 +39,7 @@
             Increased timeout for iPlug requests (e.g. SNS-iPlug might need more time).
         </action>
     </release>
-    
+
     <release version="3.4.0" date="2014-02-25" description="Release 3.4.0">
         <action type="add" dev="wemove">
             Added patch update strategy for easier installation.
@@ -59,7 +85,7 @@
         Fix wrong display of total length of group hits in right result list.
       </action>
       <action type="update" issue="INGRID-1940">
-        Introduced new field "metainfo" in query for various control info to be handled by iBus / iPlugs. 
+        Introduced new field "metainfo" in query for various control info to be handled by iBus / iPlugs.
       </action>
     </release>
 
@@ -74,22 +100,22 @@
         Modified normalization: The results of each iPlug are normalized, if there is a score greater than '1' within these results
       </action>
       <action type="fix">
-        Fix filtering iPlugs by partner: if only negative filter were defined in the query, no iPlug other than SE iPlugs were included in the query.  
+        Fix filtering iPlugs by partner: if only negative filter were defined in the query, no iPlug other than SE iPlugs were included in the query.
       </action>
     </release>
 
     <release version="2.3.0" date="2010-12-20" description="Release">
       <action type="update">
-        Add mapping of new UDK class 6 (Splitting of "Service" into "Geodata Service" and other services)  
+        Add mapping of new UDK class 6 (Splitting of "Service" into "Geodata Service" and other services)
       </action>
     </release>
 
     <release version="1.3.0" date="2010-07-07" description="Optimierung Release">
       <action type="update">
-        Optimierung Erkennungsmechanismus iPlugs (timed out iPlug scanner)  
+        Optimierung Erkennungsmechanismus iPlugs (timed out iPlug scanner)
       </action>
       <action type="update">
-        Optimierung Abarbeitung Nachrichten (Thread Pool) 
+        Optimierung Abarbeitung Nachrichten (Thread Pool)
       </action>
       <action type="update">
         Anpassung an überarbeitete Kommunikation (isConnected())
@@ -161,7 +187,7 @@
 
     <release version="1.1.3" date="2007-08-31" description="Release">
       <action dev="" type="update">
-        Verbesserung der Kommunikationskomponente. 
+        Verbesserung der Kommunikationskomponente.
       </action>
       <action dev="" type="add">
         ProxyUser und ProxyPassword werden jetzt Ueber Konfigurationsdatei gesetzt.
@@ -170,19 +196,19 @@
         Eine Http-Proxy Verbindung kann auch ohne Username und Password aufgebaut werden.
       </action>
     </release>
-    
+
     <release version="1.1.2" date="2007-08-10" description="Release">
       <action dev="" type="update">
-        Bei Query mit ranking:any werden iPlugs welche "ungerankte" Treffer zurückgeben nach score gerankt. Der Score solcher iPlugs beträgt dann den Wert 1. 
+        Bei Query mit ranking:any werden iPlugs welche "ungerankte" Treffer zurückgeben nach score gerankt. Der Score solcher iPlugs beträgt dann den Wert 1.
       </action>
     </release>
-    
+
     <release version="1.1.1" date="2007-08-09" description="Release">
       <action dev="" type="fix">
-        Korrektes Ranking der Ergebnisse, auch wenn "ungerankte" iPlugs als "gerankte" iPlugs behandelt werden (falscher datatype)  
+        Korrektes Ranking der Ergebnisse, auch wenn "ungerankte" iPlugs als "gerankte" iPlugs behandelt werden (falscher datatype)
       </action>
     </release>
-    
+
     <release version="1.1.0" date="2007-08-01" description="Release">
       <action dev="" type="update">
         Austausch JXTA-Kommunikation gegen TCP/IP-Kommunikation
