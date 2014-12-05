@@ -11,13 +11,13 @@
   <version>3.5.0-SNAPSHOT</version>
   <name>InGrid iBus</name>
   <scm>
-    <connection>scm:svn:https://harrison.its-technidata.de:444/svn/ingrid/ingrid-ibus/trunk</connection>
-    <developerConnection>scm:svn:https://harrison.its-technidata.de:444/svn/ingrid/ingrid-ibus/trunk</developerConnection>
+    <connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</connection>
+    <developerConnection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</developerConnection>
   </scm>
 
   <!-- ==================== DEPENDENCY MANAGEMENT ==================== -->
   <!-- DEPENDENCY MANAGEMENT FOR USING OLDER RELEASE VERSIONS (needed for assembly). COMMENT IF USING VERSIONS FROM PARENT -->
-	<!-- the iPlug DSC is needed for PlugDescriptions that can contain class-tags from a DSC-class (Construct!). This should be put 
+	<!-- the iPlug DSC is needed for PlugDescriptions that can contain class-tags from a DSC-class (Construct!). This should be put
 			 into IngridUtils actually!!! -->
   <dependencyManagement>
     <dependencies>
@@ -149,7 +149,7 @@
     <repository>
       <id>de.ingrid.all</id>
       <name>Maven Repo InGrid</name>
-      <url>http://harrison.its-technidata.de/archiva/repository/ingrid-all</url>
+      <url>https://dev.informationgrid.eu/archiva/repository/ingrid-all</url>
     </repository>
   </repositories>
   <build>
