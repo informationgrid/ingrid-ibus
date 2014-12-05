@@ -26,11 +26,6 @@
         <artifactId>ingrid-iplug-dsc</artifactId>
         <version>3.2.0</version>
       </dependency>
-      <dependency>
-        <groupId>de.ingrid</groupId>
-        <artifactId>ingrid-iplug-tamino</artifactId>
-        <version>3.2.0</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -64,20 +59,6 @@
               <groupId>ojdbc</groupId>
               <artifactId>ojdbc</artifactId>
           </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>de.ingrid</groupId>
-      <artifactId>ingrid-iplug-tamino</artifactId>
-      <exclusions>
-	      <exclusion>
-		      <groupId>de.ingrid</groupId>
-		      <artifactId>ingrid-iplug-admin-step1</artifactId>
-	      </exclusion>
-	      <exclusion>
-		      <groupId>de.ingrid</groupId>
-		      <artifactId>ingrid-iplug-admin-step2-tamino</artifactId>
-	      </exclusion>
       </exclusions>
     </dependency>
     <dependency>
