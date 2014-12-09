@@ -254,7 +254,7 @@ public class SyntaxInterpreter {
             
             // FIX: INGRID-1463
             String iPlugClass = plugDescription.getIPlugClass(); 
-            if ((null != iPlugClass) && (iPlugClass.equals("de.ingrid.iplug.se.NutchSearcher") || iPlugClass.equals("de.ingrid.iplug.se.seiplug"))) {
+            if ((null != iPlugClass) && (iPlugClass.equalsIgnoreCase("de.ingrid.iplug.se.NutchSearcher") || iPlugClass.equalsIgnoreCase("de.ingrid.iplug.se.seiplug"))) {
                 continue;
             }
             //
@@ -264,13 +264,24 @@ public class SyntaxInterpreter {
             if (allowedPartner.length == 0) {
                 toRemove = false;
             }
-            for (int i = 0; i < partners.length; i++) {
-                if (containsString(notAllowedPartner, partners[i])) {
-                    toRemove = true;
+            
+            // skip test if iplug is allowed for all partners
+            for (String partner : partners) {
+                if (partner.equals("all")) {
+                    toRemove = false;
                     break;
                 }
-                if (containsString(allowedPartner, partners[i])) {
-                    toRemove = false;
+            }
+            
+            if (toRemove) {
+                for (int i = 0; i < partners.length; i++) {
+                    if (containsString(notAllowedPartner, partners[i])) {
+                        toRemove = true;
+                        break;
+                    }
+                    if (containsString(allowedPartner, partners[i])) {
+                        toRemove = false;
+                    }
                 }
             }
             if (toRemove) {
