@@ -19,29 +19,33 @@ import de.ingrid.utils.tool.QueryUtil;
 import de.ingrid.utils.tool.StringUtil;
 
 /**
- * Supports you with static methods to extract various informations out of a query.
+ * Supports you with static methods to extract various informations out of a
+ * query.
  */
 public class SyntaxInterpreter {
 
     private static final Logger LOG = Logger.getLogger(SyntaxInterpreter.class);
-    
+
     /**
-     * Returns IPlugs to a given query. Currently it filters for activated, IPlug ids, supported ranking, supported
-     * datatype, supported fields, supported providers and supported partners.
+     * Returns IPlugs to a given query. Currently it filters for activated,
+     * IPlug ids, supported ranking, supported datatype, supported fields,
+     * supported providers and supported partners.
      * 
-     * @param query The search query. 
-     * @param registry The plug regestry.
+     * @param query
+     *            The search query.
+     * @param registry
+     *            The plug regestry.
      * @return The IPlugs that have the fields the query requires.
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
         PlugDescription[] plugs = registry.getAllIPlugs();
         List<PlugDescription> plugList = new ArrayList<PlugDescription>(plugs.length);
-        if(LOG.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("plugs before filtering");
         }
         for (int i = 0; i < plugs.length; i++) {
-            if(LOG.isDebugEnabled()) {
-                LOG.debug(i+ ".) " + plugs[i].getPlugId());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(i + ".) " + plugs[i].getPlugId());
             }
             plugList.add(plugs[i]);
         }
@@ -54,13 +58,13 @@ public class SyntaxInterpreter {
         filterForFields(ms, query, plugList);
         filterForProvider(ms, query, plugList);
         filterForPartner(ms, query, plugList);
-        
+
         PlugDescription[] filteredPlugs = (PlugDescription[]) plugList.toArray(new PlugDescription[plugList.size()]);
-        if(LOG.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("plugs after filtering");
             for (int j = 0; j < filteredPlugs.length; j++) {
                 PlugDescription plugDescription = filteredPlugs[j];
-                LOG.debug(j+ ".) " + plugDescription.getPlugId());    
+                LOG.debug(j + ".) " + plugDescription.getPlugId());
             }
         }
 
@@ -71,8 +75,8 @@ public class SyntaxInterpreter {
         for (Iterator<PlugDescription> iter = plugDescriptions.iterator(); iter.hasNext();) {
             PlugDescription element = iter.next();
             if (!element.isActivate()) {
-                if(LOG.isDebugEnabled()) {
-                  LOG.debug(ms+ ": Not activated! Remove iplug: " + element.getProxyServiceURL());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(ms + ": Not activated! Remove iplug: " + element.getProxyServiceURL());
                 }
                 iter.remove();
             }
@@ -85,19 +89,19 @@ public class SyntaxInterpreter {
             ingridQuery.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
             rankingTypeInQuery = ingridQuery.getRankingType();
         }
-        if(LOG.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("rankingType in Query: " + rankingTypeInQuery);
         }
         if (!rankingTypeInQuery.equals("any")) {
             for (Iterator<PlugDescription> iter = descriptions.iterator(); iter.hasNext();) {
                 PlugDescription plugDescription = iter.next();
                 String[] rankingTypes = plugDescription.getRankingTypes();
-                if(LOG.isDebugEnabled()) {
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("plugdescription/rankingTypes.length: " + plugDescription.getPlugId() + " / " + rankingTypes.length);
                 }
                 boolean foundRanking = false;
                 for (int i = 0; i < rankingTypes.length; i++) {
-                    if(LOG.isDebugEnabled()) {
+                    if (LOG.isDebugEnabled()) {
                         LOG.debug("rankingType in plugdescription: " + rankingTypes[i] + " / " + plugDescription.getPlugId());
                     }
                     if (ingridQuery.isRanked(rankingTypes[i].toLowerCase())) {
@@ -106,7 +110,7 @@ public class SyntaxInterpreter {
                     }
                 }
                 if (!foundRanking && rankingTypes.length > 0) {
-                    if(LOG.isDebugEnabled()) {
+                    if (LOG.isDebugEnabled()) {
                         LOG.debug(ms + " remove plugescription: " + plugDescription.getPlugId());
                     }
                     iter.remove();
@@ -119,8 +123,9 @@ public class SyntaxInterpreter {
         String[] queryFieldNames = getAllFieldsNamesFromQuery(ingridQueries);
 
         // Query may contain "metainfo" field not supported by all iplugs !
-        // Remove "metainfo" field from field list for checking ! So old iplugs won't be removed !
-    	queryFieldNames = StringUtil.removeStringFromStringArray(queryFieldNames, QueryUtil.FIELDNAME_METAINFO);
+        // Remove "metainfo" field from field list for checking ! So old iplugs
+        // won't be removed !
+        queryFieldNames = StringUtil.removeStringFromStringArray(queryFieldNames, QueryUtil.FIELDNAME_METAINFO);
 
         if (queryFieldNames.length == 0) {
             return;
@@ -137,10 +142,10 @@ public class SyntaxInterpreter {
                 }
             }
             if (toRemove) {
-                if(LOG.isDebugEnabled()) {
-                  LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
-                  LOG.debug(ms+" queryFieldNames: " + Arrays.asList(queryFieldNames));
-                  LOG.debug(ms+" plugfields: " + Arrays.asList(plugFields));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
+                    LOG.debug(ms + " queryFieldNames: " + Arrays.asList(queryFieldNames));
+                    LOG.debug(ms + " plugfields: " + Arrays.asList(plugFields));
                 }
                 iter.remove();
             }
@@ -158,8 +163,10 @@ public class SyntaxInterpreter {
             for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
                 PlugDescription plugDescription = iter.next();
                 String[] dataTypes = plugDescription.getDataTypes();
-                // if only negative datatypes are supplied, exclude only iplugs with negative datatype and keep others
-                // if positive datatypes are supplied, exclude all except those with the positive datatype
+                // if only negative datatypes are supplied, exclude only iplugs
+                // with negative datatype and keep others
+                // if positive datatypes are supplied, exclude all except those
+                // with the positive datatype
                 boolean toRemove = allowedDataTypes.length == 0 ? false : true;
                 for (int i = 0; i < dataTypes.length; i++) {
                     if (containsString(notAllowedDataTypes, dataTypes[i]) || containsString(notAllowedDataTypes, "all")) {
@@ -171,8 +178,8 @@ public class SyntaxInterpreter {
                     }
                 }
                 if (toRemove) {
-                    if(LOG.isDebugEnabled()) {
-                      LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                     }
                     iter.remove();
                 }
@@ -188,14 +195,14 @@ public class SyntaxInterpreter {
         }
         for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = iter.next();
-            
+
             // FIX: INGRID-1463
-            String iPlugClass = plugDescription.getIPlugClass(); 
+            String iPlugClass = plugDescription.getIPlugClass();
             if ((null != iPlugClass) && (iPlugClass.equalsIgnoreCase("de.ingrid.iplug.se.NutchSearcher") || iPlugClass.equalsIgnoreCase("de.ingrid.iplug.se.seiplug"))) {
                 continue;
             }
             //
-            
+
             String[] providers = plugDescription.getProviders();
             boolean toRemove = true;
             if (allowedProvider.length == 0) {
@@ -211,8 +218,8 @@ public class SyntaxInterpreter {
                 }
             }
             if (toRemove) {
-                if(LOG.isDebugEnabled()) {
-                  LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                 }
                 iter.remove();
             }
@@ -229,42 +236,37 @@ public class SyntaxInterpreter {
 
         for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = iter.next();
-            
+
             // FIX: INGRID-1463
-            String iPlugClass = plugDescription.getIPlugClass(); 
+            String iPlugClass = plugDescription.getIPlugClass();
             if ((null != iPlugClass) && (iPlugClass.equalsIgnoreCase("de.ingrid.iplug.se.NutchSearcher") || iPlugClass.equalsIgnoreCase("de.ingrid.iplug.se.seiplug"))) {
                 continue;
             }
-            //
-            
+
             String[] partners = plugDescription.getPartners();
+
+            // skip test if iplug is allowed for all partners
+            if (Arrays.asList(partners).contains("all")) {
+                continue;
+            }
             boolean toRemove = true;
             if (allowedPartner.length == 0) {
                 toRemove = false;
             }
-            
-            // skip test if iplug is allowed for all partners
-            for (String partner : partners) {
-                if (partner.equals("all")) {
-                    toRemove = false;
+
+            for (int i = 0; i < partners.length; i++) {
+                if (containsString(notAllowedPartner, partners[i])) {
+                    toRemove = true;
                     break;
                 }
-            }
-            
-            if (toRemove) {
-                for (int i = 0; i < partners.length; i++) {
-                    if (containsString(notAllowedPartner, partners[i])) {
-                        toRemove = true;
-                        break;
-                    }
-                    if (containsString(allowedPartner, partners[i])) {
-                        toRemove = false;
-                    }
+                if (containsString(allowedPartner, partners[i])) {
+                    toRemove = false;
                 }
             }
+
             if (toRemove) {
-                if(LOG.isDebugEnabled()) {
-                  LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                 }
                 iter.remove();
             }
@@ -279,8 +281,8 @@ public class SyntaxInterpreter {
         for (Iterator<PlugDescription> iter = plugs.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = iter.next();
             if (!containsString(restrictecPlugIds, plugDescription.getPlugId())) {
-                if(LOG.isDebugEnabled()) {
-                  LOG.debug(ms+" remove iplug: " + plugDescription.getProxyServiceURL());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                 }
                 iter.remove();
             }
