@@ -5,7 +5,10 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="3.5.0-SNAPSHOT" date="2014-xx-xx" description="Release 3.5.0">
+    <release version="3.4.1-SNAPSHOT" date="2014-12-19" description="Release 3.4.1">
+        <action type="update" dev="wemove">
+            Adapt project to GITHUB.
+        </action>
         <action type="update" dev="wemove">
             Add compatibility with new SE iPlug.
         </action>
