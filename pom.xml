@@ -8,7 +8,7 @@
 	<groupId>de.ingrid</groupId>
 	<artifactId>ingrid-ibus</artifactId>
 	<packaging>jar</packaging>
-	<version>3.4.1</version>
+	<version>3.4.1-SNAPSHOT</version>
 	<name>Ingrid iBus</name>
 	<scm>
 		<connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</connection>
@@ -185,6 +185,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
 				<!-- Add Type of Component to Manifest of Installer for Upgrade Server -->
 				<configuration>
 					<archive>
@@ -207,6 +208,59 @@
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.3</version>
 			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<!-- During release:perform, execute deploy changes:changes-report assembly:single 
+						wagon:upload changes:announcement-mail to upload the distribution to /opt/ingrid/distributions -->
+					<preparationGoals>clean verify deploy changes:changes-report
+						assembly:single wagon:upload -Dproject.url=</preparationGoals>
+					<goals>changes:announcement-mail -Dproject.url= --non-recursive</goals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>2.11</version>
+				<configuration>
+					<smtpHost>localhost</smtpHost>
+					<subject>[ingrid update announcement] ${project.build.finalName}</subject>
+					<mailSender>
+						<name>Release Notification</name>
+						<email>noreply@wemove.com</email>
+					</mailSender>
+					<toAddresses>
+						<toAddress implementation="java.lang.String">ingrid-announcement@wemove.com</toAddress>
+					</toAddresses>
+					<issueManagement>
+						<system>JIRA</system>
+						<url>http://dev.wemove.com/jira/browse/INGRID</url>
+					</issueManagement>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>wagon-maven-plugin</artifactId>
+				<version>1.0-beta-5</version>
+			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>not_derived</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.5.1</version>
+						<configuration>
+							<preparationGoals>clean verify</preparationGoals>
+							<goals>deploy</goals>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
