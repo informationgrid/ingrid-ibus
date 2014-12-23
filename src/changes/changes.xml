@@ -5,6 +5,11 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="3.4.1.1" date="2014-12-23" description="Release 3.4.1.1">
+        <action type="fix" dev="wemove">
+            Fix unpredictable sort results if all iplugs deliver the same score for the returned hits.
+        </action>
+    </release>
     <release version="3.4.1" date="2014-12-21" description="Release 3.4.1">
         <action type="add" dev="wemove">
             Adapt project to GITHUB.
