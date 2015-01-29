@@ -34,7 +34,8 @@ import de.ingrid.utils.IngridHits;
 /**
  * Container for different {@link java.util.Comparator}.
  * 
- * <p/>created on 09.05.2006
+ * <p/>
+ * created on 09.05.2006
  * 
  * @version $Revision: $
  * @author jz
@@ -49,9 +50,9 @@ public class Comparators {
     public static final Comparator SCORE_HIT_COMPARATOR = new Comparator() {
 
         public int compare(Object arg0, Object arg1) {
-        	if (null == arg0 && null == arg1) {
-        		return 0;
-        	} else if (null == arg0) {
+            if (null == arg0 && null == arg1) {
+                return 0;
+            } else if (null == arg0) {
                 return 1;
             } else if (null == arg1) {
                 return -1;
@@ -60,12 +61,30 @@ public class Comparators {
             IngridHit hit0 = (IngridHit) arg0;
             IngridHit hit1 = (IngridHit) arg1;
 
-            return Float.compare(hit1.getScore(), hit0.getScore());
+            int result = Float.compare(hit1.getScore(), hit0.getScore());
+
+            // in case of equal scores make sure alle results from one iplug are
+            // grouped together this fixes the sort problems, observed in HH
+            // where alle results from all ST iplugs had the same score and
+            // where sorted request specific.
+            if (result == 0) {
+                if (hit0.getPlugId() == null || hit1.getPlugId() == null) {
+                    return 0;
+                } else if (hit0.getPlugId() == null) {
+                    return 1;
+                } else if (hit1.getPlugId() == null) {
+                    return -1;
+                } else {
+                    result = hit0.getPlugId().compareTo(hit1.getPlugId());
+                }
+            }
+            return result;
         }
     };
 
     /**
-     * Constant for unranked hits comparator position. This denotes the field for comparison in unranked hits.
+     * Constant for unranked hits comparator position. This denotes the field
+     * for comparison in unranked hits.
      */
     public static final String UNRANKED_HITS_COMPARATOR_POSITION = "hits-position";
 

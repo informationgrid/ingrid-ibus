@@ -28,15 +28,13 @@
 
 package de.ingrid.ibus;
 
-import java.util.HashMap;
-
+import junit.framework.TestCase;
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
-import junit.framework.TestCase;
 
 /**
  * TODO comment for ScoreNormalizingTest
@@ -55,17 +53,18 @@ public class ScoreNormalizingTest extends TestCase {
         Registry registry = bus.getIPlugRegistry();
         registry.setCommunication(new DummyCommunication());
 
+        PlugDescription plugDescriptions1 = new PlugDescription();
+        plugDescriptions1.setProxyServiceURL("/:2");
+        plugDescriptions1.setOrganisation("liebes ministerium"); // 1984
+        registry.addPlugDescription(plugDescriptions1);
+        registry.activatePlug("/:2");
+
         PlugDescription plugDescriptions0 = new PlugDescription();
         plugDescriptions0.setProxyServiceURL("/:1");
         plugDescriptions0.setOrganisation("friedens ministerium");
         registry.addPlugDescription(plugDescriptions0);
         registry.activatePlug("/:1");
 
-        PlugDescription plugDescriptions1 = new PlugDescription();
-        plugDescriptions1.setProxyServiceURL("/:2");
-        plugDescriptions1.setOrganisation("liebes ministerium"); // 1984
-        registry.addPlugDescription(plugDescriptions1);
-        registry.activatePlug("/:2");
 
 //        HashMap<String, Float> globalRanking = new HashMap<String, Float>();
 //        globalRanking.put("/:2", new Float(0.1111));
@@ -169,7 +168,7 @@ public class ScoreNormalizingTest extends TestCase {
         float[] expectedScores1 = {6.0f, 4.5f, 3.75f, 3.0f, 1.5f, 0.75f, 0.5f, 0.4f, 0.3f};
         
         Bus bus = setUp(scores);
-        bus.getIPlugRegistry().removePlug("/:2");
+        bus.getIPlugRegistry().removePlug("/:1");
         
         IngridQuery query = QueryStringParser.parse("a Query ranking:score");
         
@@ -181,4 +180,28 @@ public class ScoreNormalizingTest extends TestCase {
             assertTrue(hitsArray[i].getScore() == expectedScores1[i]);
         }
     }
+    
+    public void testScoreSameScoreGroupedIPlugs() throws Exception {
+        System.out.println("testScoreSameScoreGroupedIPlugs");
+        // scores have to be sorted according to plug IDs
+        float[][] scores = {{1.0f, 1.0f},{1.0f, 1.0f}};
+        float[] expectedScores = {1.0f, 1.0f, 1.0f, 1.0f};
+        
+        Bus bus = setUp(scores);
+        
+        IngridQuery query = QueryStringParser.parse("a Query ranking:score");
+        IngridHits hits = bus.search(query, 10, 0, 100, 1000);
+        IngridHit[] hitsArray = hits.getHits();
+        for (int i = 0; i < hitsArray.length; i++) {
+            IngridHit hit = hitsArray[i];
+            System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
+            assertTrue(hit.getScore() == expectedScores[i]);
+            if (i<2) {
+                assertTrue(hit.getPlugId().equals("/:1"));
+            } else {
+                assertTrue(hit.getPlugId().equals("/:2"));
+            }
+        }
+    }
+    
 }
