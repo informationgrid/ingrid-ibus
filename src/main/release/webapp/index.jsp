@@ -20,12 +20,19 @@
   limitations under the Licence.
   **************************************************#
   --%>
+<%@page import="de.ingrid.utils.queryparser.QueryStringParser"%>
+<%@page import="de.ingrid.utils.IngridQueryTools"%>
+<%@page import="de.ingrid.utils.query.FieldQuery"%>
+<%@page import="de.ingrid.ibus.debug.DebugEvent"%>
+<%@page import="de.ingrid.utils.query.TermQuery"%>
+<%@page import="de.ingrid.utils.query.IngridQuery"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="de.ingrid.ibus.Bus" %>
 <%@ page import="de.ingrid.ibus.registry.Registry" %>
 <%@ page import="de.ingrid.utils.PlugDescription" %>
 <%@ page import="java.lang.Exception" %>
 <%@ page import="java.util.Enumeration" %>
+<%@ page import="de.ingrid.ibus.debug.DebugQuery" %>
 
 <%!
 public Map getIPlugs() {
@@ -50,11 +57,27 @@ public Map getIPlugs() {
 	}
 	return map;
 }
+
+public DebugQuery search(String q) {
+    Bus bus = Bus.getInstance();
+    DebugQuery debugQ = bus.getDebugInfo(); 
+    debugQ.setActiveAndReset();
+    try {
+        IngridQuery query = QueryStringParser.parse( q );    
+        System.out.println( "Query: " + query );
+        bus.searchAndDetail( query, 10, 0, 0, 30000, null );
+    } catch (Exception e) {}
+    
+    return debugQ;
+}
 %>
 
 <%
 String submitted = request.getParameter("submitted");
 String cancel = request.getParameter("cancel");
+String debug = request.getParameter("debug");
+String query = request.getParameter("query");
+String debugQueryString = request.getParameter("query") != null ? request.getParameter("query") : "ranking:score cache:off";
 
 Enumeration paramNames = request.getParameterNames();
 boolean saved = false;
@@ -89,6 +112,10 @@ if ((submitted != null) && submitted.equals("true")) {
 
     saved = true;
 }
+DebugQuery debugInfo = null; 
+if (debug != null && debug.equals("true")) {
+    debugInfo = search( query );
+}
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -111,6 +138,9 @@ if ((submitted != null) && submitted.equals("true")) {
 	body, td {font-family:Arial; font-size:12px}
     .section { font-weight: bold; background-color: #666; color: white; padding-left: 5px;}
     .header { font-weight: bold; }
+    .debug { border: 1px solid #888; font-family: monospace; padding: 10px; }
+    .debug ul { text-align: left; }
+    .debug li { line-height: 25px; }
 </style>
 </head>
 <body>
@@ -201,6 +231,31 @@ if ((submitted != null) && submitted.equals("true")) {
 		</td>
 		</tr>
 	</table>
+</form>
+<form method="post" action="<%=response.encodeURL("index.jsp")%>" class="debug">
+	<input type="hidden" name="debug" value="true" />
+    <input type="text" name="query" value="<%=debugQueryString%>"/>
+    <input type="submit" value="Test Query"/>
+    <%if (debugInfo != null)  {%>
+        <%-- <h5>Query: <%=debugInfo.getQuery()%></h3> --%>
+        <ul>
+        <% List events = debugInfo.getEvents(); %>
+        <% for( int i=0; i < events.size(); i++ ) { %>
+            <% DebugEvent event = (DebugEvent)events.get( i ); %>
+            <li><span style="font-weight: bold;"><%=event.title%>:</span> <%=event.message%> <%if (event.duration != null)  {%> (took: <%=event.duration%>ms) <% } %>
+            <%if (event.messageList != null)  {%>
+                <ul>
+                <% List messages = event.messageList; %>
+                <% for( int j=0; j < messages.size(); j++ ) { %>
+                    <li><%=messages.get(j)%></li>
+                <% } %>
+                </ul>
+            <% } %>
+            </li>
+        <% } %>
+        </ul>  
+    <%}%>
+    
 </form>
 </center>
 </body>

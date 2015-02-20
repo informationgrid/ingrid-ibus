@@ -46,6 +46,8 @@ import net.weta.components.communication.util.PooledThreadExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.ingrid.ibus.debug.DebugEvent;
+import de.ingrid.ibus.debug.DebugQuery;
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryRequest;
 import de.ingrid.ibus.registry.Registry;
@@ -88,6 +90,8 @@ public class Bus extends Thread implements IBus {
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
     private Metadata _metadata;
+    
+    private DebugQuery debug;
 
     /**
      * The bus. All IPlugs have to connect with the bus to be searched. It sends
@@ -105,6 +109,8 @@ public class Bus extends Thread implements IBus {
         this.fRegistry = new Registry(120000, false, factory);
         fInstance = this;
         _grouper = new Grouper(this.fRegistry);
+        debug = new DebugQuery();
+        SyntaxInterpreter.debug = this.debug;
     }
 
     /**
@@ -165,6 +171,16 @@ public class Bus extends Thread implements IBus {
             }
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit,
                     forceManyResults ? hitsPerPage * 6 : hitsPerPage);
+        }
+        
+        if (debug.isActive()) {
+            Iterator<IngridHits> it = resultSet.iterator();
+            while (it.hasNext()) {
+                IngridHits hits = it.next();
+                DebugEvent event = new DebugEvent( "Hits from '" + hits.getPlugId() + "'", "" + hits.length() );
+                event.duration = hits.getSearchTimings().get( hits.getPlugId() );
+                debug.addEvent( event );
+            }
         }
 
         IngridHits hitContainer;
@@ -821,6 +837,16 @@ public class Bus extends Thread implements IBus {
             IngridHitDetail ingridHitDetail = details[i];
             ingridHit.setHitDetail(ingridHitDetail);
         }
+        // make sure that the debugging is deactivated after each search
+        if (debug.isActive()) {
+            debug.setQuery( query );
+            debug.addEvent( new DebugEvent( "Total Hits", "" + searchedHits.length() ) );
+            debug.setInactive();
+        }
         return searchedHits;
+    }
+    
+    public DebugQuery getDebugInfo() {
+        return this.debug;
     }
 }
