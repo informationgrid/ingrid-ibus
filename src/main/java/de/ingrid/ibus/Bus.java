@@ -729,13 +729,6 @@ public class Bus extends Thread implements IBus {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("TIMING: Create details for Query (" + query.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetails) + "ms.");
         }
-        if (debug.isActive( query )) {
-            DebugEvent event = debug.getEvents().get( debug.getEvents().size() - 1 );
-            event.messageList = new ArrayList<String>();
-            for (IngridHit detail : details) {
-                event.messageList.add( detail.getString( "title" ) );
-            }
-        }
         return details;
     }
 
@@ -850,6 +843,11 @@ public class Bus extends Thread implements IBus {
         // make sure that the debugging is deactivated after each search
         if (debug.isActive(query)) {
             debug.addEvent( new DebugEvent( "Total Hits", "" + searchedHits.length() ) );
+            List<String> list = new ArrayList<String>();
+            for (IngridHit detail : details) {
+                list.add( detail.getString( "title" ) + "(score: " + detail.getScore() + ", iPlug: " + detail.getPlugId() + ")" );
+            }
+            debug.addEvent( new DebugEvent( "Result", list ) );
             debug.setInactive();
         }
         return searchedHits;
