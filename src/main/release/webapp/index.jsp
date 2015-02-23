@@ -70,7 +70,9 @@ public DebugQuery search(String q) {
         IngridQuery query = QueryStringParser.parse( q );    
         System.out.println( "Query: " + query );
         Bus.getInstance().searchAndDetail( query, 10, 0, 0, 30000, null );
-    } catch (Exception e) {}
+    } catch (Exception e) {
+        debugQ.addEvent( new DebugEvent( "Error", e.toString(  ) ) );
+    }
     
     return debugQ;
 }
@@ -256,7 +258,7 @@ if (fetch != null && fetch.equals("Fetch next query")) {
 </form>
 <form method="post" action="<%=response.encodeURL("index.jsp")%>" class="debug">
 	<input type="hidden" name="debug" value="true" />
-    <input type="text" name="query" value="<%=debugQueryString%>"/>
+    <input type="text" name="query" style="width: 400px;" value="<%=debugQueryString%>"/>
     <input type="submit" value="Test Query"/>
     <input type="submit" name="fetch" value="Fetch next query" title="Wait for the next remotely executed query and analyze it (max. 10s)"/>
     <%if (timeoutMsg != null)  {%>

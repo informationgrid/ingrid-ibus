@@ -27,6 +27,10 @@ public class DebugQuery {
         return this.isActive;
     }
     
+    public boolean isActive(IngridQuery other) {
+        return this.isActive && (this.query.hashCode() == other.hashCode());
+    }
+    
     public void setActiveAndReset() {
         this.isActive = true;
         this.setQuery( null );
@@ -44,5 +48,5 @@ public class DebugQuery {
     public void setQuery(IngridQuery query) {
         this.query = query;
     }
-    
+
 }

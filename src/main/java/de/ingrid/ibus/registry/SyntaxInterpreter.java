@@ -69,7 +69,7 @@ public class SyntaxInterpreter {
         if (LOG.isDebugEnabled()) {
             LOG.debug("plugs before filtering");
         }
-        if (debug.isActive()) {
+        if (debug.isActive(query)) {
             List<String> connectedIPlugs = new ArrayList<String>();
             for (PlugDescription pd : plugs) {
                 connectedIPlugs.add( pd.getPlugId() );
@@ -101,7 +101,7 @@ public class SyntaxInterpreter {
                 LOG.debug(j + ".) " + plugDescription.getPlugId());
             }
         }
-        if (debug.isActive()) {
+        if (debug.isActive(query)) {
             List<String> connectedIPlugsAfter = new ArrayList<String>();
             for (PlugDescription pd : filteredPlugs) {
                 connectedIPlugsAfter.add( pd.getPlugId() );
@@ -157,7 +157,7 @@ public class SyntaxInterpreter {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(ms + " remove plugescription: " + plugDescription.getPlugId());
                     }
-                    if (debug.isActive()) {
+                    if (debug.isActive(ingridQuery)) {
                         debug.addEvent( new DebugEvent( "Removed iPlug from Search, since ranking is not supported", plugDescription.getPlugId() + " ( has ranking: " + Arrays.asList( plugDescription.getRankingTypes() ) + " )" ) );
                     }
                     iter.remove();
@@ -194,7 +194,7 @@ public class SyntaxInterpreter {
                     LOG.debug(ms + " queryFieldNames: " + Arrays.asList(queryFieldNames));
                     LOG.debug(ms + " plugfields: " + Arrays.asList(plugFields));
                 }
-                if (debug.isActive()) {
+                if (debug.isActive(ingridQueries)) {
                     debug.addEvent( new DebugEvent( "Removed iPlug from Search, since fields are not available", plugDescription.getPlugId() + " : " + Arrays.asList(queryFieldNames) + " )" ) );
                 }
                 iter.remove();
@@ -231,7 +231,7 @@ public class SyntaxInterpreter {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                     }
-                    if (debug.isActive()) {
+                    if (debug.isActive(ingridQueries)) {
                         debug.addEvent( new DebugEvent( "Removed iPlug from Search, because of DataType", plugDescription.getPlugId() ) );
                     }
                     iter.remove();
@@ -274,7 +274,7 @@ public class SyntaxInterpreter {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                 }
-                if (debug.isActive()) {
+                if (debug.isActive(ingridQueries)) {
                     debug.addEvent( new DebugEvent( "Removed iPlug from Search, because of Provider", plugDescription.getPlugId() ) );
                 }
                 iter.remove();
@@ -324,7 +324,7 @@ public class SyntaxInterpreter {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                 }
-                if (debug.isActive()) {
+                if (debug.isActive(ingridQuery)) {
                     debug.addEvent( new DebugEvent( "Removed iPlug from Search, because of Partner", plugDescription.getPlugId() ) );
                 }
                 iter.remove();
@@ -343,7 +343,7 @@ public class SyntaxInterpreter {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                 }
-                if (debug.isActive()) {
+                if (debug.isActive(query)) {
                     debug.addEvent( new DebugEvent( "Removed iPlug from Search, because of explicit exclusion", plugDescription.getPlugId() ) );
                 }
                 iter.remove();

@@ -173,7 +173,7 @@ public class Bus extends Thread implements IBus {
                     forceManyResults ? hitsPerPage * 6 : hitsPerPage);
         }
         
-        if (debug.isActive()) {
+        if (debug.isActive(query)) {
             Iterator<IngridHits> it = resultSet.iterator();
             while (it.hasNext()) {
                 IngridHits hits = it.next();
@@ -729,7 +729,13 @@ public class Bus extends Thread implements IBus {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("TIMING: Create details for Query (" + query.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetails) + "ms.");
         }
-        
+        if (debug.isActive( query )) {
+            DebugEvent event = debug.getEvents().get( debug.getEvents().size() - 1 );
+            event.messageList = new ArrayList<String>();
+            for (IngridHit detail : details) {
+                event.messageList.add( detail.getString( "title" ) );
+            }
+        }
         return details;
     }
 
@@ -829,6 +835,10 @@ public class Bus extends Thread implements IBus {
 
     public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit,
             int maxMilliseconds, String[] requestedFields) throws Exception {
+        if (debug.isActive()) {
+            // the query is used to identify the right Query during the analysis where several threads are running 
+            debug.setQuery( query );
+        }
         IngridHits searchedHits = search(query, hitsPerPage, currentPage, startHit, maxMilliseconds);
         IngridHit[] hits = searchedHits.getHits();
         IngridHitDetail[] details = getDetails(hits, query, requestedFields);
@@ -838,8 +848,7 @@ public class Bus extends Thread implements IBus {
             ingridHit.setHitDetail(ingridHitDetail);
         }
         // make sure that the debugging is deactivated after each search
-        if (debug.isActive()) {
-            debug.setQuery( query );
+        if (debug.isActive(query)) {
             debug.addEvent( new DebugEvent( "Total Hits", "" + searchedHits.length() ) );
             debug.setInactive();
         }
