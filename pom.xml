@@ -71,6 +71,22 @@
 			<groupId>de.ingrid</groupId>
 			<artifactId>ingrid-utils</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>4.1.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>4.1.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>4.1.5.RELEASE</version>
+        </dependency>
+        
 		<dependency>
 			<groupId>tomcat</groupId>
 			<artifactId>jasper-compiler</artifactId>

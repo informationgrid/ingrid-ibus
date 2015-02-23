@@ -46,6 +46,8 @@ import net.weta.components.communication.util.PooledThreadExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.ingrid.ibus.debug.DebugEvent;
+import de.ingrid.ibus.debug.DebugQuery;
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.ibus.net.PlugQueryRequest;
 import de.ingrid.ibus.registry.Registry;
@@ -88,6 +90,8 @@ public class Bus extends Thread implements IBus {
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
     private Metadata _metadata;
+    
+    private DebugQuery debug;
 
     /**
      * The bus. All IPlugs have to connect with the bus to be searched. It sends
@@ -105,6 +109,8 @@ public class Bus extends Thread implements IBus {
         this.fRegistry = new Registry(120000, false, factory);
         fInstance = this;
         _grouper = new Grouper(this.fRegistry);
+        debug = new DebugQuery();
+        SyntaxInterpreter.debug = this.debug;
     }
 
     /**
@@ -165,6 +171,16 @@ public class Bus extends Thread implements IBus {
             }
             resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit,
                     forceManyResults ? hitsPerPage * 6 : hitsPerPage);
+        }
+        
+        if (debug.isActive(query)) {
+            Iterator<IngridHits> it = resultSet.iterator();
+            while (it.hasNext()) {
+                IngridHits hits = it.next();
+                DebugEvent event = new DebugEvent( "Hits from '" + hits.getPlugId() + "'", "" + hits.length() );
+                event.duration = hits.getSearchTimings().get( hits.getPlugId() );
+                debug.addEvent( event );
+            }
         }
 
         IngridHits hitContainer;
@@ -713,7 +729,13 @@ public class Bus extends Thread implements IBus {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug("TIMING: Create details for Query (" + query.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetails) + "ms.");
         }
-        
+        if (debug.isActive( query )) {
+            DebugEvent event = debug.getEvents().get( debug.getEvents().size() - 1 );
+            event.messageList = new ArrayList<String>();
+            for (IngridHit detail : details) {
+                event.messageList.add( detail.getString( "title" ) );
+            }
+        }
         return details;
     }
 
@@ -813,6 +835,10 @@ public class Bus extends Thread implements IBus {
 
     public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit,
             int maxMilliseconds, String[] requestedFields) throws Exception {
+        if (debug.isActive()) {
+            // the query is used to identify the right Query during the analysis where several threads are running 
+            debug.setQuery( query );
+        }
         IngridHits searchedHits = search(query, hitsPerPage, currentPage, startHit, maxMilliseconds);
         IngridHit[] hits = searchedHits.getHits();
         IngridHitDetail[] details = getDetails(hits, query, requestedFields);
@@ -821,6 +847,15 @@ public class Bus extends Thread implements IBus {
             IngridHitDetail ingridHitDetail = details[i];
             ingridHit.setHitDetail(ingridHitDetail);
         }
+        // make sure that the debugging is deactivated after each search
+        if (debug.isActive(query)) {
+            debug.addEvent( new DebugEvent( "Total Hits", "" + searchedHits.length() ) );
+            debug.setInactive();
+        }
         return searchedHits;
+    }
+    
+    public DebugQuery getDebugInfo() {
+        return this.debug;
     }
 }
