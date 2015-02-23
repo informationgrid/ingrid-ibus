@@ -33,6 +33,7 @@ import java.io.StringReader;
 import junit.framework.TestCase;
 import de.ingrid.ibus.DummyCommunication;
 import de.ingrid.ibus.DummyProxyFactory;
+import de.ingrid.ibus.debug.DebugQuery;
 import de.ingrid.ibus.processor.UdkMetaclassPreProcessor;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.FieldQuery;
@@ -255,6 +256,7 @@ public class SyntaxInterpreterTest extends TestCase {
     private PlugDescription[] getIPlugs(String queryString) throws Exception {
         QueryStringParser parser = new QueryStringParser(new StringReader(queryString));
         IngridQuery query = parser.parse();
+        SyntaxInterpreter.debug = new DebugQuery();
         return SyntaxInterpreter.getIPlugsForQuery(query, this.registry);
     }
 
