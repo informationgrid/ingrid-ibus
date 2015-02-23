@@ -58,14 +58,18 @@ public Map getIPlugs() {
 	return map;
 }
 
-public DebugQuery search(String q) {
-    Bus bus = Bus.getInstance();
-    DebugQuery debugQ = bus.getDebugInfo(); 
+private DebugQuery activateDebug() {
+    DebugQuery debugQ = Bus.getInstance().getDebugInfo(); 
     debugQ.setActiveAndReset();
+    return debugQ;
+}
+
+public DebugQuery search(String q) {
+    DebugQuery debugQ = activateDebug();
     try {
         IngridQuery query = QueryStringParser.parse( q );    
         System.out.println( "Query: " + query );
-        bus.searchAndDetail( query, 10, 0, 0, 30000, null );
+        Bus.getInstance().searchAndDetail( query, 10, 0, 0, 30000, null );
     } catch (Exception e) {}
     
     return debugQ;
@@ -78,6 +82,7 @@ String cancel = request.getParameter("cancel");
 String debug = request.getParameter("debug");
 String query = request.getParameter("query");
 String debugQueryString = request.getParameter("query") != null ? request.getParameter("query") : "ranking:score cache:off";
+String fetch = request.getParameter("fetch");
 
 Enumeration paramNames = request.getParameterNames();
 boolean saved = false;
@@ -113,8 +118,25 @@ if ((submitted != null) && submitted.equals("true")) {
     saved = true;
 }
 DebugQuery debugInfo = null; 
-if (debug != null && debug.equals("true")) {
+String timeoutMsg = null;
+if (debug != null && debug.equals("true") && fetch == null) {
     debugInfo = search( query );
+}
+
+if (fetch != null && fetch.equals("Fetch next query")) {
+    DebugQuery debugQ = activateDebug();
+    // wait max. 30s
+    int times = 1;
+    while (debugQ.isActive() && times < 10) {
+        Thread.sleep( 1000 );
+        times++;
+    }
+    if (debugQ.isActive()) {
+        debugQ.setInactive();
+        timeoutMsg = "Waited for an incoming query for 10s ... aborted!";
+    } else {
+        debugInfo = debugQ;
+    }
 }
 %>
 
@@ -236,8 +258,13 @@ if (debug != null && debug.equals("true")) {
 	<input type="hidden" name="debug" value="true" />
     <input type="text" name="query" value="<%=debugQueryString%>"/>
     <input type="submit" value="Test Query"/>
+    <input type="submit" name="fetch" value="Fetch next query" title="Wait for the next remotely executed query and analyze it (max. 10s)"/>
+    <%if (timeoutMsg != null)  {%>
+    <p><%=timeoutMsg%></p>
+    <% } %>
+    
     <%if (debugInfo != null)  {%>
-        <%-- <h5>Query: <%=debugInfo.getQuery()%></h3> --%>
+        <h5>Query: <%=debugInfo.getQuery()%></h5>
         <ul>
         <% List events = debugInfo.getEvents(); %>
         <% for( int i=0; i < events.size(); i++ ) { %>
