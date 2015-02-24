@@ -85,7 +85,7 @@ public class SyntaxInterpreter {
         }
 
         long ms = System.currentTimeMillis();
-        filterActivatedIplugs(ms, plugList);
+        filterActivatedIplugs(ms, query, plugList);
         filterForIPlugs(ms, query, plugList);
         filterForRanking(ms, query, plugList);
         filterForDataType(ms, query, plugList);
@@ -112,14 +112,14 @@ public class SyntaxInterpreter {
         return filteredPlugs;
     }
 
-    private static void filterActivatedIplugs(long ms, List<PlugDescription> plugDescriptions) {
+    private static void filterActivatedIplugs(long ms, IngridQuery query, List<PlugDescription> plugDescriptions) {
         for (Iterator<PlugDescription> iter = plugDescriptions.iterator(); iter.hasNext();) {
             PlugDescription element = iter.next();
             if (!element.isActivate()) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(ms + ": Not activated! Remove iplug: " + element.getProxyServiceURL());
                 }
-                if (debug.isActive()) {
+                if (debug.isActive(query)) {
                     debug.addEvent( new DebugEvent( "Removed iPlug from Search, since not activated", element.getProxyServiceURL() ) );
                 }
                 iter.remove();

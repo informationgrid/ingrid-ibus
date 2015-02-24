@@ -33,6 +33,8 @@ public class DebugQuery {
     private List<DebugEvent> events = new ArrayList<DebugEvent>();
 
     private boolean isActive = false;
+
+    private boolean analysisInProgress = false;
     
     
     public DebugQuery() {}
@@ -45,10 +47,24 @@ public class DebugQuery {
         return events;
     }
 
+    /**
+     * This must be the entry method to start an analysis. 
+     * Check if debugging is active AND that there's not an analysis in progress.
+     * 
+     * @return true if debugging is allowed and no analysis is in progress yet
+     */
+    public boolean canDebugNow() {
+        boolean allow = this.isActive && !this.analysisInProgress;
+        if (!allow) {
+            this.analysisInProgress = true;
+        }
+        return allow;
+    }
+    
     public boolean isActive() {
         return this.isActive;
     }
-    
+
     public boolean isActive(IngridQuery other) {
         return this.isActive && (this.query.hashCode() == other.hashCode());
     }
@@ -57,10 +73,12 @@ public class DebugQuery {
         this.isActive = true;
         this.setQuery( null );
         this.events.clear();
+        this.analysisInProgress = false;
     }
     
     public void setInactive() {
-        this.isActive = false;        
+        this.isActive = false;  
+        this.analysisInProgress = false;
     }
 
     public IngridQuery getQuery() {

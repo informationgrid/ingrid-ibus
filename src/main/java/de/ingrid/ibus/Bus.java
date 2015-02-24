@@ -828,7 +828,7 @@ public class Bus extends Thread implements IBus {
 
     public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit,
             int maxMilliseconds, String[] requestedFields) throws Exception {
-        if (debug.isActive()) {
+        if (debug.canDebugNow()) {
             // the query is used to identify the right Query during the analysis where several threads are running 
             debug.setQuery( query );
         }
