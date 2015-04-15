@@ -8,13 +8,16 @@
   <groupId>de.ingrid</groupId>
   <artifactId>ingrid-ibus</artifactId>
   <packaging>jar</packaging>
-  <version>3.6.0-elastic-SNAPSHOT</version>
+  <version>3.6.0-SNAPSHOT</version>
   <name>InGrid iBus</name>
   <scm>
     <connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</connection>
     <developerConnection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
+  <properties>
+    <spring.version>4.1.6.RELEASE</spring.version>
+  </properties>
   <!-- ==================== DEPENDENCY MANAGEMENT ==================== -->
   <!-- DEPENDENCY MANAGEMENT FOR USING OLDER RELEASE VERSIONS (needed for
     assembly). COMMENT IF USING VERSIONS FROM PARENT -->
@@ -75,22 +78,22 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-utils</artifactId>
-      <version>3.6.0-elastic-SNAPSHOT</version>
+      <version>3.6.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>4.1.5.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>4.1.5.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>4.1.5.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>tomcat</groupId>
