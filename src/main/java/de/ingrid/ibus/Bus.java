@@ -707,13 +707,14 @@ public class Bus extends Thread implements IBus {
             }
 
             String plugId = hits[i].getPlugId();
-            int documentId = hits[i].getDocumentId();
+            String documentId = hits[i].getDocumentId();
 
             boolean found = false;
 
+            // get the details of the hits
             for (int j = 0; j < resultDetails.length; j++) {
-                IngridHitDetail detail = resultDetails[j];
-                if (detail.getDocumentId() == documentId && detail.getPlugId().equals(plugId)) {
+                IngridHitDetail detail = resultDetails[j]; 
+                if (detail.getDocumentId().equals( documentId ) && detail.getPlugId().equals(plugId)) {
                     details[i] = detail;
                     pushMetaData(details[i]); // push meta data to details
                     found = true;
