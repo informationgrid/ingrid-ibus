@@ -707,14 +707,15 @@ public class Bus extends Thread implements IBus {
             }
 
             String plugId = hits[i].getPlugId();
-            String documentId = hits[i].getDocumentId();
+            String documentId = getDocIdAsString( hits[i] );
 
             boolean found = false;
 
             // get the details of the hits
             for (int j = 0; j < resultDetails.length; j++) {
                 IngridHitDetail detail = resultDetails[j]; 
-                if (detail.getDocumentId().equals( documentId ) && detail.getPlugId().equals(plugId)) {
+                String detailDocId = getDocIdAsString(detail);
+                if ( documentId.equals( detailDocId ) && detail.getPlugId().equals(plugId) ) {
                     details[i] = detail;
                     pushMetaData(details[i]); // push meta data to details
                     found = true;
@@ -731,6 +732,18 @@ public class Bus extends Thread implements IBus {
             fLogger.debug("TIMING: Create details for Query (" + query.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetails) + "ms.");
         }
         return details;
+    }
+    
+    /**
+     * This function is used to handle the fallback to the old docId usage, where it was an integer.
+     * @return
+     */
+    private String getDocIdAsString(IngridHit hit) {
+        String documentId = hit.getDocumentId();
+        if (documentId == null || "null".equals( documentId )) {
+            documentId = String.valueOf( hit.getInt( 0 ) );
+        }
+        return documentId;
     }
 
     private void pushMetaData(IngridHitDetail detail) {
