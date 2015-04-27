@@ -43,36 +43,6 @@
   <dependencies>
     <dependency>
       <groupId>de.ingrid</groupId>
-      <artifactId>ingrid-iplug-dsc</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>de.ingrid</groupId>
-          <artifactId>ingrid-iplug</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>hsqldb</groupId>
-          <artifactId>hsqldb</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>lucene</groupId>
-          <artifactId>lucene</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>de.ingrid</groupId>
-          <artifactId>ingrid-utils-geo</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ojdbc</groupId>
-          <artifactId>ojdbc</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>de.ingrid</groupId>
       <artifactId>ingrid-communication</artifactId>
     </dependency>
     <dependency>
