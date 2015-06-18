@@ -28,6 +28,12 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="3.6.0-SNAPSHOT" date="2015-xx-xx" description="xxx">
+        <action type="add" dev="wemove" issue="REDMINE-661">
+            Added handling of results from elastic search index (IDs of hits).
+        </action>
+    </release>
+
     <release version="3.5.0" date="2015-01-29" description="Release 3.5.0">
         <action type="add" dev="wemove" issue="REDMINE-524">
             Added license header to all source files for Open Source migration.
