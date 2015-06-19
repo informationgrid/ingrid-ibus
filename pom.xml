@@ -8,12 +8,12 @@
   <groupId>de.ingrid</groupId>
   <artifactId>ingrid-ibus</artifactId>
   <packaging>jar</packaging>
-  <version>3.6.0-SNAPSHOT</version>
+  <version>3.6.0</version>
   <name>InGrid iBus</name>
   <scm>
     <connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</connection>
     <developerConnection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>ingrid-ibus-3.6.0</tag>
   </scm>
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
