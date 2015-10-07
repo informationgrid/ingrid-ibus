@@ -20,7 +20,7 @@
   limitations under the Licence.
   **************************************************#
   -->
-<project name="PortalU Installation" basedir=".">
+<project name="InGrid iBus Installation" basedir=".">
     <description>
         iBus Installation Script
     </description>
@@ -116,6 +116,8 @@ Anstelle von localhost koennen Sie auch die IP-Adresse
 des Computers eingeben!
 Authentifizieren Sie sich als 'admin' mit dem von Ihnen 
 vergebenen Passwort.
+    
+Bitte lesen Sie bzgl. der Administration die Kapitel unter "http://www.ingrid-oss.eu".
 		</echo>
 	</target>
 	
