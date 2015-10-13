@@ -31,11 +31,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-
-import net.weta.components.communication.ICommunication;
-import net.weta.components.communication.reflect.ReflectMessageHandler;
-import net.weta.components.communication.tcp.StartCommunication;
 
 import org.mortbay.http.HashUserRealm;
 
@@ -54,6 +51,9 @@ import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.metadata.IMetadataInjector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.metadata.MetadataInjectorFactory;
+import net.weta.components.communication.ICommunication;
+import net.weta.components.communication.reflect.ReflectMessageHandler;
+import net.weta.components.communication.tcp.StartCommunication;
 
 /**
  * The server that starts a bus and its admin web gui.
@@ -72,11 +72,12 @@ public class BusServer {
      */
     public static void main(String[] args) throws Exception {
         final String usage = "You must set --descriptor <filename>, --busurl <wetag url>, --adminport <1000-65535> and --adminpassword <password>.";
-        HashMap arguments = new HashMap();
+        Map<String, String> arguments = new HashMap<String, String>();
         String busurl = null;
         String adminpassword = "";
         int adminport = 0;
-
+        String webappDir = System.getProperty( "webappDir" ) != null ? System.getProperty( "webappDir" ) : "./webapp";
+        
         // convert and validate the supplied arguments
         if (8 != args.length) {
             System.err.println("Wrong numbers of arguments. ");
@@ -90,16 +91,16 @@ public class BusServer {
         ICommunication communication = null;
         if (arguments.containsKey("--descriptor") && arguments.containsKey("--busurl")
                 && arguments.containsKey("--adminport") && arguments.containsKey("--adminpassword")) {
-            String filename = (String) arguments.get("--descriptor");
-            busurl = (String) arguments.get("--busurl");
+            String filename = arguments.get("--descriptor");
+            busurl = arguments.get("--busurl");
             try {
-                adminport = Integer.parseInt((String) arguments.get("--adminport"));
+                adminport = Integer.parseInt(arguments.get("--adminport"));
             } catch (NumberFormatException e) {
                 System.err.println("--adminport isn't a number.");
                 System.err.println(usage);
                 return;
             }
-            adminpassword = (String) arguments.get("--adminpassword");
+            adminpassword = arguments.get("--adminpassword");
 
             try {
                 FileInputStream fileIS = new FileInputStream(filename);
@@ -145,8 +146,8 @@ public class BusServer {
         } catch (Exception e) {
             System.err.println("Problems on loading globalRanking.properties. Does it exist?");
         }
-        HashMap globalRanking = new HashMap();
-        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
+        HashMap<String, Float> globalRanking = new HashMap<String, Float>();
+        for (Iterator<?> iter = properties.keySet().iterator(); iter.hasNext();) {
             String element = (String) iter.next();
             try {
                 Float value = new Float((String) properties.get(element));
@@ -168,7 +169,7 @@ public class BusServer {
         try {
             HashUserRealm realm = new HashUserRealm("IBus");
             realm.put("admin", adminpassword);
-            AdminServer.startWebContainer(new HashMap(), adminport, new File("./webapp"), true, realm);
+            AdminServer.startWebContainer(new HashMap<String, String>(), adminport, new File( webappDir ), true, realm);
         } catch (Exception e) {
             System.err.println("Cannot start the IBus admin server.");
             e.printStackTrace();
