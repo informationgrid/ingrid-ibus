@@ -58,6 +58,8 @@ and import project into eclipse.
 - execute `mvn install` to expand the base web application
 - set up a java application Run Configuration with start class `de.ingrid.ibus.BusServer`
 - add the program arguments `--descriptor src/test/resources/communication.xml --busurl /ibus-test --adminport 8100 --adminpassword admin` to the Run Configuration
+- as VM-argument the path to the webapp must be added "-DwebappDir=src/main/release"
+- make sure the tools.jar (from JDK) is added to the classpath of the runtime configuration
 - add `src/test/resources`, `src/main/release/webapp`  to class path
 - the admin gui starts in this sample on port 8100
 
