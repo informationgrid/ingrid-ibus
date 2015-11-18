@@ -2,13 +2,13 @@
   <parent>
     <artifactId>ingrid-releases-pom</artifactId>
     <groupId>de.ingrid</groupId>
-    <version>3.6.0</version>
+    <version>3.6.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.ingrid</groupId>
   <artifactId>ingrid-ibus</artifactId>
   <packaging>jar</packaging>
-  <version>3.6.1-SNAPSHOT</version>
+  <version>3.6.1</version>
   <name>InGrid iBus</name>
   <scm>
     <connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</connection>
@@ -191,6 +191,15 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>external.atlassian.jgitflow</groupId>
+        <artifactId>jgitflow-maven-plugin</artifactId>
+        <version>1.0-m5.1</version>
+        <configuration>
+          <defaultOriginUrl>https://github.com/informationgrid/ingrid-ibus</defaultOriginUrl>
+          <noDeploy>true</noDeploy>
+        </configuration>
       </plugin>
     </plugins>
   </build>
