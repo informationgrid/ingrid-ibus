@@ -1,3 +1,5 @@
+![](https://travis-ci.org/informationgrid/ingrid-ibus.svg?branch=master)
+
 InGrid iBus
 ========
 
