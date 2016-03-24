@@ -875,7 +875,14 @@ public class Bus extends Thread implements IBus {
     @Override
     public IngridDocument call(IngridCall targetInfo) throws Exception {
         IPlug plugProxy = this.fRegistry.getPlugProxy(targetInfo.getTarget());
-        IngridDocument call = plugProxy.call( targetInfo );
+        IngridDocument call;
+        if (plugProxy != null) {
+            call = plugProxy.call( targetInfo );
+        } else {
+            call = new IngridDocument();
+            call.putBoolean( "success", false );
+            call.put( "error", "iPlug not found: " + targetInfo.getTarget() );
+        }
         return call;
     }
 }
