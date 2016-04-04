@@ -39,6 +39,8 @@ public class DummyProxyFactory implements IPlugProxyFactory {
     private float[][] useScoresPerIPlug = null;
     
     private int numCreatedIPlugs = 0;
+
+    private int docId = 1;
     
     public DummyProxyFactory() {}
     
@@ -51,12 +53,13 @@ public class DummyProxyFactory implements IPlugProxyFactory {
      * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription, java.lang.String)
      */
     public IPlug createPlugProxy(PlugDescription plugDescription, String busurl) throws Exception {
-        IPlug plug;
+        DummyIPlug plug;
         if (useScoresPerIPlug != null)
             plug = new DummyIPlug(plugDescription.getPlugId(), useScoresPerIPlug[numCreatedIPlugs++]);
         else
             plug = new DummyIPlug(plugDescription.getPlugId());
         plug.configure(plugDescription);
+        plug.setDocId( docId++ );
         
         return plug;
     }

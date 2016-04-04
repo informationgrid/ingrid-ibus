@@ -79,7 +79,9 @@ public class IPlugProxyFactoryImplTest extends TestCase {
             this.fPlugComms[i].setPeerName("/101tec-group:iplug" + i);
             this.fPlugComms[i].startup();
 
-            ProxyService.createProxyServer(this.fPlugComms[i], IPlug.class, new DummyIPlug());
+            DummyIPlug dummyIPlug = new DummyIPlug();
+            dummyIPlug.setDocId( i+1 );
+            ProxyService.createProxyServer(this.fPlugComms[i], IPlug.class, dummyIPlug);
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setProxyServiceURL("/101tec-group:iplug" + i);
             this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());

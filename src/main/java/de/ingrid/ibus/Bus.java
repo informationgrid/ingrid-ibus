@@ -720,6 +720,7 @@ public class Bus extends Thread implements IBus {
                     details[i] = detail;
                     pushMetaData(details[i]); // push meta data to details
                     found = true;
+                    break;
                 }
             }
             if (!found) {
