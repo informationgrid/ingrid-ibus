@@ -31,6 +31,8 @@ package de.ingrid.ibus;
 import java.util.Random;
 
 import de.ingrid.utils.IPlug;
+import de.ingrid.utils.IngridCall;
+import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
@@ -133,5 +135,11 @@ public class DummyIPlug implements IPlug {
     public void close() throws Exception {
 	// TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public IngridDocument call(IngridCall targetInfo) throws Exception {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -30,6 +30,8 @@ package de.ingrid.ibus;
 
 import de.ingrid.ibus.net.IPlugProxyFactory;
 import de.ingrid.utils.IPlug;
+import de.ingrid.utils.IngridCall;
+import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
@@ -100,6 +102,12 @@ public class HangingPlugDummyProxyFactory implements IPlugProxyFactory {
 			}
 			return null;
 		}
+
+        @Override
+        public IngridDocument call(IngridCall targetInfo) throws Exception {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
 }

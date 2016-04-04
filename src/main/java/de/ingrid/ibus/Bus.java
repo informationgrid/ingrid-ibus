@@ -55,6 +55,7 @@ import de.ingrid.ibus.registry.SyntaxInterpreter;
 import de.ingrid.utils.IBus;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IRecordLoader;
+import de.ingrid.utils.IngridCall;
 import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
@@ -869,5 +870,19 @@ public class Bus extends Thread implements IBus {
     
     public DebugQuery getDebugInfo() {
         return this.debug;
+    }
+
+    @Override
+    public IngridDocument call(IngridCall targetInfo) throws Exception {
+        IPlug plugProxy = this.fRegistry.getPlugProxy(targetInfo.getTarget());
+        IngridDocument call;
+        if (plugProxy != null) {
+            call = plugProxy.call( targetInfo );
+        } else {
+            call = new IngridDocument();
+            call.putBoolean( "success", false );
+            call.put( "error", "iPlug not found: " + targetInfo.getTarget() );
+        }
+        return call;
     }
 }
