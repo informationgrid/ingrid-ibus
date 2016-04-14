@@ -41,6 +41,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import net.weta.components.communication.tcp.TimeoutException;
 import net.weta.components.communication.util.PooledThreadExecutor;
 
 import org.apache.commons.logging.Log;
@@ -79,7 +80,7 @@ public class Bus extends Thread implements IBus {
 
     private static final long serialVersionUID = Bus.class.getName().hashCode();
 
-    private static Log fLogger = LogFactory.getLog(Bus.class);
+    private static Log fLogger = LogFactory.getLog( Bus.class );
 
     private static Bus fInstance;
 
@@ -91,7 +92,7 @@ public class Bus extends Thread implements IBus {
     private ProcessorPipe fProcessorPipe = new ProcessorPipe();
 
     private Metadata _metadata;
-    
+
     private DebugQuery debug;
 
     /**
@@ -107,9 +108,9 @@ public class Bus extends Thread implements IBus {
      *      Registry)
      */
     public Bus(IPlugProxyFactory factory) {
-        this.fRegistry = new Registry(120000, false, factory);
+        this.fRegistry = new Registry( 120000, false, factory );
         fInstance = this;
-        _grouper = new Grouper(this.fRegistry);
+        _grouper = new Grouper( this.fRegistry );
         debug = new DebugQuery();
         SyntaxInterpreter.debug = this.debug;
     }
@@ -124,23 +125,22 @@ public class Bus extends Thread implements IBus {
         return fInstance;
     }
 
-    public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds)
-            throws Exception {
+    public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds) throws Exception {
         long startSearch = 0;
         if (fLogger.isDebugEnabled()) {
             startSearch = System.currentTimeMillis();
         }
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("search for: " + query.toString() + "(" + query.hashCode() + ") startHit: " + startHit + " started");
+            fLogger.debug( "search for: " + query.toString() + "(" + query.hashCode() + ") startHit: " + startHit + "; timeout: " + maxMilliseconds + "ms ->  started" );
         }
         if (currentPage < 1) {
             currentPage = 1;
         }
-        this.fProcessorPipe.preProcess(query);
-        boolean grouping = query.getGrouped() != null && !query.getGrouped().equalsIgnoreCase(IngridQuery.GROUPED_OFF);
+        this.fProcessorPipe.preProcess( query );
+        boolean grouping = query.getGrouped() != null && !query.getGrouped().equalsIgnoreCase( IngridQuery.GROUPED_OFF );
 
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("Grouping: " + grouping);
+            fLogger.debug( "Grouping: " + grouping );
         }
         int requestLength;
         if (!grouping) {
@@ -149,32 +149,30 @@ public class Bus extends Thread implements IBus {
             requestLength = startHit + (hitsPerPage * 6);
         }
 
-        PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery(query, this.fRegistry);
+        PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery( query, this.fRegistry );
         boolean oneIPlugOnly = (plugDescriptionsForQuery.length == 1);
         boolean forceManyResults = grouping
-                && (oneIPlugOnly && ("de.ingrid.iplug.se.NutchSearcher".equalsIgnoreCase(plugDescriptionsForQuery[0]
-                        .getIPlugClass())|| "de.ingrid.iplug.se.seiplug".equalsIgnoreCase(plugDescriptionsForQuery[0]
-                                .getIPlugClass())));
+                && (oneIPlugOnly && ("de.ingrid.iplug.se.NutchSearcher".equalsIgnoreCase( plugDescriptionsForQuery[0].getIPlugClass() ) || "de.ingrid.iplug.se.seiplug"
+                        .equalsIgnoreCase( plugDescriptionsForQuery[0].getIPlugClass() )));
         ResultSet resultSet;
         if (!oneIPlugOnly) {
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("(search) request starts: " + query.hashCode());
+                fLogger.debug( "(search) request starts: " + query.hashCode() );
             }
-            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength);
+            resultSet = requestHits( query, maxMilliseconds, plugDescriptionsForQuery, 0, requestLength );
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("(search) request ends: " + query.hashCode());
+                fLogger.debug( "(search) request ends: " + query.hashCode() );
             }
         } else {
             // request only one iplug! request from "startHit" position with
             // length "hitsPerPage", because no ranking is required
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("search for: " + query.toString() + "(" + query.hashCode() + " startHit: " + startHit + " started");
+                fLogger.debug( "search for: " + query.toString() + "(" + query.hashCode() + " startHit: " + startHit + " started" );
             }
-            resultSet = requestHits(query, maxMilliseconds, plugDescriptionsForQuery, startHit,
-                    forceManyResults ? hitsPerPage * 6 : hitsPerPage);
+            resultSet = requestHits( query, maxMilliseconds, plugDescriptionsForQuery, startHit, forceManyResults ? hitsPerPage * 6 : hitsPerPage );
         }
-        
-        if (debug.isActive(query)) {
+
+        if (debug.isActive( query )) {
             Iterator<IngridHits> it = resultSet.iterator();
             while (it.hasNext()) {
                 IngridHits hits = it.next();
@@ -187,24 +185,24 @@ public class Bus extends Thread implements IBus {
         IngridHits hitContainer;
         if (query.isNotRanked()) {
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("(search) order starts: " + query.hashCode());
+                fLogger.debug( "(search) order starts: " + query.hashCode() );
             }
-            hitContainer = orderResults(resultSet, plugDescriptionsForQuery, query);
+            hitContainer = orderResults( resultSet, plugDescriptionsForQuery, query );
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("(search) order ends: " + query.hashCode());
+                fLogger.debug( "(search) order ends: " + query.hashCode() );
             }
         } else {
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("(search) normalize starts: " + query.hashCode());
+                fLogger.debug( "(search) normalize starts: " + query.hashCode() );
             }
             // normalize only if there were more than one iplugs queried
             // if we only query one, than it doesn't matter how high the score
             // is
             // since we don't need to merge the results with other ones
-            hitContainer = normalizeScores(resultSet, oneIPlugOnly ? true : false);
+            hitContainer = normalizeScores( resultSet, oneIPlugOnly ? true : false );
 
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("(search) normalize ends: " + query.hashCode());
+                fLogger.debug( "(search) normalize ends: " + query.hashCode() );
             }
         }
 
@@ -212,62 +210,62 @@ public class Bus extends Thread implements IBus {
         int oldSize = hits.length;
         // remove duplicates after normalizing and ordering to keep duplicates
         // with highest score
-        Set set = new LinkedHashSet(Arrays.asList(hits));
-        hitContainer = new IngridHits((int) hitContainer.length(), (IngridHit[]) set.toArray(new IngridHit[set.size()]));
+        Set set = new LinkedHashSet( Arrays.asList( hits ) );
+        hitContainer = new IngridHits( (int) hitContainer.length(), (IngridHit[]) set.toArray( new IngridHit[set.size()] ) );
         hits = hitContainer.getHits();
         // re-search if duplicates are removed
         if (oldSize > hits.length) {
             // re-search recursiv but only 3 times, (hitsPerPage = 60, 120, 240)
             if (hits.length < hitsPerPage && hitsPerPage < 300) {
-                fLogger.info("research with hitsPerPage: " + hitsPerPage * 2);
-                hitContainer = search(query, hitsPerPage * 2, currentPage, startHit, maxMilliseconds);
+                fLogger.info( "research with hitsPerPage: " + hitsPerPage * 2 );
+                hitContainer = search( query, hitsPerPage * 2, currentPage, startHit, maxMilliseconds );
                 hits = hitContainer.getHits();
             }
         }
 
         int totalHits = (int) hitContainer.length();
         if (hits.length > 0) {
-            this.fProcessorPipe.postProcess(query, hits);
+            this.fProcessorPipe.postProcess( query, hits );
             if (grouping) {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
                 if (!oneIPlugOnly) {
-                    hits = cutFirstHits(hits, startHit);
+                    hits = cutFirstHits( hits, startHit );
                 }
                 if (fLogger.isDebugEnabled()) {
-                    fLogger.debug("(search) grouping starts: " + query.hashCode());
+                    fLogger.debug( "(search) grouping starts: " + query.hashCode() );
                 }
-                hitContainer = _grouper.groupHits(query, hits, hitsPerPage, totalHits, startHit, resultSet);
+                hitContainer = _grouper.groupHits( query, hits, hitsPerPage, totalHits, startHit, resultSet );
                 if (fLogger.isDebugEnabled()) {
-                    fLogger.debug("(search) grouping ends: " + query.hashCode());
+                    fLogger.debug( "(search) grouping ends: " + query.hashCode() );
                 }
             } else {
                 // prevent array cutting with only one requested iplug, assuming
                 // we already have the right number of hits in the result array
                 if (!oneIPlugOnly) {
-                    hits = cutHitsRight(hits, currentPage, hitsPerPage, startHit);
+                    hits = cutHitsRight( hits, currentPage, hitsPerPage, startHit );
                 }
-                hitContainer = new IngridHits(totalHits, hits);
+                hitContainer = new IngridHits( totalHits, hits );
             }
         }
-        setDefaultInformations(hitContainer, resultSet, !query.isNotRanked());
+        setDefaultInformations( hitContainer, resultSet, !query.isNotRanked() );
 
-        addFacetInfo(hitContainer, resultSet);
+        addFacetInfo( hitContainer, resultSet );
 
         resultSet.clear();
         resultSet = null;
 
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("search for: " + query.toString() + "(" + query.hashCode() + " startHit: " + startHit + " ended");
+            fLogger.debug( "search for: " + query.toString() + "(" + query.hashCode() + " startHit: " + startHit + " ended" );
 
             IngridHit[] ingridHits = hitContainer.getHits();
             for (int i = 0; i < ingridHits.length; i++) {
                 IngridHit ingridHit = ingridHits[i];
-                fLogger.debug("documentId: " + ingridHit.getDocumentId() + " score: " + ingridHit.getScore());
+                fLogger.debug( "documentId: " + ingridHit.getDocumentId() + " score: " + ingridHit.getScore() );
             }
         }
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("TIMING: Search for Query (" + query.hashCode() + ") took " + (System.currentTimeMillis() - startSearch) + "ms.");
+            fLogger.debug( "TIMING: Search for Query (" + query.hashCode() + ") took " + (System.currentTimeMillis() - startSearch) + "ms." );
         }
 
         return hitContainer;
@@ -278,53 +276,52 @@ public class Bus extends Thread implements IBus {
         IngridDocument allFacetClasses = null;
         for (IngridHits hits : (ArrayList<IngridHits>) resultSet) {
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("Add facets for iPlug: " + hits.getPlugId());
+                fLogger.debug( "Add facets for iPlug: " + hits.getPlugId() );
             }
-            IngridDocument facetClasses = (IngridDocument) hits.get("FACETS");
+            IngridDocument facetClasses = (IngridDocument) hits.get( "FACETS" );
             if (facetClasses != null && facetClasses.size() > 0) {
                 if (allFacetClasses == null) {
                     allFacetClasses = new IngridDocument();
-                    allFacetClasses.putAll(facetClasses);
+                    allFacetClasses.putAll( facetClasses );
                 } else {
                     for (Object o : facetClasses.keySet()) {
                         String facetClassString = (String) o;
-                        if (allFacetClasses.containsKey(facetClassString)) {
-                            allFacetClasses.put(facetClassString, allFacetClasses.getLong(facetClassString)
-                                    + facetClasses.getLong(facetClassString));
+                        if (allFacetClasses.containsKey( facetClassString )) {
+                            allFacetClasses.put( facetClassString, allFacetClasses.getLong( facetClassString ) + facetClasses.getLong( facetClassString ) );
                         } else {
-                            allFacetClasses.put(facetClassString, facetClasses.getLong(facetClassString));
+                            allFacetClasses.put( facetClassString, facetClasses.getLong( facetClassString ) );
                         }
                     }
                 }
                 if (fLogger.isDebugEnabled()) {
                     for (Object o : facetClasses.keySet()) {
                         String facetClassString = (String) o;
-                        fLogger.debug("facet '" + facetClassString + "' : " + facetClasses.getLong(facetClassString));
+                        fLogger.debug( "facet '" + facetClassString + "' : " + facetClasses.getLong( facetClassString ) );
                     }
                 }
             }
         }
         if (allFacetClasses != null) {
-            hitContainer.put("FACETS", allFacetClasses);
+            hitContainer.put( "FACETS", allFacetClasses );
         }
     }
 
     private void setDefaultInformations(IngridHits hitContainer, ResultSet resultSet, boolean ranked) {
-        hitContainer.setPlugId("ibus");
-        hitContainer.setInVolvedPlugs(resultSet.getPlugIdsWithResult().length);
-        hitContainer.setRanked(ranked);
+        hitContainer.setPlugId( "ibus" );
+        hitContainer.setInVolvedPlugs( resultSet.getPlugIdsWithResult().length );
+        hitContainer.setRanked( ranked );
     }
 
-    private ResultSet requestHits(IngridQuery query, int maxMilliseconds, PlugDescription[] plugsForQuery, int start,
-            int requestLength) throws Exception {
+    private ResultSet requestHits(IngridQuery query, int maxMilliseconds, PlugDescription[] plugsForQuery, int start, int requestLength) throws Exception {
+
         int plugsForQueryLength = plugsForQuery.length;
         boolean allowEmptyResults = query.isGetUnrankedIPlugsWithNoResults();
-        ResultSet resultSet = new ResultSet(allowEmptyResults, plugsForQueryLength);
+        ResultSet resultSet = new ResultSet( allowEmptyResults, plugsForQueryLength );
         PlugQueryRequest[] requests = new PlugQueryRequest[plugsForQueryLength];
         Future<?>[] requestFutures = new Future[plugsForQueryLength];
 
         // check whether query contains "metainfo"
-        boolean queryHasMetainfo = query.containsField(QueryUtil.FIELDNAME_METAINFO);
+        boolean queryHasMetainfo = query.containsField( QueryUtil.FIELDNAME_METAINFO );
 
         // orig query and cloned query (if necessary)
         IngridQuery origQuery = query;
@@ -333,20 +330,20 @@ public class Bus extends Thread implements IBus {
         try {
             for (int i = 0; i < plugsForQueryLength; i++) {
                 PlugDescription plugDescription = plugsForQuery[i];
-                IPlug plugProxy = this.fRegistry.getPlugProxy(plugDescription.getPlugId());
+                IPlug plugProxy = this.fRegistry.getPlugProxy( plugDescription.getPlugId() );
                 if (plugProxy != null) {
 
                     // check whether iplug can process "metainfo" and manipulate
                     // query accordingly.
                     if (queryHasMetainfo) {
-                        if (!PlugDescriptionUtil.hasField(plugDescription, QueryUtil.FIELDNAME_METAINFO)) {
+                        if (!PlugDescriptionUtil.hasField( plugDescription, QueryUtil.FIELDNAME_METAINFO )) {
                             // iplug cannot process "metainfo". Remove
                             // "metainfo" from query.
                             // We have to do deep copy and remove to avoid
                             // conflicts (asynchronous call to iplugs !)
                             if (clonedQuery == null) {
-                                clonedQuery = QueryUtil.deepCopy(query);
-                                QueryUtil.removeFieldFromQuery(clonedQuery, QueryUtil.FIELDNAME_METAINFO);
+                                clonedQuery = QueryUtil.deepCopy( query );
+                                QueryUtil.removeFieldFromQuery( clonedQuery, QueryUtil.FIELDNAME_METAINFO );
                             }
                             query = clonedQuery;
                         } else {
@@ -355,21 +352,42 @@ public class Bus extends Thread implements IBus {
                         }
                     }
 
-                    requests[i] = new PlugQueryRequest(plugProxy, this.fRegistry, plugDescription.getPlugId(),
-                            resultSet, query, start, requestLength);
-                    requestFutures[i] = PooledThreadExecutor.getInstance().submit(requests[i]);
+                    requests[i] = new PlugQueryRequest( plugProxy, this.fRegistry, plugDescription.getPlugId(), resultSet, query, start, requestLength );
+                    requestFutures[i] = PooledThreadExecutor.submit( requests[i] );
                 }
             }
             if (plugsForQueryLength > 0) {
-                try {
-                    synchronized (resultSet) {
-                        if (!resultSet.isComplete()) {
-                            resultSet.wait(maxMilliseconds);
+                synchronized (resultSet) {
+                    if (!resultSet.isComplete()) {
+                        long startTimer = System.currentTimeMillis();
+                        if (fLogger.isDebugEnabled()) {
+                            fLogger.debug( "Resultset not complete yet. Wait for max " + maxMilliseconds + " ms." );
                         }
-                    }
-                } catch (InterruptedException e) {
-                    if (fLogger.isWarnEnabled()) {
-                        fLogger.warn("waiting for results iterrupted");
+                        while (!resultSet.isComplete() && (startTimer + maxMilliseconds) > System.currentTimeMillis()) {
+                            try {
+                                resultSet.wait( 1000 );
+                                if (fLogger.isDebugEnabled()) {
+                                    if (!resultSet.isComplete() && (startTimer + maxMilliseconds) > System.currentTimeMillis()) {
+                                        fLogger.debug( "Waiting for results thread [" + Thread.currentThread().getName() + "] finished  after " + (System.currentTimeMillis() - startTimer) + " ms. Resultset not complete. Wait another 1000 ms for resultset to complete." );
+                                    }
+                                }
+                            } catch (InterruptedException e) {
+                                if (fLogger.isWarnEnabled()) {
+                                    fLogger.warn( "Waiting for results iterrupted.", e );
+                                }
+                                if (fLogger.isDebugEnabled()) {
+                                    fLogger.debug( "Waiting for results thread [" + Thread.currentThread().getName() + "] iterrupted after " + (System.currentTimeMillis() - startTimer) + " ms." );
+                                }
+                            }
+                        }
+                        if (resultSet.isComplete()) {
+                            if (fLogger.isDebugEnabled()) {
+                                fLogger.debug( "Resultset complete within " + (System.currentTimeMillis() - startTimer) + " ms." );
+                            }
+                        } else {
+                            fLogger.error( "Resultset incomplete, Timeout [" + maxMilliseconds + " ms] exceeded!" );
+                            throw new TimeoutException( "Could not retrieve resultset in iBus within " + maxMilliseconds + " ms.");
+                        }
                     }
                 }
             }
@@ -378,7 +396,10 @@ public class Bus extends Thread implements IBus {
         finally {
             for (int i = 0; i < plugsForQueryLength; i++) {
                 if (requestFutures[i] != null) {
-                    requestFutures[i].cancel(true);
+                    if (fLogger.isDebugEnabled()) {
+                        fLogger.debug( "Cancel future [" + requestFutures[i] + "]." );
+                    }
+                    requestFutures[i].cancel( true );
                 }
                 requests[i] = null; // for gc.
             }
@@ -390,58 +411,56 @@ public class Bus extends Thread implements IBus {
 
     private IngridHits orderResults(ResultSet resultSet, PlugDescription[] plugDescriptionsForQuery, IngridQuery query) {
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("order the results");
+            fLogger.debug( "order the results" );
         }
 
         // deliver also dummy hit for iPlugs with NO RESULTS !
         boolean addIPlugsWithNoResults = query.isGetUnrankedIPlugsWithNoResults();
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("orderResults: addIPlugsWithNoResults = " + addIPlugsWithNoResults);
-            fLogger.debug("orderResults: resultSet.size() = " + resultSet.size());
+            fLogger.debug( "orderResults: addIPlugsWithNoResults = " + addIPlugsWithNoResults );
+            fLogger.debug( "orderResults: resultSet.size() = " + resultSet.size() );
         }
 
         int resultHitsCount = resultSet.size();
         int totalHits = 0;
         for (int i = 0; i < resultHitsCount; i++) {
-            IngridHits hitContainer = (IngridHits) resultSet.get(i);
-            int pos = getPlugPosition(plugDescriptionsForQuery, hitContainer.getPlugId());
-            hitContainer.putInt(Comparators.UNRANKED_HITS_COMPARATOR_POSITION, pos);
+            IngridHits hitContainer = (IngridHits) resultSet.get( i );
+            int pos = getPlugPosition( plugDescriptionsForQuery, hitContainer.getPlugId() );
+            hitContainer.putInt( Comparators.UNRANKED_HITS_COMPARATOR_POSITION, pos );
             totalHits += hitContainer.length();
 
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("orderResults: hitContainer, plugId = " + hitContainer.getPlugId() + ", pos = " + pos
-                        + ", hitContainer.length = " + hitContainer.length());
+                fLogger.debug( "orderResults: hitContainer, plugId = " + hitContainer.getPlugId() + ", pos = " + pos + ", hitContainer.length = " + hitContainer.length() );
             }
 
             if (hitContainer.length() <= 0 && addIPlugsWithNoResults) {
                 // care for correct number. Dummy hit will be added if no
                 // results !
                 if (fLogger.isDebugEnabled()) {
-                    fLogger.debug("orderResults: add 1 to total num hits (dummy hit)");
+                    fLogger.debug( "orderResults: add 1 to total num hits (dummy hit)" );
                 }
                 totalHits++;
             }
         }
-        Collections.sort(resultSet, Comparators.UNRANKED_HITS_COMPARATOR);
+        Collections.sort( resultSet, Comparators.UNRANKED_HITS_COMPARATOR );
         List orderedHits = new LinkedList();
         for (int i = 0; i < resultHitsCount; i++) {
-            IngridHits hitContainer = (IngridHits) resultSet.get(i);
+            IngridHits hitContainer = (IngridHits) resultSet.get( i );
             IngridHit[] hits = hitContainer.getHits();
             if (hits != null && hits.length > 0) {
-                orderedHits.addAll(Arrays.asList(hits));
+                orderedHits.addAll( Arrays.asList( hits ) );
             } else if (addIPlugsWithNoResults) {
                 // add dummy hit !
-                IngridHit dummyHit = new IngridHit(hitContainer.getPlugId(), -1, -1, 0.0f);
-                dummyHit.setDummyHit(true);
-                orderedHits.add(dummyHit);
+                IngridHit dummyHit = new IngridHit( hitContainer.getPlugId(), -1, -1, 0.0f );
+                dummyHit.setDummyHit( true );
+                orderedHits.add( dummyHit );
                 if (fLogger.isDebugEnabled()) {
-                    fLogger.debug("orderResults: added dummy hit " + dummyHit);
+                    fLogger.debug( "orderResults: added dummy hit " + dummyHit );
                 }
             }
 
         }
-        IngridHits result = new IngridHits(totalHits, (IngridHit[]) orderedHits.toArray(new IngridHit[orderedHits
-                .size()]));
+        IngridHits result = new IngridHits( totalHits, (IngridHit[]) orderedHits.toArray( new IngridHit[orderedHits.size()] ) );
 
         orderedHits.clear();
         orderedHits = null;
@@ -451,19 +470,19 @@ public class Bus extends Thread implements IBus {
 
     private int getPlugPosition(PlugDescription[] plugDescriptionsForQuery, String plugId) {
         for (int i = 0; i < plugDescriptionsForQuery.length; i++) {
-            if (plugDescriptionsForQuery[i].getPlugId().equals(plugId)) {
+            if (plugDescriptionsForQuery[i].getPlugId().equals( plugId )) {
                 return i;
             }
         }
         if (fLogger.isWarnEnabled()) {
-            fLogger.warn("plugId '" + plugId + "' not contained");
+            fLogger.warn( "plugId '" + plugId + "' not contained" );
         }
         return Integer.MAX_VALUE;
     }
 
     private IngridHits normalizeScores(List<IngridHits> resultSet, boolean skipNormalization) {
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("normalize the results");
+            fLogger.debug( "normalize the results" );
         }
 
         int totalHits = 0;
@@ -471,10 +490,10 @@ public class Bus extends Thread implements IBus {
         List<IngridHit> documents = new LinkedList<IngridHit>();
         for (int i = 0; i < count; i++) {
             float maxScore = 1.0f;
-            IngridHits hitContainer = resultSet.get(i);
+            IngridHits hitContainer = resultSet.get( i );
             totalHits += hitContainer.length();
             if (hitContainer.getHits().length > 0) {
-                Float boost = this.fRegistry.getGlobalRankingBoost(hitContainer.getPlugId());
+                Float boost = this.fRegistry.getGlobalRankingBoost( hitContainer.getPlugId() );
                 IngridHit[] resultHits = hitContainer.getHits();
                 if (null != boost) {
                     for (int j = 0; j < resultHits.length; j++) {
@@ -483,32 +502,31 @@ public class Bus extends Thread implements IBus {
                             score = resultHits[j].getScore();
                             score = score * boost.floatValue();
                         }
-                        resultHits[j].setScore(score);
+                        resultHits[j].setScore( score );
                     }
                 }
 
                 // normalize scores of the results of this iPlug
                 // so maxScore will never get bigger than 1 now!
                 if (!skipNormalization && maxScore < resultHits[0].getScore()) {
-                    normalizeHits(hitContainer, resultHits[0].getScore());
+                    normalizeHits( hitContainer, resultHits[0].getScore() );
                 }
             }
 
             IngridHit[] toAddHits = hitContainer.getHits();
             if (toAddHits != null) {
-                documents.addAll(Arrays.asList(toAddHits));
+                documents.addAll( Arrays.asList( toAddHits ) );
             }
         }
 
-        IngridHits result = new IngridHits(totalHits, sortHits((IngridHit[]) documents.toArray(new IngridHit[documents
-                .size()])));
-        
+        IngridHits result = new IngridHits( totalHits, sortHits( (IngridHit[]) documents.toArray( new IngridHit[documents.size()] ) ) );
+
         // add timings for the corresponding iplugs
         HashMap<String, Long> timings = new HashMap<String, Long>();
         for (IngridHits hits : resultSet) {
-            timings.putAll(hits.getSearchTimings());
+            timings.putAll( hits.getSearchTimings() );
         }
-        result.setSearchTimings(timings);
+        result.setSearchTimings( timings );
 
         documents.clear();
         documents = null;
@@ -519,12 +537,12 @@ public class Bus extends Thread implements IBus {
     private void normalizeHits(IngridHits hits, float maxScore) {
         // normalize Score
         for (IngridHit hit : hits.getHits()) {
-            hit.setScore(hit.getScore() / maxScore);
+            hit.setScore( hit.getScore() / maxScore );
         }
     }
 
     private IngridHit[] sortHits(IngridHit[] documents) {
-        Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
+        Arrays.sort( documents, Comparators.SCORE_HIT_COMPARATOR );
         return documents;
     }
 
@@ -537,43 +555,42 @@ public class Bus extends Thread implements IBus {
             return new IngridHit[0];
         }
         IngridHit[] cuttedHits = new IngridHit[newLength];
-        System.arraycopy(hits, startHit, cuttedHits, 0, newLength);
+        System.arraycopy( hits, startHit, cuttedHits, 0, newLength );
         return cuttedHits;
     }
 
     private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
-        int pageStart = Math.min(((currentPage - 1) * hitsPerPage), hits.length);
+        int pageStart = Math.min( ((currentPage - 1) * hitsPerPage), hits.length );
         int resultLength = 0;
         if (hits.length <= pageStart) {
             final int preLastPage = hits.length / hitsPerPage;
-            pageStart = Math.min((preLastPage * hitsPerPage), hits.length);
+            pageStart = Math.min( (preLastPage * hitsPerPage), hits.length );
         }
-        resultLength = Math.min(hits.length - pageStart, hitsPerPage);
+        resultLength = Math.min( hits.length - pageStart, hitsPerPage );
         if (hits.length == resultLength) {
             return hits;
         }
         IngridHit[] cuttedHits = new IngridHit[resultLength];
-        System.arraycopy(hits, pageStart, cuttedHits, 0, resultLength);
+        System.arraycopy( hits, pageStart, cuttedHits, 0, resultLength );
 
         return cuttedHits;
     }
 
     public Record getRecord(IngridHit hit) throws Exception {
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("get record for: " + hit.getId() + " from iPlug : " + hit.getPlugId() + " started");
+            fLogger.debug( "get record for: " + hit.getId() + " from iPlug : " + hit.getPlugId() + " started" );
         }
 
-        PlugDescription plugDescription = getIPlugRegistry().getPlugDescription(hit.getPlugId());
-        IPlug plugProxy = this.fRegistry.getPlugProxy(hit.getPlugId());
+        PlugDescription plugDescription = getIPlugRegistry().getPlugDescription( hit.getPlugId() );
+        IPlug plugProxy = this.fRegistry.getPlugProxy( hit.getPlugId() );
         if (plugProxy == null) {
-            throw new IllegalStateException("plug '" + hit.getPlugId() + "' currently not availible");
+            throw new IllegalStateException( "plug '" + hit.getPlugId() + "' currently not available." );
         }
         if (plugDescription.isRecordloader()) {
-            return ((IRecordLoader) plugProxy).getRecord(hit);
+            return ((IRecordLoader) plugProxy).getRecord( hit );
         }
         if (fLogger.isWarnEnabled()) {
-            fLogger.warn("plug does not implement record loader: " + plugDescription.getPlugId()
-                    + " but was requested to load a record");
+            fLogger.warn( "plug does not implement record loader: " + plugDescription.getPlugId() + " but was requested to load a record" );
         }
         return null;
     }
@@ -586,25 +603,25 @@ public class Bus extends Thread implements IBus {
         if (requestedFields == null) {
             requestedFields = new String[0];
         }
-        IPlug plugProxy = this.fRegistry.getPlugProxy(hit.getPlugId());
+        IPlug plugProxy = this.fRegistry.getPlugProxy( hit.getPlugId() );
         try {
             long time = System.currentTimeMillis();
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("(search) detail start " + hit.getPlugId() + " " + ingridQuery.hashCode());
+                fLogger.debug( "(search) detail start " + hit.getPlugId() + " " + ingridQuery.hashCode() );
             }
-            IngridHitDetail detail = plugProxy.getDetail(hit, ingridQuery, requestedFields);
+            IngridHitDetail detail = plugProxy.getDetail( hit, ingridQuery, requestedFields );
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("(search) detail end " + hit.getPlugId() + " " + ingridQuery.hashCode() + " within " + (System.currentTimeMillis() - time) + " ms.");
+                fLogger.debug( "(search) detail end " + hit.getPlugId() + " " + ingridQuery.hashCode() + " within " + (System.currentTimeMillis() - time) + " ms." );
             }
-            detail.put(IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time));
-            pushMetaData(detail);
+            detail.put( IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time) );
+            pushMetaData( detail );
             if (fLogger.isDebugEnabled()) {
-                fLogger.debug("TIMING: Create detail for Query (" + ingridQuery.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetail) + "ms.");
+                fLogger.debug( "TIMING: Create detail for Query (" + ingridQuery.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetail) + "ms." );
             }
             return detail;
         } catch (Exception e) {
             if (fLogger.isErrorEnabled()) {
-                fLogger.error(e.toString());
+                fLogger.error( e.toString() );
             }
         }
 
@@ -627,52 +644,50 @@ public class Bus extends Thread implements IBus {
             // ignore hit if hit is "placeholder"
             if (hit.isDummyHit()) {
                 if (fLogger.isDebugEnabled()) {
-                    fLogger.debug("getDetails: do NOT call iPlug for dummy hit: " + hit);
+                    fLogger.debug( "getDetails: do NOT call iPlug for dummy hit: " + hit );
                 }
                 continue;
             }
-            ArrayList requestHitList = (ArrayList) hashMap.get(hit.getPlugId());
+            ArrayList requestHitList = (ArrayList) hashMap.get( hit.getPlugId() );
             if (requestHitList == null) {
                 requestHitList = new ArrayList();
-                hashMap.put(hit.getPlugId(), requestHitList);
+                hashMap.put( hit.getPlugId(), requestHitList );
             }
-            requestHitList.add(hit);
+            requestHitList.add( hit );
         }
         // send requests and collect response
         Iterator iterator = hashMap.keySet().iterator();
         IPlug plugProxy;
-        ArrayList resultList = new ArrayList(hits.length);
-        Random random = new Random(System.currentTimeMillis());
+        ArrayList resultList = new ArrayList( hits.length );
+        Random random = new Random( System.currentTimeMillis() );
         long time = 0;
         while (iterator.hasNext()) {
             String plugId = (String) iterator.next();
-            ArrayList requestHitList = (ArrayList) hashMap.get(plugId);
+            ArrayList requestHitList = (ArrayList) hashMap.get( plugId );
             if (requestHitList != null) {
-                IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray(new IngridHit[requestHitList.size()]);
-                plugProxy = this.fRegistry.getPlugProxy(plugId);
+                IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray( new IngridHit[requestHitList.size()] );
+                plugProxy = this.fRegistry.getPlugProxy( plugId );
                 if (plugProxy != null) {
                     if (fLogger.isDebugEnabled()) {
-                        fLogger.debug("(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode());
+                        fLogger.debug( "(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode() );
                     }
                     time = System.currentTimeMillis();
-                    IngridHitDetail[] responseDetails = plugProxy.getDetails(requestHits, query, requestedFields);
+                    IngridHitDetail[] responseDetails = plugProxy.getDetails( requestHits, query, requestedFields );
                     if (fLogger.isDebugEnabled()) {
-                        fLogger.debug("(search) details ends (" + responseDetails.length + ")" + plugId + " query:" + query.hashCode() + " within " + (System.currentTimeMillis() - time) + " ms.");
+                        fLogger.debug( "(search) details ends (" + responseDetails.length + ")" + plugId + " query:" + query.hashCode() + " within "
+                                + (System.currentTimeMillis() - time) + " ms." );
                     }
                     for (int i = 0; i < responseDetails.length; i++) {
                         if (responseDetails[i] == null) {
                             if (fLogger.isErrorEnabled()) {
-                                fLogger
-                                        .error(plugId
-                                                + ": responded details that are null (set a pseudo responseDetail");
+                                fLogger.error( plugId + ": responded details that are null (set a pseudo responseDetail" );
                             }
-                            responseDetails[i] = new IngridHitDetail(plugId, random.nextInt(), random.nextInt(), 0.0f,
-                                    "", "");
+                            responseDetails[i] = new IngridHitDetail( plugId, random.nextInt(), random.nextInt(), 0.0f, "", "" );
                         }
-                        responseDetails[i].put(IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time));
+                        responseDetails[i].put( IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time) );
                     }
 
-                    resultList.addAll(Arrays.asList(responseDetails));
+                    resultList.addAll( Arrays.asList( responseDetails ) );
                     // FIXME: to improve performance we can use an Array instead
                     // of a list here.
                 }
@@ -688,8 +703,7 @@ public class Bus extends Thread implements IBus {
         hashMap = null;
 
         // int count = resultList.size();
-        IngridHitDetail[] resultDetails = (IngridHitDetail[]) resultList
-                .toArray(new IngridHitDetail[resultList.size()]);
+        IngridHitDetail[] resultDetails = (IngridHitDetail[]) resultList.toArray( new IngridHitDetail[resultList.size()] );
 
         resultList.clear();
         resultList = null;
@@ -699,10 +713,10 @@ public class Bus extends Thread implements IBus {
         for (int i = 0; i < hits.length; i++) {
             // set dummy detail if hit is "placeholder"
             if (hits[i].isDummyHit()) {
-                details[i] = new IngridHitDetail(hit, "dummy hit", "");
-                details[i].setDummyHit(true);
+                details[i] = new IngridHitDetail( hit, "dummy hit", "" );
+                details[i].setDummyHit( true );
                 if (fLogger.isDebugEnabled()) {
-                    fLogger.debug("getDetails: dummy hit, add dummy detail: " + details[i]);
+                    fLogger.debug( "getDetails: dummy hit, add dummy detail: " + details[i] );
                 }
                 continue;
             }
@@ -714,30 +728,32 @@ public class Bus extends Thread implements IBus {
 
             // get the details of the hits
             for (int j = 0; j < resultDetails.length; j++) {
-                IngridHitDetail detail = resultDetails[j]; 
-                String detailDocId = getDocIdAsString(detail);
-                if ( documentId.equals( detailDocId ) && detail.getPlugId().equals(plugId) ) {
+                IngridHitDetail detail = resultDetails[j];
+                String detailDocId = getDocIdAsString( detail );
+                if (documentId.equals( detailDocId ) && detail.getPlugId().equals( plugId )) {
                     details[i] = detail;
-                    pushMetaData(details[i]); // push meta data to details
+                    pushMetaData( details[i] ); // push meta data to details
                     found = true;
                     break;
                 }
             }
             if (!found) {
                 if (fLogger.isErrorEnabled()) {
-                    fLogger.error("unable to find details getDetails: " + hit.toString());
+                    fLogger.error( "unable to find details getDetails: " + hit.toString() );
                 }
-                details[i] = new IngridHitDetail(hit, "no details found", "");
+                details[i] = new IngridHitDetail( hit, "no details found", "" );
             }
         }
         if (fLogger.isDebugEnabled()) {
-            fLogger.debug("TIMING: Create details for Query (" + query.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetails) + "ms.");
+            fLogger.debug( "TIMING: Create details for Query (" + query.hashCode() + ") in " + (System.currentTimeMillis() - startGetDetails) + "ms." );
         }
         return details;
     }
-    
+
     /**
-     * This function is used to handle the fallback to the old docId usage, where it was an integer.
+     * This function is used to handle the fallback to the old docId usage,
+     * where it was an integer.
+     * 
      * @return
      */
     private String getDocIdAsString(IngridHit hit) {
@@ -750,11 +766,11 @@ public class Bus extends Thread implements IBus {
 
     private void pushMetaData(IngridHitDetail detail) {
         PlugDescription plugDescription;
-        plugDescription = this.fRegistry.getPlugDescription(detail.getPlugId());
+        plugDescription = this.fRegistry.getPlugDescription( detail.getPlugId() );
         if (plugDescription != null) {
-            detail.setOrganisation(plugDescription.getOrganisation());
-            detail.setDataSourceName(plugDescription.getDataSourceName());
-            detail.setIplugClassName(plugDescription.getIPlugClass());
+            detail.setOrganisation( plugDescription.getOrganisation() );
+            detail.setDataSourceName( plugDescription.getDataSourceName() );
+            detail.setIplugClassName( plugDescription.getIPlugClass() );
         }
 
     }
@@ -780,29 +796,27 @@ public class Bus extends Thread implements IBus {
     }
 
     public boolean containsPlugDescription(String plugId, String md5Hash) {
-        return this.fRegistry.containsPlugDescription(plugId, md5Hash);
+        return this.fRegistry.containsPlugDescription( plugId, md5Hash );
     }
 
     public void addPlugDescription(PlugDescription plugDescription) {
         if (null != plugDescription) {
             if (fLogger.isInfoEnabled()) {
-                fLogger.info("adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:"
-                        + getAllIPlugs().length);
+                fLogger.info( "adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length );
             }
-            this.fRegistry.addPlugDescription(plugDescription);
+            this.fRegistry.addPlugDescription( plugDescription );
         } else {
             if (fLogger.isErrorEnabled()) {
-                fLogger.error("Cannot add IPlug: plugdescription is null.");
+                fLogger.error( "Cannot add IPlug: plugdescription is null." );
             }
         }
     }
 
     public void removePlugDescription(PlugDescription plugDescription) {
         if (fLogger.isInfoEnabled()) {
-            fLogger.info("removing plug '" + plugDescription.getPlugId() + "' current plug count:"
-                    + getAllIPlugs().length);
+            fLogger.info( "removing plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length );
         }
-        this.fRegistry.removePlug(plugDescription.getPlugId());
+        this.fRegistry.removePlug( plugDescription.getPlugId() );
     }
 
     public PlugDescription[] getAllIPlugs() {
@@ -814,7 +828,7 @@ public class Bus extends Thread implements IBus {
     }
 
     public PlugDescription getIPlug(String plugId) {
-        return this.fRegistry.getPlugDescription(plugId);
+        return this.fRegistry.getPlugDescription( plugId );
     }
 
     public void close() throws Exception {
@@ -823,13 +837,13 @@ public class Bus extends Thread implements IBus {
 
     @Override
     public Serializable getMetadata(String plugId, String metadataKey) {
-        Metadata metadata = getMetadata(plugId);
-        return metadata != null ? metadata.getMetadata(metadataKey) : null;
+        Metadata metadata = getMetadata( plugId );
+        return metadata != null ? metadata.getMetadata( metadataKey ) : null;
     }
 
     @Override
     public Metadata getMetadata(String plugId) {
-        PlugDescription plugDescription = getIPlug(plugId);
+        PlugDescription plugDescription = getIPlug( plugId );
         return plugDescription != null ? plugDescription.getMetadata() : null;
     }
 
@@ -842,22 +856,22 @@ public class Bus extends Thread implements IBus {
         _metadata = metadata;
     }
 
-    public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit,
-            int maxMilliseconds, String[] requestedFields) throws Exception {
+    public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds, String[] requestedFields) throws Exception {
         if (debug.canDebugNow()) {
-            // the query is used to identify the right Query during the analysis where several threads are running 
+            // the query is used to identify the right Query during the analysis
+            // where several threads are running
             debug.setQuery( query );
         }
-        IngridHits searchedHits = search(query, hitsPerPage, currentPage, startHit, maxMilliseconds);
+        IngridHits searchedHits = search( query, hitsPerPage, currentPage, startHit, maxMilliseconds );
         IngridHit[] hits = searchedHits.getHits();
-        IngridHitDetail[] details = getDetails(hits, query, requestedFields);
+        IngridHitDetail[] details = getDetails( hits, query, requestedFields );
         for (int i = 0; i < hits.length; i++) {
             IngridHit ingridHit = hits[i];
             IngridHitDetail ingridHitDetail = details[i];
-            ingridHit.setHitDetail(ingridHitDetail);
+            ingridHit.setHitDetail( ingridHitDetail );
         }
         // make sure that the debugging is deactivated after each search
-        if (debug.isActive(query)) {
+        if (debug.isActive( query )) {
             debug.addEvent( new DebugEvent( "Total Hits", "" + searchedHits.length() ) );
             List<String> list = new ArrayList<String>();
             for (IngridHit detail : details) {
@@ -868,7 +882,7 @@ public class Bus extends Thread implements IBus {
         }
         return searchedHits;
     }
-    
+
     public DebugQuery getDebugInfo() {
         return this.debug;
     }
