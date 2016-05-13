@@ -28,19 +28,29 @@
         <author email="joachim@wemove.com">Joachim Müller</author>
     </properties>
     <body>
-    <release version="3.6.1" date="2015-11-18" description="Release 3.6.1">
-      <action type="update" dev="wemove" issue="REDMINE-15">
-        Remove all references to PortalU.
-      </action>
-    </release>
-    
+
+        <release version="3.6.2" date="2016-05-13" description="Release 3.6.2">
+          <action type="fix" dev="wemove" issue="REDMINE-286">
+            Fixed problem with interrupted messages.
+          </action>
+          <action type="update" dev="wemove" issue="REDMINE-113">
+            Added generic call method to call any method on an iPlug.
+          </action>
+        </release>
+
+        <release version="3.6.1" date="2015-11-18" description="Release 3.6.1">
+          <action type="update" dev="wemove" issue="REDMINE-15">
+            Remove all references to PortalU.
+          </action>
+        </release>
+        
         <release version="3.6.0" date="2015-06-19" description="Release 3.6.0">
-      <action type="add" dev="wemove" issue="REDMINE-661">
-        Added handling of results from elastic search index (IDs of hits).
-      </action>
-      <action type="add" dev="wemove">
-        Added debugging of query results within the administration page.
-      </action>
+          <action type="add" dev="wemove" issue="REDMINE-661">
+            Added handling of results from elastic search index (IDs of hits).
+          </action>
+          <action type="add" dev="wemove">
+            Added debugging of query results within the administration page.
+          </action>
         </release>
 
         <release version="3.5.0" date="2015-01-29" description="Release 3.5.0">

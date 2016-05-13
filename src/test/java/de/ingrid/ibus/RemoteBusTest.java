@@ -46,7 +46,7 @@ public class RemoteBusTest extends TestCase {
     /**
      * @throws Throwable
      */
-    public void testSearch() throws Throwable {
+    public void testASearch() throws Throwable {
         String iBusUrl = "/101tec-group:ibus";
         
         TcpCommunication com = new TcpCommunication();
