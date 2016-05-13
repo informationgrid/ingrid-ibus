@@ -2,7 +2,7 @@
   <parent>
     <artifactId>ingrid-releases-pom</artifactId>
     <groupId>de.ingrid</groupId>
-    <version>3.6.2-SNAPSHOT</version>
+    <version>3.6.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus</artifactId>
@@ -36,12 +36,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-communication</artifactId>
-      <version>3.6.2-SNAPSHOT</version>
+      <version>3.6.2</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-utils</artifactId>
-      <version>3.6.2-SNAPSHOT</version>
+      <version>3.6.2</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
