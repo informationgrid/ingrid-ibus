@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2016 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -28,9 +28,17 @@
 
 package de.ingrid.ibus;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
 import de.ingrid.ibus.registry.Registry;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
@@ -51,7 +59,7 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @author $Author jz ${lastedit}
  * 
  */
-public class BusTest extends TestCase {
+public class BusTest {
 
     private static final String ORGANISATION = "a organisation";
 
@@ -60,10 +68,11 @@ public class BusTest extends TestCase {
     private PlugDescription[] plugDescriptions = new PlugDescription[30];
 
     public BusTest() throws Exception {
-        setUp();
+        //setUp();
     }
-    
-    protected void setUp() throws Exception {
+
+    @Before
+    public void setUp() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
         Registry registry = this.bus.getIPlugRegistry();
         for (int i = 0; i < this.plugDescriptions.length; i++) {
@@ -79,6 +88,7 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testSearch() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle ranking:score");
 
@@ -96,6 +106,7 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testFieldSearch() throws Exception {
         this.plugDescriptions[this.plugDescriptions.length - 1].addField("aField");
         IngridQuery query = QueryStringParser.parse("aField:halle");
@@ -107,6 +118,7 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testSearchWithStatisticProcessors() throws Exception {
         // TODO: make this test log implementation independent
         this.bus.getProccessorPipe().addPreProcessor(new StatisticPreProcessor());
@@ -119,6 +131,7 @@ public class BusTest extends TestCase {
     /**
      * Test the instanciation process.
      */
+    @Test
     public void testAddRemoveIPlug() {
         assertEquals(this.plugDescriptions.length, this.bus.getIPlugRegistry().getAllIPlugs().length);
         PlugDescription pd = new PlugDescription();
@@ -133,6 +146,7 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetHitDetail() throws Exception {
 
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
@@ -155,6 +169,7 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetHitDetails() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000);
@@ -172,6 +187,7 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testUnrankedSearch() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
         Registry registry = this.bus.getIPlugRegistry();
@@ -206,6 +222,7 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testUnrankedGroupedDatatypeSearch() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
         Registry registry = this.bus.getIPlugRegistry();
@@ -228,6 +245,7 @@ public class BusTest extends TestCase {
      * Test query with partners in sub clauses.
      * @throws Exception
      */
+    @Test
     public void testFilterForPartner() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
         this.plugDescriptions = new PlugDescription[3];
@@ -249,6 +267,7 @@ public class BusTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGroupByPlugId() throws Exception {
         this.bus = new Bus(new DummyProxyFactory());
         Registry registry = this.bus.getIPlugRegistry();
@@ -274,6 +293,7 @@ public class BusTest extends TestCase {
      * With Java7 comparisons are more strict and can throw exceptions if
      * the comparator is not valid (reflexive, symmetrical and transitive)
      */
+    @Test
     @SuppressWarnings("unchecked")
 	public void testSortHitsSpecial() {
     	IngridHit[] documents = new IngridHit[32];
@@ -289,14 +309,15 @@ public class BusTest extends TestCase {
     	
         Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
         
-        assertEquals(1.4f, documents[0].getScore());
+        assertEquals(1.4f, documents[0].getScore(), 0);
         for (int i = 1; i < documents.length/2; i++) {
-        	assertEquals(1.0f, documents[i].getScore());
+        	assertEquals(1.0f, documents[i].getScore(), 0);
         }
         assertNull(documents[documents.length-1]);
     }
     
     @SuppressWarnings("unchecked")
+    @Test
 	public void testSortHits() {
     	IngridHit[] documents = new IngridHit[32];
         // *******************************
@@ -366,9 +387,9 @@ public class BusTest extends TestCase {
     }
     
     private void checkSortedDocuments(IngridHit[] documents) {
-    	assertEquals(1.4f, documents[0].getScore());
+    	assertEquals(1.4f, documents[0].getScore(), 0);
         for (int i = 1; i < documents.length/2; i++) {
-        	assertEquals(1.0f, documents[i].getScore());
+        	assertEquals(1.0f, documents[i].getScore(), 0);
         }
         for (int i = documents.length/2; i < documents.length; i++) {
         	assertNull(documents[documents.length-1]);

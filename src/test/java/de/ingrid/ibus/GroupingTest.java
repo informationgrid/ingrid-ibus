@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2016 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -22,14 +22,16 @@
  */
 package de.ingrid.ibus;
 
-import java.util.Iterator;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
-import junit.framework.TestCase;
 
 /**
  * Test for grouping functionality.
@@ -41,7 +43,7 @@ import junit.framework.TestCase;
  * @author $Author: ${lastedit}
  * 
  */
-public class GroupingTest extends TestCase {
+public class GroupingTest {
 
     private static final String ORGANISATION = "a organisation";
 
@@ -49,7 +51,8 @@ public class GroupingTest extends TestCase {
 
     private PlugDescription[] plugDescriptions = new PlugDescription[5];
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.fBus = new Bus(new DummyProxyFactory());
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
@@ -63,6 +66,7 @@ public class GroupingTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void  testGroupingForDatasource() throws Exception {
 	IngridQuery ingridQuery = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_DATASOURCE);
 	int hitsPerPage = 10;
@@ -82,6 +86,7 @@ public class GroupingTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGrouping() throws Exception {
         IngridQuery query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_ORGANISATION);
         int hitsPerPage = 10;
@@ -99,6 +104,7 @@ public class GroupingTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGroupingINGRID_911() throws Exception {
         PlugDescription plugDesc = new PlugDescription();
         plugDesc.setProxyServiceURL("additional plug");
@@ -122,6 +128,7 @@ public class GroupingTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testHitPerPage() throws Exception {
         IngridQuery query = QueryStringParser.parse("aQuery grouped:" + IngridQuery.GROUPED_BY_PLUGID);
         int hitsPerPage = 10;
@@ -204,6 +211,7 @@ public class GroupingTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testPaging() throws Exception {
         // setup
         Bus bus = new Bus(new DummyProxyFactory());

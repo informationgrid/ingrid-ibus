@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2016 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -28,6 +28,7 @@
 
 package de.ingrid.ibus;
 
+import net.weta.components.communication.tcp.TimeoutException;
 import junit.framework.TestCase;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.queryparser.QueryStringParser;
@@ -55,8 +56,13 @@ public class HangingConnectionTest extends TestCase {
         bus.getIPlugRegistry().addPlugDescription(plugDescriptions);
         bus.getIPlugRegistry().activatePlug("");
         long start = System.currentTimeMillis();
-        bus.search(QueryStringParser.parse("hallo"), 10, 1, 100, 1000);
-        assertTrue(start + 100 < System.currentTimeMillis());
+        try {
+            bus.search(QueryStringParser.parse("hallo"), 10, 1, 100, 1000);
+            fail();
+        } catch (TimeoutException e) {
+            assertTrue(start + 100 < System.currentTimeMillis());
+        }
+        
     }
 
 }

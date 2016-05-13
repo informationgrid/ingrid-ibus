@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2016 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -32,6 +32,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import de.ingrid.ibus.net.PlugQueryRequest;
 import de.ingrid.utils.IngridHits;
 
 /**
@@ -40,6 +44,8 @@ import de.ingrid.utils.IngridHits;
 public class ResultSet extends ArrayList {
 
     private static final long serialVersionUID = ResultSet.class.getName().hashCode();
+    
+    private final static Log LOG = LogFactory.getLog(ResultSet.class);
 
     private int fNumberOfConnections;
 
@@ -76,6 +82,9 @@ public class ResultSet extends ArrayList {
     public synchronized void resultsAdded() {
         this.fNumberOfFinsihedConnections += 1;
         if (isComplete()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug( "Resultset is complete. Notify [" + this + "] in thread [" + Thread.currentThread().getName() + "]." );
+            }
             this.notify();
         }
     }

@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2016 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -79,7 +79,9 @@ public class IPlugProxyFactoryImplTest extends TestCase {
             this.fPlugComms[i].setPeerName("/101tec-group:iplug" + i);
             this.fPlugComms[i].startup();
 
-            ProxyService.createProxyServer(this.fPlugComms[i], IPlug.class, new DummyIPlug());
+            DummyIPlug dummyIPlug = new DummyIPlug();
+            dummyIPlug.setDocId( i+1 );
+            ProxyService.createProxyServer(this.fPlugComms[i], IPlug.class, dummyIPlug);
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setProxyServiceURL("/101tec-group:iplug" + i);
             this.plugDescriptions[i].setIPlugClass(DummyIPlug.class.getName());

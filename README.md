@@ -1,4 +1,3 @@
-![](https://travis-ci.org/informationgrid/ingrid-ibus.svg?branch=develop)
 
 
 InGrid iBus

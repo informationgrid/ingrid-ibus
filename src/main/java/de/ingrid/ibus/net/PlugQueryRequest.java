@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2016 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -101,7 +101,7 @@ public class PlugQueryRequest implements Runnable {
         final long time = System.currentTimeMillis();
         try {
             if (fLog.isDebugEnabled()) {
-                fLog.debug("Search in IPlug " + this.fPlugId + " ...");
+                fLog.debug("Search in IPlug " + this.fPlugId + "; start: " + this.fStart + "; length: " + this.fLength);
             }
             IngridHits hits = this.fIPlug.search(this.fQuery, this.fStart, this.fLength);
             if (hits.getPlugId() == null) {
@@ -111,7 +111,7 @@ public class PlugQueryRequest implements Runnable {
                 hits.setPlugId(this.fPlugId);
             }
             if (fLog.isDebugEnabled()) {
-                fLog.debug("adding results from: " + this.fPlugId + " for query (" + this.fQuery.hashCode() + ") size: " + hits.length() + " time: "
+                fLog.debug("adding " + hits.getHits().length + " results from: " + this.fPlugId + " for query (" + this.fQuery.hashCode() + ")  within "
                         + (System.currentTimeMillis() - time) + " ms");
             }
             hits.setSearchTimings(new HashMap<String, Long>() {{put(fPlugId, (System.currentTimeMillis() - time));}});

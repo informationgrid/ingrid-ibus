@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2015 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2016 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -46,7 +46,7 @@ public class RemoteBusTest extends TestCase {
     /**
      * @throws Throwable
      */
-    public void testSearch() throws Throwable {
+    public void testASearch() throws Throwable {
         String iBusUrl = "/101tec-group:ibus";
         
         TcpCommunication com = new TcpCommunication();
