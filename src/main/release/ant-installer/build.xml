@@ -76,6 +76,10 @@
         
         <delete>
             <fileset dir="${installDir}/lib" includes="**/*"/>
+            <fileset dir="${installDir}/webapp/admin/WEB-INF/work" includes="**/*"/>
+        </delete>
+        <delete>
+            <fileset dir="${installDir}/webapp/admin/WEB-INF/work" includes="**/*"/>
         </delete>
         
         <move toDir="${installDir}">

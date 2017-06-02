@@ -182,7 +182,11 @@ startIplug()
   CLASS=de.ingrid.ibus.BusServer
   
   # run it
-  exec nohup "$JAVA" $INGRID_OPTS $CLASS --descriptor conf/communication.xml --adminpassword @ADMIN_PASSWORD@ --adminport @ADMIN_PORT@ --busurl @BUS_URL@ > console.log &
+  if [ "$RUN_DIRECTLY" ]; then
+    exec "$JAVA" $INGRID_OPTS $CLASS --descriptor conf/communication.xml --adminpassword @ADMIN_PASSWORD@ --adminport @ADMIN_PORT@ --busurl @BUS_URL@
+  else
+    exec nohup "$JAVA" $INGRID_OPTS $CLASS --descriptor conf/communication.xml --adminpassword @ADMIN_PASSWORD@ --adminport @ADMIN_PORT@ --busurl @BUS_URL@ > console.log &
+  fi
   
   echo "ingrid component ($INGRID_HOME) started."
   echo $! > $PID
