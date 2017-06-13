@@ -26,7 +26,7 @@
 	xsi:noNamespaceSchemaLocation="communication.xsd">
 	<server name="/test-group:test-server">
 		<socket port="@serverport@" timeout="10" />
-		<messages maximumSize="1048576" threadCount="100" />
+		<messages maximumSize="10485760" threadCount="100" />
 	</server>
 	<messages handleTimeout="60" queueSize="2000" />
 </communication>
