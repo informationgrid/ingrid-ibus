@@ -2,7 +2,7 @@
   <parent>
     <artifactId>ingrid-releases-pom</artifactId>
     <groupId>de.ingrid</groupId>
-    <version>4.0.3</version>
+    <version>4.0.4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus</artifactId>
@@ -205,12 +205,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <version>1.11</version>
-      </plugin>
-      
-      <!-- Activate docker image build and push integration (see parent-pom) -->
-      <plugin>
-        <groupId>com.spotify</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
