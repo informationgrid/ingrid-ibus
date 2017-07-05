@@ -1,0 +1,6 @@
+:host {
+    cursor: pointer;
+}
+.panel:hover {
+    background-color: #eee;
+}

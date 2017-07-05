@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 
 const appRoutes: Routes = [
   { path: 'indices', component: ListIndicesComponent },
+  { path: 'indices/:id', component: ListIndicesComponent },
   { path: '',
     redirectTo: '/indices',
     pathMatch: 'full'

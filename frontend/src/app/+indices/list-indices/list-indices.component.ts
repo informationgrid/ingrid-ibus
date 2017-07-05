@@ -1,3 +1,5 @@
+import { IndexService } from './../index.service';
+import { IndexItem } from './index-item/index-item.component';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ListIndicesComponent implements OnInit {
 
-  constructor() { }
+  indexItems: IndexItem[] = [];
+
+  constructor(private indexService: IndexService) { }
 
   ngOnInit() {
+    this.getIndexNames();
+  }
+
+  getIndexNames() {
+    this.indexService.getIndices().subscribe( items => this.indexItems = items );
   }
 
 }
