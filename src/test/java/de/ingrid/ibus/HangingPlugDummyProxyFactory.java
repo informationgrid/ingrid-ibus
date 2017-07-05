@@ -28,7 +28,7 @@
 
 package de.ingrid.ibus;
 
-import de.ingrid.ibus.net.IPlugProxyFactory;
+import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridCall;
 import de.ingrid.utils.IngridDocument;

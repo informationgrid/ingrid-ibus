@@ -27,11 +27,12 @@
 package de.ingrid.ibus.processor;
 
 import junit.framework.TestCase;
+import de.ingrid.ibus.comm.processor.UdkMetaclassPreProcessor;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
- * Test for {@link de.ingrid.ibus.processor.UdkMetaclassPreProcessor}.
+ * Test for {@link de.ingrid.ibus.comm.processor.UdkMetaclassPreProcessor}.
  * 
  * <p/>created on 19.05.2006
  * 

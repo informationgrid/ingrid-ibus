@@ -28,7 +28,7 @@
 	<bean id="defaultMetadataInjector"
 		class="de.ingrid.utils.metadata.ConfigurableManifestMetadataInjector">
 		<constructor-arg index="0">
-			<value>de.ingrid.ibus.Bus</value>
+			<value>de.ingrid.ibus.comm.Bus</value>
 		</constructor-arg>
 	</bean>
 

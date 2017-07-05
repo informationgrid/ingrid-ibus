@@ -38,10 +38,6 @@
       <outputDirectory>${project.artifactId}-${project.version}/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>src/main/release/webapp</directory>
-      <outputDirectory>${project.artifactId}-${project.version}/webapp/admin</outputDirectory>
-    </fileSet>
-    <fileSet>
       <directory>src/main/release/ant-installer</directory>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
@@ -67,6 +63,7 @@
       <scope>runtime</scope>
       <excludes>
         <exclude>de.ingrid:ingrid-installer</exclude>
+        <exclude>org.springframework.boot:spring-boot-devtools</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>

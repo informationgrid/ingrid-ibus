@@ -23,6 +23,7 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
+import de.ingrid.ibus.comm.Bus;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;

@@ -39,7 +39,9 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.ingrid.ibus.registry.Registry;
+import de.ingrid.ibus.comm.Bus;
+import de.ingrid.ibus.comm.Comparators;
+import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;

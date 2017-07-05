@@ -29,7 +29,8 @@
 package de.ingrid.ibus;
 
 import junit.framework.TestCase;
-import de.ingrid.ibus.registry.Registry;
+import de.ingrid.ibus.comm.Bus;
+import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;

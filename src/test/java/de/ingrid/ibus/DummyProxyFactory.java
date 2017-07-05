@@ -28,7 +28,7 @@
 
 package de.ingrid.ibus;
 
-import de.ingrid.ibus.net.IPlugProxyFactory;
+import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
 
@@ -50,7 +50,7 @@ public class DummyProxyFactory implements IPlugProxyFactory {
     
     /**
      * @throws Exception 
-     * @see de.ingrid.ibus.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription, java.lang.String)
+     * @see de.ingrid.ibus.comm.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription, java.lang.String)
      */
     public IPlug createPlugProxy(PlugDescription plugDescription, String busurl) throws Exception {
         DummyIPlug plug;

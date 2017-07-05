@@ -30,6 +30,7 @@ package de.ingrid.ibus;
 
 import net.weta.components.communication.tcp.TimeoutException;
 import junit.framework.TestCase;
+import de.ingrid.ibus.comm.Bus;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.queryparser.QueryStringParser;
 

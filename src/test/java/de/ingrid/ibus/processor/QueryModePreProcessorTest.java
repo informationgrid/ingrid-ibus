@@ -27,6 +27,7 @@
 package de.ingrid.ibus.processor;
 
 import junit.framework.TestCase;
+import de.ingrid.ibus.comm.processor.QueryModePreProcessor;
 import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;

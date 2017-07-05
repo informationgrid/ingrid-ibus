@@ -26,11 +26,12 @@
 package de.ingrid.ibus.processor;
 
 import junit.framework.TestCase;
+import de.ingrid.ibus.comm.processor.LimitedAttributesPreProcessor;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
- * Test for {@link de.ingrid.ibus.processor.LimitedAttributesPreProcessor}.
+ * Test for {@link de.ingrid.ibus.comm.processor.LimitedAttributesPreProcessor}.
  * 
  * <p/>created on 31.05.2006
  * 

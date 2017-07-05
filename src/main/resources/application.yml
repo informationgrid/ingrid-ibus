@@ -1,0 +1,11 @@
+server:
+    port: 8082
+
+security:
+    user:
+        name: admin
+        password: admin
+        
+ibus:
+    descriptor: C:\\Projects\\spring-boot\\ingrid-ibus\\src\\test\\resources\\communication.xml
+    url: /ingrid-group:ibus-test

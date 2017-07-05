@@ -27,11 +27,12 @@
 package de.ingrid.ibus.processor;
 
 import junit.framework.TestCase;
+import de.ingrid.ibus.comm.processor.AddressPreProcessor;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
- * Test for {@link de.ingrid.ibus.processor.AddressPreProcessor}.
+ * Test for {@link de.ingrid.ibus.comm.processor.AddressPreProcessor}.
  * 
  * <p/>created on 01.06.2006
  * 

@@ -179,7 +179,7 @@ startIplug()
 
   export CLASSPATH="$CLASSPATH"
   INGRID_OPTS="-Dingrid_home=$INGRID_HOME $INGRID_OPTS"
-  CLASS=de.ingrid.ibus.BusServer
+  CLASS=de.ingrid.ibus.IBusApplication
   
   # run it
   if [ "$RUN_DIRECTLY" ]; then
