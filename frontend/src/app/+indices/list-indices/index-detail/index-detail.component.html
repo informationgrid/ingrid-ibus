@@ -1,0 +1,26 @@
+<div class="container">
+  <dl class="dl-horizontal">
+    <dt>Index-Name</dt>
+    <dd>{{detail.name}}</dd>
+    <dt>Index-ID</dt>
+    <dd>{{detail.id}}</dd>
+    <dt>Letzte Aktualisierung</dt>
+    <dd>{{detail.lastIndexed}}</dd>
+    <dt>Letzter Heartbeat</dt>
+    <dd>{{detail.lastHeartbeat}}</dd>
+    <dt>Mapping</dt>
+    <dd>{{detail.mapping}}</dd>
+    <dt>Status</dt>
+    <dd>{{detail.state}}</dd>
+  </dl>
+
+</div>
+
+<div class="footer">
+  <div class="container">
+    <a class="btn btn-default" (click)="deleteIndex()">Löschen</a>
+    <a class="btn btn-default" (click)="toggleActive()">{{ activated ? 'Deaktivieren' : 'Aktivieren'}}</a>
+    <a class="btn btn-default" (click)="index()">Indexierung vormerken</a>
+    <input type="checkbox"> deaktivieren, wenn kein Heartbeat
+  </div>
+</div>

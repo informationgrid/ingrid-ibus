@@ -1,8 +1,10 @@
 <div class="panel panel-default" (click)="showIndexItem(data)">
   <div class="panel-body">
-    <div class="index-id pull-left">{{data.id}}</div>
+    <div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.activated"></span></div>
+    <div class="pull-left">
+      <div class="index-id">{{data.id}}</div>
+      <div class="index-name">{{data.name}}</div>
+    </div>
     <div class="index-last-indexed pull-right">{{data.lastIndexed}}</div>
-    <div class="clearfix"></div>
-    <div class="index-name">{{data.name}}</div>
   </div>
 </div>

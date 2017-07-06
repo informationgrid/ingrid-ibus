@@ -1,6 +1,15 @@
-:host {
+.panel {
     cursor: pointer;
 }
 .panel:hover {
     background-color: #eee;
+}
+
+.glyphicon {
+    padding: 10px;
+    color: #ff0000;
+}
+
+.glyphicon.active {
+    color: #7ce47f;
 }

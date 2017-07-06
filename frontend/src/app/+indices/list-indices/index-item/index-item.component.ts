@@ -5,6 +5,7 @@ export interface IndexItem {
   id: string;
   name: string;
   lastIndexed: string;
+  activated?: boolean;
 }
 
 @Component({
