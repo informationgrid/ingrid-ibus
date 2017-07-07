@@ -1,14 +1,12 @@
 import { HttpModule } from '@angular/http';
-import { RouterTestingModule } from '@angular/router/testing';
-/* tslint:disable:no-unused-variable */
 
-import { TestBed, async, inject } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 import { IndexService } from './index.service';
 
 describe('Service: Index', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         HttpModule
       ],
       providers: [IndexService]
@@ -22,7 +20,7 @@ describe('Service: Index', () => {
       expect(items.length).toBe(1);
       expect(items[0].id).toBe('myIndex');
       expect(items[0].name).toBe('IGE-iPlug (HH)');
-      expect(items[0].lastIndexed).toBe('2017-07-05 17:23:00');
+      expect(items[0].lastIndexed).toBe('2014-03-12T13:37:27+00:00');
     });
   }));
 });

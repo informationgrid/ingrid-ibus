@@ -1,11 +1,15 @@
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { IndexService } from './../../index.service';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { IndexService } from '../../index.service';
 import { Component, OnInit } from '@angular/core';
 
 export interface IndexDetail {
   id: string;
   name?: string;
   lastIndexed?: string;
+  lastHeartbeat?: string;
+  mapping?: any;
+  state?: string;
+  deactivateWhenNoHeartbeat?: boolean;
   [x: string]: any;
 }
 
@@ -29,15 +33,21 @@ export class IndexDetailComponent implements OnInit {
   }
 
   deleteIndex() {
-
+    this.indexService.deleteIndex(this.detail.id);
   }
 
   toggleActive() {
     this.activated = !this.activated;
+    this.indexService.setActive(this.detail.id, this.activated);
   }
 
   index() {
+    this.indexService.index(this.detail.id);
+  }
 
+  toggleHeartbeatDeactivation() {
+    this.detail.deactivateWhenNoHeartbeat = !this.detail.deactivateWhenNoHeartbeat;
+    this.indexService.update( this.detail );
   }
 
 }

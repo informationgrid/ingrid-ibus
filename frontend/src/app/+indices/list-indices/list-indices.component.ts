@@ -1,4 +1,4 @@
-import { IndexService } from './../index.service';
+import { IndexService } from '../index.service';
 import { IndexItem } from './index-item/index-item.component';
 import { Component, OnInit } from '@angular/core';
 

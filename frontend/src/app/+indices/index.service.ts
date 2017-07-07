@@ -6,23 +6,48 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 
 let INDICES: IndexItem[] = [
-    { id: 'myIndex', name: 'IGE-iPlug (HH)', lastIndexed: '2017-07-05 17:23:00' }
+  {id: 'myIndex', name: 'IGE-iPlug (HH)', lastIndexed: '2014-03-12T13:37:27+00:00', activated: true}
 ];
 
-let DETAIL = { id: 'myIndex', name: 'IGE-iPlug (HH)', lastIndexed: '2017-07-05 17:23:00' };
+let DETAIL: IndexDetail = {
+  id: 'myIndex',
+  name: 'IGE-iPlug (HH)',
+  lastIndexed: '2014-03-12T13:37:27+00:00',
+  lastHeartbeat: '2017-07-05T15:22:48+00:00',
+  state: 'Indexing ...',
+  deactivateWhenNoHeartbeat: false,
+  mapping: {}
+};
 
 @Injectable()
 export class IndexService {
 
-    constructor(private http: Http) { }
+  constructor(private http: Http) {
+  }
 
-    getIndices(): Observable<IndexItem[]> {
-        // return this.http.get('').map( response => {} );
-        return Observable.of(INDICES);
-    }
+  getIndices(): Observable<IndexItem[]> {
+    // return this.http.get('').map( response => {} );
+    return Observable.of(INDICES);
+  }
 
-    getIndexDetail(id: string): Observable<IndexDetail> {
-        return Observable.of(DETAIL);
-    }
+  getIndexDetail(id: string): Observable<IndexDetail> {
+    return Observable.of(DETAIL);
+  }
+
+  update(detail: IndexDetail) {
+    // TODO: implement
+  }
+
+  deleteIndex(id: string) {
+    // TODO: implement
+  }
+
+  setActive(id: string, active: boolean) {
+    // TODO: implement
+  }
+
+  index(id: string) {
+    // TODO: implement
+  }
 
 }

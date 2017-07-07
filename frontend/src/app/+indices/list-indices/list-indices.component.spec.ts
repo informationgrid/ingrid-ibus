@@ -1,8 +1,7 @@
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpModule } from '@angular/http';
-import { IndexService } from './../index.service';
+import { IndexService } from '../index.service';
 import { IndexItemComponent } from './index-item/index-item.component';
-import { element } from 'protractor';
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -17,14 +16,13 @@ describe('ListIndicesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         HttpModule,
         RouterTestingModule
       ],
       declarations: [ListIndicesComponent, IndexItemComponent],
       providers: [IndexService]
-    })
-      .compileComponents();
+    });
   }));
 
   beforeEach(() => {
@@ -39,7 +37,7 @@ describe('ListIndicesComponent', () => {
   });
 
   it('should show the initial page', () => {
-    expect(element.queryAll(By.css('h1')).length).toBe(1);
+    expect(element.queryAll(By.css('.page-header')).length).toBe(1);
   });
 
   it('should show a list of indices', () => {

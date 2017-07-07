@@ -2,7 +2,7 @@ import { IndexDetailComponent } from './+indices/list-indices/index-detail/index
 import { IndicesModule } from './+indices/indices.module';
 import { ListIndicesComponent } from './+indices/list-indices/list-indices.component';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -33,7 +33,9 @@ const appRoutes: Routes = [
     ),
     IndicesModule
   ],
-  providers: [],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'de' } // <-- use correct locale for dates
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
