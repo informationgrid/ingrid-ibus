@@ -3,3 +3,7 @@
 .container {
     padding: 60px 15px 0;
 }
+
+.error {
+  padding: 15px;
+}

@@ -1,4 +1,4 @@
-import { IndexDetailComponent } from './+indices/list-indices/index-detail/index-detail.component';
+import { IndexDetailComponent } from './+indices/+index-detail/index-detail.component';
 import { IndicesModule } from './+indices/indices.module';
 import { ListIndicesComponent } from './+indices/list-indices/list-indices.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -8,6 +8,9 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
+import { IndexService } from './+indices/index-mock.service';
+import { ErrorComponent } from './shared/error/error.component';
+import { SharedModule } from './shared/shared.module';
 
 const appRoutes: Routes = [
   { path: 'indices', component: ListIndicesComponent },
@@ -31,9 +34,11 @@ const appRoutes: Routes = [
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
     ),
+    SharedModule,
     IndicesModule
   ],
   providers: [
+    IndexService,
     { provide: LOCALE_ID, useValue: 'de' } // <-- use correct locale for dates
   ],
   bootstrap: [AppComponent]

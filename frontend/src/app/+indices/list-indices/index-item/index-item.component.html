@@ -1,10 +1,11 @@
 <div class="panel panel-default" (click)="showIndexItem(data)">
   <div class="panel-body">
-    <div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.activated"></span></div>
+    <div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>
     <div class="pull-left">
-      <div class="index-id">{{data.id}}</div>
-      <div class="index-name">{{data.name}}</div>
+      <div class="index-id">{{data.name}}</div>
+      <div class="index-name">{{data.longName}}</div>
     </div>
     <div class="index-last-indexed pull-right">{{data.lastIndexed | date:'medium'}}</div>
+    <div *ngIf="!data.hasAdditionalInfo">Dieser Index hat keine zusätzlichen iPlug-Informationen!</div>
   </div>
 </div>

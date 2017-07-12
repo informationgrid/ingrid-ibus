@@ -1,0 +1,45 @@
+<div *ngIf="detail">
+
+
+  <div class="detail-container container">
+
+    <ingrid-error [msg]="error"></ingrid-error>
+
+    <dl class="dl-horizontal">
+      <dt>Index-Name</dt>
+      <dd>{{detail.name}}</dd>
+      <dt>Name der Komponente</dt>
+      <dd>{{detail.longName}}</dd>
+      <dt>Admin-URL</dt>
+      <dd>{{detail.adminUrl}}</dd>
+      <dt>Anzahl Dokumente</dt>
+      <dd>{{detail.numberDocs}}</dd>
+      <dt>Letzte Aktualisierung</dt>
+      <dd>{{detail.lastIndexed | date:'medium'}}</dd>
+      <dt>Letzter Heartbeat</dt>
+      <dd>{{detail.lastHeartbeat | date:'medium'}}</dd>
+      <dt>Mapping</dt>
+      <dd><pre>{{detail.mapping | json}}</pre></dd>
+      <dt>Status</dt>
+      <dd>{{detail.state}}</dd>
+    </dl>
+
+  </div>
+
+  <div class="footer">
+    <div class="container">
+      <form class="form-inline">
+        <a class="btn btn-default deleteIndex" (click)="deleteIndex()">Löschen</a>
+        <a class="btn btn-default toggleActiveIndex" (click)="toggleActive()">{{ detail.active ? 'Deaktivieren' :
+          'Aktivieren'}}</a>
+        <a class="btn btn-default doIndex" (click)="index()">Indexierung vormerken</a>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" [checked]="detail.deactivateWhenNoHeartbeat" (click)="toggleHeartbeatDeactivation()">
+            deaktivieren, wenn kein Heartbeat
+          </label>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

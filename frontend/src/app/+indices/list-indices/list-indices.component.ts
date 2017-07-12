@@ -11,6 +11,8 @@ export class ListIndicesComponent implements OnInit {
 
   indexItems: IndexItem[] = [];
 
+  error = '';
+
   constructor(private indexService: IndexService) { }
 
   ngOnInit() {
@@ -18,7 +20,10 @@ export class ListIndicesComponent implements OnInit {
   }
 
   getIndexNames() {
-    this.indexService.getIndices().subscribe( items => this.indexItems = items );
+    this.indexService.getIndices().subscribe(
+      items => this.indexItems = items,
+      error => this.error = error
+    );
   }
 
 }

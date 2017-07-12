@@ -8,6 +8,8 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { ListIndicesComponent } from './list-indices.component';
+import { Observable } from 'rxjs/Observable';
+import { shouldNotShowError, shouldShowError } from '../../../../testing/index';
 
 describe('ListIndicesComponent', () => {
   let component: ListIndicesComponent;
@@ -29,19 +31,33 @@ describe('ListIndicesComponent', () => {
     fixture = TestBed.createComponent(ListIndicesComponent);
     component = fixture.componentInstance;
     element = fixture.debugElement;
-    fixture.detectChanges();
   });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
+
   it('should show the initial page', () => {
+    fixture.detectChanges();
     expect(element.queryAll(By.css('.page-header')).length).toBe(1);
   });
 
   it('should show a list of indices', () => {
+    fixture.detectChanges();
     expect(element.queryAll(By.css('.panel')).length).toBe(1);
+    shouldNotShowError(element);
 
   });
+
+  it('should show an error if indices could not be fetched', () => {
+    const service = fixture.debugElement.injector.get(IndexService);
+    spyOn(service, 'getIndices').and.returnValue(Observable.throw('fake error'));
+
+    fixture.detectChanges();
+    shouldShowError(element, 'fake error');
+
+  });
+
+
+
 });

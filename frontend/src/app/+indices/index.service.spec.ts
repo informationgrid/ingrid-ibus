@@ -18,8 +18,8 @@ describe('Service: Index', () => {
 
     service.getIndices().subscribe(items => {
       expect(items.length).toBe(1);
-      expect(items[0].id).toBe('myIndex');
-      expect(items[0].name).toBe('IGE-iPlug (HH)');
+      expect(items[0].name).toBe('myIndex');
+      expect(items[0].longName).toBe('IGE-iPlug (HH)');
       expect(items[0].lastIndexed).toBe('2014-03-12T13:37:27+00:00');
     });
   }));

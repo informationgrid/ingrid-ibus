@@ -1,15 +1,16 @@
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { IndexService } from '../../index.service';
+import { IndexService } from '../index.service';
 import { Component, OnInit } from '@angular/core';
 
 export interface IndexDetail {
-  id: string;
   name?: string;
+  longName?: string;
   lastIndexed?: string;
   lastHeartbeat?: string;
   mapping?: any;
   state?: string;
   deactivateWhenNoHeartbeat?: boolean;
+  active?: boolean;
   [x: string]: any;
 }
 
@@ -22,9 +23,10 @@ export class IndexDetailComponent implements OnInit {
 
   detail: IndexDetail;
 
-  activated = false;
+  error = null;
 
-  constructor(private activeRoute: ActivatedRoute, private indexService: IndexService) { }
+  constructor(private activeRoute: ActivatedRoute, private indexService: IndexService) {
+  }
 
   ngOnInit() {
     this.activeRoute.paramMap
@@ -33,21 +35,37 @@ export class IndexDetailComponent implements OnInit {
   }
 
   deleteIndex() {
-    this.indexService.deleteIndex(this.detail.id);
+    this.indexService.deleteIndex(this.detail.name).subscribe(
+      null,
+      err => this.handleError(err)
+    );
   }
 
   toggleActive() {
-    this.activated = !this.activated;
-    this.indexService.setActive(this.detail.id, this.activated);
+    this.indexService.setActive(this.detail.name, !this.detail.active).subscribe(
+      () => this.detail.active = !this.detail.active,
+      err => this.handleError(err)
+    );
   }
 
   index() {
-    this.indexService.index(this.detail.id);
+    this.indexService.index(this.detail.name).subscribe(
+      null,
+      err => this.handleError(err)
+    );
   }
 
   toggleHeartbeatDeactivation() {
     this.detail.deactivateWhenNoHeartbeat = !this.detail.deactivateWhenNoHeartbeat;
-    this.indexService.update( this.detail );
+    /*this.indexService.update(this.detail).subscribe(
+      null,
+      err => this.handleError(err)
+    );*/
+  }
+
+  handleError(error: Response) {
+    console.error('Error happened: ', error);
+    this.error = error.statusText;
   }
 
 }

@@ -1,23 +1,10 @@
-import { IndexDetail } from './list-indices/index-detail/index-detail.component';
+import { IndexDetail } from './+index-detail/index-detail.component';
 import { IndexItem } from './list-indices/index-item/index-item.component';
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
-
-let INDICES: IndexItem[] = [
-  {id: 'myIndex', name: 'IGE-iPlug (HH)', lastIndexed: '2014-03-12T13:37:27+00:00', activated: true}
-];
-
-let DETAIL: IndexDetail = {
-  id: 'myIndex',
-  name: 'IGE-iPlug (HH)',
-  lastIndexed: '2014-03-12T13:37:27+00:00',
-  lastHeartbeat: '2017-07-05T15:22:48+00:00',
-  state: 'Indexing ...',
-  deactivateWhenNoHeartbeat: false,
-  mapping: {}
-};
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class IndexService {
@@ -26,28 +13,33 @@ export class IndexService {
   }
 
   getIndices(): Observable<IndexItem[]> {
-    // return this.http.get('').map( response => {} );
-    return Observable.of(INDICES);
+    return this.http.get(environment.apiUrl + '/indices')
+      .map(response => response.json());
   }
 
   getIndexDetail(id: string): Observable<IndexDetail> {
-    return Observable.of(DETAIL);
+    return this.http.get(environment.apiUrl + '/indices/' + id)
+      .map(response => response.json());
   }
 
   update(detail: IndexDetail) {
     // TODO: implement
   }
 
-  deleteIndex(id: string) {
-    // TODO: implement
+  deleteIndex(id: string): Observable<number> {
+    return this.http.delete(environment.apiUrl + '/indices/' + id)
+      .map(response => response.status);
   }
 
   setActive(id: string, active: boolean) {
-    // TODO: implement
+    let command = active ? 'activate' : 'deactivate';
+    return this.http.put(environment.apiUrl + '/indices/' + id + '/' + command, null)
+      .map(response => response.status);
   }
 
   index(id: string) {
-    // TODO: implement
+    return this.http.put(environment.apiUrl + '/indices/' + id + '/index', null)
+      .map(response => response.status);
   }
 
 }

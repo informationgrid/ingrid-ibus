@@ -7,8 +7,8 @@ import { DebugElement, LOCALE_ID } from '@angular/core';
 import { IndexItemComponent } from './index-item.component';
 
 let ITEM_EXAMPLE = {
-  id: 'myId',
-  name: 'myName',
+  name: 'myId',
+  longName: 'myName',
   lastIndexed: '2014-03-12T13:37:27+00:00'
 };
 

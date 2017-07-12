@@ -1,5 +1,5 @@
-import { click, indexServiceStub } from '../../../../../testing/index';
-import { IndexService } from '../../index.service';
+import { click, indexServiceStub } from '../../../../testing/index';
+import { IndexService } from '../index.service';
 import { RouterTestingModule } from '@angular/router/testing';
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
