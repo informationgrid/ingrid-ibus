@@ -2,6 +2,7 @@ import { IndexDetail } from '../src/app/+indices/+index-detail/index-detail.comp
 import { Observable } from 'rxjs/Rx';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { IndexItem } from '../src/app/+indices/list-indices/index-item/index-item.component';
 
 /** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
 export const ButtonClickEvents = {
@@ -18,23 +19,35 @@ export function click(el: DebugElement | HTMLElement, eventObj: any = ButtonClic
   }
 }
 
+export const testIndexItem = <IndexItem>{
+  name: 'my-index',
+  longName: 'myName',
+  active: true,
+  hasAdditionalInfo: true
+};
 
 /** A mock for the IndexService with some data and spies on the functions. */
 export const indexServiceStub = {
   getIndexDetail(id): Observable<IndexDetail> {
-    return Observable.of({
-      id: '1',
-      name: 'myName',
+    return Observable.of(<IndexDetail>{
+      name: 'my-index',
+      longName: 'myName',
       lastHeartbeat: '2014-03-12T13:37:27.000+0000',
-      lastIndexed:   '2015-11-15T11:44:12.000+0000',
+      lastIndexed: '2015-11-15T11:44:12.000+0000',
       mapping: {},
-      state: 'Indexing ...'
+      indexingState: {
+        message: 'Indexing ...',
+        numProcessed: 45,
+        running: true,
+        totalDocs: 156
+      }
     });
   },
   update: jasmine.createSpy('update'),
-  deleteIndex: jasmine.createSpy('update'),
-  setActive: jasmine.createSpy('update'),
-  index: jasmine.createSpy('update')
+  deleteIndex: jasmine.createSpy('deleteIndex'),
+  setActive: jasmine.createSpy('setActive'),
+  index: jasmine.createSpy('index'),
+  getIndices: jasmine.createSpy('getIndices')
 };
 
 export function shouldNotShowError(element: DebugElement) {

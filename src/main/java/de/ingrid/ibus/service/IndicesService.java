@@ -25,6 +25,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,9 @@ import de.ingrid.ibus.model.IndexState;
 public class IndicesService {
 
     private Logger log = LogManager.getLogger( IndicesService.class );
+    
+    @Autowired
+    private SettingsService settingsService;
 
     private static final String INDEX_FIELD_LAST_INDEXED = "lastIndexed";
     private static final String INDEX_FIELD_INDEXING_STATE = "indexingState";
@@ -165,6 +169,7 @@ public class IndicesService {
 
             index.setLongName( hitSource.get( INDEX_FIELD_IPLUG_NAME ).toString() );
             index.setLastIndexed( mapDate( (String) hitSource.get( INDEX_FIELD_LAST_INDEXED ) ) );
+            index.setActive( settingsService.isActive(indexName) );
 
             if (detail) {
                 index.setLastHeartbeat( mapDate( hitSource.get( INDEX_FIELD_LAST_HEARTBEAT ).toString() ) );

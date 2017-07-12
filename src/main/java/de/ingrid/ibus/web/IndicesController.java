@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import de.ingrid.ibus.model.Index;
 import de.ingrid.ibus.model.View;
 import de.ingrid.ibus.service.IndicesService;
+import de.ingrid.ibus.service.SettingsService;
 
 @CrossOrigin
 @Controller
@@ -26,6 +27,9 @@ import de.ingrid.ibus.service.IndicesService;
 public class IndicesController {
     @Autowired
     private IndicesService indicesService;
+    
+    @Autowired
+    private SettingsService settingsService;
 
     @JsonView(View.Summary.class)
     @GetMapping("/indices")
@@ -50,14 +54,26 @@ public class IndicesController {
 
     @PutMapping("/indices/{id}/activate")
     @ResponseBody
-    public ResponseEntity<Void> activateIndex(@PathVariable String id) {
-        return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).build();
+    public ResponseEntity<Void> activateIndex(@PathVariable String id) throws Exception {
+        boolean success = this.settingsService.activateIndex( id );
+        
+        if (success) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
+        }
     }
 
     @PutMapping("/indices/{id}/deactivate")
     @ResponseBody
-    public ResponseEntity<Void> deactivateIndex(@PathVariable String id) {
-        return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).build();
+    public ResponseEntity<Void> deactivateIndex(@PathVariable String id) throws Exception {
+        boolean success = this.settingsService.deactivateIndex( id );
+        
+        if (success) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
+        }
     }
 
     @PutMapping("/indices/{id}")

@@ -3,8 +3,5 @@
 
   <index-item *ngFor="let item of indexItems" [data]="item"></index-item>
 
-  <p *ngIf="error" class="error bg-danger">
-    Es trat ein Fehler bei der Verbindung zum Elasticsearch-Cluster auf:
-    {{error}}
-  </p>
+  <ingrid-error [msg]="error"></ingrid-error>
 </div>

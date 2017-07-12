@@ -7,7 +7,12 @@
 
     <dl class="dl-horizontal">
       <dt>Index-Name</dt>
-      <dd>{{detail.name}}</dd>
+      <dd>{{detail.name}}
+        <span class="glyphicon glyphicon-certificate"
+              [class.text-success]="detail.active"
+              [class.text-danger]="!detail.active"
+        ></span>
+      </dd>
       <dt>Name der Komponente</dt>
       <dd>{{detail.longName}}</dd>
       <dt>Admin-URL</dt>
@@ -19,9 +24,20 @@
       <dt>Letzter Heartbeat</dt>
       <dd>{{detail.lastHeartbeat | date:'medium'}}</dd>
       <dt>Mapping</dt>
-      <dd><pre>{{detail.mapping | json}}</pre></dd>
+      <dd>
+        <a (click)="showMapping = !showMapping" class="btn btn-xs btn-default">
+          {{showMapping ? 'Verstecken' : 'Anzeigen'}}
+        </a>
+        <pre *ngIf="showMapping">{{detail.mapping | json}}</pre>
+      </dd>
       <dt>Status</dt>
-      <dd>{{detail.state}}</dd>
+      <dd *ngIf="detail.indexingState?.running">
+        {{detail.indexingState?.numProcessed}} / {{detail.indexingState?.totalDocs}}:
+        {{detail.indexingState?.message}}
+      </dd>
+      <dd *ngIf="!detail.indexingState?.running">
+        Keine Indizierung
+      </dd>
     </dl>
 
   </div>

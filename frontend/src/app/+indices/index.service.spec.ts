@@ -1,7 +1,7 @@
 import { HttpModule } from '@angular/http';
 
 import { TestBed, inject } from '@angular/core/testing';
-import { IndexService } from './index.service';
+import { IndexService } from './index-mock.service';
 
 describe('Service: Index', () => {
   beforeEach(() => {

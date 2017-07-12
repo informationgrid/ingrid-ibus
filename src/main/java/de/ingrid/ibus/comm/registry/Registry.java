@@ -46,6 +46,7 @@ import net.weta.components.communication.util.PooledThreadExecutor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.io.ClassPathResource;
 
 import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.utils.IPlug;
@@ -111,14 +112,22 @@ public class Registry {
      *            The factory that creates IPlugs.
      */
     public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation, IPlugProxyFactory factory) {
+        
+        ClassPathResource ibusSettings = new ClassPathResource( "/activatedIplugs.properties" );
+        
         try {
-            File dir = new File("conf");
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            this.fFile = new File(dir, "activatedIplugs.properties");
-            if (!this.fFile.exists()) {
-                this.fFile.createNewFile();
+            if (ibusSettings.exists()) {
+                this.fFile = ibusSettings.getFile();
+            } else {
+                File dir = new File("conf");
+                if (!dir.exists()) {
+                    dir.mkdir();
+                }
+                this.fFile = new File(dir, "activatedIplugs.properties");
+                if (!this.fFile.exists()) {
+                    this.fFile.createNewFile();
+                }
+                
             }
         } catch (Exception e) {
             if (fLogger.isErrorEnabled()) {

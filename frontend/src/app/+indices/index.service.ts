@@ -33,8 +33,7 @@ export class IndexService {
 
   setActive(id: string, active: boolean) {
     let command = active ? 'activate' : 'deactivate';
-    return this.http.put(environment.apiUrl + '/indices/' + id + '/' + command, null)
-      .map(response => response.status);
+    return this.http.put(environment.apiUrl + '/indices/' + id + '/' + command, null);
   }
 
   index(id: string) {

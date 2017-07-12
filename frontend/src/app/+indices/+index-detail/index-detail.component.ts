@@ -8,7 +8,7 @@ export interface IndexDetail {
   lastIndexed?: string;
   lastHeartbeat?: string;
   mapping?: any;
-  state?: string;
+  indexingState?: any;
   deactivateWhenNoHeartbeat?: boolean;
   active?: boolean;
   [x: string]: any;
@@ -24,6 +24,8 @@ export class IndexDetailComponent implements OnInit {
   detail: IndexDetail;
 
   error = null;
+
+  showMapping = false;
 
   constructor(private activeRoute: ActivatedRoute, private indexService: IndexService) {
   }
@@ -57,15 +59,16 @@ export class IndexDetailComponent implements OnInit {
 
   toggleHeartbeatDeactivation() {
     this.detail.deactivateWhenNoHeartbeat = !this.detail.deactivateWhenNoHeartbeat;
+    this.indexService.update(this.detail);
     /*this.indexService.update(this.detail).subscribe(
       null,
       err => this.handleError(err)
     );*/
   }
 
-  handleError(error: Response) {
+  handleError(error: any) {
     console.error('Error happened: ', error);
-    this.error = error.statusText;
+    this.error = error.statusText || error.message || error.json().message;
   }
 
 }

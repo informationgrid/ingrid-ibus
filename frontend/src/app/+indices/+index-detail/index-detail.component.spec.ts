@@ -7,6 +7,7 @@ import { By } from '@angular/platform-browser';
 
 import { IndexDetailComponent } from './index-detail.component';
 import { LOCALE_ID } from '@angular/core';
+import { SharedModule } from '../../shared/shared.module';
 
 describe('IndexDetailComponent', () => {
   let component: IndexDetailComponent;
@@ -16,11 +17,12 @@ describe('IndexDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [IndexDetailComponent],
       imports: [
-        RouterTestingModule
+        RouterTestingModule,
+        SharedModule
       ],
       providers: [
         {provide: IndexService, useValue: indexServiceStub},
-        { provide: LOCALE_ID, useValue: 'de' }
+        {provide: LOCALE_ID, useValue: 'de'}
       ]
     });
   }));
@@ -36,7 +38,7 @@ describe('IndexDetailComponent', () => {
 
     const detailDiv = <HTMLElement>fixture.debugElement.query(By.css('.detail-container')).nativeElement;
 
-    expect(detailDiv.textContent).toContain('1');
+    expect(detailDiv.textContent).toContain('my-index');
     expect(detailDiv.textContent).toContain('myName');
     expect(detailDiv.textContent).toContain('12. März 2014, 14:37:27');
     expect(detailDiv.textContent).toContain('15. Nov. 2015, 12:44:12');
