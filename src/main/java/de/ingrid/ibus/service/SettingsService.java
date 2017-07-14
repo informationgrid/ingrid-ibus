@@ -8,8 +8,10 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -49,7 +51,12 @@ public class SettingsService {
 
             String propActiveIndices = properties.getProperty( "activeIndices" );
             if (propActiveIndices != null) {
-                activeIndices = new HashSet<String>( Arrays.asList( propActiveIndices.split( "," ) ) );
+                
+                List<String> activeList = propActiveIndices.trim().length() == 0 
+                        ? new ArrayList<String>()
+                        : Arrays.asList( propActiveIndices.split( "," ) );
+                        
+                activeIndices = new HashSet<String>( activeList );
             } else {
                 activeIndices = new HashSet<String>();
             }
@@ -59,6 +66,10 @@ public class SettingsService {
                 log.error( "Cannot open the file for saving the activation state of the iplugs.", e );
             }
         }
+    }
+    
+    public Set<String> getActiveIndices() {
+        return this.activeIndices;
     }
 
     public boolean activateIndex(String index) throws Exception {

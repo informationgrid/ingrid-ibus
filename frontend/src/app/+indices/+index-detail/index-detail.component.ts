@@ -2,7 +2,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { IndexService } from '../index.service';
 import { Component, OnInit } from '@angular/core';
 
-export interface IndexDetail {
+export class IndexDetail {
+  id: string;
   name?: string;
   longName?: string;
   lastIndexed?: string;
@@ -44,7 +45,7 @@ export class IndexDetailComponent implements OnInit {
   }
 
   toggleActive() {
-    this.indexService.setActive(this.detail.name, !this.detail.active).subscribe(
+    this.indexService.setActive(this.detail.id, !this.detail.active).subscribe(
       () => this.detail.active = !this.detail.active,
       err => this.handleError(err)
     );

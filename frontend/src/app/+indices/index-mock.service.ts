@@ -1,5 +1,5 @@
 import { IndexDetail } from './+index-detail/index-detail.component';
-import { IndexItem } from './list-indices/index-item/index-item.component';
+import { IndexItem } from './index-item/index-item.component';
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';

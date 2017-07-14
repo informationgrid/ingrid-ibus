@@ -1,6 +1,6 @@
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpModule } from '@angular/http';
-import { IndexItemComponent } from './index-item/index-item.component';
+import { IndexItemComponent } from '../index-item/index-item.component';
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';

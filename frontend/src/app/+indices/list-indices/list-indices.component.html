@@ -1,7 +1,14 @@
 <div class="container">
-  <div class="page-header">Indizes</div>
 
-  <index-item *ngFor="let item of indexItems" [data]="item"></index-item>
+  <div class="page-header">Komponenten-Indizes</div>
+  <ng-container *ngFor="let item of indexItems">
+    <index-item *ngIf="item.hasAdditionalInfo" [data]="item"></index-item>
+  </ng-container>
+
+  <div class="page-header">Andere Indizes</div>
+  <ng-container *ngFor="let item of indexItems">
+    <index-item *ngIf="!item.hasAdditionalInfo"  [data]="item"></index-item>
+  </ng-container>
 
   <ingrid-error [msg]="error"></ingrid-error>
 </div>

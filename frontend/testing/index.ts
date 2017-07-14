@@ -2,7 +2,7 @@ import { IndexDetail } from '../src/app/+indices/+index-detail/index-detail.comp
 import { Observable } from 'rxjs/Rx';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { IndexItem } from '../src/app/+indices/list-indices/index-item/index-item.component';
+import { IndexItem } from '../src/app/+indices/index-item/index-item.component';
 
 /** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
 export const ButtonClickEvents = {

@@ -1,7 +1,8 @@
 import { Router } from '@angular/router';
 import { Component, OnInit, Input } from '@angular/core';
 
-export interface IndexItem {
+export class IndexItem {
+  id: string;
   name: string;
   longName: string;
   lastIndexed: string;
@@ -24,6 +25,8 @@ export class IndexItemComponent implements OnInit {
   }
 
   showIndexItem(item: IndexItem) {
-    this.router.navigate(['/indices/' + item.name]);
+    if (item.hasAdditionalInfo) {
+      this.router.navigate(['/indices/' + item.name]);
+    }
   }
 }

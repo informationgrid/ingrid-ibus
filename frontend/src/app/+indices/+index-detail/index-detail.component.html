@@ -13,23 +13,30 @@
               [class.text-danger]="!detail.active"
         ></span>
       </dd>
+
       <dt>Name der Komponente</dt>
       <dd>{{detail.longName}}</dd>
+
       <dt>Admin-URL</dt>
-      <dd>{{detail.adminUrl}}</dd>
+      <dd><a target="_blank" [href]="detail.adminUrl">{{detail.adminUrl}}</a></dd>
+
       <dt>Anzahl Dokumente</dt>
       <dd>{{detail.numberDocs}}</dd>
+
       <dt>Letzte Aktualisierung</dt>
       <dd>{{detail.lastIndexed | date:'medium'}}</dd>
+
       <dt>Letzter Heartbeat</dt>
       <dd>{{detail.lastHeartbeat | date:'medium'}}</dd>
+
       <dt>Mapping</dt>
       <dd>
         <a (click)="showMapping = !showMapping" class="btn btn-xs btn-default">
           {{showMapping ? 'Verstecken' : 'Anzeigen'}}
         </a>
-        <pre *ngIf="showMapping">{{detail.mapping | json}}</pre>
+        <pre *ngIf="showMapping" class="mapping">{{detail.mapping | json}}</pre>
       </dd>
+
       <dt>Status</dt>
       <dd *ngIf="detail.indexingState?.running">
         {{detail.indexingState?.numProcessed}} / {{detail.indexingState?.totalDocs}}:

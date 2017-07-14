@@ -11,10 +11,13 @@ import { AppComponent } from './app.component';
 import { IndexService } from './+indices/index-mock.service';
 import { ErrorComponent } from './shared/error/error.component';
 import { SharedModule } from './shared/shared.module';
+import { SearchComponent } from './+search/search/search.component';
+import { SearchModule } from './+search/search.module';
 
 const appRoutes: Routes = [
   { path: 'indices', component: ListIndicesComponent },
   { path: 'indices/:id', component: IndexDetailComponent },
+  { path: 'search', component: SearchComponent },
   { path: '',
     redirectTo: '/indices',
     pathMatch: 'full'
@@ -35,7 +38,8 @@ const appRoutes: Routes = [
       { enableTracing: true } // <-- debugging purposes only
     ),
     SharedModule,
-    IndicesModule
+    IndicesModule,
+    SearchModule
   ],
   providers: [
     IndexService,

@@ -1,5 +1,5 @@
 import { IndexService } from '../index.service';
-import { IndexItem } from './index-item/index-item.component';
+import { IndexItem } from '../index-item/index-item.component';
 import { Component, OnInit } from '@angular/core';
 
 @Component({

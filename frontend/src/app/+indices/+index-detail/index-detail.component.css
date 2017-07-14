@@ -2,6 +2,10 @@
   padding: 0 0 60px;
 }
 
+.mapping {
+  max-height: 600px;
+}
+
 .footer {
   position: fixed;
   bottom: 0;

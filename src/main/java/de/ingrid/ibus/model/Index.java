@@ -6,6 +6,10 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonView;
 
 public class Index {
+
+    @JsonView(View.Summary.class)
+    private String id;
+
     @JsonView(View.Summary.class)
     private String name;
 
@@ -33,9 +37,8 @@ public class Index {
     private boolean active;
 
     @JsonView(View.Summary.class)
-    private boolean hasAdditionalInfo = true;
+    private boolean hasAdditionalInfo = false;
 
-    
     public String getName() {
         return name;
     }
@@ -122,6 +125,14 @@ public class Index {
 
     public void setHasAdditionalInfo(boolean hasAdditionalInfo) {
         this.hasAdditionalInfo = hasAdditionalInfo;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 }
