@@ -1,6 +1,7 @@
 package de.ingrid.ibus.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -20,9 +21,6 @@ public class Index {
     private long numberDocs;
 
     @JsonView(View.Summary.class)
-    private Date lastIndexed;
-
-    @JsonView(View.Summary.class)
     private Date created;
 
     private Date lastHeartbeat;
@@ -37,7 +35,10 @@ public class Index {
     private boolean active;
 
     @JsonView(View.Summary.class)
-    private boolean hasAdditionalInfo = false;
+    private boolean hasLinkedComponent = false;
+
+    @JsonView(View.Summary.class)
+    private List<IndexType> types;
 
     public String getName() {
         return name;
@@ -53,14 +54,6 @@ public class Index {
 
     public void setNumberDocs(long l) {
         this.numberDocs = l;
-    }
-
-    public Date getLastIndexed() {
-        return lastIndexed;
-    }
-
-    public void setLastIndexed(Date lastIndexed) {
-        this.lastIndexed = lastIndexed;
     }
 
     public boolean isActive() {
@@ -119,12 +112,12 @@ public class Index {
         this.indexingState = indexingState;
     }
 
-    public boolean isHasAdditionalInfo() {
-        return hasAdditionalInfo;
+    public boolean isHasLinkedComponent() {
+        return hasLinkedComponent;
     }
 
-    public void setHasAdditionalInfo(boolean hasAdditionalInfo) {
-        this.hasAdditionalInfo = hasAdditionalInfo;
+    public void setHasLinkedComponent(boolean hasLinkedComponent) {
+        this.hasLinkedComponent = hasLinkedComponent;
     }
 
     public String getId() {
@@ -135,4 +128,11 @@ public class Index {
         this.id = id;
     }
 
+    public List<IndexType> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<IndexType> types2) {
+        this.types = types2;
+    }
 }

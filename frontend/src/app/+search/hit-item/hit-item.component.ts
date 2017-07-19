@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SearchHit } from '../SearchHit';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'hit-item',
@@ -10,9 +11,12 @@ export class HitItemComponent implements OnInit {
 
   @Input() hit: SearchHit;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
   }
 
+  showDetailHit(hit: SearchHit) {
+    this.router.navigate(['/search/' + hit.indexId + '/' + hit.id])
+  }
 }

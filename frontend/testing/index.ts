@@ -23,7 +23,7 @@ export const testIndexItem = <IndexItem>{
   name: 'my-index',
   longName: 'myName',
   active: true,
-  hasAdditionalInfo: true
+  hasLinkedComponent: true
 };
 
 /** A mock for the IndexService with some data and spies on the functions. */

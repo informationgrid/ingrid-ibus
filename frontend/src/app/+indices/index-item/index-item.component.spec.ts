@@ -4,12 +4,14 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement, LOCALE_ID } from '@angular/core';
 
-import { IndexItemComponent } from './index-item.component';
+import { IndexItem, IndexItemComponent } from './index-item.component';
 
-let ITEM_EXAMPLE = {
+let ITEM_EXAMPLE: IndexItem = {
+  id: '123',
   name: 'myId',
   longName: 'myName',
-  lastIndexed: '2014-03-12T13:37:27+00:00'
+  lastIndexed: '2014-03-12T13:37:27+00:00',
+  types: []
 };
 
 describe('IndexItemComponent', () => {

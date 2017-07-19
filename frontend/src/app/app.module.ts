@@ -13,11 +13,13 @@ import { ErrorComponent } from './shared/error/error.component';
 import { SharedModule } from './shared/shared.module';
 import { SearchComponent } from './+search/search/search.component';
 import { SearchModule } from './+search/search.module';
+import { SearchDetailComponent } from './+search/+search-detail/search-detail.component';
 
 const appRoutes: Routes = [
   { path: 'indices', component: ListIndicesComponent },
   { path: 'indices/:id', component: IndexDetailComponent },
   { path: 'search', component: SearchComponent },
+  { path: 'search/:indexId/:hitId', component: SearchDetailComponent },
   { path: '',
     redirectTo: '/indices',
     pathMatch: 'full'

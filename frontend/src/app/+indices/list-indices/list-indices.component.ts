@@ -26,4 +26,8 @@ export class ListIndicesComponent implements OnInit {
     );
   }
 
+  refresh() {
+    this.getIndexNames();
+  }
+
 }

@@ -6,7 +6,27 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 
 let INDICES: IndexItem[] = [
-  {name: 'myIndex', longName: 'IGE-iPlug (HH)', lastIndexed: '2014-03-12T13:37:27+00:00', active: true}
+  {
+    id: '12345',
+    name: 'myIndex',
+    longName: 'IGE-iPlug (HH)',
+    lastIndexed: '2014-03-12T13:37:27+00:00',
+    active: true,
+    hasLinkedComponent: true,
+    types: [
+      {
+        id: '1',
+        name: 'myType1',
+        active: true,
+        lastIndexed: '2016-03-12T13:37:27+00:00'
+      }, {
+        id: '2',
+        name: 'myType2',
+        active: false,
+        lastIndexed: '2014-03-12T13:37:27+00:00'
+      }
+    ]
+  }
 ];
 
 let DETAIL: IndexDetail = {
@@ -26,7 +46,6 @@ export class IndexService {
   }
 
   getIndices(): Observable<IndexItem[]> {
-    // return this.http.get('').map( response => {} );
     return Observable.of(INDICES);
   }
 
@@ -39,15 +58,15 @@ export class IndexService {
   }
 
   deleteIndex(id: string) {
-    // TODO: implement
+    return Observable.of(null);
   }
 
   setActive(id: string, active: boolean) {
-    // TODO: implement
+    return Observable.of(null);
   }
 
   index(id: string) {
-    // TODO: implement
+    return Observable.of(null);
   }
 
 }

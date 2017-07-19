@@ -68,17 +68,17 @@ public class SettingsService {
         }
     }
     
-    public Set<String> getActiveIndices() {
+    public Set<String> getActiveComponentIds() {
         return this.activeIndices;
     }
 
-    public boolean activateIndex(String index) throws Exception {
+    public boolean activateIndexType(String index) throws Exception {
         activeIndices.add( index );
         properties.put( "activeIndices", StringUtils.collectionToCommaDelimitedString( activeIndices ) );
         return writeSettings();
     }
     
-    public boolean deactivateIndex(String index) throws Exception {
+    public boolean deactivateIndexType(String index) throws Exception {
         activeIndices.remove( index );
         properties.put( "activeIndices", StringUtils.collectionToCommaDelimitedString( activeIndices ) );
         return writeSettings();

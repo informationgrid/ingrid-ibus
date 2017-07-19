@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import de.ingrid.ibus.model.Index;
+import de.ingrid.ibus.model.IndexTypeDetail;
 import de.ingrid.ibus.model.SearchResult;
 import de.ingrid.ibus.model.View;
 import de.ingrid.ibus.service.IndicesService;
@@ -48,10 +49,10 @@ public class IndicesController {
 
     @GetMapping("/indices/{id}")
     @ResponseBody
-    public ResponseEntity<Index> getIndexDetail(@PathVariable String id) {
-        Index index;
+    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id, @RequestParam String type) {
+        IndexTypeDetail index;
         try {
-            index = this.indicesService.getIndexDetail( id );
+            index = this.indicesService.getIndexDetail( id, type );
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( null );
@@ -62,7 +63,7 @@ public class IndicesController {
     @PutMapping("/indices/{id}/activate")
     @ResponseBody
     public ResponseEntity<Void> activateIndex(@PathVariable String id) throws Exception {
-        boolean success = this.settingsService.activateIndex( id );
+        boolean success = this.settingsService.activateIndexType( id );
         
         if (success) {
             return ResponseEntity.ok().build();
@@ -74,7 +75,7 @@ public class IndicesController {
     @PutMapping("/indices/{id}/deactivate")
     @ResponseBody
     public ResponseEntity<Void> deactivateIndex(@PathVariable String id) throws Exception {
-        boolean success = this.settingsService.deactivateIndex( id );
+        boolean success = this.settingsService.deactivateIndexType( id );
         
         if (success) {
             return ResponseEntity.ok().build();
@@ -98,7 +99,9 @@ public class IndicesController {
     @DeleteMapping("/indices/{id}")
     @ResponseBody
     public ResponseEntity<Void> removeIndex(@PathVariable String id) {
-        return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).build();
+        this.indicesService.deleteIndex(id);
+        return ResponseEntity.ok().build();
+        
     }
     
     @GetMapping("/search")
@@ -111,6 +114,13 @@ public class IndicesController {
             log.error(ex);
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    
+    @GetMapping("/indices/{indexId}/{hitId}")
+    @ResponseBody
+    public ResponseEntity<SearchResult> getHitDetail(@PathVariable String indexId, @PathVariable String hitId) {
+        SearchResult hitDetail = this.indicesService.getHitDetail(indexId, hitId);
+        return ResponseEntity.ok( hitDetail );
     }
 
 }

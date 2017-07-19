@@ -8,14 +8,22 @@ html, body, app-root {
     padding: 60px 15px 0;
 }
 
+dt {
+  padding-bottom: 15px;
+}
+
 .error {
   padding: 15px;
 }
 
-.clickable.panel {
+.clickable {
   cursor: pointer;
 }
 
-.clickable.panel:hover {
-  background-color: #eee;
+.glyphicon.clickable:hover {
+  background-color: inherit;
+}
+
+.clickable:hover {
+  background-color: #f8f8f8;
 }

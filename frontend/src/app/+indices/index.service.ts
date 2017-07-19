@@ -18,8 +18,8 @@ export class IndexService {
       .map(response => response.json());
   }
 
-  getIndexDetail(id: string): Observable<IndexDetail> {
-    return this.http.get(environment.apiUrl + '/indices/' + id)
+  getIndexDetail(id: string, type: string): Observable<IndexDetail> {
+    return this.http.get(environment.apiUrl + '/indices/' + id + '?type=' + type)
       .map(response => response.json());
   }
 
@@ -44,6 +44,11 @@ export class IndexService {
 
   search(query: string): Observable<SearchHit[]> {
     return this.http.get(environment.apiUrl + '/search?query=' + query)
+      .map(res => res.json());
+  }
+
+  getSearchDetail(indexId: string, hitId: string): Observable<SearchHit> {
+    return this.http.get(environment.apiUrl + '/indices/' + indexId + '/' + hitId)
       .map(res => res.json());
   }
 }

@@ -33,7 +33,9 @@ export class IndexDetailComponent implements OnInit {
 
   ngOnInit() {
     this.activeRoute.paramMap
-      .switchMap((params: ParamMap) => this.indexService.getIndexDetail(params.get('id')))
+      .switchMap((params: ParamMap) => {
+        return this.indexService.getIndexDetail(params.get('id'), params.get('type'));
+      })
       .subscribe(detail => this.detail = detail);
   }
 

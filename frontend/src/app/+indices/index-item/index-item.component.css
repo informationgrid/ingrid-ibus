@@ -1,8 +1,49 @@
 .glyphicon {
-    padding: 10px;
+    /*padding: 0 10px 0 0;*/
     color: #ff0000;
 }
 
 .glyphicon.active {
     color: #7ce47f;
+}
+
+.index-id {
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 6px;
+  display: inline-block;
+  font-size: x-small;
+}
+
+.panel {
+  position: relative;
+}
+
+.content {
+  padding-left: 15px;
+}
+
+.indexState {
+  padding: 5px;
+  margin-right: 5px;
+  position: absolute;
+  left: 5px;
+  top: 8px;
+}
+
+.indexState:hover {
+  background-color: #eeeeee;
+  border-radius: 20px;
+}
+
+.delete {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  padding: 10px;
+  color: #dddddd;
+}
+.delete:hover {
+  color: #ff0000;
 }
