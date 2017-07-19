@@ -28,7 +28,7 @@ export class IndexItemComponent implements OnInit {
 
   @Input() data: IndexItem;
 
-  @Output() onDelete: EventEmitter<any>;
+  @Output() onDelete = new EventEmitter();
 
   constructor(private router: Router, private indexService: IndexService) { }
 
@@ -42,7 +42,9 @@ export class IndexItemComponent implements OnInit {
   }
 
   deleteIndex(item: IndexItem) {
-    this.indexService.deleteIndex(item.name).subscribe();
+    this.indexService.deleteIndex(item.name).subscribe(
+      response => this.onDelete.next()
+    );
   }
 
   activateIndexType(type: IndexType, evt: Event) {

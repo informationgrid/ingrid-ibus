@@ -14,6 +14,7 @@ import { SharedModule } from './shared/shared.module';
 import { SearchComponent } from './+search/search/search.component';
 import { SearchModule } from './+search/search.module';
 import { SearchDetailComponent } from './+search/+search-detail/search-detail.component';
+import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 
 const appRoutes: Routes = [
   { path: 'indices', component: ListIndicesComponent },
@@ -39,6 +40,9 @@ const appRoutes: Routes = [
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
     ),
+    ConfirmationPopoverModule.forRoot({
+      confirmButtonType: 'danger' // set defaults here
+    }),
     SharedModule,
     IndicesModule,
     SearchModule

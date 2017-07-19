@@ -1,11 +1,27 @@
-<div class="panel panel-default" [class.clickable]="data.hasAdditionalInfo" (click)="showIndexItem(data)">
+<div class="panel panel-default">
+  <span class="index-id">{{data.name}}</span>
   <div class="panel-body">
-    <div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>
+    <!--<div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>-->
     <div class="pull-left">
-      <div class="index-id">{{data.name}}</div>
       <div class="index-name">{{data.longName}}</div>
-      <div *ngIf="!data.hasAdditionalInfo">Dieser Index wird von keiner Komponenten referenziert!</div>
+      <div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>
     </div>
     <div class="index-last-indexed pull-right">{{data.lastIndexed | date:'medium'}}</div>
+    <div class="glyphicon glyphicon-trash pull-right delete clickable text-muted" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
+         [title]="'Wirklich löschen?'"
+         [message]="'Wollen Sie den Index wirklich löschen?'"
+         placement="left"
+         confirmText="Löschen"
+         cancelText="Abbrechen"
+         (confirm)="deleteIndex(data)"></div>
   </div>
+
+  <ul class="list-group">
+    <li *ngFor="let type of data.types" class="list-group-item clickable" (click)="showIndexItem(data, type.name)">
+      <div class="indexState glyphicon glyphicon-off" [class.active]="type.active" title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
+      <span class="content">{{type.name}}</span>
+      <div class="pull-right small">{{type.lastIndexed | date:'medium'}}</div>
+      <div *ngIf="data.hasLinkedComponent && !type.hasLinkedComponent" class="text-danger">Nicht referenziert!</div>
+    </li>
+  </ul>
 </div>
