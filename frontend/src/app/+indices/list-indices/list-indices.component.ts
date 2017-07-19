@@ -11,9 +11,12 @@ export class ListIndicesComponent implements OnInit {
 
   indexItems: IndexItem[] = [];
 
+  isLoading = true;
+
   error = '';
 
-  constructor(private indexService: IndexService) { }
+  constructor(private indexService: IndexService) {
+  }
 
   ngOnInit() {
     this.getIndexNames();
@@ -21,12 +24,16 @@ export class ListIndicesComponent implements OnInit {
 
   getIndexNames() {
     this.indexService.getIndices().subscribe(
-      items => this.indexItems = items,
+      items => {
+        this.indexItems = items;
+        this.isLoading = false;
+      },
       error => this.error = error
     );
   }
 
   refresh() {
+    this.isLoading = true;
     this.getIndexNames();
   }
 

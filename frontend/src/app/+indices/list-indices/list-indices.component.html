@@ -1,6 +1,6 @@
 <div class="container">
 
-  <div class="page-header">Komponenten-Indizes</div>
+  <div class="page-header">Komponenten-Indizes <span *ngIf="isLoading" class="pull-right glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></div>
   <ng-container *ngFor="let item of indexItems">
     <index-item *ngIf="item.hasLinkedComponent" [data]="item" (onDelete)="refresh()"></index-item>
   </ng-container>
