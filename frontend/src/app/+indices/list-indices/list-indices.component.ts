@@ -28,7 +28,10 @@ export class ListIndicesComponent implements OnInit {
         this.indexItems = items;
         this.isLoading = false;
       },
-      error => this.error = error
+      error => {
+        this.error = error;
+        this.isLoading = false;
+      }
     );
   }
 

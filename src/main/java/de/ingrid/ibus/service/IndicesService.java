@@ -2,7 +2,6 @@ package de.ingrid.ibus.service;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,8 +30,10 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.IdsQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,9 @@ public class IndicesService {
 
     @Autowired
     private SettingsService settingsService;
+    
+    @Autowired
+    private SearchService searchService;
 
     @Autowired
     private QueryBuilderService queryBuilderService;
@@ -330,35 +334,55 @@ public class IndicesService {
         }
     }
 
-    public List<SearchResult> search(String query) {
+//    public List<SearchResult> search(String query) {
+//        
+//        IngridQuery iQuery = new IngridQuery( true, false, 0, query );
+//        IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
+//        
+//        String[] indices = getActiveIndices();
+//        String[] justIndexNames = Stream.of( indices )
+//                .map( indexWithType -> indexWithType.split( ":" )[0] )
+//                .collect( Collectors.toSet() )
+//                .toArray( new String[0] );
+//
+//        BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
+//        BoolQueryBuilder queryWithFilter = queryBuilderService.createQueryWithFilter( query, indexTypeFilter );
+//
+//        SearchResponse response = client.prepareSearch( justIndexNames )
+//                .setQuery( queryWithFilter )
+//                .setFetchSource( new String[] { "*" }, null )
+//                .setSize( 10 )
+//                .get();
+//
+//        SearchHit[] hits = response.getHits().getHits();
+//
+//        List<SearchResult> results = new ArrayList<SearchResult>();
+//        for (SearchHit hit : hits) {
+//            SearchResult result = new SearchResult();
+//            result.setId( hit.getId() );
+//            result.setIndexId( hit.getIndex() );
+//            result.setTitle( (String) hit.getSource().get( "title" ) );
+//            result.setSummary( (String) hit.getSource().get( "summary" ) );
+//            result.setSource( (String) hit.getSource().get( "dataSourceName" ) );
+//            results.add( result );
+//        }
+//        return results;
+//    }
+    
+    public SearchHits search(QueryBuilder query) {
         String[] indices = getActiveIndices();
         String[] justIndexNames = Stream.of( indices )
                 .map( indexWithType -> indexWithType.split( ":" )[0] )
                 .collect( Collectors.toSet() )
                 .toArray( new String[0] );
-
-        BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
-        BoolQueryBuilder queryWithFilter = queryBuilderService.createQueryWithFilter( query, indexTypeFilter );
-
+        
         SearchResponse response = client.prepareSearch( justIndexNames )
-                .setQuery( queryWithFilter )
+                .setQuery( query )
                 .setFetchSource( new String[] { "*" }, null )
                 .setSize( 10 )
                 .get();
-
-        SearchHit[] hits = response.getHits().getHits();
-
-        List<SearchResult> results = new ArrayList<SearchResult>();
-        for (SearchHit hit : hits) {
-            SearchResult result = new SearchResult();
-            result.setId( hit.getId() );
-            result.setIndexId( hit.getIndex() );
-            result.setTitle( (String) hit.getSource().get( "title" ) );
-            result.setSummary( (String) hit.getSource().get( "summary" ) );
-            result.setSource( (String) hit.getSource().get( "???" ) );
-            results.add( result );
-        }
-        return results;
+        
+        return response.getHits();
     }
 
     private String[] getActiveIndices() {
@@ -399,7 +423,7 @@ public class IndicesService {
         result.setIndexId( hit.getIndex() );
         result.setTitle( (String) hit.getSource().get( "title" ) );
         result.setSummary( (String) hit.getSource().get( "summary" ) );
-        result.setSource( (String) hit.getSource().get( "???" ) );
+        result.setSource( (String) hit.getSource().get( "dataSourceName" ) );
         result.setDetail( (String) hit.getSource().get( "idf" ) );
         return result;
     }

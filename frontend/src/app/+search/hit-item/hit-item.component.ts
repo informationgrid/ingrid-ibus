@@ -11,12 +11,13 @@ export class HitItemComponent implements OnInit {
 
   @Input() hit: SearchHit;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+  }
 
   ngOnInit() {
   }
 
   showDetailHit(hit: SearchHit) {
-    this.router.navigate(['/search/' + hit.indexId + '/' + hit.id])
+    this.router.navigate(['/search/' + hit.esIndex + '/' + hit.hitDetail['0']]);
   }
 }

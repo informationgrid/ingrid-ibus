@@ -1,7 +1,7 @@
 <div class="clickable panel panel-default" (click)="showDetailHit(hit)">
   <div class="panel-body">
-    <div class="title">{{hit.title}}</div>
-    <p class="summary">{{hit.summary}}</p>
-    <div class="source">Quelle: {{hit.source}}</div>
+    <div class="title">{{hit.hitDetail.title}}</div>
+    <p class="summary">{{hit.hitDetail.abstract}}</p>
+    <div class="source">Quelle: {{hit.dataSourceName}}</div>
   </div>
 </div>

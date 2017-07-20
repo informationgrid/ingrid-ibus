@@ -24,7 +24,12 @@ import de.ingrid.ibus.model.IndexTypeDetail;
 import de.ingrid.ibus.model.SearchResult;
 import de.ingrid.ibus.model.View;
 import de.ingrid.ibus.service.IndicesService;
+import de.ingrid.ibus.service.SearchService;
 import de.ingrid.ibus.service.SettingsService;
+import de.ingrid.utils.IngridHit;
+import de.ingrid.utils.IngridHits;
+import de.ingrid.utils.query.IngridQuery;
+import de.ingrid.utils.queryparser.QueryStringParser;
 
 @CrossOrigin
 @Controller
@@ -35,6 +40,9 @@ public class IndicesController {
     
     @Autowired
     private IndicesService indicesService;
+    
+    @Autowired
+    private SearchService searchService;
     
     @Autowired
     private SettingsService settingsService;
@@ -106,10 +114,14 @@ public class IndicesController {
     
     @GetMapping("/search")
     @ResponseBody
-    public ResponseEntity<List<SearchResult>> search(@RequestParam String query) {
+    public ResponseEntity<IngridHits> search(@RequestParam String query) {
         try {
-            List<SearchResult> result = this.indicesService.search(query);
-            return ResponseEntity.ok(result);
+            IngridQuery iQuery = QueryStringParser.parse( query );
+            IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
+            return ResponseEntity.ok(searchAndDetail);
+            
+            //List<SearchResult> result = this.indicesService.search(query);
+            //return ResponseEntity.ok(result);
         } catch (Exception ex) {
             log.error(ex);
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR).build();

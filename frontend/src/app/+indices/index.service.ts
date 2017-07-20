@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import { environment } from '../../environments/environment';
 import { SearchHit } from '../+search/SearchHit';
+import { SearchHits } from '../+search/SearchHits';
 
 @Injectable()
 export class IndexService {
@@ -42,7 +43,7 @@ export class IndexService {
       .map(response => response.status);
   }
 
-  search(query: string): Observable<SearchHit[]> {
+  search(query: string): Observable<SearchHits> {
     return this.http.get(environment.apiUrl + '/search?query=' + query)
       .map(res => res.json());
   }
