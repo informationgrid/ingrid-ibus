@@ -249,7 +249,7 @@ public class IndicesService {
 
             index.setId( id );
             index.setLongName( hitSource.get( INDEX_FIELD_IPLUG_NAME ).toString() );
-            // index.setLastIndexed( mapDate( (String) hitSource.get( INDEX_FIELD_LAST_INDEXED ) ) );
+            index.setLastIndexed( mapDate( (String) hitSource.get( INDEX_FIELD_LAST_INDEXED ) ) );
             index.setActive( settingsService.isActive( id ) );
 
             index.setLastHeartbeat( mapDate( hitSource.get( INDEX_FIELD_LAST_HEARTBEAT ).toString() ) );
@@ -312,8 +312,8 @@ public class IndicesService {
     private IndexState mapIndexingState(Map<String, Object> state) {
         IndexState indexState = new IndexState();
 
-        String numProcessed = (String) state.get( "numProcessed" );
-        String totalDocs = (String) state.get( "totalDocs" );
+        Integer numProcessed = (Integer) state.get( "numProcessed" );
+        Integer totalDocs = (Integer) state.get( "totalDocs" );
 
         // indexState.setMessage( message );
         indexState.setRunning( state.get( "running" ).equals( true ) );
@@ -376,8 +376,10 @@ public class IndicesService {
                 .collect( Collectors.toSet() )
                 .toArray( new String[0] );
         
+        BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
+        
         SearchResponse response = client.prepareSearch( justIndexNames )
-                .setQuery( query )
+                .setQuery( QueryBuilders.boolQuery().must( query ).must( indexTypeFilter ) )
                 .setFetchSource( new String[] { "*" }, null )
                 .setSize( 10 )
                 .get();

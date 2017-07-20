@@ -7,6 +7,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
+import { DateRelativePipe } from './date-relative.pipe';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
   declarations: [
     ListIndicesComponent,
     IndexItemComponent,
-    IndexDetailComponent
+    IndexDetailComponent,
+    DateRelativePipe
   ]
 })
 export class IndicesModule { }

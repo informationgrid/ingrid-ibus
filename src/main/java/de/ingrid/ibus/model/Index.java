@@ -24,6 +24,8 @@ public class Index {
     private Date created;
 
     private Date lastHeartbeat;
+    
+    private Date lastIndexed;
 
     private Map<String, Object> mapping;
 
@@ -134,5 +136,13 @@ public class Index {
 
     public void setTypes(List<IndexType> types2) {
         this.types = types2;
+    }
+
+    public Date getLastIndexed() {
+        return lastIndexed;
+    }
+
+    public void setLastIndexed(Date lastIndexed) {
+        this.lastIndexed = lastIndexed;
     }
 }
