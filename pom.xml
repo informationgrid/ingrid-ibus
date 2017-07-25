@@ -12,20 +12,13 @@
   <packaging>jar</packaging>
 
   <name>iBus</name>
-  <description>Demo project for Spring Boot</description>
+  <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
 
   <scm>
     <connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</connection>
     <developerConnection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
-
-  <!-- <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.4.RELEASE</version>
-    <relativePath /> lookup parent from repository
-  </parent> -->
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -239,6 +232,5 @@
       </plugin>
     </plugins>
   </build>
-
-
+  
 </project>

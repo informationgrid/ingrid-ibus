@@ -23,7 +23,6 @@ public class QueryBuilderService {
         BoolQueryBuilder boolShould = QueryBuilders.boolQuery();
         List<QueryBuilder> should = boolShould.should();
 
-        // Set<String> activeIndices = settings.getActiveIndices();
         for (String indexTypes : activeIndices) {
             String[] indexSplitType = indexTypes.split( ":" );
             should.add( buildIndexTypeMust( indexSplitType[0], indexSplitType[1] ) );
@@ -33,8 +32,6 @@ public class QueryBuilderService {
 
         return boolQuery;
     }
-
-    // public BoolQueryBuilder createMustQuery(String)
 
     public BoolQueryBuilder buildMustQuery(String... fieldAndValue) {
 

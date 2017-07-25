@@ -29,7 +29,6 @@ import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -59,6 +58,7 @@ public class IndicesService {
     private static final String INDEX_FIELD_INDEXING_STATE = "indexingState";
     private static final String INDEX_FIELD_ADMIN_URL = "adminUrl";
     private static final String INDEX_FIELD_LAST_HEARTBEAT = "lastHeartbeat";
+    private static final String INDEX_FIELD_IPLUG_ID = "plugId";
     private static final String INDEX_FIELD_IPLUG_NAME = "iPlugName";
     private static final String INDEX_INFO_NAME = "ingrid_meta";
 
@@ -66,9 +66,9 @@ public class IndicesService {
 
     @Autowired
     private SettingsService settingsService;
-    
-    @Autowired
-    private SearchService searchService;
+
+    // @Autowired
+    // private SearchService searchService;
 
     @Autowired
     private QueryBuilderService queryBuilderService;
@@ -232,7 +232,7 @@ public class IndicesService {
      * @param index
      */
     @SuppressWarnings("unchecked")
-    private void applyAdditionalData(String indexName, String type, Index index) {
+    private void applyAdditionalData(String indexName, String type, IndexTypeDetail index) {
         BoolQueryBuilder indexTypeQuery = queryBuilderService.buildMustQuery( LINKED_INDEX, indexName, LINKED_TYPE, type );
 
         SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
@@ -245,12 +245,11 @@ public class IndicesService {
         long totalHits = response.getHits().totalHits;
         if (totalHits == 1) {
             Map<String, Object> hitSource = response.getHits().getAt( 0 ).getSource();
-            String id = response.getHits().getAt( 0 ).getId();
 
-            index.setId( id );
-            index.setLongName( hitSource.get( INDEX_FIELD_IPLUG_NAME ).toString() );
+            index.setId( (String) hitSource.get( INDEX_FIELD_IPLUG_ID ) );
+            index.setLongName( (String) hitSource.get( INDEX_FIELD_IPLUG_NAME ) );
             index.setLastIndexed( mapDate( (String) hitSource.get( INDEX_FIELD_LAST_INDEXED ) ) );
-            index.setActive( settingsService.isActive( id ) );
+            index.setActive( settingsService.isActive( index.getId() ) );
 
             index.setLastHeartbeat( mapDate( hitSource.get( INDEX_FIELD_LAST_HEARTBEAT ).toString() ) );
             index.setAdminUrl( hitSource.get( INDEX_FIELD_ADMIN_URL ).toString() );
@@ -289,17 +288,17 @@ public class IndicesService {
                     Date lastIndexed = format.parse( (String) hit.getSource().get( INDEX_FIELD_LAST_INDEXED ) );
 
                     indexItem.setId( hit.getId() );
-                    indexItem.setLongName( hitSource.get( INDEX_FIELD_IPLUG_NAME ).toString() );
+                    indexItem.setLongName( (String) hitSource.get( INDEX_FIELD_IPLUG_NAME ) );
                     // indexItem.setLastIndexed( mapDate( (String) hitSource.get( INDEX_FIELD_LAST_INDEXED ) ) );
                     // indexItem.setActive( settingsService.isActive( hit.getId() ) );
                     indexItem.setHasLinkedComponent( true );
 
                     for (IndexType type : indexItem.getTypes()) {
                         if (type.getName().equals( indexType )) {
-                            type.setId( hit.getId() );
+                            type.setId( (String) hitSource.get( INDEX_FIELD_IPLUG_ID ) );
                             type.setHasLinkedComponent( true );
                             type.setLastIndexed( lastIndexed );
-                            type.setActive( settingsService.isActive( hit.getId() ) );
+                            type.setActive( settingsService.isActive( type.getId() ) );
                         }
                     }
                 }
@@ -334,56 +333,56 @@ public class IndicesService {
         }
     }
 
-//    public List<SearchResult> search(String query) {
-//        
-//        IngridQuery iQuery = new IngridQuery( true, false, 0, query );
-//        IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
-//        
-//        String[] indices = getActiveIndices();
-//        String[] justIndexNames = Stream.of( indices )
-//                .map( indexWithType -> indexWithType.split( ":" )[0] )
-//                .collect( Collectors.toSet() )
-//                .toArray( new String[0] );
-//
-//        BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
-//        BoolQueryBuilder queryWithFilter = queryBuilderService.createQueryWithFilter( query, indexTypeFilter );
-//
-//        SearchResponse response = client.prepareSearch( justIndexNames )
-//                .setQuery( queryWithFilter )
-//                .setFetchSource( new String[] { "*" }, null )
-//                .setSize( 10 )
-//                .get();
-//
-//        SearchHit[] hits = response.getHits().getHits();
-//
-//        List<SearchResult> results = new ArrayList<SearchResult>();
-//        for (SearchHit hit : hits) {
-//            SearchResult result = new SearchResult();
-//            result.setId( hit.getId() );
-//            result.setIndexId( hit.getIndex() );
-//            result.setTitle( (String) hit.getSource().get( "title" ) );
-//            result.setSummary( (String) hit.getSource().get( "summary" ) );
-//            result.setSource( (String) hit.getSource().get( "dataSourceName" ) );
-//            results.add( result );
-//        }
-//        return results;
-//    }
-    
+    // public List<SearchResult> search(String query) {
+    //
+    // IngridQuery iQuery = new IngridQuery( true, false, 0, query );
+    // IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
+    //
+    // String[] indices = getActiveIndices();
+    // String[] justIndexNames = Stream.of( indices )
+    // .map( indexWithType -> indexWithType.split( ":" )[0] )
+    // .collect( Collectors.toSet() )
+    // .toArray( new String[0] );
+    //
+    // BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
+    // BoolQueryBuilder queryWithFilter = queryBuilderService.createQueryWithFilter( query, indexTypeFilter );
+    //
+    // SearchResponse response = client.prepareSearch( justIndexNames )
+    // .setQuery( queryWithFilter )
+    // .setFetchSource( new String[] { "*" }, null )
+    // .setSize( 10 )
+    // .get();
+    //
+    // SearchHit[] hits = response.getHits().getHits();
+    //
+    // List<SearchResult> results = new ArrayList<SearchResult>();
+    // for (SearchHit hit : hits) {
+    // SearchResult result = new SearchResult();
+    // result.setId( hit.getId() );
+    // result.setIndexId( hit.getIndex() );
+    // result.setTitle( (String) hit.getSource().get( "title" ) );
+    // result.setSummary( (String) hit.getSource().get( "summary" ) );
+    // result.setSource( (String) hit.getSource().get( "dataSourceName" ) );
+    // results.add( result );
+    // }
+    // return results;
+    // }
+
     public SearchHits search(QueryBuilder query) {
         String[] indices = getActiveIndices();
         String[] justIndexNames = Stream.of( indices )
                 .map( indexWithType -> indexWithType.split( ":" )[0] )
                 .collect( Collectors.toSet() )
                 .toArray( new String[0] );
-        
+
         BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
-        
+
         SearchResponse response = client.prepareSearch( justIndexNames )
                 .setQuery( QueryBuilders.boolQuery().must( query ).must( indexTypeFilter ) )
                 .setFetchSource( new String[] { "*" }, null )
                 .setSize( 10 )
                 .get();
-        
+
         return response.getHits();
     }
 
@@ -393,12 +392,16 @@ public class IndicesService {
         // get active components
         Set<String> activeComponents = settingsService.getActiveComponentIds();
 
-        IdsQueryBuilder idsQuery = QueryBuilders.idsQuery().addIds( activeComponents.toArray( new String[0] ) );
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        
+        for (String active : activeComponents) {
+            boolQuery.should( QueryBuilders.termQuery( INDEX_FIELD_IPLUG_ID, active ) );
+        }
 
         // get real index names from active components
         SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
                 .setTypes( "info" )
-                .setQuery( idsQuery )
+                .setQuery( boolQuery )
                 .setFetchSource( new String[] { LINKED_INDEX, LINKED_TYPE }, null )
                 .get();
 

@@ -26,7 +26,6 @@ import de.ingrid.ibus.model.View;
 import de.ingrid.ibus.service.IndicesService;
 import de.ingrid.ibus.service.SearchService;
 import de.ingrid.ibus.service.SettingsService;
-import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;

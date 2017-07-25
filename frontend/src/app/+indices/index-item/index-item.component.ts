@@ -1,6 +1,7 @@
 import { Router } from '@angular/router';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IndexService } from '../index.service';
+import { URLSearchParams } from '@angular/http';
 
 export class IndexType {
   id: string;
@@ -30,14 +31,16 @@ export class IndexItemComponent implements OnInit {
 
   @Output() onDelete = new EventEmitter();
 
-  constructor(private router: Router, private indexService: IndexService) { }
+  constructor(private router: Router, private indexService: IndexService) {
+  }
 
   ngOnInit() {
   }
 
   showIndexItem(item: IndexItem, type: string) {
     if (item.hasLinkedComponent) {
-      this.router.navigate(['/indices/' + item.name, { type: type }]);
+
+      this.router.navigate(['/indices/' + item.name, {type: type}]);
     }
   }
 
