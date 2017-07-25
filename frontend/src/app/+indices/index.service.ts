@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 import { environment } from '../../environments/environment';
 import { SearchHit } from '../+search/SearchHit';
 import { SearchHits } from '../+search/SearchHits';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class IndexService {
@@ -47,5 +47,11 @@ export class IndexService {
 
   getSearchDetail(indexId: string, hitId: string): Observable<SearchHit> {
     return this.http.get(environment.apiUrl + '/indices/' + indexId + '/' + hitId);
+  }
+
+  getActiveComponentIds(): Observable<string[]> {
+    return this.http.get(environment.apiUrl + '/settings/activeComponentIds', {
+      params: new HttpParams().set('verify', 'true')
+    });
   }
 }

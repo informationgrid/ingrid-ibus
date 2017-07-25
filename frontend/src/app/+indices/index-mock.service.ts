@@ -69,4 +69,7 @@ export class IndexService {
     return Observable.of(null);
   }
 
+  getActiveComponentIds() {
+
+  }
 }

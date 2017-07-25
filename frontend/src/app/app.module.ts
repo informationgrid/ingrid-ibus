@@ -10,6 +10,7 @@ import { SearchModule } from './+search/search.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import appRoutes from './app.routes';
 import { HttpClientModule } from '@angular/common/http';
+import { SettingsModule } from './+settings/settings.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { HttpClientModule } from '@angular/common/http';
     }),
     SharedModule,
     IndicesModule,
-    SearchModule
+    SearchModule,
+    SettingsModule
   ],
   providers: [
     IndexService,
