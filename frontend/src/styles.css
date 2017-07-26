@@ -16,16 +16,15 @@ dt {
   padding: 15px;
 }
 
-.clickable {
+.clickable, .clickable-only {
   cursor: pointer;
+}
+.clickable:hover {
+  background-color: #f8f8f8;
 }
 
 .glyphicon.clickable:hover {
   background-color: inherit;
-}
-
-.clickable:hover {
-  background-color: #f8f8f8;
 }
 
 .glyphicon-refresh-animate {

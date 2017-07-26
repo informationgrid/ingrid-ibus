@@ -8,6 +8,8 @@ import { By } from '@angular/platform-browser';
 import { IndexDetailComponent } from './index-detail.component';
 import { LOCALE_ID } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
+import { DateRelativePipe } from '../date-relative.pipe';
+import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 
 describe('IndexDetailComponent', () => {
   let component: IndexDetailComponent;
@@ -15,9 +17,10 @@ describe('IndexDetailComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [IndexDetailComponent],
+      declarations: [IndexDetailComponent, DateRelativePipe],
       imports: [
         RouterTestingModule,
+        ConfirmationPopoverModule.forRoot(),
         SharedModule
       ],
       providers: [
@@ -66,18 +69,20 @@ describe('IndexDetailComponent', () => {
 
     click(checkboxHeartbeat);
     fixture.detectChanges();
-    expect(indexServiceStub.update.calls.count()).toBe(1);
+    expect(indexServiceStub.update.calls.count()).toBe(1, 'There was no update call.');
 
     click(btnDelete);
     fixture.detectChanges();
-    expect(indexServiceStub.deleteIndex.calls.count()).toBe(1);
+    click(fixture.debugElement.query(By.css('.popover .btn.btn-block')));
+    fixture.detectChanges();
+    expect(indexServiceStub.deleteIndex.calls.count()).toBe(1, 'There was no delete call.');
 
     click(btnToggleActivate);
     fixture.detectChanges();
-    expect(indexServiceStub.setActive.calls.count()).toBe(1);
+    expect(indexServiceStub.setActive.calls.count()).toBe(1, 'There was no setActive call.');
 
     click(btnDoIndex);
     fixture.detectChanges();
-    expect(indexServiceStub.index.calls.count()).toBe(1);
+    expect(indexServiceStub.index.calls.count()).toBe(1, 'There was no index call.');
   });
 });

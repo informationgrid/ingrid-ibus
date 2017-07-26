@@ -16,6 +16,18 @@
   font-size: x-small;
 }
 
+.short .index-id {
+  padding: 10px 0 0 10px;
+  border: none;
+}
+
+.short.panel {
+  margin-bottom: 5px;
+}
+.short .panel-body {
+  padding: 5px;
+}
+
 .panel {
   position: relative;
 }

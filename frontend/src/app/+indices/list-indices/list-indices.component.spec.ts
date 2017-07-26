@@ -1,5 +1,4 @@
 import { RouterTestingModule } from '@angular/router/testing';
-import { HttpModule } from '@angular/http';
 import { IndexItemComponent } from '../index-item/index-item.component';
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
@@ -11,6 +10,8 @@ import { Observable } from 'rxjs/Observable';
 import { indexServiceStub, shouldNotShowError, shouldShowError, testIndexItem } from '../../../../testing/index';
 import { IndexService } from '../index.service';
 import { SharedModule } from '../../shared/shared.module';
+import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('ListIndicesComponent', () => {
   let component: ListIndicesComponent;
@@ -20,8 +21,11 @@ describe('ListIndicesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        HttpModule,
+        HttpClientModule,
         RouterTestingModule,
+        ConfirmationPopoverModule.forRoot({
+          confirmButtonType: 'danger' // set defaults here
+        }),
         SharedModule
       ],
       declarations: [ListIndicesComponent, IndexItemComponent],
@@ -42,7 +46,7 @@ describe('ListIndicesComponent', () => {
   it('should show the initial page', () => {
     indexServiceStub.getIndices.and.callFake(() => Observable.of([]));
     fixture.detectChanges();
-    expect(element.queryAll(By.css('.page-header')).length).toBe(1);
+    expect(element.queryAll(By.css('.page-header')).length).toBe(2);
   });
 
   it('should show a list of indices', () => {
@@ -56,6 +60,15 @@ describe('ListIndicesComponent', () => {
   it('should show an error if indices could not be fetched', () => {
     const service = fixture.debugElement.injector.get(IndexService);
     indexServiceStub.getIndices.and.returnValue(Observable.throw('fake error'));
+
+    fixture.detectChanges();
+    shouldShowError(element, 'fake error');
+
+  });
+
+  it('should show an error if indices could not be activated', () => {
+    const service = fixture.debugElement.injector.get(IndexService);
+    indexServiceStub.setActive.and.returnValue(Observable.throw('fake error'));
 
     fixture.detectChanges();
     shouldShowError(element, 'fake error');

@@ -370,6 +370,12 @@ public class IndicesService {
 
     public SearchHits search(QueryBuilder query) {
         String[] indices = getActiveIndices();
+
+        // when no index was selected then do not return any hits
+        if (indices.length == 0) {
+            return new SearchHits( new SearchHit[0], 0, 0 );
+        }
+
         String[] justIndexNames = Stream.of( indices )
                 .map( indexWithType -> indexWithType.split( ":" )[0] )
                 .collect( Collectors.toSet() )
@@ -393,7 +399,7 @@ public class IndicesService {
         Set<String> activeComponents = settingsService.getActiveComponentIds();
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        
+
         for (String active : activeComponents) {
             boolQuery.should( QueryBuilders.termQuery( INDEX_FIELD_IPLUG_ID, active ) );
         }

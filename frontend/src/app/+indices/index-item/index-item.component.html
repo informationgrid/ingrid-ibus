@@ -1,10 +1,10 @@
-<div class="panel panel-default">
+<div class="panel panel-default" [class.short]="view === 'short'">
   <span class="index-id">{{data.name}}</span>
   <div class="panel-body">
     <!--<div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>-->
     <div class="pull-left">
       <div class="index-name">{{data.longName}}</div>
-      <div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>
+      <!--<div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>-->
     </div>
     <div class="index-last-indexed pull-right">{{data.lastIndexed | date:'medium'}}</div>
     <div class="glyphicon glyphicon-trash pull-right delete clickable text-muted" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
@@ -16,7 +16,7 @@
          (confirm)="deleteIndex(data)"></div>
   </div>
 
-  <ul class="list-group">
+  <ul *ngIf="view !== 'short'" class="list-group">
     <li *ngFor="let type of data.types" class="list-group-item clickable" (click)="showIndexItem(data, type.name)">
       <div class="indexState glyphicon glyphicon-off" [class.active]="type.active" title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
       <span class="content">{{type.name}}</span>

@@ -10,14 +10,16 @@ import { SearchHits } from '../SearchHits';
 })
 export class SearchComponent implements OnInit {
 
-  hits: SearchHit[];
+  hits: SearchHit[] = [];
   totalDocs: number;
 
   error: string = null;
 
-  constructor(private indexService: IndexService) { }
+  constructor(private indexService: IndexService) {
+  }
 
   ngOnInit() {
+    this.search('');
   }
 
   search(query: string) {

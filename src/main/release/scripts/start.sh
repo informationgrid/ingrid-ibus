@@ -183,9 +183,9 @@ startIplug()
   
   # run it
   if [ "$RUN_DIRECTLY" ]; then
-    exec "$JAVA" $INGRID_OPTS $CLASS --descriptor conf/communication.xml --adminpassword @ADMIN_PASSWORD@ --adminport @ADMIN_PORT@ --busurl @BUS_URL@
+    exec "$JAVA" $INGRID_OPTS $CLASS
   else
-    exec nohup "$JAVA" $INGRID_OPTS $CLASS --descriptor conf/communication.xml --adminpassword @ADMIN_PASSWORD@ --adminport @ADMIN_PORT@ --busurl @BUS_URL@ > console.log &
+    exec nohup "$JAVA" $INGRID_OPTS $CLASS > console.log &
   fi
   
   echo "ingrid component ($INGRID_HOME) started."

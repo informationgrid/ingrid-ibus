@@ -5,6 +5,7 @@ export class SearchHit {
   summary: string;
   source: string;
   detail: string;
+  dataSourceName: string;
 
   esIndex: string;
   hitDetail: any;

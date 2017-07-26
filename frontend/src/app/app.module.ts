@@ -8,9 +8,9 @@ import { IndexService } from './+indices/index-mock.service';
 import { SharedModule } from './shared/shared.module';
 import { SearchModule } from './+search/search.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
-import appRoutes from './app.routes';
 import { HttpClientModule } from '@angular/common/http';
 import { SettingsModule } from './+settings/settings.module';
+import { rootRoutes } from './app.routes';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,7 @@ import { SettingsModule } from './+settings/settings.module';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    appRoutes,
+    rootRoutes,
     ConfirmationPopoverModule.forRoot({
       confirmButtonType: 'danger' // set defaults here
     }),

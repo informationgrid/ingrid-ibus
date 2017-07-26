@@ -15,6 +15,8 @@ export class ListIndicesComponent implements OnInit {
 
   error = '';
 
+  expanded = {};
+
   constructor(private indexService: IndexService) {
   }
 

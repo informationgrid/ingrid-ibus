@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
+import { SearchHits } from '../+search/SearchHits';
 
 let INDICES: IndexItem[] = [
   {
@@ -53,6 +54,19 @@ export class IndexService {
     return Observable.of(DETAIL);
   }
 
+  getSearchDetail(): Observable<any> {
+    return Observable.of({});
+  }
+
+  search(): Observable<SearchHits> {
+    return Observable.of(
+      {
+        length: 0,
+        hits: []
+      }
+    )
+  }
+
   update(detail: IndexDetail) {
     // TODO: implement
   }
@@ -70,6 +84,6 @@ export class IndexService {
   }
 
   getActiveComponentIds() {
-
+    return Observable.of(['a', 'b']);
   }
 }

@@ -22,6 +22,8 @@ export function click(el: DebugElement | HTMLElement, eventObj: any = ButtonClic
 export const testIndexItem = <IndexItem>{
   name: 'my-index',
   longName: 'myName',
+  lastIndexed: '2015-11-15T11:44:12.000+0000',
+  types: [],
   active: true,
   hasLinkedComponent: true
 };
@@ -55,6 +57,6 @@ export function shouldNotShowError(element: DebugElement) {
 }
 
 export function shouldShowError(element: DebugElement, message: string) {
-  expect(element.queryAll(By.css('.error')).length).toBe(1);
-  expect(element.query(By.css('.error')).nativeElement.textContent).toContain(message);
+  expect(element.queryAll(By.css('.alert')).length).toBe(1);
+  expect(element.query(By.css('.alert')).nativeElement.textContent).toContain(message);
 }

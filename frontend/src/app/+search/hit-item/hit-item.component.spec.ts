@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HitItemComponent } from './hit-item.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { IndexService } from '../../+indices/index.service';
+import { IndexService as IndexServiceMock } from '../../+indices/index-mock.service';
 
 describe('HitItemComponent', () => {
   let component: HitItemComponent;
@@ -8,7 +11,13 @@ describe('HitItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HitItemComponent ]
+      declarations: [ HitItemComponent ],
+      imports: [
+        RouterTestingModule
+      ],
+      providers: [
+        { provide: IndexService, useClass: IndexServiceMock }
+      ]
     })
     .compileComponents();
   }));
@@ -16,10 +25,21 @@ describe('HitItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HitItemComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should be created', () => {
+    component.hit = {
+      id: '123',
+      indexId: 'a',
+      title: 'myTitle',
+      summary: 'mySummary',
+      source: 'mySource',
+      detail: '',
+      dataSourceName: 'my ds name',
+      esIndex: '',
+      hitDetail: {}
+    };
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 });

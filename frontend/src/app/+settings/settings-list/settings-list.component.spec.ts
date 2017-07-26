@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SettingsListComponent } from './settings-list.component';
+import { FormsModule } from '@angular/forms';
+import { IndexService as IndexServiceMock } from '../../+indices/index-mock.service';
+import { IndexService } from '../../+indices/index.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpModule } from '@angular/http';
 
 describe('SettingsListComponent', () => {
   let component: SettingsListComponent;
@@ -8,7 +13,15 @@ describe('SettingsListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SettingsListComponent ]
+      declarations: [ SettingsListComponent ],
+      imports: [
+        FormsModule,
+        HttpClientTestingModule,
+        HttpModule
+      ],
+      providers: [
+        { provide: IndexService, useClass: IndexServiceMock }
+      ]
     })
     .compileComponents();
   }));

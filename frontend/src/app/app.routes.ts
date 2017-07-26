@@ -4,6 +4,7 @@ import { IndexDetailComponent } from './+indices/+index-detail/index-detail.comp
 import { ListIndicesComponent } from './+indices/list-indices/list-indices.component';
 import { RouterModule, Routes } from '@angular/router';
 import { SettingsListComponent } from './+settings/settings-list/settings-list.component';
+import { environment } from '../environments/environment';
 
 const appRoutes: Routes = [
   { path: 'indices', component: ListIndicesComponent },
@@ -18,7 +19,7 @@ const appRoutes: Routes = [
   // { path: '**', component: PageNotFoundComponent }
 ];
 
-export default RouterModule.forRoot(
+export let rootRoutes = RouterModule.forRoot(
   appRoutes,
-  { enableTracing: true } // <-- debugging purposes only
-)
+  { enableTracing: !environment.production } // <-- debugging purposes only
+);

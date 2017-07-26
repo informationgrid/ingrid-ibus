@@ -2,13 +2,23 @@
 
   <div class="page-header">Komponenten-Indizes <span *ngIf="isLoading" class="pull-right glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></div>
   <ng-container *ngFor="let item of indexItems">
-    <index-item *ngIf="item.hasLinkedComponent" [data]="item" (onDelete)="refresh()"></index-item>
+    <index-item *ngIf="item.hasLinkedComponent" [data]="item"
+                (onDelete)="refresh()"
+                (onError)="error = $event"
+    ></index-item>
   </ng-container>
 
-  <div class="page-header">Andere Indizes</div>
-  <ng-container *ngFor="let item of indexItems">
-    <index-item *ngIf="!item.hasLinkedComponent" [data]="item" (onDelete)="refresh()"></index-item>
-  </ng-container>
+  <div class="page-header clickable-only" (click)="expanded['others'] = !expanded['others']">
+    Andere Indizes
+    <span class="pull-right glyphicon"
+          [class.glyphicon-chevron-up]="expanded['others']"
+          [class.glyphicon-chevron-down]="!expanded['others']"></span>
+  </div>
+  <div *ngIf="expanded['others']">
+    <ng-container *ngFor="let item of indexItems">
+      <index-item *ngIf="!item.hasLinkedComponent" [data]="item" [view]="'short'" (onDelete)="refresh()"></index-item>
+    </ng-container>
+  </div>
 
   <ingrid-error [msg]="error"></ingrid-error>
 </div>

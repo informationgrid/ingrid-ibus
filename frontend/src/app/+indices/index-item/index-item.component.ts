@@ -28,8 +28,11 @@ export class IndexItem {
 export class IndexItemComponent implements OnInit {
 
   @Input() data: IndexItem;
+  @Input() view = 'full';
 
   @Output() onDelete = new EventEmitter();
+
+  @Output() onError = new EventEmitter();
 
   constructor(private router: Router, private indexService: IndexService) {
   }
@@ -53,6 +56,9 @@ export class IndexItemComponent implements OnInit {
   activateIndexType(type: IndexType, evt: Event) {
     evt.stopImmediatePropagation();
     type.active = !type.active;
-    this.indexService.setActive(type.id, type.active).subscribe();
+    this.indexService.setActive(type.id, type.active).subscribe(
+      null,
+      err => this.onError.next(err)
+    );
   }
 }

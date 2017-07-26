@@ -5,6 +5,9 @@ import { By } from '@angular/platform-browser';
 import { DebugElement, LOCALE_ID } from '@angular/core';
 
 import { IndexItem, IndexItemComponent } from './index-item.component';
+import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
+import { IndexService } from '../index.service';
+import { IndexService as IndexServiceMock } from '../index-mock.service';
 
 let ITEM_EXAMPLE: IndexItem = {
   id: '123',
@@ -19,15 +22,19 @@ describe('IndexItemComponent', () => {
   let debug: DebugElement;
   let fixture: ComponentFixture<IndexItemComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [
+        RouterTestingModule,
+        ConfirmationPopoverModule.forRoot()
+      ],
       declarations: [IndexItemComponent],
       providers: [
-        { provide: LOCALE_ID, useValue: 'de' }
+        {provide: IndexService, use: IndexServiceMock},
+        {provide: LOCALE_ID, useValue: 'de'}
       ]
     });
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(IndexItemComponent);

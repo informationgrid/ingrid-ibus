@@ -3,8 +3,6 @@ package de.ingrid.ibus;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import de.ingrid.admin.Config;
 import de.ingrid.admin.JettyStarter;
@@ -31,8 +27,8 @@ import de.ingrid.admin.elasticsearch.converter.WildcardQueryConverter;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    
-    private static Logger log = LogManager.getLogger(WebSecurityConfig.class);
+
+    private static Logger log = LogManager.getLogger( WebSecurityConfig.class );
 
     @Value("${development:false}")
     private boolean developmentMode;
@@ -45,20 +41,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             initProductionMode( http );
         }
     }
-    
+
     @Bean
     public QueryConverter queryConverter() throws Exception {
         Config config = new Config();
         config.indexSearchDefaultFields = new String[] { "title", "content" };
-        
+
         new JettyStarter( false );
         JettyStarter.getInstance().config = config;
         QueryConverter qc = new QueryConverter();
-        
-        //qc.setQueryParsers( parsers  );
+
+        // qc.setQueryParsers( parsers );
         return qc;
     }
-    
+
     @Bean
     public List<IQueryParsers> queryParsers() {
         List<IQueryParsers> parsers = new ArrayList<IQueryParsers>();
@@ -89,9 +85,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private void initDevelopmentMode(HttpSecurity http) throws Exception {
-        log.info("======================================================");
-        log.info("================== DEVELOPMENT MODE ==================");
-        log.info("======================================================");
+        log.info( "======================================================" );
+        log.info( "================== DEVELOPMENT MODE ==================" );
+        log.info( "======================================================" );
         // @formatter:off
         http
             .cors().and()
@@ -99,20 +95,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .permitAll()
                 .and()
-            .csrf().requireCsrfProtectionMatcher( new RequestMatcher() {
+            .csrf().disable();
         // @formatter:on
-
-                    private RegexRequestMatcher apiMatcher = new RegexRequestMatcher( "/api/.*", null );
-
-                    @Override
-                    public boolean matches(HttpServletRequest req) {
-                        // disable CSRF for all API requests
-                        if (apiMatcher.matches( req )) {
-                            return false;
-                        }
-                        return true;
-                    }
-                } );
     }
 
     // @Autowired
