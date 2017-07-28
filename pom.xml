@@ -209,7 +209,7 @@
               <goal>install-node-and-npm</goal>
             </goals>
             <!-- optional: default phase is "generate-resources" -->
-            <phase>prepare-package</phase>
+            <!-- <phase>process-classes</phase> -->
             <configuration>
               <nodeVersion>v6.11.0</nodeVersion>
               <workingDirectory>frontend</workingDirectory>
@@ -221,7 +221,7 @@
               <goal>npm</goal>
             </goals>
 
-            <phase>prepare-package</phase>
+            <!-- <phase>process-classes</phase> -->
 
             <configuration>
               <workingDirectory>frontend</workingDirectory>
