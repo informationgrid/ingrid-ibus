@@ -71,6 +71,8 @@ public class BusServer {
     @Value("${ibus.url}")
     private String iBusUrl;
 
+    private Registry registry;
+
     public BusServer() throws Exception {
     }
     
@@ -96,10 +98,10 @@ public class BusServer {
         Metadata metadata = new Metadata();
         injectMetadatas( metadata, bus );
         bus.setMetadata( metadata );
-        Registry registry = bus.getIPlugRegistry();
+        registry = bus.getIPlugRegistry();
         registry.setUrl( iBusUrl );
         registry.setCommunication( communication );
-
+        
         // add processors
         bus.getProccessorPipe().addPreProcessor( new UdkMetaclassPreProcessor() );
         bus.getProccessorPipe().addPreProcessor( new LimitedAttributesPreProcessor() );
@@ -147,6 +149,10 @@ public class BusServer {
         for (IMetadataInjector metadataInjector : metadataInjectors) {
             metadataInjector.injectMetaDatas( metadata );
         }
+    }
+    
+    public Registry getRegistry() {
+        return registry;
     }
 
 }

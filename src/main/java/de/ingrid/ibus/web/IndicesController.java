@@ -21,11 +21,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import de.ingrid.ibus.model.Index;
 import de.ingrid.ibus.model.IndexTypeDetail;
-import de.ingrid.ibus.model.SearchResult;
 import de.ingrid.ibus.model.View;
 import de.ingrid.ibus.service.IndicesService;
 import de.ingrid.ibus.service.SearchService;
 import de.ingrid.ibus.service.SettingsService;
+import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
@@ -106,6 +106,8 @@ public class IndicesController {
     @DeleteMapping("/indices/{id}")
     @ResponseBody
     public ResponseEntity<Void> removeIndex(@PathVariable String id) {
+        // TODO: remove from active indices
+        // TODO: also have a job to clean up active indices in case they have been deleted somewhere else
         this.indicesService.deleteIndex(id);
         return ResponseEntity.ok().build();
         
@@ -129,8 +131,8 @@ public class IndicesController {
     
     @GetMapping("/indices/{indexId}/{hitId}")
     @ResponseBody
-    public ResponseEntity<SearchResult> getHitDetail(@PathVariable String indexId, @PathVariable String hitId) {
-        SearchResult hitDetail = this.indicesService.getHitDetail(indexId, hitId);
+    public ResponseEntity<IngridHitDetail> getHitDetail(@PathVariable String indexId, @PathVariable String hitId) {
+        IngridHitDetail hitDetail = this.indicesService.getHitDetail(indexId, hitId);
         return ResponseEntity.ok( hitDetail );
     }
 

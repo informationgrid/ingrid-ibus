@@ -1,8 +1,5 @@
 package de.ingrid.ibus;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,18 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
-import de.ingrid.admin.Config;
-import de.ingrid.admin.JettyStarter;
-import de.ingrid.admin.elasticsearch.IQueryParsers;
-import de.ingrid.admin.elasticsearch.converter.DatatypePartnerProviderQueryConverter;
-import de.ingrid.admin.elasticsearch.converter.DefaultFieldsQueryConverter;
-import de.ingrid.admin.elasticsearch.converter.FieldQueryIGCConverter;
-import de.ingrid.admin.elasticsearch.converter.MatchAllQueryConverter;
 import de.ingrid.admin.elasticsearch.converter.QueryConverter;
-import de.ingrid.admin.elasticsearch.converter.RangeQueryConverter;
-import de.ingrid.admin.elasticsearch.converter.WildcardFieldQueryConverter;
-import de.ingrid.admin.elasticsearch.converter.WildcardQueryConverter;
 
 @Configuration
 @EnableWebSecurity
@@ -44,33 +32,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public QueryConverter queryConverter() throws Exception {
-        Config config = new Config();
-        config.indexSearchDefaultFields = new String[] { "title", "content" };
-
-        new JettyStarter( false );
-        JettyStarter.getInstance().config = config;
-        QueryConverter qc = new QueryConverter();
-
-        // qc.setQueryParsers( parsers );
-        return qc;
-    }
-
-    @Bean
-    public List<IQueryParsers> queryParsers() {
-        List<IQueryParsers> parsers = new ArrayList<IQueryParsers>();
-        parsers.add( new DefaultFieldsQueryConverter() );
-        parsers.add( new DatatypePartnerProviderQueryConverter() );
-        parsers.add( new FieldQueryIGCConverter() );
-        parsers.add( new RangeQueryConverter() );
-        parsers.add( new WildcardQueryConverter() );
-        parsers.add( new WildcardFieldQueryConverter() );
-        parsers.add( new MatchAllQueryConverter() );
-        return parsers;
+        return new QueryConverter();
     }
 
     private void initProductionMode(HttpSecurity http) throws Exception {
         // @formatter:off
         http
+            .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // make cookies readable within JS
+                .and()
             .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
@@ -95,7 +65,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .permitAll()
                 .and()
-            .csrf().disable();
+            .csrf()
+            // .disable();
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         // @formatter:on
     }
 

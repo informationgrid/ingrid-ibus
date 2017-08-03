@@ -57,7 +57,7 @@ import de.ingrid.utils.PlugDescription;
  */
 public class Registry {
 
-    private static final String LAST_LIFESIGN = "addedTimeStamp";
+    public static final String LAST_LIFESIGN = "addedTimeStamp";
 
     private static Log fLogger = LogFactory.getLog(Registry.class);
 
@@ -171,7 +171,14 @@ public class Registry {
                 plugDescription.setActivate(this.fIplugAutoActivation);
             }
             plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
-            createPlugProxy(plugDescription);
+            
+            Object overrideProxy = plugDescription.get( "overrideProxy" );
+            if (overrideProxy != null) {
+                this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), (IPlug) overrideProxy);
+            } else {
+                createPlugProxy(plugDescription);
+            }
+            
             synchronized (this.fPlugDescriptionByPlugId) {
                 this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
                 if (fLogger.isDebugEnabled()) {

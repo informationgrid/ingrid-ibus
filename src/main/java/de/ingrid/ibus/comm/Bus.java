@@ -41,9 +41,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import net.weta.components.communication.tcp.TimeoutException;
-import net.weta.components.communication.util.PooledThreadExecutor;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -68,6 +65,8 @@ import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.tool.PlugDescriptionUtil;
 import de.ingrid.utils.tool.QueryUtil;
+import net.weta.components.communication.tcp.TimeoutException;
+import net.weta.components.communication.util.PooledThreadExecutor;
 
 /**
  * The IBus a centralized Bus that routes queries and return results. Created on
@@ -828,7 +827,12 @@ public class Bus extends Thread implements IBus {
     }
 
     public PlugDescription getIPlug(String plugId) {
-        return this.fRegistry.getPlugDescription( plugId );
+        PlugDescription plugDescription = this.fRegistry.getPlugDescription( plugId );
+        if (plugDescription != null) {
+            plugDescription = (PlugDescription) plugDescription.clone();
+            plugDescription.remove( "overrideProxy" );
+        }
+        return plugDescription;
     }
 
     public void close() throws Exception {

@@ -1,14 +1,14 @@
 <div class="container">
   <dl *ngIf="detail" class="dl-horizontal">
     <dt>ID</dt>
-    <dd>{{detail.id}}</dd>
+    <dd>{{detail['0']}}</dd>
     <dt>Titel</dt>
     <dd>{{detail.title}}</dd>
     <dt>Zusammenfassung</dt>
-    <dd>{{detail.summary}}</dd>
+    <dd>{{detail.abstract}}</dd>
     <dt>Quelle</dt>
     <dd>{{detail.source}}</dd>
     <dt>IDF</dt>
-    <dd><pre>{{detail.detail}}</pre></dd>
+    <dd><pre>{{detail.idf}}</pre></dd>
   </dl>
 </div>

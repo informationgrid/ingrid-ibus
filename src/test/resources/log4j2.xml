@@ -16,6 +16,12 @@
         <Logger name="de.ingrid" level="debug" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
+        <Logger name="de.ingrid.admin.elasticsearch.converter" level="warn" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        <Logger name="net" level="info" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
         <Logger name="org.springframework" level="info" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>

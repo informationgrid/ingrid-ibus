@@ -1,7 +1,6 @@
 package de.ingrid.ibus.service;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.apache.logging.log4j.LogManager;
@@ -22,32 +22,31 @@ import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
+import de.ingrid.admin.service.ElasticsearchNodeFactoryBean;
 import de.ingrid.ibus.model.ElasticsearchInfo;
 import de.ingrid.ibus.model.Index;
 import de.ingrid.ibus.model.IndexState;
 import de.ingrid.ibus.model.IndexType;
 import de.ingrid.ibus.model.IndexTypeDetail;
-import de.ingrid.ibus.model.SearchResult;
+import de.ingrid.utils.IngridHit;
+import de.ingrid.utils.IngridHitDetail;
 
 @Service
 public class IndicesService {
@@ -72,22 +71,30 @@ public class IndicesService {
 
     @Autowired
     private QueryBuilderService queryBuilderService;
+    
+    @Autowired
+    private ElasticsearchNodeFactoryBean esBean;
 
-    private TransportClient client;
+    private Client client;
 
     @Value("${index.prefix.filter:}")
     private String indexPrefixFilter;
 
     public IndicesService(@Value("${elasticsearch.addresses:http://localhost:9300}") final String[] elasticAddresses) throws IOException {
 
-        Settings settings = Settings.builder().put( "cluster.name", "ingrid" ).build();
-        client = new PreBuiltTransportClient( settings );
+//        Settings settings = Settings.builder().put( "cluster.name", "ingrid" ).build();
+//        client = new PreBuiltTransportClient( settings );
+//
+//        for (String address : elasticAddresses) {
+//            UrlResource url = new UrlResource( address );
+//            client.addTransportAddress( new InetSocketTransportAddress( InetAddress.getByName( url.getURL().getHost() ), url.getURL().getPort() ) );
+//        }
 
-        for (String address : elasticAddresses) {
-            UrlResource url = new UrlResource( address );
-            client.addTransportAddress( new InetSocketTransportAddress( InetAddress.getByName( url.getURL().getHost() ), url.getURL().getPort() ) );
-        }
-
+    }
+    
+    @PostConstruct
+    public void init() {
+        client = esBean.getClient();
     }
 
     @PreDestroy
@@ -95,6 +102,10 @@ public class IndicesService {
         client.close();
     }
 
+    /**
+     * 
+     * @return
+     */
     public ElasticsearchInfo getElasticsearchInfo() {
         ElasticsearchInfo info = new ElasticsearchInfo();
         List<Index> indices = new ArrayList<Index>();
@@ -127,16 +138,14 @@ public class IndicesService {
         return info;
     }
 
-    // public List<Index> getIndices() {
-    // SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
-    // .setTypes( "info" )
-    // .setFetchSource( new String[] { "indexAlias" }, null )
-    // .setSize( 1000 )
-    // .get();
-    //
-    // long totalHits = response.getHits().totalHits;
-    // }
-
+    /**
+     * 
+     * @param indexId
+     * @param type
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
     public IndexTypeDetail getIndexDetail(String indexId, String type) throws InterruptedException, ExecutionException {
         IndexTypeDetail index = new IndexTypeDetail();
 
@@ -150,6 +159,12 @@ public class IndicesService {
         return index;
     }
 
+    /**
+     * 
+     * @param indexName
+     * @param index
+     * @param type
+     */
     private void applyDetailedIndexInfo(String indexName, IndexTypeDetail index, String type) {
 
         index.setType( type );
@@ -157,6 +172,12 @@ public class IndicesService {
         addMapping( indexName, type, index );
     }
 
+    /**
+     * 
+     * @param indexName
+     * @param indexType
+     * @param index
+     */
     private void addMapping(String indexName, String indexType, Index index) {
         GetMappingsRequestBuilder rb = client.admin().indices().prepareGetMappings( indexName );
 
@@ -180,6 +201,11 @@ public class IndicesService {
 
     }
 
+    /**
+     * 
+     * @param indexName
+     * @param index
+     */
     private void addTypes(String indexName, Index index) {
         List<String> types = new ArrayList<String>();
 
@@ -206,6 +232,13 @@ public class IndicesService {
         }
     }
 
+    /**
+     * 
+     * @param indexName
+     * @param type
+     * @param index
+     * @param settings
+     */
     private void addDefaultIndexInfo(String indexName, String type, Index index, Settings settings) {
         SearchRequestBuilder srb = client.prepareSearch( indexName );
 
@@ -263,6 +296,10 @@ public class IndicesService {
 
     }
 
+    /**
+     * 
+     * @param indices
+     */
     private void addComponentData(List<Index> indices) {
         SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
                 .setTypes( "info" )
@@ -308,6 +345,11 @@ public class IndicesService {
         }
     }
 
+    /**
+     * 
+     * @param state
+     * @return
+     */
     private IndexState mapIndexingState(Map<String, Object> state) {
         IndexState indexState = new IndexState();
 
@@ -325,6 +367,11 @@ public class IndicesService {
         return indexState;
     }
 
+    /**
+     * 
+     * @param date
+     * @return
+     */
     private Date mapDate(String date) {
         if (date != null) {
             return new DateTime( date ).toDate();
@@ -368,6 +415,11 @@ public class IndicesService {
     // return results;
     // }
 
+    /**
+     * 
+     * @param query
+     * @return
+     */
     public SearchHits search(QueryBuilder query) {
         String[] indices = getActiveIndices();
 
@@ -383,6 +435,8 @@ public class IndicesService {
 
         BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
 
+        // TODO: handle not existing index names which lead to an exception
+        
         SearchResponse response = client.prepareSearch( justIndexNames )
                 .setQuery( QueryBuilders.boolQuery().must( query ).must( indexTypeFilter ) )
                 .setFetchSource( new String[] { "*" }, null )
@@ -392,7 +446,11 @@ public class IndicesService {
         return response.getHits();
     }
 
-    private String[] getActiveIndices() {
+    /**
+     * 
+     * @return
+     */
+    public String[] getActiveIndices() {
         List<String> result = new ArrayList<String>();
 
         // get active components
@@ -413,32 +471,57 @@ public class IndicesService {
 
         // collect all referenced indices
         response.getHits().forEach( hit -> {
-            result.add( (String) hit.getSource().get( LINKED_INDEX ) + ":" + (String) hit.getSource().get( LINKED_TYPE ) );
+            String index = (String) hit.getSource().get( LINKED_INDEX );
+            String type = (String) hit.getSource().get( LINKED_TYPE );
+            if (index != null && type != null) {
+                result.add(  index + ":" + type );
+            }
         } );
 
         return result.toArray( new String[0] );
     }
 
-    public SearchResult getHitDetail(String indexId, String hitId) {
+    /**
+     * 
+     * @param indexId
+     * @param hitId
+     * @return
+     */
+    public IngridHitDetail getHitDetail(String indexId, String hitId) {
         GetResponse response = client.prepareGet( indexId, null, hitId )
                 .setFetchSource( "*", null )
                 .get();
 
-        SearchResult hit = mapHitDetail( response );
+        IngridHitDetail hit = mapHitDetail( response );
         return hit;
     }
 
-    private SearchResult mapHitDetail(GetResponse hit) {
-        SearchResult result = new SearchResult();
-        result.setId( hit.getId() );
-        result.setIndexId( hit.getIndex() );
-        result.setTitle( (String) hit.getSource().get( "title" ) );
-        result.setSummary( (String) hit.getSource().get( "summary" ) );
-        result.setSource( (String) hit.getSource().get( "dataSourceName" ) );
-        result.setDetail( (String) hit.getSource().get( "idf" ) );
+    /**
+     * 
+     * @param hit
+     * @return
+     */
+    private IngridHitDetail mapHitDetail(GetResponse hit) {
+        Map<String, Object> source = hit.getSource();
+        
+        IngridHitDetail result = new IngridHitDetail(
+                (String) source.get( "iPlugId" ),
+                hit.getId(),
+                -1,
+                -1.0f,
+                (String) source.get( "title" ),
+                (String) source.get( "summary" ) );
+        
+        result.put( "source", source.get( "iPlugId" ) );
+        result.put( "idf", source.get( "idf" ) );
+        
         return result;
     }
 
+    /**
+     * 
+     * @param id
+     */
     public void deleteIndex(String id) {
         client.admin().indices().prepareDelete( id ).get();
     }
