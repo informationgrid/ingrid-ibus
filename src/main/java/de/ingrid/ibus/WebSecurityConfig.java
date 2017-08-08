@@ -25,19 +25,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${development:false}")
     private boolean developmentMode;
-    
+
     @Value("${elastic.remoteHosts:localhost:9300}")
     private String[] remoteHosts;
-    
+
     @Value("${elastic.defaultFields:title,content}")
     private String[] defaultFields;
-    
+
     @Value("${elastic.indexName:__centralIndex__}")
     private String indexName;
 
     @Value("${elastic.indexFieldTitle:title}")
     private String titleField;
-    
+
     @Value("${elastic.indexFieldSummary:abstract}")
     private String summaryField;
 
@@ -54,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public QueryConverter queryConverter() throws Exception {
         return new QueryConverter();
     }
-    
+
     @Bean
     public ElasticsearchNodeFactoryBean elasticsearchNodeFactoryBean() throws Exception {
         Config config = new Config();
@@ -67,10 +67,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         config.indexFieldTitle = this.titleField;
         config.indexFieldSummary = this.summaryField;
         config.esRemoteHosts = this.remoteHosts;
-        
+
         new JettyStarter( false );
         JettyStarter.getInstance().config = config;
-        
+
         return new ElasticsearchNodeFactoryBean();
     }
 
@@ -110,16 +110,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // @formatter:on
     }
 
-    // @Autowired
-    // public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-    //// auth
-    //// .inMemoryAuthentication()
-    //// .withUser("user").password("password").roles("USER");
-    //
-    //// auth.userDetailsService( username -> {
-    //// return new User( username, password, authorities );
-    //// });
-    //
-    //
-    // }
 }

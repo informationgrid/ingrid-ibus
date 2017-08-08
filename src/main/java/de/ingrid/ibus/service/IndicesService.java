@@ -45,7 +45,6 @@ import de.ingrid.ibus.model.Index;
 import de.ingrid.ibus.model.IndexState;
 import de.ingrid.ibus.model.IndexType;
 import de.ingrid.ibus.model.IndexTypeDetail;
-import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHitDetail;
 
 @Service
@@ -80,16 +79,7 @@ public class IndicesService {
     @Value("${index.prefix.filter:}")
     private String indexPrefixFilter;
 
-    public IndicesService(@Value("${elasticsearch.addresses:http://localhost:9300}") final String[] elasticAddresses) throws IOException {
-
-//        Settings settings = Settings.builder().put( "cluster.name", "ingrid" ).build();
-//        client = new PreBuiltTransportClient( settings );
-//
-//        for (String address : elasticAddresses) {
-//            UrlResource url = new UrlResource( address );
-//            client.addTransportAddress( new InetSocketTransportAddress( InetAddress.getByName( url.getURL().getHost() ), url.getURL().getPort() ) );
-//        }
-
+    public IndicesService() throws IOException {
     }
     
     @PostConstruct

@@ -26,7 +26,12 @@
 package de.ingrid.ibus.comm;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +39,9 @@ import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,30 +71,59 @@ import net.weta.components.communication.tcp.StartCommunication;
  */
 @Component
 public class BusServer {
-    
+
     private static Logger log = LogManager.getLogger( BusServer.class );
 
-    @Value("${ibus.descriptor}")
+    private Registry registry;
+
+    /**
+     * IBUS SETTINGS
+     */
+    @Value("${ibus.descriptor:conf/communication.xml}")
     private String iBusDescriptor;
 
     @Value("${ibus.url}")
     private String iBusUrl;
 
-    private Registry registry;
+    @Value("${ibus.port:9900}")
+    private String iBusPort;
 
-    public BusServer() throws Exception {
-    }
-    
+    @Value("${ibus.timeout:10}")
+    private String iBusTimeout;
+
+    @Value("${ibus.maximumSize:10485760}")
+    private String iBusMaximumSize;
+
+    @Value("${ibus.threadCount:100}")
+    private String iBusThreadCount;
+
+    @Value("${ibus.handleTimeout:60}")
+    private String iBusHandleTimeout;
+
+    @Value("${ibus.queueSize:2000}")
+    private String iBusQueueSize;
+
+    /**
+     * 
+     * @throws Exception
+     */
+    public BusServer() throws Exception {}
+
     @PostConstruct
     public void postConstruct() throws Exception {
-        
+
         ICommunication communication = null;
 
         try {
+            writeCommunication();
+
             FileInputStream fileIS = new FileInputStream( iBusDescriptor );
             communication = StartCommunication.create( fileIS );
+
             communication.startup();
             communication.subscribeGroup( iBusUrl );
+            
+            // removeCommunicationFile();
         } catch (Exception e) {
             log.error( "Cannot start the communication: " + e.getMessage() );
             e.printStackTrace();
@@ -102,7 +139,7 @@ public class BusServer {
         registry = bus.getIPlugRegistry();
         registry.setUrl( iBusUrl );
         registry.setCommunication( communication );
-        
+
         // add processors
         bus.getProccessorPipe().addPreProcessor( new UdkMetaclassPreProcessor() );
         bus.getProccessorPipe().addPreProcessor( new LimitedAttributesPreProcessor() );
@@ -141,7 +178,64 @@ public class BusServer {
                 messageHandler );
 
     }
-    
+
+    private void removeCommunicationFile() {
+        try {
+            Files.deleteIfExists( Paths.get( iBusDescriptor ) );
+        } catch (IOException e) {
+            log.error( "Could not delete communication.xml", e );
+        }
+        
+    }
+
+    private void writeCommunication() {
+        XMLStreamWriter writer = null;
+        try {
+
+            XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
+            writer = outputFactory.createXMLStreamWriter( new FileOutputStream( iBusDescriptor ) );
+            writer.writeStartDocument( "utf-8", "1.0" );
+
+            writer.writeStartElement( "communication" );
+            writer.writeAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
+            writer.writeAttribute( "xsi:noNamespaceSchemaLocation", "communication.xsd" );
+
+            writer.writeStartElement( "server" );
+            writer.writeAttribute( "name", iBusUrl );
+
+            writer.writeStartElement( "socket" );
+            writer.writeAttribute( "port", iBusPort );
+            writer.writeAttribute( "timeout", iBusTimeout );
+            writer.writeEndElement();
+            writer.writeStartElement( "messages" );
+            writer.writeAttribute( "maximumSize", iBusMaximumSize );
+            writer.writeAttribute( "threadCount", iBusThreadCount );
+            writer.writeEndElement();
+
+            writer.writeEndElement();
+
+            writer.writeStartElement( "messages" );
+            writer.writeAttribute( "handleTimeout", iBusHandleTimeout );
+            writer.writeAttribute( "queueSize", iBusQueueSize );
+            writer.writeEndElement();
+
+            writer.writeEndElement();
+            writer.writeEndDocument();
+            writer.flush();
+            writer.close();
+
+        } catch (XMLStreamException | FileNotFoundException e) {
+            log.error( "Error writing communication.xml", e );
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (XMLStreamException e1) {
+                    log.error( "Writer could not be closed", e1 );
+                }
+            }
+        }
+    }
+
     @PreDestroy
     private void onDestroy() {
         this.registry.getCommunication().shutdown();
@@ -156,7 +250,7 @@ public class BusServer {
             metadataInjector.injectMetaDatas( metadata );
         }
     }
-    
+
     public Registry getRegistry() {
         return registry;
     }
