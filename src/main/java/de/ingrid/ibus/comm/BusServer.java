@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -139,6 +140,11 @@ public class BusServer {
         communication.getMessageQueue().getProcessorRegistry().addMessageHandler( ReflectMessageHandler.MESSAGE_TYPE,
                 messageHandler );
 
+    }
+    
+    @PreDestroy
+    private void onDestroy() {
+        this.registry.getCommunication().shutdown();
     }
 
     private void injectMetadatas(Metadata metadata, IBus bus) throws Exception {

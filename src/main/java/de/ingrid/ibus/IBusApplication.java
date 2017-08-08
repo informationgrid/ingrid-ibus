@@ -1,14 +1,10 @@
 package de.ingrid.ibus;
 
-import java.util.ArrayList;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
-import de.ingrid.admin.Config;
-import de.ingrid.admin.JettyStarter;
 import de.ingrid.admin.elasticsearch.IPlugHeartbeatElasticsearch;
 import de.ingrid.admin.elasticsearch.IndexRunnable;
 import de.ingrid.admin.elasticsearch.IndexScheduler;
@@ -28,23 +24,7 @@ import de.ingrid.admin.service.PlugDescriptionService;
 public class IBusApplication {
 
 	public static void main(String[] args) throws Exception {
-	    Config config = new Config();
-	    config.indexing = true;
-	    config.searchType = "DEFAULT";
-        config.indexSearchDefaultFields = new String[] { "title", "content" };
-        config.esRemoteNode = true;
-        config.indexSearchInTypes = new ArrayList<String>();
-        config.communicationProxyUrl = "__centralIndex__";
-        config.indexFieldTitle = "title";
-        config.indexFieldSummary = "abstract";
-        config.additionalSearchDetailFields = new String[0];
-        // TODO: refactor!!!
-        
-        config.esRemoteHosts = new String[] {"localhost:9300"};
-        
-	    new JettyStarter( false );
-        JettyStarter.getInstance().config = config;
-        
 		SpringApplication.run(IBusApplication.class, args);
 	}
+	
 }
