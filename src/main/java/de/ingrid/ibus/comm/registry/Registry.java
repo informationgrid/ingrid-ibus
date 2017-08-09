@@ -35,10 +35,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeSet;
 
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.WetagURL;
@@ -390,7 +393,16 @@ public class Registry {
     private void loadProperties() {
         try {
             FileInputStream fis = new FileInputStream(this.fFile);
-            this.fActivatedIplugs = new Properties();
+            
+            // create a sorted properties file
+            this.fActivatedIplugs = new Properties() {
+                private static final long serialVersionUID = 6956076060462348684L;
+                @Override
+                public synchronized Enumeration<Object> keys() {
+                    return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+                }
+            };
+            
             this.fActivatedIplugs.load(fis);
             fis.close();
         } catch (IOException e) {

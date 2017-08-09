@@ -10,10 +10,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +49,15 @@ public class SettingsService {
                 }
             }
 
-            properties = new Properties();
+            // create a sorted properties file
+            properties = new Properties() {
+                private static final long serialVersionUID = 6956076060462348684L;
+                @Override
+                public synchronized Enumeration<Object> keys() {
+                    return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+                }
+            };
+            
             properties.load( ibusSettings.getInputStream() );
 
             String propActiveIndices = properties.getProperty( "activeIndices" );

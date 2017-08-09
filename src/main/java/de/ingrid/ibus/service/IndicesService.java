@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
+import de.ingrid.admin.elasticsearch.QueryBuilderService;
 import de.ingrid.admin.service.ElasticsearchNodeFactoryBean;
 import de.ingrid.ibus.model.ElasticsearchInfo;
 import de.ingrid.ibus.model.Index;
