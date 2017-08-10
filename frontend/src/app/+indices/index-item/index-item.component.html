@@ -1,19 +1,27 @@
 <div class="panel panel-default" [class.short]="view === 'short'">
-  <span class="index-id">{{data.name}}</span>
+  <span *ngIf="view === 'short'" class="index-id">{{data.name}}</span>
+
+  <div *ngIf="view !== 'short'" class="dropdown pull-right" [class.open]="dropDownOpen">
+    <div class="menu-icon clickable text-muted" (click)="dropDownOpen = !dropDownOpen"></div>
+    <ul class="dropdown-menu">
+      <li><a (click)="index()">Indexieren</a></li>
+      <li><a title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
+               [title]="'Wirklich löschen?'"
+               [message]="'Wollen Sie den Index wirklich löschen?'"
+               placement="left"
+               confirmText="Löschen"
+               cancelText="Abbrechen"
+               (confirm)="deleteIndex(data)">Löschen</a></li>
+    </ul>
+  </div>
+
   <div class="panel-body">
     <!--<div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>-->
     <div class="pull-left">
-      <div class="index-name">{{data.longName}}</div>
+      <div class="index-name" [title]="'Index: ' + data.name">{{data.longName}}</div>
       <!--<div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>-->
     </div>
     <div class="index-last-indexed pull-right">{{data.lastIndexed | date:'medium'}}</div>
-    <div class="glyphicon glyphicon-trash pull-right delete clickable text-muted" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
-         [title]="'Wirklich löschen?'"
-         [message]="'Wollen Sie den Index wirklich löschen?'"
-         placement="left"
-         confirmText="Löschen"
-         cancelText="Abbrechen"
-         (confirm)="deleteIndex(data)"></div>
   </div>
 
   <ul *ngIf="view !== 'short'" class="list-group">

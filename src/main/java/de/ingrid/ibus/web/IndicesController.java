@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import de.ingrid.ibus.model.Index;
 import de.ingrid.ibus.model.IndexTypeDetail;
 import de.ingrid.ibus.model.View;
+import de.ingrid.ibus.service.IPlugService;
 import de.ingrid.ibus.service.IndicesService;
 import de.ingrid.ibus.service.SearchService;
 import de.ingrid.ibus.service.SettingsService;
@@ -45,6 +46,9 @@ public class IndicesController {
     
     @Autowired
     private SettingsService settingsService;
+    
+    @Autowired
+    private IPlugService iplugService;
 
     @JsonView(View.Summary.class)
     @GetMapping("/indices")
@@ -100,7 +104,15 @@ public class IndicesController {
     @PutMapping("/indices/{id}/index")
     @ResponseBody
     public ResponseEntity<Void> planIndex(@PathVariable String id) {
-        return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).build();
+        
+        String plugId = indicesService.getIPlugForIndex(id);
+        boolean success = this.iplugService.index( plugId );
+        
+        if (success) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @DeleteMapping("/indices/{id}")

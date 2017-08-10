@@ -58,6 +58,7 @@ public class IndicesService {
     private static final String INDEX_FIELD_ADMIN_URL = "adminUrl";
     private static final String INDEX_FIELD_LAST_HEARTBEAT = "lastHeartbeat";
     private static final String INDEX_FIELD_IPLUG_ID = "plugId";
+    private static final String INDEX_FIELD_INDEX_ID = "indexId";
     private static final String INDEX_FIELD_IPLUG_NAME = "iPlugName";
     private static final String INDEX_INFO_NAME = "ingrid_meta";
 
@@ -270,7 +271,8 @@ public class IndicesService {
         if (totalHits == 1) {
             Map<String, Object> hitSource = response.getHits().getAt( 0 ).getSource();
 
-            index.setId( (String) hitSource.get( INDEX_FIELD_IPLUG_ID ) );
+            index.setId( (String) hitSource.get( INDEX_FIELD_INDEX_ID ) );
+            index.setPlugId( (String) hitSource.get( INDEX_FIELD_IPLUG_ID ) );
             index.setLongName( (String) hitSource.get( INDEX_FIELD_IPLUG_NAME ) );
             index.setLastIndexed( mapDate( (String) hitSource.get( INDEX_FIELD_LAST_INDEXED ) ) );
             index.setActive( settingsService.isActive( index.getId() ) );
@@ -323,7 +325,7 @@ public class IndicesService {
 
                     for (IndexType type : indexItem.getTypes()) {
                         if (type.getName().equals( indexType )) {
-                            type.setId( (String) hitSource.get( INDEX_FIELD_IPLUG_ID ) );
+                            type.setId( (String) hitSource.get( INDEX_FIELD_INDEX_ID ) );
                             type.setHasLinkedComponent( true );
                             type.setLastIndexed( lastIndexed );
                             type.setActive( settingsService.isActive( type.getId() ) );
@@ -446,11 +448,15 @@ public class IndicesService {
 
         // get active components
         Set<String> activeComponents = settingsService.getActiveComponentIds();
+        
+        if (activeComponents.size() == 0) {
+            return new String[0];
+        }
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
         for (String active : activeComponents) {
-            boolQuery.should( QueryBuilders.termQuery( INDEX_FIELD_IPLUG_ID, active ) );
+            boolQuery.should( QueryBuilders.termQuery( INDEX_FIELD_INDEX_ID, active ) );
         }
 
         // get real index names from active components
@@ -515,5 +521,25 @@ public class IndicesService {
      */
     public void deleteIndex(String id) {
         client.admin().indices().prepareDelete( id ).get();
+    }
+
+    public String getIPlugForIndex(String id) {
+        SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
+                .setTypes( "info" )
+                .setQuery( QueryBuilders.termQuery( LINKED_INDEX, id ) )
+                .setFetchSource( new String[] { "*" }, null )
+                .setSize( 1000 )
+                .get();
+        
+        SearchHit[] hits = response.getHits().getHits();
+        
+        // get first plugid found
+        // it's possible that there are more than one documents returned since for each type a document exists 
+        if (hits.length > 0) {
+            return (String) hits[0].getSource().get( INDEX_FIELD_IPLUG_ID );
+        } else {
+            log.error( "There should be at least one corresponding component for the index: " + id );
+        }
+        return null;
     }
 }

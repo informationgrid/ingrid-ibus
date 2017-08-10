@@ -49,11 +49,15 @@ Contribute
  
 ### Set up eclipse project
 
-```
-mvn eclipse:eclipse
-```
+Import this project as Maven-Project and add the folder "src/test/resources" to the classpath for the run configuration.
+The configuration can be done in the file application-default.properties under the test resources.
 
-and import project into eclipse.
+You need an external elasticsearch node you want to store your indexed documents. Make sure to have the following properties correctly configured:
+
+- elastic.remoteHosts
+- cluster.name (elasticsearch.properties)
+
+
 
 ### Debug under eclipse
 

@@ -7,6 +7,7 @@ export class SearchHit {
   detail: string;
   dataSourceName: string;
 
-  esIndex: string;
+  es_index: string;
+  es_type: string;
   hitDetail: any;
 }

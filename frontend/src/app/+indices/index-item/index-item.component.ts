@@ -1,7 +1,6 @@
 import { Router } from '@angular/router';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { IndexService } from '../index.service';
-import { URLSearchParams } from '@angular/http';
 
 export class IndexType {
   id: string;
@@ -34,7 +33,9 @@ export class IndexItemComponent implements OnInit {
 
   @Output() onError = new EventEmitter();
 
-  constructor(private router: Router, private indexService: IndexService) {
+  dropDownOpen = false;
+
+  constructor(private eRef: ElementRef, private router: Router, private indexService: IndexService) {
   }
 
   ngOnInit() {
@@ -60,5 +61,27 @@ export class IndexItemComponent implements OnInit {
       null,
       err => this.onError.next(err)
     );
+  }
+
+  index() {
+    this.indexService.index(this.data.name).subscribe(
+      null,
+      err => this.handleError(err)
+    );
+  }
+
+  /**
+   * Close drop down menu when clicked outside of this component
+   * @param event
+   */
+  @HostListener('document:click', ['$event'])
+  closeDropDown(event) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.dropDownOpen = false;
+    }
+  }
+
+  handleError(error: any) {
+    console.error('Error happened: ', error);
   }
 }

@@ -44,7 +44,7 @@
   top: 8px;
 }
 
-.indexState:hover, .delete:hover {
+.indexState:hover, .delete:hover, .menu-icon:hover {
   background-color: #eeeeee;
   border-radius: 20px;
 }
@@ -59,4 +59,20 @@
 }
 .delete:hover {
   color: #ff0000;
+}
+
+.dropdown {
+  position: absolute;
+  right: 5px;
+  top: 10px;
+}
+.short .dropdown {
+  top: 1px;
+}
+.menu-icon {
+  padding: 2px 0 0px 5px;
+}
+.menu-icon:after {
+  content: '\2807';
+  font-size: 1.5em;
 }

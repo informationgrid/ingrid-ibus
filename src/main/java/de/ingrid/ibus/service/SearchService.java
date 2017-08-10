@@ -1,16 +1,12 @@
 package de.ingrid.ibus.service;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +46,8 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
     @Autowired
     private QueryConverter queryConverter;
     
-    @Autowired BusServer busServer;
+    @Autowired 
+    private BusServer busServer;
     
     private String[] fields = new String[] { "metainfo", "t01_object.obj_id", "t02_address","t02_address.adr_id", "capabilities_url","parent","city","iPlugId","organisation","kml","refering","title","content","t011_obj_geo","t02_address4","t02_address3","t02_address5","children","datatype","provider","additional_html_1","street","y1","y2","t021_communication","t011_obj_serv","t02_address2","t022_adr_adr3","summary","t011_obj_serv_op_connpoint","zip","publish_id","t022_adr_adr","t03_catalogue","t012_obj_adr","idf","title2","title3","dataSourceName","t01_object","partner","refering_service_uuid","x1","boost","x2","parent4","parent5","object_reference","parent2","parent3","incl_meta","t01_object.org_obj_id", "t01_object.obj_class","metaclass" };
     private String[] datatypes = new String[] { "metadata", "dsc_ecs", "default", "topics", "dsc_ecs_address", "address", "IDF_1.0" };
@@ -85,50 +82,66 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
     }
 
     public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds, String[] requestedFields) {
-        IngridHits hits = null;
-        List<IngridHit> ingridHits = new ArrayList<IngridHit>();
-        
-        BoolQueryBuilder esQuery = queryConverter.convert( query );
-        
-        
-        SearchHits dHits = indexService.search( esQuery );
-        
-        dHits.forEach( hit -> {
-            
-            IngridHit ingridHit = new IngridHit();
-            
-            
-            String title = (String) hit.getSource().get( "title" );
-            String summary = (String) hit.getSource().get( "summary" );
-            ingridHit.put( "esIndex", hit.getIndex() );
-            ingridHit.put( "esType", hit.getType() );
-            ingridHit.put( "dataSourceName", hit.getSource().get( "dataSourceName" ) );
-            ingridHit.setDataSourceId( 0 );
-            ingridHit.setDocumentId( hit.getId() );
-            ingridHit.setPlugId( (String) hit.getSource().get( "iPlugId" ) );
-            
-            
-            ingridHit.setScore( hit.getScore() );
-            IngridHitDetail detail = new IngridHitDetail( ingridHit, title, summary );
-            
-            detail.setDocumentId( hit.getId() );
-            
-            // TODO: get class name from hit, which is used to display the detail in portal
-            // use different method, like the type how document should be displayed!?
-            detail.setIplugClassName( "igesearchplug" );
-            
-            // addPlugDescriptionInformations( detail, requestedFields );
-            
-            prepareDetail( detail, hit, requestedFields );
-            
-            ingridHit.setHitDetail( detail );
-            ingridHits.add( ingridHit );
-            
-        });
-        
-        hits = new IngridHits( (int)dHits.getTotalHits(), ingridHits.toArray( new IngridHit[0] ) );
-        
-        return hits;
+        try {
+            IngridHits hits = this.search( query, startHit, 10 );
+            IngridHitDetail[] details = this.getDetails( hits.getHits(), query, requestedFields );
+            for (int i = 0; i < hits.getHits().length; i++) {
+                IngridHit ingridHit = hits.getHits()[i];
+                IngridHitDetail ingridHitDetail = details[i];
+                ingridHit.setHitDetail( ingridHitDetail );
+            }
+            return hits;
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+
+
+        // IngridHits hits = null;
+        // List<IngridHit> ingridHits = new ArrayList<IngridHit>();
+        //
+        // BoolQueryBuilder esQuery = queryConverter.convert( query );
+        //
+        //
+        // SearchHits dHits = indexService.search( esQuery );
+        //
+        // dHits.forEach( hit -> {
+        //
+        // IngridHit ingridHit = new IngridHit();
+        //
+        //
+        // String title = (String) hit.getSource().get( "title" );
+        // String summary = (String) hit.getSource().get( "summary" );
+        // ingridHit.put( "esIndex", hit.getIndex() );
+        // ingridHit.put( "esType", hit.getType() );
+        // ingridHit.put( "dataSourceName", hit.getSource().get( "dataSourceName" ) );
+        // ingridHit.setDataSourceId( 0 );
+        // ingridHit.setDocumentId( hit.getId() );
+        // ingridHit.setPlugId( (String) hit.getSource().get( "iPlugId" ) );
+        //
+        //
+        // ingridHit.setScore( hit.getScore() );
+        // IngridHitDetail detail = new IngridHitDetail( ingridHit, title, summary );
+        //
+        // detail.setDocumentId( hit.getId() );
+        //
+        // // TODO: get class name from hit, which is used to display the detail in portal
+        // // use different method, like the type how document should be displayed!?
+        // detail.setIplugClassName( "igesearchplug" );
+        //
+        // // addPlugDescriptionInformations( detail, requestedFields );
+        //
+        // prepareDetail( detail, hit, requestedFields );
+        //
+        // ingridHit.setHitDetail( detail );
+        // ingridHits.add( ingridHit );
+        //
+        // });
+        //
+        // hits = new IngridHits( (int)dHits.getTotalHits(), ingridHits.toArray( new IngridHit[0] ) );
+        //
+        // return hits;
     }
     
     private void prepareDetail(IngridHitDetail detail, SearchHit dHit, String[] requestedFields) {

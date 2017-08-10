@@ -12,6 +12,9 @@ public class Index {
     private String id;
 
     @JsonView(View.Summary.class)
+    private String plugId;
+
+    @JsonView(View.Summary.class)
     private String name;
 
     @JsonView(View.Summary.class)
@@ -24,7 +27,7 @@ public class Index {
     private Date created;
 
     private Date lastHeartbeat;
-    
+
     private Date lastIndexed;
 
     private Map<String, Object> mapping;
@@ -144,5 +147,13 @@ public class Index {
 
     public void setLastIndexed(Date lastIndexed) {
         this.lastIndexed = lastIndexed;
+    }
+
+    public String getPlugId() {
+        return plugId;
+    }
+
+    public void setPlugId(String plugId) {
+        this.plugId = plugId;
     }
 }
