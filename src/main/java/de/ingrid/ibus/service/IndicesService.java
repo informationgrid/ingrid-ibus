@@ -464,6 +464,7 @@ public class IndicesService {
                 .setTypes( "info" )
                 .setQuery( boolQuery )
                 .setFetchSource( new String[] { LINKED_INDEX, LINKED_TYPE }, null )
+                .setSize( 1000 )
                 .get();
 
         // collect all referenced indices
