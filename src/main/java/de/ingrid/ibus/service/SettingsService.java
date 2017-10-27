@@ -1,7 +1,6 @@
 package de.ingrid.ibus.service;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -101,23 +100,15 @@ public class SettingsService {
         try {
             out = new FileOutputStream( settingsFile );
             p.store( properties, out, "Written by SettingsService" );
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
-            // return false;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw e;
-            // return false;
         } finally {
             try {
                 if (out != null) out.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 throw e;
-                // return false;
             }
         }
         return true;
@@ -125,5 +116,15 @@ public class SettingsService {
 
     public boolean isActive(String indexName) {
         return activeIndices.contains( indexName );
+    }
+
+    public boolean activateIPlug(String id) throws Exception {
+        properties.put( id, "true" );
+        return writeSettings();
+    }
+
+    public boolean deactivateIPlug(String id) throws Exception {
+        properties.put( id, "false" );
+        return writeSettings();
     }
 }

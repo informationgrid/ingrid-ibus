@@ -24,3 +24,5 @@ nbdist/
 .nb-gradle/
 node/
 src/main/resources/static/
+data/
+.vscode/

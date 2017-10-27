@@ -1,6 +1,7 @@
 package de.ingrid.ibus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,10 +13,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
-import de.ingrid.admin.Config;
-import de.ingrid.admin.JettyStarter;
-import de.ingrid.admin.elasticsearch.converter.QueryConverter;
-import de.ingrid.admin.service.ElasticsearchNodeFactoryBean;
+import de.ingrid.codelists.CodeListService;
+import de.ingrid.codelists.comm.HttpCLCommunication;
+import de.ingrid.codelists.comm.ICodeListCommunication;
+import de.ingrid.codelists.persistency.ICodeListPersistency;
+import de.ingrid.codelists.persistency.XmlCodeListPersistency;
 
 @Configuration
 @EnableWebSecurity
@@ -40,6 +42,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${elastic.indexFieldSummary:abstract}")
     private String summaryField;
+    
+    @Value("${codelistrepo.url:http://192.168.0.247/xxx}")
+    private String codelistUrl;
+    
+    @Value("${codelistrepo.username:}")
+    private String codelistUsername;
+    
+    @Value("${codelistrepo.password:}")
+    private String codelistPassword;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -51,27 +62,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public QueryConverter queryConverter() throws Exception {
-        return new QueryConverter();
+    public CodeListService codelistService() {
+        CodeListService codeListService = new CodeListService();
+        List<ICodeListPersistency> persistencies = new ArrayList<ICodeListPersistency>();
+        XmlCodeListPersistency<?> xmlPersistency = new XmlCodeListPersistency<>();
+        xmlPersistency.setPathToXml( "data/codelists" );
+        persistencies.add( xmlPersistency );
+        codeListService.setPersistencies( persistencies  );
+        codeListService.setDefaultPersistency( 0 );
+        return codeListService;
     }
-
+    
     @Bean
-    public ElasticsearchNodeFactoryBean elasticsearchNodeFactoryBean() throws Exception {
-        Config config = new Config();
-        config.indexing = true;
-        config.esRemoteNode = true;
-        config.indexSearchInTypes = new ArrayList<String>();
-        config.communicationProxyUrl = this.indexName;
-        config.additionalSearchDetailFields = new String[0];
-        config.indexSearchDefaultFields = this.defaultFields;
-        config.indexFieldTitle = this.titleField;
-        config.indexFieldSummary = this.summaryField;
-        config.esRemoteHosts = this.remoteHosts;
-
-        new JettyStarter( false );
-        JettyStarter.getInstance().config = config;
-
-        return new ElasticsearchNodeFactoryBean();
+    public ICodeListCommunication codelistCommunication() {
+        HttpCLCommunication comm = new HttpCLCommunication();
+        comm.setRequestUrl( codelistUrl );
+        comm.setUsername( codelistUsername );
+        comm.setPassword( codelistPassword );
+        return comm;
     }
 
     private void initProductionMode(HttpSecurity http) throws Exception {
@@ -105,8 +113,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
             .csrf()
-            // .disable();
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+                .disable();
+                //.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         // @formatter:on
     }
 

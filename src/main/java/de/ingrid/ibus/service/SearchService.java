@@ -1,18 +1,13 @@
 package de.ingrid.ibus.service;
 
 import java.io.Serializable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.annotation.PostConstruct;
 
-import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.ingrid.admin.JettyStarter;
-import de.ingrid.admin.elasticsearch.IndexImpl;
-import de.ingrid.admin.elasticsearch.converter.QueryConverter;
+import de.ingrid.elasticsearch.search.IndexImpl;
 import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.ElasticDocument;
@@ -43,9 +38,6 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
     @Autowired
     private IndexImpl indexUtils;
     
-    @Autowired
-    private QueryConverter queryConverter;
-    
     @Autowired 
     private BusServer busServer;
     
@@ -72,13 +64,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
         pd.put( "overrideProxy", this );
         registry.addPlugDescription( pd  );
         
-        Timer timer = new Timer();
-        timer.schedule( new TimerTask() {
-            @Override
-            public void run() {
-                pd.putLong(Registry.LAST_LIFESIGN, System.currentTimeMillis());
-            }
-        }, 60*1000, 60*1000 );
+        new SimulatedLifesign( pd );
     }
 
     public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds, String[] requestedFields) {
@@ -144,25 +130,25 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
         // return hits;
     }
     
-    private void prepareDetail(IngridHitDetail detail, SearchHit dHit, String[] requestedFields) {
-
-        if (requestedFields != null) {
-            for (String field : requestedFields) {
-                if (dHit.getField( field ) != null) {
-                    if (dHit.getField( field ).getValue() instanceof String) {
-                        detail.put( field, new String[] { dHit.getField( field ).getValue() } );
-                    } else {
-                        detail.put( field, dHit.getField( field ).getValue() );
-                    }
-                }
-            }
-        }
-    }
+//    private void prepareDetail(IngridHitDetail detail, SearchHit dHit, String[] requestedFields) {
+//
+//        if (requestedFields != null) {
+//            for (String field : requestedFields) {
+//                if (dHit.getField( field ) != null) {
+//                    if (dHit.getField( field ).getValue() instanceof String) {
+//                        detail.put( field, new String[] { dHit.getField( field ).getValue() } );
+//                    } else {
+//                        detail.put( field, dHit.getField( field ).getValue() );
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public IngridHits search(IngridQuery query, int start, int length) throws Exception {
         
-        JettyStarter.getInstance().config.docProducerIndices = indexService.getActiveIndices();
+        indexUtils.docProducerIndices = indexService.getActiveIndices();
         
         return indexUtils.search( query, start, length );
 //        IngridHits hits = null;

@@ -19,6 +19,9 @@
         <Logger name="org.springframework" level="info" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
+        <Logger name="net.meta" level="info" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
         <Root level="warn">
             <AppenderRef ref="LogFile" />
         </Root>

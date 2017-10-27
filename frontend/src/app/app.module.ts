@@ -8,9 +8,10 @@ import { IndexService } from './+indices/index-mock.service';
 import { SharedModule } from './shared/shared.module';
 import { SearchModule } from './+search/search.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { SettingsModule } from './+settings/settings.module';
 import { rootRoutes } from './app.routes';
+import { IPlugsModule } from 'app/+iplugs/iplugs.module';
 
 @NgModule({
   declarations: [
@@ -19,12 +20,13 @@ import { rootRoutes } from './app.routes';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule,
+    HttpClientModule, HttpClientXsrfModule,
     rootRoutes,
     ConfirmationPopoverModule.forRoot({
       confirmButtonType: 'danger' // set defaults here
     }),
     SharedModule,
+    IPlugsModule,
     IndicesModule,
     SearchModule,
     SettingsModule

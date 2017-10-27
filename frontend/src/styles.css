@@ -32,6 +32,16 @@ dt {
   -webkit-animation: spin2 .7s infinite linear;
 }
 
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
 @-webkit-keyframes spin2 {
   from { -webkit-transform: rotate(0deg);}
   to { -webkit-transform: rotate(360deg);}

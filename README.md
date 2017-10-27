@@ -60,6 +60,13 @@ You need an external elasticsearch node you want to store your indexed documents
 
 
 ### Debug under eclipse
+- Start up an Elasticsearch Cluster (docker)
+
+> docker-compose up -d
+
+- Run as Java "src\main\java\de\ingrid\ibus\IBusApplication.java"
+
+- mvn spring-boot:run
 
 - execute `mvn install` to expand the base web application
 - set up a java application Run Configuration with start class `de.ingrid.ibus.BusServer`
@@ -69,6 +76,14 @@ You need an external elasticsearch node you want to store your indexed documents
 - add `src/test/resources`, `src/main/release/webapp`  to class path
 - the admin gui starts in this sample on port 8100
 
+### Frontend development
+
+To start a local server for the angular application call:
+
+> npm install # only once
+> npm start
+
+Afterwards the server can be accessed through http://localhost:4200. Doing any change on the sources the browser will be automatically updated.
 
 Support
 -------

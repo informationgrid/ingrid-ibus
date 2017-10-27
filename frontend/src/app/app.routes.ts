@@ -4,9 +4,11 @@ import { IndexDetailComponent } from './+indices/+index-detail/index-detail.comp
 import { ListIndicesComponent } from './+indices/list-indices/list-indices.component';
 import { RouterModule, Routes } from '@angular/router';
 import { SettingsListComponent } from './+settings/settings-list/settings-list.component';
+import { ConnectedIplugsComponent } from './+iplugs/connected-iplugs/connected-iplugs.component';
 import { environment } from '../environments/environment';
 
 const appRoutes: Routes = [
+  { path: 'iplugs', component: ConnectedIplugsComponent },
   { path: 'indices', component: ListIndicesComponent },
   { path: 'indices/:id', component: IndexDetailComponent },
   { path: 'search', component: SearchComponent },

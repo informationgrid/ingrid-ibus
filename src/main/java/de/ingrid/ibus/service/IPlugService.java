@@ -10,6 +10,7 @@ import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridCall;
 import de.ingrid.utils.IngridDocument;
+import de.ingrid.utils.PlugDescription;
 
 @Service
 public class IPlugService {
@@ -22,6 +23,11 @@ public class IPlugService {
     @PostConstruct
     public void init() {
         registry = busServer.getRegistry();
+    }
+    
+    public PlugDescription[] getConnectedIPlugs() {
+        PlugDescription[] allIPlugs = registry.getAllIPlugs();
+        return allIPlugs;
     }
     
     public boolean index(String plugId) {
@@ -41,5 +47,22 @@ public class IPlugService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public PlugDescription getIPlugDetail(String id) {
+        for (PlugDescription pd : getConnectedIPlugs()) {
+            if (pd.getPlugId().equals( id )) {
+                return pd;
+            }
+        }
+        return null;
+    }
+    
+    public void activate(String plugId) {
+        registry.activatePlug( plugId );
+    }
+    
+    public void deactivate(String plugId) {
+        registry.deActivatePlug( plugId );
     }
 }

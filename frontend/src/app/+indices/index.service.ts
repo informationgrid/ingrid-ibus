@@ -15,11 +15,11 @@ export class IndexService {
   }
 
   getIndices(): Observable<IndexItem[]> {
-    return this.http.get(environment.apiUrl + '/indices');
+    return this.http.get<IndexItem[]>(environment.apiUrl + '/indices');
   }
 
   getIndexDetail(id: string, type: string): Observable<IndexDetail> {
-    return this.http.get(environment.apiUrl + '/indices/' + id + '?type=' + type);
+    return this.http.get<IndexDetail>(environment.apiUrl + '/indices/' + id + '?type=' + type);
   }
 
   update(detail: IndexDetail) {
@@ -33,7 +33,7 @@ export class IndexService {
 
   setActive(id: string, active: boolean) {
     let command = active ? 'activate' : 'deactivate';
-    return this.http.put(environment.apiUrl + '/indices/' + encodeURIComponent(id) + '/' + command, null);
+    return this.http.put(environment.apiUrl + '/indices/' + encodeURIComponent(id) + '/' + command, null, { responseType: 'text' });
   }
 
   index(id: string) {
@@ -42,15 +42,15 @@ export class IndexService {
   }
 
   search(query: string): Observable<SearchHits> {
-    return this.http.get(environment.apiUrl + '/search?query=' + query);
+    return this.http.get<SearchHits>(environment.apiUrl + '/search?query=' + query);
   }
 
   getSearchDetail(indexId: string, hitId: string): Observable<SearchHit> {
-    return this.http.get(environment.apiUrl + '/indices/' + indexId + '/' + hitId);
+    return this.http.get<SearchHit>(environment.apiUrl + '/indices/' + indexId + '/' + hitId);
   }
 
   getActiveComponentIds(): Observable<string[]> {
-    return this.http.get(environment.apiUrl + '/settings/activeComponentIds', {
+    return this.http.get<string[]>(environment.apiUrl + '/settings/activeComponentIds', {
       params: new HttpParams().set('verify', 'true')
     });
   }

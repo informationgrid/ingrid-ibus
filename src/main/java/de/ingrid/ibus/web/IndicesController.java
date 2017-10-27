@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import de.ingrid.ibus.model.Index;
 import de.ingrid.ibus.model.IndexTypeDetail;
@@ -31,7 +33,7 @@ import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @Controller
 @RequestMapping("/api")
 public class IndicesController {
@@ -71,10 +73,10 @@ public class IndicesController {
         return ResponseEntity.ok( index );
     }
 
-    @PutMapping("/indices/{id}/activate")
+    @PutMapping("/indices/activate")
     @ResponseBody
-    public ResponseEntity<Void> activateIndex(@PathVariable String id) throws Exception {
-        boolean success = this.settingsService.activateIndexType( id );
+    public ResponseEntity<Void> activateIndex(@RequestBody JsonNode json) throws Exception {
+        boolean success = this.settingsService.activateIndexType( json.get( "id" ).asText() );
         
         if (success) {
             return ResponseEntity.ok().build();
@@ -83,10 +85,10 @@ public class IndicesController {
         }
     }
 
-    @PutMapping("/indices/{id}/deactivate")
+    @PutMapping("/indices/deactivate")
     @ResponseBody
-    public ResponseEntity<Void> deactivateIndex(@PathVariable String id) throws Exception {
-        boolean success = this.settingsService.deactivateIndexType( id );
+    public ResponseEntity<Void> deactivateIndex(@RequestBody JsonNode json) throws Exception {
+        boolean success = this.settingsService.deactivateIndexType( json.get( "id" ).asText() );
         
         if (success) {
             return ResponseEntity.ok().build();
@@ -95,17 +97,17 @@ public class IndicesController {
         }
     }
 
-    @PutMapping("/indices/{id}")
+    @PutMapping("/indices")
     @ResponseBody
-    public ResponseEntity<Void> updateIndex(@PathVariable String id) {
+    public ResponseEntity<Void> updateIndex(@RequestBody JsonNode json) {
         return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).build();
     }
 
-    @PutMapping("/indices/{id}/index")
+    @PutMapping("/indices/index")
     @ResponseBody
-    public ResponseEntity<Void> planIndex(@PathVariable String id) {
+    public ResponseEntity<Void> planIndex(@RequestBody JsonNode json) {
         
-        String plugId = indicesService.getIPlugForIndex(id);
+        String plugId = indicesService.getIPlugForIndex(json.get( "id" ).asText());
         boolean success = this.iplugService.index( plugId );
         
         if (success) {
@@ -115,12 +117,12 @@ public class IndicesController {
         }
     }
 
-    @DeleteMapping("/indices/{id}")
+    @DeleteMapping("/indices")
     @ResponseBody
-    public ResponseEntity<Void> removeIndex(@PathVariable String id) {
+    public ResponseEntity<Void> removeIndex(@RequestBody JsonNode json) {
         // TODO: remove from active indices
         // TODO: also have a job to clean up active indices in case they have been deleted somewhere else
-        this.indicesService.deleteIndex(id);
+        this.indicesService.deleteIndex(json.get( "id" ).asText());
         return ResponseEntity.ok().build();
         
     }
@@ -141,9 +143,12 @@ public class IndicesController {
         }
     }
     
-    @GetMapping("/indices/{indexId}/{hitId}")
+    @GetMapping("/indices/detail")
     @ResponseBody
-    public ResponseEntity<IngridHitDetail> getHitDetail(@PathVariable String indexId, @PathVariable String hitId) {
+    public ResponseEntity<IngridHitDetail> getHitDetail(@RequestBody JsonNode json) {
+        String indexId = json.get( "indexId" ).asText();
+        String hitId = json.get( "hitId" ).asText();
+        
         IngridHitDetail hitDetail = this.indicesService.getHitDetail(indexId, hitId);
         return ResponseEntity.ok( hitDetail );
     }

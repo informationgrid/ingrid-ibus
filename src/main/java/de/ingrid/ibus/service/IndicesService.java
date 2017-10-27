@@ -1,6 +1,7 @@
 package de.ingrid.ibus.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,14 +40,16 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
-import de.ingrid.admin.elasticsearch.QueryBuilderService;
-import de.ingrid.admin.service.ElasticsearchNodeFactoryBean;
+import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
+import de.ingrid.elasticsearch.IndexManager;
+import de.ingrid.elasticsearch.QueryBuilderService;
 import de.ingrid.ibus.model.ElasticsearchInfo;
 import de.ingrid.ibus.model.Index;
 import de.ingrid.ibus.model.IndexState;
 import de.ingrid.ibus.model.IndexType;
 import de.ingrid.ibus.model.IndexTypeDetail;
 import de.ingrid.utils.IngridHitDetail;
+import de.ingrid.utils.xml.XMLSerializer;
 
 @Service
 public class IndicesService {
@@ -66,9 +69,9 @@ public class IndicesService {
 
     @Autowired
     private SettingsService settingsService;
-
-    // @Autowired
-    // private SearchService searchService;
+    
+    @Autowired
+    private IndexManager indexManager;
 
     @Autowired
     private QueryBuilderService queryBuilderService;
@@ -87,7 +90,9 @@ public class IndicesService {
     @PostConstruct
     public void init() {
         client = esBean.getClient();
+        prepareIndices();
     }
+
 
     @PreDestroy
     public void destroy() {
@@ -102,30 +107,35 @@ public class IndicesService {
         ElasticsearchInfo info = new ElasticsearchInfo();
         List<Index> indices = new ArrayList<Index>();
 
-        ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().getIndices();
-        esIndices.forEach( (indexMap) -> {
-            System.out.println( "Index: " + indexMap.key );
-
-            // skip indices that do not start with the configured prefix, since we don't want to have all indices of a cluster
-            if (!indexMap.key.startsWith( indexPrefixFilter )) {
-                return;
-            }
-
-            Index index = new Index();
-
-            addDefaultIndexInfo( indexMap.key, null, index, indexMap.value.getSettings() );
-
-            // applyAdditionalData( indexMap.key, index, false );
-            // addMapping( indexMap.key, null, index );
-
-            addTypes( indexMap.key, index );
-
-            indices.add( index );
-        } );
-
-        addComponentData( indices );
-
-        info.setIndices( indices );
+        try {
+            ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().getIndices();
+            esIndices.forEach( (indexMap) -> {
+                System.out.println( "Index: " + indexMap.key );
+    
+                // skip indices that do not start with the configured prefix, since we don't want to have all indices of a cluster
+                if (!indexMap.key.startsWith( indexPrefixFilter )) {
+                    return;
+                }
+    
+                Index index = new Index();
+    
+                addDefaultIndexInfo( indexMap.key, null, index, indexMap.value.getSettings() );
+    
+                // applyAdditionalData( indexMap.key, index, false );
+                // addMapping( indexMap.key, null, index );
+    
+                addTypes( indexMap.key, index );
+    
+                indices.add( index );
+            } );
+    
+            addComponentData( indices );
+    
+            info.setIndices( indices );
+            
+        } catch (Exception ex) {
+            log.error( "Problem querying Elasticsearch:", ex );
+        }
 
         return info;
     }
@@ -543,4 +553,20 @@ public class IndicesService {
         }
         return null;
     }
+    
+    private void prepareIndices() {
+        boolean indexExists = indexManager.indexExists( INDEX_INFO_NAME );
+        
+        if (!indexExists) {
+            InputStream defaultMappingStream = getClass().getClassLoader().getResourceAsStream( "ingrid-meta-mapping.json" );
+            try {
+                String mappingString = XMLSerializer.getContents( defaultMappingStream );
+                indexManager.createIndex( INDEX_INFO_NAME, "info", mappingString );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+    }
+
 }

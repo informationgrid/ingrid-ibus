@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class LogoutController {
-//    @Autowired
-//    private HelloWorldService helloWorldService;
 
     /**
      * Demonstrates that invoking {@link HttpServletRequest#logout()} will log the user out.
