@@ -15,7 +15,7 @@ const appRoutes: Routes = [
   { path: 'search/:indexId/:hitId', component: SearchDetailComponent },
   { path: 'settings', component: SettingsListComponent },
   { path: '',
-    redirectTo: '/indices',
+    redirectTo: '/iplugs',
     pathMatch: 'full'
   }
   // { path: '**', component: PageNotFoundComponent }

@@ -302,7 +302,7 @@
             <configuration>
               <workingDirectory>frontend</workingDirectory>
               <arguments>run build</arguments>
-              <skip>true</skip>
+              <!-- <skip>true</skip> -->
             </configuration>
           </execution>
         </executions>

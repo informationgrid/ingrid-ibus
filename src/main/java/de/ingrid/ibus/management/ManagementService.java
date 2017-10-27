@@ -36,6 +36,7 @@ public class ManagementService {
         pd.setProxyServiceURL( MANAGEMENT_IPLUG_ID );
         pd.setIPlugClass( "managementiplug" );
         pd.setRecordLoader( true );
+        pd.setRankinTypes( false, false, true );
         pd.setDataSourceDescription( "central index" );
 
         for (String datatype : datatypes) {

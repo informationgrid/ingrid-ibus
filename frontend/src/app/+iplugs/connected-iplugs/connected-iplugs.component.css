@@ -1,6 +1,12 @@
-.indexState {
-    padding: 0;
+.iplugState {
     position: relative;
+    padding: 5px;
+    margin: 5px;
     left: 0;
     top: 0;
+}
+
+.glyphicon {
+    /*padding: 0 10px 0 0;*/
+    color: inherit;
 }
