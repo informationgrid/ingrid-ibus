@@ -89,6 +89,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // make cookies readable within JS
                 .and()
             .authorizeRequests()
+                .antMatchers( "/css/**" ).permitAll()
+                .and()
+            .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()

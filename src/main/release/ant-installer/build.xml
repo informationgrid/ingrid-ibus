@@ -94,11 +94,13 @@
 		<replace file="${xml-communication}" token="${plugXML.communication.server.socket(port)}" 	value="${serverPort}"/>		
 	</target>
 
-	<target name="startscript" description="Set ibus properties in startscript.">
-		<echo>Schreibe Konfiguration in start.sh</echo>
-		<replace file="${start-script}" token="@ADMIN_PASSWORD@" value="${adminPasswort}"/>
-		<replace file="${start-script}" token="@ADMIN_PORT@" value="${adminPort}"/>
-		<replace file="${start-script}" token="@BUS_URL@" value="${serverName}"/>
+	<target name="startscript" description="Set ibus properties.">
+		<echo>Schreibe Konfiguration in application-default.properties</echo>
+        <property file="${installDir}/conf/default-datasource.properties"/>
+        <property name="server.port"            value="$${SERVER_PORT:${adminPort}}" />
+        <property name="security.user.name"     value="$${ADMIN_USERNAME:admin}}" />
+        <property name="security.user.password" value="$${ADMIN_PASSWORD:${adminPasswort}}" />
+        <property name="ibus.url"               value="$${IBUS_ID:${serverName}}" />
 	</target>
 	
 	<target name="startComponent">

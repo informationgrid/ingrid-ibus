@@ -28,7 +28,7 @@ Download from https://dev.informationgrid.eu/ingrid-distributions/ingrid-ibus/
  
 or
 
-build from source with `mvn package assembly:single`.
+build from source with `mvn package`.
 
 Execute
 
@@ -64,15 +64,15 @@ You need an external elasticsearch node you want to store your indexed documents
 
 > docker-compose up -d
 
-- Run as Java "src\main\java\de\ingrid\ibus\IBusApplication.java"
+Run as Java 
 
-- mvn spring-boot:run
+> "src\main\java\de\ingrid\ibus\IBusApplication.java"
 
-- execute `mvn install` to expand the base web application
-- set up a java application Run Configuration with start class `de.ingrid.ibus.BusServer`
-- add the program arguments `--descriptor src/test/resources/communication.xml --busurl /ibus-test --adminport 8100 --adminpassword admin` to the Run Configuration
-- as VM-argument the path to the webapp must be added "-DwebappDir=src/main/release"
-- make sure the tools.jar (from JDK) is added to the classpath of the runtime configuration
+or with maven
+
+> mvn spring-boot:run
+
+- execute `mvn package` to build the frontend and let it copy to the resource directory
 - add `src/test/resources`, `src/main/release/webapp`  to class path
 - the admin gui starts in this sample on port 8100
 
@@ -80,6 +80,7 @@ You need an external elasticsearch node you want to store your indexed documents
 
 To start a local server for the angular application call:
 
+> cd frontend
 > npm install # only once
 > npm start
 

@@ -3,7 +3,7 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-releases-pom</artifactId>
-    <version>4.0.4-SNAPSHOT</version>
+    <version>4.1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -193,18 +193,8 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- <dependency>
-      <groupId>de.ingrid</groupId>
-      <artifactId>ingrid-base-webapp</artifactId>
-      <version>4.1.0-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency> -->
   </dependencies>
+
   <repositories>
     <!-- Repo of parent pom needed, parent pom may not be installed locally
       yet -->
@@ -214,6 +204,7 @@
       <url>https://dev.informationgrid.eu/archiva/repository/ingrid-all</url>
     </repository>
   </repositories>
+  
   <build>
     <plugins>
       <plugin>

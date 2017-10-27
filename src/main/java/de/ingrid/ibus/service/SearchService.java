@@ -1,6 +1,8 @@
 package de.ingrid.ibus.service;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.ingrid.elasticsearch.search.IndexImpl;
+import de.ingrid.ibus.comm.Bus;
 import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.ElasticDocument;
@@ -76,7 +79,15 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
                 IngridHitDetail ingridHitDetail = details[i];
                 ingridHit.setHitDetail( ingridHitDetail );
             }
-            return hits;
+            
+            @SuppressWarnings("deprecation")
+            IngridHits iPlugsResult = Bus.getInstance().searchAndDetail( query, 10, 0, 0, 30000, null );
+            IngridHit[] iPlugHits = iPlugsResult.getHits();
+            
+            IngridHit[] allHits = Stream.concat( Arrays.stream( iPlugHits ), Arrays.stream( hits.getHits() ) ).toArray(IngridHit[]::new);
+            
+            return new IngridHits( (int)(iPlugsResult.length() + hits.length()), allHits );
+            
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -151,6 +162,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
         indexUtils.docProducerIndices = indexService.getActiveIndices();
         
         return indexUtils.search( query, start, length );
+        
 //        IngridHits hits = null;
 //        List<IngridHit> ingridHits = new ArrayList<IngridHit>();
 //        

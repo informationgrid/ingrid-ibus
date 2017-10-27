@@ -131,7 +131,8 @@ public class IndicesController {
     @ResponseBody
     public ResponseEntity<IngridHits> search(@RequestParam String query) {
         try {
-            IngridQuery iQuery = QueryStringParser.parse( query );
+            IngridQuery iQuery = QueryStringParser.parse( query + " ranking:score" );
+            
             IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
             return ResponseEntity.ok(searchAndDetail);
             
