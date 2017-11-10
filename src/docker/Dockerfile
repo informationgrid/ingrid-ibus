@@ -12,7 +12,7 @@ RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
     && rm -Rf /tmp/* \
     && rm ingrid-*.jar
     
-COPY log4j2.xml /opt/ingrid/ingrid-ibus/conf
+RUN ln -sf /dev/stdout /opt/ingrid/ingrid-ibus/log.log
 
 WORKDIR /opt/ingrid/ingrid-ibus
 EXPOSE 80
