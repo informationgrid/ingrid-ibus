@@ -11,9 +11,11 @@ RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
     && cp -R /tmp/ingrid-ibus-*/* /opt/ingrid/ingrid-ibus/ \
     && rm -Rf /tmp/* \
     && rm ingrid-*.jar
+    
+ADD log4j2.xml /opt/ingrid/ingrid-ibus/conf
 
 WORKDIR /opt/ingrid/ingrid-ibus
-EXPOSE 9900
+EXPOSE 80
 EXPOSE 9901
 
 CMD /bin/sh start.sh start

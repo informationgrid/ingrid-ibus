@@ -96,7 +96,8 @@
 
 	<target name="startscript" description="Set ibus properties.">
 		<echo>Schreibe Konfiguration in application-default.properties</echo>
-        <property file="${installDir}/conf/default-datasource.properties"/>
+        <touch file="${installDir}/conf/application-default.properties" />
+        <property file="${installDir}/conf/application-default.properties"/>
         <property name="server.port"            value="$${SERVER_PORT:${adminPort}}" />
         <property name="security.user.name"     value="$${ADMIN_USERNAME:admin}}" />
         <property name="security.user.password" value="$${ADMIN_PASSWORD:${adminPasswort}}" />
