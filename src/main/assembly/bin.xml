@@ -62,7 +62,6 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <excludes>
-        <exclude>de.ingrid:ingrid-installer</exclude>
         <exclude>org.springframework.boot:spring-boot-devtools</exclude>
       </excludes>
     </dependencySet>

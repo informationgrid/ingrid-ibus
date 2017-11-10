@@ -15,12 +15,15 @@
     <Loggers>
         <Logger name="de.ingrid" level="info" additivity="false">
             <AppenderRef ref="LogFile" />
+            <AppenderRef ref="Console" />
         </Logger>
         <Logger name="org.springframework" level="info" additivity="false">
             <AppenderRef ref="LogFile" />
+            <AppenderRef ref="Console" />
         </Logger>
         <Root level="warn">
             <AppenderRef ref="LogFile" />
+            <AppenderRef ref="Console" />
         </Root>
     </Loggers>
 </Configuration>
