@@ -8,6 +8,7 @@ ADD ingrid-ibus-*-installer.jar /
 
 RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
     && mkdir -p /opt/ingrid/ingrid-ibus \
+    && mkdir -p /opt/ingrid/ingrid-ibus/logs \
     && cp -R /tmp/ingrid-ibus-*/* /opt/ingrid/ingrid-ibus/ \
     && rm -Rf /tmp/* \
     && rm ingrid-*.jar
