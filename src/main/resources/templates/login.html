@@ -4,7 +4,6 @@
   xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 <title>InGrid iBus Login</title>
-<link type="text/css" href="bootstrap.min.css" rel="stylesheet" />
 <style>
 body {
   padding-top: 120px;
@@ -98,7 +97,7 @@ body {
 </head>
 <body>
   <div class="container">
-    <form th:action="@{/login}" method="post" class="form-signin">
+    <form th:action="@{login}" method="post" class="form-signin">
       <h1 class="form-signin-heading text-muted">iBus
         Administration</h1>
       <input type="text" class="form-control" placeholder="Benutzername"

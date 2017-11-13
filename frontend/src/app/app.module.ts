@@ -1,6 +1,8 @@
+import { environment } from 'environments/environment';
+import { ConfigService } from './config.service';
 import { IndicesModule } from './+indices/indices.module';
 import { BrowserModule } from '@angular/platform-browser';
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -12,6 +14,12 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { SettingsModule } from './+settings/settings.module';
 import { rootRoutes } from './app.routes';
 import { IPlugsModule } from 'app/+iplugs/iplugs.module';
+
+export function ConfigLoader(configService: ConfigService) {
+  return () => {
+    return configService.load(environment.configUrl);
+  };
+}
 
 @NgModule({
   declarations: [
@@ -32,7 +40,13 @@ import { IPlugsModule } from 'app/+iplugs/iplugs.module';
     SettingsModule
   ],
   providers: [
-    IndexService,
+    ConfigService, IndexService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: ConfigLoader,
+      deps: [ConfigService],
+      multi: true
+    },
     { provide: LOCALE_ID, useValue: 'de' } // <-- use correct locale for dates
   ],
   bootstrap: [AppComponent]

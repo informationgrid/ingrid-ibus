@@ -8,13 +8,14 @@ import { ConnectedIplugsComponent } from './+iplugs/connected-iplugs/connected-i
 import { environment } from '../environments/environment';
 
 const appRoutes: Routes = [
-  { path: 'iplugs', component: ConnectedIplugsComponent },
-  { path: 'indices', component: ListIndicesComponent },
-  { path: 'indices/:id', component: IndexDetailComponent },
-  { path: 'search', component: SearchComponent },
-  { path: 'search/:indexId/:hitId', component: SearchDetailComponent },
-  { path: 'settings', component: SettingsListComponent },
-  { path: '',
+  {path: 'iplugs', component: ConnectedIplugsComponent},
+  {path: 'indices', component: ListIndicesComponent},
+  {path: 'indices/:id', component: IndexDetailComponent},
+  {path: 'search', component: SearchComponent},
+  {path: 'search/:indexId/:hitId', component: SearchDetailComponent},
+  {path: 'settings', component: SettingsListComponent},
+  {
+    path: '',
     redirectTo: '/iplugs',
     pathMatch: 'full'
   }
@@ -23,5 +24,8 @@ const appRoutes: Routes = [
 
 export let rootRoutes = RouterModule.forRoot(
   appRoutes,
-  { enableTracing: !environment.production } // <-- debugging purposes only
+  {
+    enableTracing: !environment.production,  // <-- debugging purposes only
+    useHash: true
+  }
 );

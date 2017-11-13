@@ -1,3 +1,4 @@
+import { ConfigService, Configuration } from './../config.service';
 import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -16,15 +17,19 @@ export class PlugDescription {
 @Injectable()
 export class IPlugService {
 
-  constructor(private http: HttpClient) { }
+  private configuration: Configuration;
+
+  constructor(private http: HttpClient, configService: ConfigService) {
+    this.configuration = configService.getConfiguration();
+  }
 
   getConnectedIPlugs(): Observable<PlugDescription[]> {
-    return this.http.get<PlugDescription[]>(environment.apiUrl + '/iplugs');
+    return this.http.get<PlugDescription[]>(this.configuration.backendUrl + '/iplugs');
   }
 
   setActive(id: string, active: boolean): Observable<any> {
     let command = active ? 'activate' : 'deactivate';
-    return this.http.put(environment.apiUrl + '/iplugs/' + command, {
+    return this.http.put(this.configuration.backendUrl + '/iplugs/' + command, {
       id: id
     }, { responseType: 'text' });
   }

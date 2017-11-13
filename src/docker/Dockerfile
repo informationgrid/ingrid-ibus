@@ -12,7 +12,7 @@ RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
     && rm -Rf /tmp/* \
     && rm ingrid-*.jar
     
-RUN ln -sf /dev/stdout /opt/ingrid/ingrid-ibus/log.log
+RUN ln -sf /dev/stdout /opt/ingrid/ingrid-ibus/logs/log.log
 
 WORKDIR /opt/ingrid/ingrid-ibus
 EXPOSE 80
