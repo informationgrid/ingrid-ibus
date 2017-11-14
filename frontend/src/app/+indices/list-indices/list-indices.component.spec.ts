@@ -12,6 +12,7 @@ import { IndexService } from '../index.service';
 import { SharedModule } from '../../shared/shared.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { HttpClientModule } from '@angular/common/http';
+import { of } from 'rxjs/observable/of';
 
 describe('ListIndicesComponent', () => {
   let component: ListIndicesComponent;
@@ -44,13 +45,13 @@ describe('ListIndicesComponent', () => {
 
 
   it('should show the initial page', () => {
-    indexServiceStub.getIndices.and.callFake(() => Observable.of([]));
+    indexServiceStub.getIndices.and.callFake(() => of([]));
     fixture.detectChanges();
     expect(element.queryAll(By.css('.page-header')).length).toBe(2);
   });
 
   it('should show a list of indices', () => {
-    indexServiceStub.getIndices.and.callFake(() => Observable.of([testIndexItem]));
+    indexServiceStub.getIndices.and.callFake(() => of([testIndexItem]));
     fixture.detectChanges();
     expect(element.queryAll(By.css('.panel')).length).toBe(1);
     shouldNotShowError(element);

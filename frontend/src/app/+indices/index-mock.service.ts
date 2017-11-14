@@ -1,10 +1,11 @@
 import { IndexDetail } from './+index-detail/index-detail.component';
 import { IndexItem } from './index-item/index-item.component';
-import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import { SearchHits } from '../+search/SearchHits';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
 
 let INDICES: IndexItem[] = [
   {
@@ -43,23 +44,23 @@ let DETAIL: IndexDetail = {
 @Injectable()
 export class IndexService {
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
   }
 
   getIndices(): Observable<IndexItem[]> {
-    return Observable.of(INDICES);
+    return of(INDICES);
   }
 
   getIndexDetail(id: string): Observable<IndexDetail> {
-    return Observable.of(DETAIL);
+    return of(DETAIL);
   }
 
   getSearchDetail(): Observable<any> {
-    return Observable.of({});
+    return of({});
   }
 
   search(): Observable<SearchHits> {
-    return Observable.of(
+    return of(
       {
         length: 0,
         hits: []
@@ -72,18 +73,18 @@ export class IndexService {
   }
 
   deleteIndex(id: string) {
-    return Observable.of(null);
+    return of(null);
   }
 
   setActive(id: string, active: boolean) {
-    return Observable.of(null);
+    return of(null);
   }
 
   index(id: string) {
-    return Observable.of(null);
+    return of(null);
   }
 
   getActiveComponentIds() {
-    return Observable.of(['a', 'b']);
+    return of(['a', 'b']);
   }
 }

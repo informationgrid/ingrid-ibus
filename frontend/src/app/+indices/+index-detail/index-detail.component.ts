@@ -1,6 +1,7 @@
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { IndexService } from '../index.service';
 import { Component, OnInit } from '@angular/core';
+import 'rxjs/add/operator/switchMap';
 
 export class IndexDetail {
   id: string;

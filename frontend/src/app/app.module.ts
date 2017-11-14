@@ -14,6 +14,10 @@ import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { SettingsModule } from './+settings/settings.module';
 import { rootRoutes } from './app.routes';
 import { IPlugsModule } from 'app/+iplugs/iplugs.module';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
+
+registerLocaleData( localeDe );
 
 export function ConfigLoader(configService: ConfigService) {
   return () => {

@@ -36,7 +36,8 @@ describe('HitItemComponent', () => {
       source: 'mySource',
       detail: '',
       dataSourceName: 'my ds name',
-      esIndex: '',
+      es_index: '',
+      es_type: '',
       hitDetail: {}
     };
     fixture.detectChanges();

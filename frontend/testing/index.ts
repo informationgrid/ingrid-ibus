@@ -1,8 +1,9 @@
 import { IndexDetail } from '../src/app/+indices/+index-detail/index-detail.component';
-import { Observable } from 'rxjs/Rx';
-import { DebugElement } from '@angular/core';
-import { By } from '@angular/platform-browser';
 import { IndexItem } from '../src/app/+indices/index-item/index-item.component';
+import { DebugElement } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
+import { By } from '@angular/platform-browser';
 
 /** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
 export const ButtonClickEvents = {
@@ -31,7 +32,7 @@ export const testIndexItem = <IndexItem>{
 /** A mock for the IndexService with some data and spies on the functions. */
 export const indexServiceStub = {
   getIndexDetail(id): Observable<IndexDetail> {
-    return Observable.of(<IndexDetail>{
+    return of(<IndexDetail>{
       name: 'my-index',
       longName: 'myName',
       lastHeartbeat: '2014-03-12T13:37:27.000+0000',
