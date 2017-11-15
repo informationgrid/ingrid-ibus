@@ -16,6 +16,7 @@ export class IndexItem {
   lastIndexed: string;
   active?: boolean;
   hasLinkedComponent?: boolean;
+  isConnected: boolean;
   types: IndexType[];
 }
 

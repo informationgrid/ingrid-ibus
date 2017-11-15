@@ -6,6 +6,7 @@ export class SearchHit {
   source: string;
   detail: string;
   dataSourceName: string;
+  score: number;
 
   es_index: string;
   es_type: string;

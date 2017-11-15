@@ -1,5 +1,18 @@
 <div class="container">
 
+  <div *ngIf="showInfo" class="panel panel-info">
+    <div class="panel-heading">
+      Information
+      <button type="button" class="close" aria-label="Close" (click)="showInfo = false"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="panel-body">
+      Hier werden alle Elasticsearch-Indizes angezeigt, die von den neuen iPlugs angelegt worden sind. Anstatt die indexierten Daten
+      lokal im iPlug zu halten, werden diese in den zentralen Index einliefert, welcher vom iBus verwaltet wird.
+      Dabei kann die Einlieferung der Daten direkt in den Elasticsearch Index geschehen oder über die InGrid-Kommunikation,
+      so dass kein zusätzlicher Port geöffnet werden muss.
+    </div>
+  </div>
+
   <div class="page-header">Komponenten-Indizes <span *ngIf="isLoading" class="pull-right glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></div>
   <ng-container *ngFor="let item of indexItems">
     <index-item *ngIf="item.hasLinkedComponent" [data]="item"

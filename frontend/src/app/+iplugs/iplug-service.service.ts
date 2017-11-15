@@ -7,11 +7,14 @@ import { environment } from 'environments/environment';
 export class PlugDescription {
   proxyServiceUrl: string;
   dataSourceName: string;
-  dataSourceDescription: string;  setActive(arg0: any, arg1: any): any {
-    throw new Error("Method not implemented.");
+  dataSourceDescription: string;
+  activated: boolean;
+  useRemoteElasticsearch: boolean;
+
+  setActive(arg0: any, arg1: any): any {
+    throw new Error('Method not implemented.');
   }
 
-  activated: boolean;
 }
 
 @Injectable()
@@ -31,7 +34,7 @@ export class IPlugService {
     let command = active ? 'activate' : 'deactivate';
     return this.http.put(this.configuration.backendUrl + '/iplugs/' + command, {
       id: id
-    }, { responseType: 'text' });
+    }, {responseType: 'text'});
   }
 
 }

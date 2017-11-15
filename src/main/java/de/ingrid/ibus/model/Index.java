@@ -25,6 +25,9 @@ public class Index {
 
     @JsonView(View.Summary.class)
     private Date created;
+    
+    @JsonView(View.Summary.class)
+    private boolean isConnected;
 
     private Date lastHeartbeat;
 
@@ -155,5 +158,13 @@ public class Index {
 
     public void setPlugId(String plugId) {
         this.plugId = plugId;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public void setConnected(boolean isConnected) {
+        this.isConnected = isConnected;
     }
 }

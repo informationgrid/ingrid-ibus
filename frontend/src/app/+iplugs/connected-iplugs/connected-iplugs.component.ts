@@ -7,8 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['../../+indices/index-item/index-item.component.css', './connected-iplugs.component.css']
 })
 export class ConnectedIplugsComponent implements OnInit {
-  
+
   listOfIPlugs: PlugDescription[];
+
+  showInfo = true;
 
   error = '';
 

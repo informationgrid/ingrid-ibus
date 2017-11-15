@@ -18,7 +18,10 @@
   <div class="panel-body">
     <!--<div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>-->
     <div class="pull-left">
-      <div class="index-name" [title]="'Index: ' + data.name">{{data.longName}}</div>
+      <div class="index-name" [title]="'Index: ' + data.name">
+        {{data.longName}}
+        <span *ngIf="data.isConnected" title="Verbunden mit iBus" class="glyphicon glyphicon-link active"></span>
+      </div>
       <!--<div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>-->
     </div>
     <div class="index-last-indexed pull-right">{{data.lastIndexed | date:'medium'}}</div>

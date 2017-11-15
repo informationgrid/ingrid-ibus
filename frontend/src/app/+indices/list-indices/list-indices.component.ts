@@ -13,6 +13,8 @@ export class ListIndicesComponent implements OnInit {
 
   isLoading = true;
 
+  showInfo = true;
+
   error = '';
 
   expanded = {};

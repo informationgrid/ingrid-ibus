@@ -49,6 +49,7 @@ import de.ingrid.ibus.model.IndexState;
 import de.ingrid.ibus.model.IndexType;
 import de.ingrid.ibus.model.IndexTypeDetail;
 import de.ingrid.utils.IngridHitDetail;
+import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.xml.XMLSerializer;
 
 @Service
@@ -78,6 +79,9 @@ public class IndicesService {
     
     @Autowired
     private ElasticsearchNodeFactoryBean esBean;
+    
+    @Autowired
+    private IPlugService iPlugService;
 
     private Client client;
 
@@ -126,10 +130,14 @@ public class IndicesService {
     
                 addTypes( indexMap.key, index );
     
+                // check if iPlug is connected through InGrid Communication
+                //iPlugService.getIPlugDetail()
+                
                 indices.add( index );
             } );
     
             addComponentData( indices );
+            
     
             info.setIndices( indices );
             
@@ -329,8 +337,11 @@ public class IndicesService {
 
                     indexItem.setId( hit.getId() );
                     indexItem.setLongName( (String) hitSource.get( INDEX_FIELD_IPLUG_NAME ) );
-                    // indexItem.setLastIndexed( mapDate( (String) hitSource.get( INDEX_FIELD_LAST_INDEXED ) ) );
-                    // indexItem.setActive( settingsService.isActive( hit.getId() ) );
+                    // check if linked component / iPlug is connected
+                    PlugDescription iPlugDetail = iPlugService.getIPlugDetail( (String) hitSource.get( "plugId" ) );
+                    if (iPlugDetail != null) {
+                        indexItem.setConnected( true );
+                    }
                     indexItem.setHasLinkedComponent( true );
 
                     for (IndexType type : indexItem.getTypes()) {

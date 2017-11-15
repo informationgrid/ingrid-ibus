@@ -2,13 +2,19 @@ package de.ingrid.ibus.service;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.ingrid.elasticsearch.IndexInfo;
+import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.elasticsearch.search.IndexImpl;
 import de.ingrid.ibus.comm.Bus;
 import de.ingrid.ibus.comm.BusServer;
@@ -28,6 +34,8 @@ import de.ingrid.utils.query.IngridQuery;
 @Service
 public class SearchService implements IPlug, IRecordLoader, Serializable {
     
+    private static Logger log = LogManager.getLogger( SearchService.class );
+    
     private static final String CENTRAL_INDEX_ID = "__centralIndex__";
 
     /**
@@ -37,6 +45,9 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
 
     @Autowired
     private IndicesService indexService;
+    
+    @Autowired
+    private IndexManager indexManager;
 
     @Autowired
     private IndexImpl indexUtils;
@@ -243,10 +254,94 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
         return indexUtils.getDetails( hits, query, requestedFields );
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public IngridDocument call(IngridCall targetInfo) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+        IngridDocument doc = new IngridDocument();
+        
+        Map<String, Object> parameters = null;
+        Object parameter = null;
+        
+        switch (targetInfo.getMethod()) {
+        case "createIndex":
+            parameter = targetInfo.getParameter();
+            boolean success = indexManager.createIndex( (String) parameter );
+            //if (!success) throw new RuntimeException( "Index could not be created: " + name );
+            doc.put( "result", success );
+            break;
+            
+        case "getIndexNameFromAliasName":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            String aliasName = indexManager.getIndexNameFromAliasName(
+                    (String) parameters.get( "indexAlias" ), 
+                    (String) parameters.get( "partialName" ) );
+            doc.put( "result", aliasName );
+            break;
+            
+        case "switchAlias":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            indexManager.switchAlias(
+                    (String) parameters.get( "aliasName" ),
+                    (String) parameters.get( "oldIndex" ),
+                    (String) parameters.get( "newIndex" ) );
+            break;
+            
+        case "checkAndCreateInformationIndex":
+            indexManager.checkAndCreateInformationIndex();
+            break;
+            
+        case "getIndexTypeIdentifier":
+            parameter = targetInfo.getParameter();
+            String resultIndexTypeIdent = indexManager.getIndexTypeIdentifier( (IndexInfo) parameter );
+            doc.put( "result", resultIndexTypeIdent );
+            break;
+            
+        case "addBasicFields":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            indexManager.addBasicFields(
+                    (ElasticDocument) parameters.get( "document" ),
+                    (IndexInfo) parameters.get( "info" ) );
+            break;
+            
+        case "update":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            indexManager.update(
+                    (IndexInfo) parameters.get( "indexinfo" ),
+                    (ElasticDocument) parameters.get( "doc" ),
+                    (boolean) parameters.get( "updateOldIndex" ) );
+            break;
+            
+        case "updateIPlugInformation":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            indexManager.updateIPlugInformation(
+                    (String) parameters.get( "id" ),
+                    (String) parameters.get( "info" ) );
+            break;
+            
+        case "flush":
+            indexManager.flush();
+            break;
+            
+        case "deleteIndex":
+            parameter = targetInfo.getParameter();
+            indexManager.deleteIndex( (String) parameter );
+            break;
+            
+        case "getMapping":
+            parameter = targetInfo.getParameter();
+            Map<String, Object> resultMapping = indexManager.getMapping( (IndexInfo) parameter );
+            doc.put( "result", resultMapping );
+            break;
+            
+        case "updateHearbeatInformation":
+            parameter = targetInfo.getParameter();
+            indexManager.updateHearbeatInformation( (List<String>) parameter );
+            break;
+            
+        default:
+            log.error( "Calling method not supported: " + targetInfo.getMethod() );
+        }
+        return doc;
     }
 
     @Override

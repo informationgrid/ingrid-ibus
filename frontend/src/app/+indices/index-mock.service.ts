@@ -15,6 +15,7 @@ let INDICES: IndexItem[] = [
     lastIndexed: '2014-03-12T13:37:27+00:00',
     active: true,
     hasLinkedComponent: true,
+    isConnected: true,
     types: [
       {
         id: '1',

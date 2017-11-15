@@ -40,6 +40,10 @@ and follow the install instructions.
 
 Obtain further information at http://informationgrid.github.io/
 
+# Apache-Configuration
+
+ProxyPass /ibus-gui/ http://<ip-address>:<port>/
+ProxyPassReverse /ibus-gui/ http://<ip-address>:<port>/
 
 Contribute
 ----------
