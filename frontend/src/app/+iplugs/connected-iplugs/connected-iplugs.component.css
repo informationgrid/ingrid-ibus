@@ -6,7 +6,10 @@
     top: 0;
 }
 
-.glyphicon {
-    /*padding: 0 10px 0 0;*/
-    color: inherit;
+.index-id {
+  width: fit-content;
+}
+
+.list .card-body {
+  padding: 1rem 0.5rem;
 }

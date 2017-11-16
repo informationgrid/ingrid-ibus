@@ -1,8 +1,23 @@
-<div class="panel panel-default" [class.short]="view === 'short'">
+<div class="card mb-3" [class.short]="view === 'short mb-1'">
   <span *ngIf="view === 'short'" class="index-id">{{data.name}}</span>
 
+  <div class="dropdown" [class.show]="dropDownOpen">
+    <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
+    </button>
+    <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
+      <button class="dropdown-item"(click)="index()">Indexieren</button>
+      <button class="dropdown-item" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
+         [title]="'Wirklich löschen?'"
+         [message]="'Wollen Sie den Index wirklich löschen?'"
+         placement="left"
+         confirmText="Löschen"
+         cancelText="Abbrechen"
+         (confirm)="deleteIndex(data)">Löschen
+      </button>
+    </div>
+  </div>
+
   <div *ngIf="view !== 'short'" class="dropdown pull-right" [class.open]="dropDownOpen">
-    <div class="menu-icon clickable text-muted" (click)="dropDownOpen = !dropDownOpen"></div>
     <ul class="dropdown-menu">
       <li><a (click)="index()">Indexieren</a></li>
       <li><a title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
@@ -15,12 +30,12 @@
     </ul>
   </div>
 
-  <div class="panel-body">
+  <div class="card-body">
     <!--<div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>-->
     <div class="pull-left">
       <div class="index-name" [title]="'Index: ' + data.name">
         {{data.longName}}
-        <span *ngIf="data.isConnected" title="Verbunden mit iBus" class="glyphicon glyphicon-link active"></span>
+        <span *ngIf="data.isConnected" title="Verbunden mit iBus" class="fa fa-link text-success"></span>
       </div>
       <!--<div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>-->
     </div>
@@ -29,7 +44,9 @@
 
   <ul *ngIf="view !== 'short'" class="list-group">
     <li *ngFor="let type of data.types" class="list-group-item clickable" (click)="showIndexItem(data, type.name)">
-      <div class="indexState glyphicon glyphicon-off" [class.active]="type.active" title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
+      <div class="indexState fa fa-power-off" [class.text-success]="type.active"
+           [class.text-danger]="!type.active"
+           title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
       <span class="content">{{type.name}}</span>
       <div class="pull-right small">{{type.lastIndexed | date:'medium'}}</div>
       <div *ngIf="data.hasLinkedComponent && !type.hasLinkedComponent" class="text-danger">Nicht referenziert!</div>

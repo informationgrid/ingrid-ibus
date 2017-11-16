@@ -5,7 +5,11 @@ html, body, app-root {
 }
 
 .container {
-    padding: 60px 15px 0;
+    padding: 10px 15px 0;
+}
+
+button.fa-info {
+  padding: 2px 7px;
 }
 
 dt {
@@ -25,11 +29,6 @@ dt {
 
 .glyphicon.clickable:hover {
   background-color: inherit;
-}
-
-.glyphicon-refresh-animate {
-  -animation: spin .7s infinite linear;
-  -webkit-animation: spin2 .7s infinite linear;
 }
 
 .flex-row {

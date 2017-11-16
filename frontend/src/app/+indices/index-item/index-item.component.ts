@@ -57,6 +57,8 @@ export class IndexItemComponent implements OnInit {
 
   activateIndexType(type: IndexType, evt: Event) {
     evt.stopImmediatePropagation();
+    evt.stopPropagation();
+    evt.preventDefault();
     type.active = !type.active;
     this.indexService.setActive(type.id, type.active).subscribe(
       null,

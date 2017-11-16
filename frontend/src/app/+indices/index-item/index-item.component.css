@@ -1,12 +1,3 @@
-.glyphicon {
-    /*padding: 0 10px 0 0;*/
-    color: #ff0000;
-}
-
-.glyphicon.active {
-    color: #7ce47f;
-}
-
 .index-id {
   border-bottom: 1px solid #ddd;
   border-right: 1px solid #ddd;
@@ -16,8 +7,14 @@
   font-size: x-small;
 }
 
+.list-group-item {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
 .short .index-id {
-  padding: 10px 0 0 10px;
+  padding: 10px;
   border: none;
 }
 
@@ -44,7 +41,7 @@
   top: 8px;
 }
 
-.indexState:hover, .delete:hover, .menu-icon:hover {
+.indexState:hover, .delete:hover {
   background-color: #eeeeee;
   border-radius: 20px;
 }

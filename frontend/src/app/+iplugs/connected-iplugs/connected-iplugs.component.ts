@@ -10,7 +10,7 @@ export class ConnectedIplugsComponent implements OnInit {
 
   listOfIPlugs: PlugDescription[];
 
-  showInfo = true;
+  showInfo = false;
 
   error = '';
 

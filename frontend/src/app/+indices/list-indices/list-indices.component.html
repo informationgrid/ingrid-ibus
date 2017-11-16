@@ -1,11 +1,17 @@
 <div class="container">
 
-  <div *ngIf="showInfo" class="panel panel-info">
-    <div class="panel-heading">
+  <div *ngIf="!showInfo" class="text-right text-info mb-1">
+    <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfo = true"></button>
+  </div>
+
+  <div *ngIf="showInfo" class="card text-white bg-info mb-3">
+    <div class="card-header">
       Information
-      <button type="button" class="close" aria-label="Close" (click)="showInfo = false"><span aria-hidden="true">&times;</span></button>
+      <button type="button" class="close" aria-label="Close" (click)="showInfo = false">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
       Hier werden alle Elasticsearch-Indizes angezeigt, die von den neuen iPlugs angelegt worden sind. Anstatt die indexierten Daten
       lokal im iPlug zu halten, werden diese in den zentralen Index einliefert, welcher vom iBus verwaltet wird.
       Dabei kann die Einlieferung der Daten direkt in den Elasticsearch Index geschehen oder über die InGrid-Kommunikation,
@@ -13,7 +19,8 @@
     </div>
   </div>
 
-  <div class="page-header">Komponenten-Indizes <span *ngIf="isLoading" class="pull-right glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></div>
+  <h6>Komponenten-Indizes <span *ngIf="isLoading" class="pull-right fa fa-spinner fa-spin"></span></h6>
+
   <ng-container *ngFor="let item of indexItems">
     <index-item *ngIf="item.hasLinkedComponent" [data]="item"
                 (onDelete)="refresh()"
@@ -21,13 +28,13 @@
     ></index-item>
   </ng-container>
 
-  <div class="page-header clickable-only" (click)="expanded['others'] = !expanded['others']">
+  <h6 class="clickable-only pt-3" (click)="expanded['others'] = !expanded['others']">
     Andere Indizes
-    <span class="pull-right glyphicon"
-          [class.glyphicon-chevron-up]="expanded['others']"
-          [class.glyphicon-chevron-down]="!expanded['others']"></span>
-  </div>
-  <div *ngIf="expanded['others']">
+    <span class="pull-right fa"
+          [class.fa-chevron-up]="expanded['others']"
+          [class.fa-chevron-down]="!expanded['others']"></span>
+  </h6>
+  <div *ngIf="expanded['others']" class="other">
     <ng-container *ngFor="let item of indexItems">
       <index-item *ngIf="!item.hasLinkedComponent" [data]="item" [view]="'short'" (onDelete)="refresh()"></index-item>
     </ng-container>

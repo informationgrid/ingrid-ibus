@@ -1,36 +1,42 @@
 <div class="container">
 
-  <div *ngIf="showInfo" class="panel panel-info">
-    <div class="panel-heading">
+  <div *ngIf="!showInfo" class="text-right text-info mb-1">
+    <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfo = true"></button>
+  </div>
+
+  <div *ngIf="showInfo" class="card text-white bg-info mb-3">
+    <div class="card-header">
       Information
-      <button type="button" class="close" aria-label="Close" (click)="showInfo = false"><span aria-hidden="true">&times;</span></button>
+      <button type="button" class="close" aria-label="Close" (click)="showInfo = false">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
       Hier werden alle iPlugs angezeigt, die ihren Index selbst verwalten. Dies
       entspricht das alte Verhalten, wo der iBus die iPlugs separat anfragt, um die Suchergebnisse zu erhalten.
       Mit einem Klick auf dem An-/Ausschalter wird ein iPlug für die Suche einbezogen oder nicht. Über das Lesezeichen
-      <i class="glyphicon glyphicon-bookmark"></i> kann direkt zur Adminoberfläche gesprungen werden.
+      <i class="fa fa-bookmark"></i> kann direkt zur Adminoberfläche gesprungen werden.
     </div>
   </div>
 
-  <div class="panel panel-default" *ngFor="let data of listOfIPlugs">
+  <div class="card list mb-3" *ngFor="let data of listOfIPlugs">
     <span class="index-id">{{data.proxyServiceUrl}}</span>
 
-    <div class="panel-body">
+    <div class="card-body">
       <div class="flex-row">
-        <span *ngIf="data.useRemoteElasticsearch" class="btn iplugState btn-default disabled"
+        <span *ngIf="data.useRemoteElasticsearch" class="btn iplugState btn-secondary disabled"
               title="Dieses iPlug verwendet den zentralen Index und wird über die Indexverwaltung gesteuert.">
-          <i class="glyphicon glyphicon-off"></i>
+          <i class="fa fa-power-off"></i>
         </span>
         <span *ngIf="!data.useRemoteElasticsearch"
               class="btn iplugState" [class.btn-success]="data.activated" [class.btn-danger]="!data.activated"
               title="Aktiviere/Deaktiviere IPlug"
-              (click)="activateIPlug(data, $event)"><i class="glyphicon glyphicon-off"></i></span>
+              (click)="activateIPlug(data, $event)"><i class="fa fa-power-off"></i></span>
         <div class="flex-column">
           <div>
             <span class="index-name" [title]="'Index: ' + data.name">{{data.dataSourceName}}</span>
             <span><a href="{{data.IPLUG_ADMIN_GUI_URL}}" title="Admin-GUI"
-                     class="glyphicon glyphicon-bookmark"></a></span>
+                     class="fa fa-bookmark"></a></span>
           </div>
           <div>{{data.dataSourceDescription}}</div>
         </div>
@@ -39,8 +45,8 @@
 
   </div>
 
-  <div *ngIf="listOfIPlugs?.length === 0" class="panel panel-info">
-    <div class="panel-body">
+  <div *ngIf="listOfIPlugs?.length === 0" class="card text-white bg-info">
+    <div class="card-body">
       Es sind keine iPlugs mit dem iBus verbunden.
     </div>
   </div>

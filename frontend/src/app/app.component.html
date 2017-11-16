@@ -1,29 +1,24 @@
-<nav class="navbar navbar-default navbar-fixed-top">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a routerLink="/" class="navbar-brand">iBus</a>
-    </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a routerLink="/" class="navbar-brand">iBus</a>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li routerLinkActive="active"><a routerLink="/iplugs">Angeschlossene iPlugs</a></li>
-        <li routerLinkActive="active"><a routerLink="/indices">Index-Verwaltung</a></li>
-        <li routerLinkActive="active"><a routerLink="/search">Such-Analyse</a></li>
-        <!-- <li routerLinkActive="active"><a routerLink="/settings">Einstellungen</a></li> -->
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="./logout" class="navbar-link">Logout</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+          (click)="showMenu = !showMenu">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="navbar-collapse" [class.collapse]="!showMenu" id="navbarSupportedContent">
+
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" routerLinkActive="active"><a class="nav-link" routerLink="/iplugs">Angeschlossene iPlugs</a></li>
+      <li class="nav-item" routerLinkActive="active"><a class="nav-link" routerLink="/indices">Index-Verwaltung</a></li>
+      <li class="nav-item" routerLinkActive="active"><a class="nav-link" routerLink="/search">Such-Analyse</a></li>
+      <!--<li routerLinkActive="active"><a routerLink="/settings">Einstellungen</a></li>-->
+    </ul>
+
+    <form class="form-inline">
+      <a href="./logout" class="navbar-link text-info">Logout</a>
+    </form>
+  </div>
 </nav>
 
 <router-outlet></router-outlet>
