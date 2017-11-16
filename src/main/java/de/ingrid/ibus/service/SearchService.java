@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.ingrid.elasticsearch.ElasticConfig;
 import de.ingrid.elasticsearch.IndexInfo;
 import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.elasticsearch.search.IndexImpl;
@@ -51,6 +52,9 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
 
     @Autowired
     private IndexImpl indexUtils;
+    
+    @Autowired
+    private ElasticConfig elasticConfig;
     
     @Autowired 
     private BusServer busServer;
@@ -170,7 +174,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
     @Override
     public IngridHits search(IngridQuery query, int start, int length) throws Exception {
         
-        indexUtils.docProducerIndices = indexService.getActiveIndices();
+        elasticConfig.docProducerIndices = indexService.getActiveIndices();
         
         return indexUtils.search( query, start, length );
         
