@@ -260,9 +260,12 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
         
         switch (targetInfo.getMethod()) {
         case "createIndex":
-            parameter = targetInfo.getParameter();
-            boolean success = indexManager.createIndex( (String) parameter );
-            //if (!success) throw new RuntimeException( "Index could not be created: " + name );
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            boolean success = indexManager.createIndex(
+                    (String) parameters.get( "name" ),
+                    "_default_",
+                    (String) parameters.get( "mapping" ));
+
             doc.put( "result", success );
             break;
             
