@@ -41,6 +41,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
+import de.ingrid.elasticsearch.IndexInfo;
 import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.elasticsearch.QueryBuilderService;
 import de.ingrid.ibus.model.ElasticsearchInfo;
@@ -435,7 +436,7 @@ public class IndicesService {
      * @return
      */
     public SearchHits search(QueryBuilder query) {
-        String[] indices = getActiveIndices();
+        IndexInfo[] indices = getActiveIndices();
 
         // when no index was selected then do not return any hits
         if (indices.length == 0) {
@@ -443,7 +444,7 @@ public class IndicesService {
         }
 
         String[] justIndexNames = Stream.of( indices )
-                .map( indexWithType -> indexWithType.split( ":" )[0] )
+                .map( indexWithType -> indexWithType.getToIndex() )
                 .collect( Collectors.toSet() )
                 .toArray( new String[0] );
 
@@ -464,14 +465,14 @@ public class IndicesService {
      * 
      * @return
      */
-    public String[] getActiveIndices() {
-        List<String> result = new ArrayList<String>();
+    public IndexInfo[] getActiveIndices() {
+        List<IndexInfo> result = new ArrayList<IndexInfo>();
 
         // get active components
         Set<String> activeComponents = settingsService.getActiveComponentIds();
         
         if (activeComponents.size() == 0) {
-            return new String[0];
+            return new IndexInfo[0];
         }
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -493,11 +494,14 @@ public class IndicesService {
             String index = (String) hit.getSource().get( LINKED_INDEX );
             String type = (String) hit.getSource().get( LINKED_TYPE );
             if (index != null && type != null) {
-                result.add(  index + ":" + type );
+                IndexInfo info = new IndexInfo();
+                info.setToIndex( index );
+                info.setToType( type );
+                result.add(  info );
             }
         } );
 
-        return result.toArray( new String[0] );
+        return result.toArray( new IndexInfo[0] );
     }
 
     /**

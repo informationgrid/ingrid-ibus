@@ -52,6 +52,6 @@ public class ManagementService {
         
         registry.activatePlug( MANAGEMENT_IPLUG_ID );
 
-        new SimulatedLifesign( pd );
+        new SimulatedLifesign( registry, pd );
     }
 }

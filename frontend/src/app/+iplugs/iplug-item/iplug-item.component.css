@@ -1,0 +1,15 @@
+.iplugState {
+  position: relative;
+  padding: 5px;
+  margin: 5px;
+  left: 0;
+  top: 0;
+}
+
+.index-id {
+  width: fit-content;
+}
+
+.list .card-body {
+  padding: 1rem 0.5rem;
+}

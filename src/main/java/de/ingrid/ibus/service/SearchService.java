@@ -1,10 +1,8 @@
 package de.ingrid.ibus.service;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
@@ -82,26 +80,19 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
         pd.put( "overrideProxy", this );
         registry.addPlugDescription( pd  );
         
-        new SimulatedLifesign( pd );
+        registry.activatePlug( CENTRAL_INDEX_ID );
+        
+        new SimulatedLifesign( registry, pd );
     }
 
     public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds, String[] requestedFields) {
         try {
-            IngridHits hits = this.search( query, startHit, 10 );
-            IngridHitDetail[] details = this.getDetails( hits.getHits(), query, requestedFields );
-            for (int i = 0; i < hits.getHits().length; i++) {
-                IngridHit ingridHit = hits.getHits()[i];
-                IngridHitDetail ingridHitDetail = details[i];
-                ingridHit.setHitDetail( ingridHitDetail );
-            }
             
             @SuppressWarnings("deprecation")
             IngridHits iPlugsResult = Bus.getInstance().searchAndDetail( query, 10, 0, 0, 30000, null );
             IngridHit[] iPlugHits = iPlugsResult.getHits();
             
-            IngridHit[] allHits = Stream.concat( Arrays.stream( iPlugHits ), Arrays.stream( hits.getHits() ) ).toArray(IngridHit[]::new);
-            
-            return new IngridHits( (int)(iPlugsResult.length() + hits.length()), allHits );
+            return new IngridHits( (int) iPlugsResult.length(), iPlugHits );
             
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -174,7 +165,8 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
     @Override
     public IngridHits search(IngridQuery query, int start, int length) throws Exception {
         
-        elasticConfig.docProducerIndices = indexService.getActiveIndices();
+        elasticConfig.communicationProxyUrl = CENTRAL_INDEX_ID;
+        elasticConfig.activeIndices = indexService.getActiveIndices();
         
         return indexUtils.search( query, start, length );
         

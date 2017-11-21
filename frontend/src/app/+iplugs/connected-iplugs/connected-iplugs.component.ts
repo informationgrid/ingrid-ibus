@@ -8,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConnectedIplugsComponent implements OnInit {
 
-  listOfIPlugs: PlugDescription[];
+  iplugsLocalIndex: PlugDescription[];
+  iplugsCentralIndex: PlugDescription[];
 
   showInfo = false;
 
@@ -17,8 +18,12 @@ export class ConnectedIplugsComponent implements OnInit {
   constructor(private iPlugService: IPlugService) { }
 
   ngOnInit() {
-    this.iPlugService.getConnectedIPlugs().subscribe(
-      iPlugs => this.listOfIPlugs = iPlugs.filter( p => !p.proxyServiceUrl.startsWith( '__' ) ),
+    this.iPlugService.getConnectedIPlugs()
+      .subscribe(
+      iPlugs => {
+        this.iplugsLocalIndex = iPlugs.filter(p => !p.proxyServiceUrl.startsWith('__') && !p.useRemoteElasticsearch);
+        this.iplugsCentralIndex = iPlugs.filter(p => !p.proxyServiceUrl.startsWith('__') && p.useRemoteElasticsearch);
+      },
       error => this.handleError( error )
     )
   }

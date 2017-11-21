@@ -2,11 +2,11 @@ import { ConfigService, Configuration } from './../config.service';
 import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'environments/environment';
 
 export class PlugDescription {
   proxyServiceUrl: string;
   dataSourceName: string;
+  IPLUG_ADMIN_GUI_URL: string;
   dataSourceDescription: string;
   activated: boolean;
   useRemoteElasticsearch: boolean;

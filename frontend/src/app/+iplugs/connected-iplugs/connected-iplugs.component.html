@@ -19,33 +19,18 @@
     </div>
   </div>
 
-  <div class="card list mb-3" *ngFor="let data of listOfIPlugs">
-    <span class="index-id">{{data.proxyServiceUrl}}</span>
 
-    <div class="card-body">
-      <div class="flex-row">
-        <span *ngIf="data.useRemoteElasticsearch" class="btn iplugState btn-secondary disabled"
-              title="Dieses iPlug verwendet den zentralen Index und wird über die Indexverwaltung gesteuert.">
-          <i class="fa fa-power-off"></i>
-        </span>
-        <span *ngIf="!data.useRemoteElasticsearch"
-              class="btn iplugState" [class.btn-success]="data.activated" [class.btn-danger]="!data.activated"
-              title="Aktiviere/Deaktiviere IPlug"
-              (click)="activateIPlug(data, $event)"><i class="fa fa-power-off"></i></span>
-        <div class="flex-column">
-          <div>
-            <span class="index-name" [title]="'Index: ' + data.name">{{data.dataSourceName}}</span>
-            <span><a href="{{data.IPLUG_ADMIN_GUI_URL}}" title="Admin-GUI"
-                     class="fa fa-bookmark"></a></span>
-          </div>
-          <div>{{data.dataSourceDescription}}</div>
-        </div>
-      </div>
-    </div>
+  <ng-container *ngIf="iplugsLocalIndex.length > 0">
+    <h6>IPlugs mit eigenem Suchindex</h6>
+    <iplug-item [data]="data" *ngFor="let data of iplugsLocalIndex"></iplug-item>
+  </ng-container>
 
-  </div>
+  <ng-container *ngIf="iplugsCentralIndex.length > 0">
+    <h6>IPlugs mit zentralem Suchindex</h6>
+    <iplug-item [data]="data" *ngFor="let data of iplugsCentralIndex"></iplug-item>
+  </ng-container>
 
-  <div *ngIf="listOfIPlugs?.length === 0" class="card text-white bg-info">
+  <div *ngIf="iplugsLocalIndex?.length === 0 && iplugsCentralIndex?.length === 0" class="card text-white bg-info">
     <div class="card-body">
       Es sind keine iPlugs mit dem iBus verbunden.
     </div>

@@ -8,12 +8,13 @@ import de.ingrid.utils.PlugDescription;
 
 public class SimulatedLifesign {
 
-    public SimulatedLifesign(PlugDescription pd) {
+    public SimulatedLifesign(Registry registry, PlugDescription pd) {
         Timer timer = new Timer();
         timer.schedule( new TimerTask() {
             @Override
             public void run() {
                 pd.putLong(Registry.LAST_LIFESIGN, System.currentTimeMillis());
+                registry.addPlugDescription( pd );
             }
         }, 60*1000, 60*1000 );
     }

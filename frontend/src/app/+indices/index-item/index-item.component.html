@@ -1,8 +1,9 @@
 <div class="card mb-3" [class.short]="view === 'short mb-1'">
   <span *ngIf="view === 'short'" class="index-id">{{data.name}}</span>
 
-  <div class="dropdown" [class.show]="dropDownOpen">
-    <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
+  <div *ngIf="view !== 'short'" class="dropdown" [class.show]="dropDownOpen">
+    <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
     </button>
     <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
       <button class="dropdown-item"(click)="index()">Indexieren</button>
