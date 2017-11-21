@@ -166,6 +166,8 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
     public IngridHits search(IngridQuery query, int start, int length) throws Exception {
         
         elasticConfig.communicationProxyUrl = CENTRAL_INDEX_ID;
+        elasticConfig.partner = new String[] { "???" };
+        elasticConfig.provider = new String[] { "???" };
         elasticConfig.activeIndices = indexService.getActiveIndices();
         
         return indexUtils.search( query, start, length );
@@ -293,13 +295,6 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             parameter = targetInfo.getParameter();
             String resultIndexTypeIdent = indexManager.getIndexTypeIdentifier( (IndexInfo) parameter );
             doc.put( "result", resultIndexTypeIdent );
-            break;
-            
-        case "addBasicFields":
-            parameters = (Map<String, Object>) targetInfo.getParameter();
-            indexManager.addBasicFields(
-                    (ElasticDocument) parameters.get( "document" ),
-                    (IndexInfo) parameters.get( "info" ) );
             break;
             
         case "update":
