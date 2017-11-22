@@ -20,12 +20,12 @@
   </div>
 
 
-  <ng-container *ngIf="iplugsLocalIndex.length > 0">
+  <ng-container *ngIf="iplugsLocalIndex?.length > 0">
     <h6>IPlugs mit eigenem Suchindex</h6>
     <iplug-item [data]="data" *ngFor="let data of iplugsLocalIndex"></iplug-item>
   </ng-container>
 
-  <ng-container *ngIf="iplugsCentralIndex.length > 0">
+  <ng-container *ngIf="iplugsCentralIndex?.length > 0">
     <h6>IPlugs mit zentralem Suchindex</h6>
     <iplug-item [data]="data" *ngFor="let data of iplugsCentralIndex"></iplug-item>
   </ng-container>

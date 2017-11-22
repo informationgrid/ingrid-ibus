@@ -768,8 +768,8 @@ public class Bus extends Thread implements IBus {
         plugDescription = this.fRegistry.getPlugDescription( detail.getPlugId() );
         if (plugDescription != null) {
             detail.setIplugClassName( plugDescription.getIPlugClass() );
-            // detail.setOrganisation( plugDescription.getOrganisation() );
-            // detail.setDataSourceName( plugDescription.getDataSourceName() );
+            if (detail.getOrganisation() == null) detail.setOrganisation( plugDescription.getOrganisation() );
+            if (detail.getDataSourceName() == null) detail.setDataSourceName( plugDescription.getDataSourceName() );
         }
 
     }

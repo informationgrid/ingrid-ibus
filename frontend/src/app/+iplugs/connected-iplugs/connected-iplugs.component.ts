@@ -28,14 +28,6 @@ export class ConnectedIplugsComponent implements OnInit {
     )
   }
 
-  activateIPlug(iPlug: PlugDescription) {
-    iPlug.activated = !iPlug.activated;
-    this.iPlugService.setActive( iPlug.proxyServiceUrl, iPlug.activated ).subscribe(
-      null,
-      error => this.handleError(error)
-    );
-  }
-
   private handleError(error) {
     console.error( 'Problem getting connected iPlugs', error );
     this.error = error;
