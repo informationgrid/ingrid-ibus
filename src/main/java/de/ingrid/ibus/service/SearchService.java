@@ -1,7 +1,6 @@
 package de.ingrid.ibus.service;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -329,7 +328,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             
         case "updateHearbeatInformation":
             parameter = targetInfo.getParameter();
-            indexManager.updateHearbeatInformation( (List<String>) parameter );
+            indexManager.updateHearbeatInformation( (Map<String, String>) parameter );
             break;
             
         default:

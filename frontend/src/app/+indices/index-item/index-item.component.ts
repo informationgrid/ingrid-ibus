@@ -68,7 +68,7 @@ export class IndexItemComponent implements OnInit {
 
   index() {
     this.indexService.index(this.data.name).subscribe(
-      null,
+      () => this.dropDownOpen = false,
       err => this.handleError(err)
     );
   }

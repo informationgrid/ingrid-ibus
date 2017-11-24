@@ -6,7 +6,7 @@
             aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
     </button>
     <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
-      <button class="dropdown-item"(click)="index()">Indexieren</button>
+      <button *ngIf="data.isConnected" class="dropdown-item"(click)="index()">Indexieren</button>
       <button class="dropdown-item" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
          [title]="'Wirklich löschen?'"
          [message]="'Wollen Sie den Index wirklich löschen?'"
@@ -18,25 +18,13 @@
     </div>
   </div>
 
-  <div *ngIf="view !== 'short'" class="dropdown pull-right" [class.open]="dropDownOpen">
-    <ul class="dropdown-menu">
-      <li><a (click)="index()">Indexieren</a></li>
-      <li><a title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
-               [title]="'Wirklich löschen?'"
-               [message]="'Wollen Sie den Index wirklich löschen?'"
-               placement="left"
-               confirmText="Löschen"
-               cancelText="Abbrechen"
-               (confirm)="deleteIndex(data)">Löschen</a></li>
-    </ul>
-  </div>
-
   <div class="card-body">
     <!--<div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>-->
     <div class="pull-left">
       <div class="index-name" [title]="'Index: ' + data.name">
         {{data.longName}}
-        <span *ngIf="data.isConnected" title="Verbunden mit iBus" class="fa fa-link text-success"></span>
+        <span *ngIf="view !== 'short' && data.isConnected" title="Verbunden mit iBus" class="fa fa-link text-success"></span>
+        <span *ngIf="view !== 'short' && !data.isConnected" title="Nicht verbunden mit iBus" class="fa fa-link text-danger"></span>
       </div>
       <!--<div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>-->
     </div>

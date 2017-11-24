@@ -21,7 +21,7 @@
 
   <h6>Komponenten-Indizes <span *ngIf="isLoading" class="pull-right fa fa-spinner fa-spin"></span></h6>
 
-  <ng-container *ngFor="let item of indexItems">
+  <ng-container *ngFor="let item of indexItems; trackBy: getIndexItemIdentifier">
     <index-item *ngIf="item.hasLinkedComponent" [data]="item"
                 (onDelete)="refresh()"
                 (onError)="error = $event"

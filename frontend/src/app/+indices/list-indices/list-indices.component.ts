@@ -1,13 +1,15 @@
 import { IndexService } from '../index.service';
 import { IndexItem } from '../index-item/index-item.component';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-list-indices',
   templateUrl: './list-indices.component.html',
   styleUrls: ['./list-indices.component.css']
 })
-export class ListIndicesComponent implements OnInit {
+export class ListIndicesComponent implements OnInit, OnDestroy {
 
   indexItems: IndexItem[] = [];
 
@@ -15,7 +17,12 @@ export class ListIndicesComponent implements OnInit {
 
   showInfo = false;
 
+  // dynamically request connected iPlugs and update page
+  autoRefresh = true;
+
   error = '';
+
+  observer: Subscription;
 
   expanded = {};
 
@@ -23,7 +30,16 @@ export class ListIndicesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getIndexNames();
+    this.observer = IntervalObservable.create(10000)
+      .startWith(0)
+      .takeWhile( _ => this.autoRefresh )
+      .subscribe( () => {
+        this.getIndexNames();
+      } )
+  }
+
+  ngOnDestroy() {
+    this.observer.unsubscribe();
   }
 
   getIndexNames() {
@@ -37,6 +53,10 @@ export class ListIndicesComponent implements OnInit {
         this.isLoading = false;
       }
     );
+  }
+
+  getIndexItemIdentifier(item: IndexItem) {
+    return item.id;
   }
 
   refresh() {
