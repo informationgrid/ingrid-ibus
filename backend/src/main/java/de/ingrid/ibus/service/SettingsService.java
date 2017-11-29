@@ -2,6 +2,7 @@ package de.ingrid.ibus.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -57,7 +58,7 @@ public class SettingsService {
                 }
             };
             
-            properties.load( ibusSettings.getInputStream() );
+            properties.load( new FileReader( this.settingsFile ) );
 
             String propActiveIndices = properties.getProperty( "activeIndices" );
             if (propActiveIndices != null) {

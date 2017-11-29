@@ -30,6 +30,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -193,7 +195,7 @@ public class BusServer {
         try {
 
             XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
-            writer = outputFactory.createXMLStreamWriter( new FileOutputStream( iBusDescriptor ) );
+            writer = outputFactory.createXMLStreamWriter( new OutputStreamWriter(new FileOutputStream( iBusDescriptor ), Charset.forName( "utf-8" ) ) );
             writer.writeStartDocument( "utf-8", "1.0" );
 
             writer.writeStartElement( "communication" );

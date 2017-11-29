@@ -47,7 +47,7 @@
       <outputDirectory>/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>target/frontend</directory>
+      <directory>target/frontend/static</directory>
       <outputDirectory>${project.artifactId}-${project.version}/conf/static</outputDirectory>
     </fileSet>
     <fileSet>
@@ -67,6 +67,7 @@
       <scope>runtime</scope>
       <excludes>
         <exclude>org.springframework.boot:spring-boot-devtools</exclude>
+        <exclude>de.ingrid:ingrid-ibus-frontend</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>

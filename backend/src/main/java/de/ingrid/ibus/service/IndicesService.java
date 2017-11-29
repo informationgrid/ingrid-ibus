@@ -471,7 +471,7 @@ public class IndicesService {
         // get active components
         Set<String> activeComponents = settingsService.getActiveComponentIds();
         
-        if (activeComponents.size() == 0) {
+        if (activeComponents == null || activeComponents.size() == 0) {
             return new IndexInfo[0];
         }
 

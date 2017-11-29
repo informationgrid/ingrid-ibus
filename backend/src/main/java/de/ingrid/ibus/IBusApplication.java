@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-//@ComponentScan(basePackages = {"de.ingrid.ibus", "de.ingrid.admin.service", "de.ingrid.elasticsearch"}, excludeFilters = {})
 @ComponentScan(basePackages = { "de.ingrid" })
 public class IBusApplication {
 
