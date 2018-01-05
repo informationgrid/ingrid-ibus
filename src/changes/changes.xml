@@ -29,6 +29,12 @@
   </properties>
   <body>
 
+    <release version="4.2.0" date="2018-01-05" description="Release 4.2.0">
+      <action type="add" dev="wemove">
+        Improved docker configuration and updated license header.
+      </action>
+    </release>
+
     <release version="4.0.3" date="2017-06-13" description="Release 4.0.3">
       <action type="add" dev="wemove">
         Prepare for docker deployment.
