@@ -36,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import de.ingrid.codelists.CodeListService;
 import de.ingrid.codelists.model.CodeList;
 import de.ingrid.codelists.model.CodeListEntry;
-import de.ingrid.ibus.management.utils.ManagementUtils;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.query.IngridQuery;
 
@@ -70,14 +69,14 @@ public class ManagementGetProviderAsListUseCase implements ManagementUseCase {
         IngridHit[] result = null;
         List<Map<String, Object>> providerList = new ArrayList<Map<String, Object>>();
         
-        CodeList providers = codelistService.getCodeList( "51" );
+        CodeList providers = codelistService.getCodeList( "111" );
 
         for (CodeListEntry entry : providers.getEntries()) {
             
             Map<String, Object> providerHash = new HashMap<String, Object>();
-            providerHash.put("providerid", ManagementUtils.getFieldFromData( entry, "id" ));
-            providerHash.put("name", entry.getLocalisedEntry( "de" ));
-            providerHash.put("url", ManagementUtils.getFieldFromData( entry, "url" ));
+            providerHash.put("providerid", entry.getField( "ident" ));
+            providerHash.put("name", entry.getField( "name" ));
+            providerHash.put("url", entry.getField( "url" ));
             providerList.add(providerHash);
         }
 

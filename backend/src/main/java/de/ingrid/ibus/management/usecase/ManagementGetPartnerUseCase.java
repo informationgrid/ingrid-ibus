@@ -36,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import de.ingrid.codelists.CodeListService;
 import de.ingrid.codelists.model.CodeList;
 import de.ingrid.codelists.model.CodeListEntry;
-import de.ingrid.ibus.management.utils.ManagementUtils;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.query.IngridQuery;
 
@@ -68,14 +67,14 @@ public class ManagementGetPartnerUseCase implements ManagementUseCase {
         IngridHit[] result = null;
         List<Map<String, Object>> partnerList = new ArrayList<Map<String, Object>>();
 
-        CodeList partners = codelistService.getCodeList( "50" );
-        CodeList providers = codelistService.getCodeList( "51" );
+        CodeList partners = codelistService.getCodeList( "110" );
+        CodeList providers = codelistService.getCodeList( "111" );
 
         List<CodeListEntry> entries = partners.getEntries();
 
         for (CodeListEntry entry : entries) {
 
-            String partnerId = ManagementUtils.getFieldFromData( entry, "id" );
+            String partnerId = entry.getField( "ident" ); //codelistService.getManagementUtils.getFieldFromData( entry, "id" );
             if ("bund".equals( partnerId )) partnerId = "bu";
             
             Map<String, Object> partnerHash = mapPartner( entry );
@@ -97,22 +96,22 @@ public class ManagementGetPartnerUseCase implements ManagementUseCase {
 
     private Map<String, Object> mapPartner(CodeListEntry entry) {
         Map<String, Object> partnerHash = new HashMap<String, Object>();
-        partnerHash.put( "partnerid", ManagementUtils.getFieldFromData( entry, "id" ) );
-        partnerHash.put( "name", entry.getLocalisedEntry( "de" ) );
+        partnerHash.put( "partnerid", entry.getField( "ident" ) );
+        partnerHash.put( "name", entry.getField( "name" ) );
         return partnerHash;
     }
 
     private List<Map<String, Object>> mapProviders(CodeList providers, String partnerId) {
         List<Map<String, Object>> providerList = new ArrayList<Map<String, Object>>();
         for (CodeListEntry provider : providers.getEntries()) {
-            String providerId = ManagementUtils.getFieldFromData( provider, "id" );
+            String providerId = provider.getField( "ident" );
 
             // get all providers that start with the partner ID
             if (providerId.startsWith( partnerId + "_" )) {
                 Map<String, Object> providerHash = new HashMap<String, Object>();
                 providerHash.put( "providerid", providerId );
-                providerHash.put( "name", provider.getLocalisedEntry( "de" ) );
-                providerHash.put( "url", ManagementUtils.getFieldFromData( provider, "url" ) );
+                providerHash.put( "name", provider.getField( "name" ) );
+                providerHash.put( "url", provider.getField( "url" ) );
                 providerList.add( providerHash );
             }
         }

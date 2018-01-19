@@ -103,17 +103,7 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
     
     @PostConstruct
     public void init() {
-        List<CodeList> list = codeListService.getCodeLists();
-        
-//        String data = list.get(66).getEntries().get(0).getData();
-//        JSONObject json = new JSONObject( data );
-//        json.get( "id" );
     }
-    
-//    @Autowired
-//    public ManagementIPlug(IMetadataInjector[] injector, IPreProcessor[] preProcessors, IPostProcessor[] postProcessors) {
-//        super(30000, new PlugDescriptionFieldFilters(), injector, preProcessors, postProcessors);
-//    }
     
     /**
      * @see de.ingrid.utils.IPlug#configure(de.ingrid.utils.PlugDescription)
@@ -131,7 +121,6 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
      * @see de.ingrid.utils.IPlug#close()
      */
     public void close() throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
