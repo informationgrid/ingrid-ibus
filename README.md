@@ -50,7 +50,14 @@ Contribute
 
 - Issue Tracker: https://github.com/informationgrid/ingrid-ibus/issues
 - Source Code: https://github.com/informationgrid/ingrid-ibus
- 
+
+### Setup IntelliJ Idea
+
+* add project as Maven-module
+* add "src/test/resources" to dependency class-directory
+* mark directory "target/frontend" as Resources
+* run IBusApplication.java
+
 ### Set up eclipse project
 
 Import this project as Maven-Project and add the folder "src/test/resources" to the classpath for the run configuration.
@@ -60,7 +67,6 @@ You need an external elasticsearch node you want to store your indexed documents
 
 - elastic.remoteHosts
 - cluster.name (elasticsearch.properties)
-
 
 
 ### Debug under eclipse
