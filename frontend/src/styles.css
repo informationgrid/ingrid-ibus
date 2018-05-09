@@ -1,7 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body, app-root {
+html, body {
   height: 100%;
+}
+
+app-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .container {

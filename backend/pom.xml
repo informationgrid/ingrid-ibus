@@ -12,7 +12,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring.version>1.5.8.RELEASE</spring.version>
+        <spring.version>2.0.1.RELEASE</spring.version>
+        <jackson.version>2.9.5</jackson.version>
         <java.version>1.8</java.version>
     </properties>
     <dependencyManagement>
@@ -30,11 +31,31 @@
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>5.5.1</version>
+                <version>5.6.3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
         <!-- InGrid Dependencies -->
         <dependency>
             <groupId>de.ingrid</groupId>
@@ -50,7 +71,7 @@
         <dependency>
             <groupId>de.ingrid</groupId>
             <artifactId>ingrid-utils</artifactId>
-            <version>4.0.1</version>
+            <version>4.2.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
@@ -109,7 +130,7 @@
         <dependency>
             <groupId>de.ingrid</groupId>
             <artifactId>ingrid-codelist-service</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+            <version>4.4.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
@@ -129,7 +150,7 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
-            <version>5.5.1</version>
+            <version>5.6.3</version>
         </dependency>
         <!-- Spring Boot Dependencies -->
         <dependency>

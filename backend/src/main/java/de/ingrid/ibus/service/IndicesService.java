@@ -90,8 +90,7 @@ public class IndicesService {
     @Value("${index.prefix.filter:}")
     private String indexPrefixFilter;
 
-    public IndicesService() throws IOException {
-    }
+    public IndicesService() {}
     
     @PostConstruct
     public void init() {
@@ -204,12 +203,12 @@ public class IndicesService {
         GetMappingsResponse response = rb.execute().actionGet();
 
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = response.mappings();
-        Map<String, Object> indexMapping = new HashMap<String, Object>();
+        Map<String, Object> indexMapping = new HashMap<>();
         mappings.get( indexName ).forEach( (type -> {
             try {
                 indexMapping.put( type.key, type.value.getSourceAsMap() );
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                log.error("Error during setting of mapping in elasticsearch index", e);
             }
         }) );
 
@@ -223,7 +222,7 @@ public class IndicesService {
      * @param index
      */
     private void addTypes(String indexName, Index index) {
-        List<String> types = new ArrayList<String>();
+        List<String> types = new ArrayList<>();
 
         GetMappingsResponse response;
         try {
@@ -234,7 +233,7 @@ public class IndicesService {
                     types.add( type.key );
             } );
 
-            List<IndexType> indexTypes = new ArrayList<IndexType>();
+            List<IndexType> indexTypes = new ArrayList<>();
             for (String type : types) {
                 IndexType newIndexType = new IndexType();
                 newIndexType.setName( type );
@@ -378,7 +377,7 @@ public class IndicesService {
         // indexState.setMessage( message );
         indexState.setRunning( state.get( "running" ).equals( true ) );
         if (numProcessed != null) {
-            indexState.setNumProcessed( Integer.valueOf( numProcessed ) );
+            indexState.setNumProcessed(numProcessed);
         }
         if (totalDocs != null) {
             indexState.setTotalDocs( Integer.valueOf( state.get( "totalDocs" ).toString() ) );
@@ -519,8 +518,7 @@ public class IndicesService {
                 .setFetchSource( "*", null )
                 .get();
 
-        IngridHitDetail hit = mapHitDetail( response );
-        return hit;
+        return mapHitDetail( response );
     }
 
     /**
