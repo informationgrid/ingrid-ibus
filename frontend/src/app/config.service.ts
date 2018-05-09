@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 export class Configuration {
-    constructor(public backendUrl: string) { }
+    constructor(
+      public backendUrl: string,
+      public useIndices: boolean) { }
 }
 
 @Injectable()

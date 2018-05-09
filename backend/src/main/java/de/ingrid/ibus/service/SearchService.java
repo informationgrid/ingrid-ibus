@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -98,156 +99,31 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             e.printStackTrace();
             return null;
         }
-
-
-        // IngridHits hits = null;
-        // List<IngridHit> ingridHits = new ArrayList<IngridHit>();
-        //
-        // BoolQueryBuilder esQuery = queryConverter.convert( query );
-        //
-        //
-        // SearchHits dHits = indexService.search( esQuery );
-        //
-        // dHits.forEach( hit -> {
-        //
-        // IngridHit ingridHit = new IngridHit();
-        //
-        //
-        // String title = (String) hit.getSource().get( "title" );
-        // String summary = (String) hit.getSource().get( "summary" );
-        // ingridHit.put( "esIndex", hit.getIndex() );
-        // ingridHit.put( "esType", hit.getType() );
-        // ingridHit.put( "dataSourceName", hit.getSource().get( "dataSourceName" ) );
-        // ingridHit.setDataSourceId( 0 );
-        // ingridHit.setDocumentId( hit.getId() );
-        // ingridHit.setPlugId( (String) hit.getSource().get( "iPlugId" ) );
-        //
-        //
-        // ingridHit.setScore( hit.getScore() );
-        // IngridHitDetail detail = new IngridHitDetail( ingridHit, title, summary );
-        //
-        // detail.setDocumentId( hit.getId() );
-        //
-        // // TODO: get class name from hit, which is used to display the detail in portal
-        // // use different method, like the type how document should be displayed!?
-        // detail.setIplugClassName( "igesearchplug" );
-        //
-        // // addPlugDescriptionInformations( detail, requestedFields );
-        //
-        // prepareDetail( detail, hit, requestedFields );
-        //
-        // ingridHit.setHitDetail( detail );
-        // ingridHits.add( ingridHit );
-        //
-        // });
-        //
-        // hits = new IngridHits( (int)dHits.getTotalHits(), ingridHits.toArray( new IngridHit[0] ) );
-        //
-        // return hits;
     }
     
-//    private void prepareDetail(IngridHitDetail detail, SearchHit dHit, String[] requestedFields) {
-//
-//        if (requestedFields != null) {
-//            for (String field : requestedFields) {
-//                if (dHit.getField( field ) != null) {
-//                    if (dHit.getField( field ).getValue() instanceof String) {
-//                        detail.put( field, new String[] { dHit.getField( field ).getValue() } );
-//                    } else {
-//                        detail.put( field, dHit.getField( field ).getValue() );
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     @Override
     public IngridHits search(IngridQuery query, int start, int length) throws Exception {
         
         elasticConfig.communicationProxyUrl = CENTRAL_INDEX_ID;
         elasticConfig.partner = new String[] { "???" };
         elasticConfig.provider = new String[] { "???" };
-        elasticConfig.activeIndices = indexService.getActiveIndices();
-        
-        return indexUtils.search( query, start, length );
-        
-//        IngridHits hits = null;
-//        List<IngridHit> ingridHits = new ArrayList<IngridHit>();
-//        
-//        BoolQueryBuilder esQuery = queryConverter.convert( query );
-//        
-//        
-//        SearchHits dHits = indexService.search( esQuery );
-//        
-//        dHits.forEach( hit -> {
-//            
-//            IngridHit ingridHit = new IngridHit();
-//            
-//            
-//            String title = (String) hit.getSource().get( "title" );
-//            String summary = (String) hit.getSource().get( "summary" );
-//            ingridHit.put( "esIndex", hit.getIndex() );
-//            ingridHit.put( "esType", hit.getType() );
-//            ingridHit.put( "dataSourceName", hit.getSource().get( "dataSourceName" ) );
-//            ingridHit.setDataSourceId( 0 );
-//            ingridHit.setDocumentId( hit.getId() );
-//            // ingridHit.setPlugId( (String) hit.getSource().get( "iPlugId" ) );
-//            ingridHit.setPlugId( CENTRAL_INDEX_ID );
-//            
-//            
-//            ingridHit.setScore( hit.getScore() );
-//            IngridHitDetail detail = new IngridHitDetail( ingridHit, title, summary );
-//            
-//            detail.setDocumentId( hit.getId() );
-//            
-//            // TODO: get class name from hit, which is used to display the detail in portal
-//            // use different method, like the type how document should be displayed!?
-//            detail.setIplugClassName( "igesearchplug" );
-//            
-//            ingridHit.setHitDetail( detail );
-//            ingridHits.add( ingridHit );
-//            
-//        });
-//        
-//        hits = new IngridHits( (int)dHits.getTotalHits(), ingridHits.toArray( new IngridHit[0] ) );
-//        
-//        return hits;
+
+        try {
+            elasticConfig.activeIndices = indexService.getActiveIndices();
+            return indexUtils.search( query, start, length );
+        } catch (NoNodeAvailableException ex) {
+            log.warn("No search on elasticsearch since not connected to node");
+            return new IngridHits( 0, new IngridHit[0] );
+        }
     }
 
     @Override
     public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) throws Exception {
-//        BoolQueryBuilder esQuery = queryConverter.convert( query );
-//        
-//        
-//        String indexId = (String) hit.get("esIndex");
-//        String hitId = hit.getDocumentId();
-//        SearchResult result = indexService.getHitDetail( indexId, hitId );
-//        
-//        result.ge
-//        
-//        String title = (String) hit.getSource().get( "title" );
-//        String summary = (String) hit.getSource().get( "summary" );
-//        IngridHitDetail detail = new IngridHitDetail( hit, title, summary );
-//        
-//        detail.setDocumentId( hit.getId() );
-//        
-//        // TODO: get class name from hit, which is used to display the detail in portal
-//        // use different method, like the type how document should be displayed!?
-//        detail.setIplugClassName( "igesearchplug" );
-//        
-//        ingridHit.setHitDetail( detail );
         return indexUtils.getDetail( hit, query, requestedFields );
     }
 
     @Override
     public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
-//        IngridHitDetail[] details = new IngridHitDetail[hits.length];
-//        int i = 0;
-//        for (IngridHit hit : hits) {
-//            details[i++] = getDetail(hit, query, requestedFields);
-//        }
-//        return details;
-        
         return indexUtils.getDetails( hits, query, requestedFields );
     }
 

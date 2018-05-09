@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import {startWith, takeWhile} from 'rxjs/operators';
 
 @Component({
   selector: 'app-connected-iplugs',
@@ -28,8 +29,10 @@ export class ConnectedIplugsComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.observer = IntervalObservable.create(10000)
-      .startWith(0)
-      .takeWhile( _ => this.autoRefresh )
+      .pipe(
+        startWith(0),
+        takeWhile(_ => this.autoRefresh )
+      )
       .subscribe( () => {
         this.iPlugService.getConnectedIPlugs()
           .subscribe(

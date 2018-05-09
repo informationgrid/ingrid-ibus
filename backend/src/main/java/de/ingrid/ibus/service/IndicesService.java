@@ -24,6 +24,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
@@ -95,7 +96,11 @@ public class IndicesService {
     @PostConstruct
     public void init() {
         client = esBean.getClient();
-        prepareIndices();
+        try {
+            prepareIndices();
+        } catch (NoNodeAvailableException ex) {
+            log.warn("Could not connect to elasticsearch node");
+        }
     }
 
 
@@ -270,9 +275,8 @@ public class IndicesService {
      * Request data from special collection in Elasticsearch, where additional metadata is stored about an index and the corresponding
      * iPlug, that delivers the data of the index.
      * 
+     * @param indexName
      * @param type
-     * 
-     * @param key
      * @param index
      */
     @SuppressWarnings("unchecked")
