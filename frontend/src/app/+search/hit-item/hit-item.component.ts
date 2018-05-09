@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'hit-item',
   templateUrl: './hit-item.component.html',
-  styleUrls: ['./hit-item.component.css']
+  styleUrls: ['./hit-item.component.scss']
 })
 export class HitItemComponent implements OnInit {
 

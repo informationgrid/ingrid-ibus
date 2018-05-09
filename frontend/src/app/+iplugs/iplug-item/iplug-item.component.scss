@@ -17,9 +17,9 @@
 .bookmark {
   margin-left: 10px;
   color: #17a2b8;
-}
 
-.bookmark:hover {
-  color: #138496;
-  text-decoration: none;
+  &:hover {
+    color: #138496;
+    text-decoration: none;
+  }
 }

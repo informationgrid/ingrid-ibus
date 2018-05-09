@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 @Component({
   selector: 'ingrid-error',
   templateUrl: './error.component.html',
-  styleUrls: ['./error.component.css'],
+  styleUrls: ['./error.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ErrorComponent implements OnInit {

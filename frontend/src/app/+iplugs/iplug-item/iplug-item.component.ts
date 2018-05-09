@@ -4,7 +4,7 @@ import { IPlugService, PlugDescription } from '../iplug-service.service';
 @Component({
   selector: 'iplug-item',
   templateUrl: './iplug-item.component.html',
-  styleUrls: ['../../+indices/index-item/index-item.component.css', './iplug-item.component.css']
+  styleUrls: ['../../+indices/index-item/index-item.component.scss', './iplug-item.component.scss']
 })
 export class IPlugItemComponent implements OnInit {
 

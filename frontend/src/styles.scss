@@ -31,10 +31,10 @@ dt {
 }
 .clickable:hover {
   background-color: #f8f8f8;
-}
 
-.glyphicon.clickable:hover {
-  background-color: inherit;
+  &.glyphicon {
+    background-color: inherit;
+  }
 }
 
 .flex-row {

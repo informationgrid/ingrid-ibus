@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 @Component({
   selector: 'app-list-indices',
   templateUrl: './list-indices.component.html',
-  styleUrls: ['./list-indices.component.css']
+  styleUrls: ['./list-indices.component.scss']
 })
 export class ListIndicesComponent implements OnInit, OnDestroy {
 

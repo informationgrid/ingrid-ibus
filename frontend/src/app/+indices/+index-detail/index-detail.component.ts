@@ -19,7 +19,7 @@ export class IndexDetail {
 @Component({
   selector: 'index-detail',
   templateUrl: './index-detail.component.html',
-  styleUrls: ['./index-detail.component.css']
+  styleUrls: ['./index-detail.component.scss']
 })
 export class IndexDetailComponent implements OnInit {
 

@@ -6,7 +6,7 @@ import { SearchHit } from '../SearchHit';
 @Component({
   selector: 'search-detail',
   templateUrl: './search-detail.component.html',
-  styleUrls: ['./search-detail.component.css']
+  styleUrls: ['./search-detail.component.scss']
 })
 export class SearchDetailComponent implements OnInit {
 

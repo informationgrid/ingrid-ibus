@@ -8,7 +8,7 @@ import {startWith, takeWhile} from 'rxjs/operators';
 @Component({
   selector: 'app-connected-iplugs',
   templateUrl: './connected-iplugs.component.html',
-  styleUrls: ['../../+indices/index-item/index-item.component.css', './connected-iplugs.component.css']
+  styleUrls: ['./connected-iplugs.component.scss']
 })
 export class ConnectedIplugsComponent implements OnInit, OnDestroy {
 

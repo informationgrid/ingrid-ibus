@@ -23,7 +23,7 @@ export class IndexItem {
 @Component({
   selector: 'index-item',
   templateUrl: './index-item.component.html',
-  styleUrls: ['./index-item.component.css']
+  styleUrls: ['./index-item.component.scss']
 })
 export class IndexItemComponent implements OnInit {
 
