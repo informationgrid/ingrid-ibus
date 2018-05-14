@@ -2,6 +2,8 @@ package de.ingrid.ibus.web;
 
 import java.util.List;
 
+import de.ingrid.ibus.comm.Bus;
+import de.ingrid.ibus.comm.debug.DebugQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,12 +134,16 @@ public class IndicesController {
     public ResponseEntity<IngridHits> search(@RequestParam String query) {
         try {
             IngridQuery iQuery = QueryStringParser.parse( query + " ranking:score" );
-            
+
+            // enable debugging of query
+            DebugQuery debugQ = Bus.getInstance().getDebugInfo();
+            debugQ.setActiveAndReset();
+
             IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
+
+            searchAndDetail.put("debug", debugQ.getEvents());
+
             return ResponseEntity.ok(searchAndDetail);
-            
-            //List<SearchResult> result = this.indicesService.search(query);
-            //return ResponseEntity.ok(result);
         } catch (Exception ex) {
             log.error(ex);
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IndexService } from '../../+indices/index.service';
 import { SearchHit } from '../SearchHit';
-import { SearchHits } from '../SearchHits';
+import {DebugEvent, SearchHits} from '../SearchHits';
 
 @Component({
   selector: 'app-search',
@@ -14,6 +14,8 @@ export class SearchComponent implements OnInit {
   totalDocs: number;
 
   error: string = null;
+  showDebug = false;
+  debugInfo: DebugEvent[];
 
   constructor(private indexService: IndexService) {
   }
@@ -34,6 +36,7 @@ export class SearchComponent implements OnInit {
   private prepareHits(hits: SearchHits) {
     this.hits = hits.hits;
     this.totalDocs = hits.length;
+    this.debugInfo = hits.debug;
   }
 
 }

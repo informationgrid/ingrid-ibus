@@ -30,7 +30,7 @@ import de.ingrid.utils.query.IngridQuery;
 public class DebugQuery {
     private IngridQuery query;
     
-    private List<DebugEvent> events = new ArrayList<DebugEvent>();
+    private List<DebugEvent> events = new ArrayList<>();
 
     private boolean isActive = false;
 

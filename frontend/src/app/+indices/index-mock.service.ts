@@ -1,6 +1,5 @@
 import { IndexDetail } from './+index-detail/index-detail.component';
 import { IndexItem } from './index-item/index-item.component';
-import 'rxjs/add/operator/map';
 import { SearchHits } from '../+search/SearchHits';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -64,7 +63,8 @@ export class IndexService {
     return of(
       {
         length: 0,
-        hits: []
+        hits: [],
+        debug: []
       }
     )
   }

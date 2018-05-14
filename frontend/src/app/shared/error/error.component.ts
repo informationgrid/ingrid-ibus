@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'ingrid-error',
@@ -8,7 +8,21 @@ import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core
 })
 export class ErrorComponent implements OnInit {
 
-  @Input() msg: string | any;
+  private _msg: any;
+
+  @Input()
+  set msg(message: any) {
+    if (message && message.url && message.url.indexOf('/login') !== -1) {
+      this._msg = 'Sie sind ausgeloggt. Weiterleitung zur Login-Seite in 5 Sekunden';
+      setTimeout( () => window.location.replace('./login'), 5000);
+    } else {
+      this._msg = message;
+    }
+  }
+
+  get msg(): any {
+    return this._msg;
+  }
 
   constructor() {
   }

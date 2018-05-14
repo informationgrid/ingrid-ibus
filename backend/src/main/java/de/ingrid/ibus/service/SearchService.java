@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import de.ingrid.ibus.comm.debug.DebugQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
@@ -87,7 +88,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
 
     public IngridHits searchAndDetail(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds, String[] requestedFields) {
         try {
-            
+
             @SuppressWarnings("deprecation")
             IngridHits iPlugsResult = Bus.getInstance().searchAndDetail( query, 10, 0, 0, 30000, null );
             IngridHit[] iPlugHits = iPlugsResult.getHits();
