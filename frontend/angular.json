@@ -28,6 +28,12 @@
             "scripts": []
           },
           "configurations": {
+            "hmr": {
+              "fileReplacements": [{
+                "src": "src/environments/environment.ts",
+                "replaceWith": "src/environments/environment.hmr.ts"
+              }]
+            },
             "production": {
               "optimization": true,
               "outputHashing": "all",
@@ -55,6 +61,10 @@
           "configurations": {
             "production": {
               "browserTarget": "frontend:build:production"
+            },
+            "hmr": {
+              "hmr": true,
+              "browserTarget": "frontend:build:hmr"
             }
           }
         },

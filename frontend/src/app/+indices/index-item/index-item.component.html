@@ -8,8 +8,8 @@
     <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
       <button *ngIf="data.isConnected" class="dropdown-item"(click)="index()">Indexieren</button>
       <button class="dropdown-item" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
-         [title]="'Wirklich löschen?'"
-         [message]="'Wollen Sie den Index wirklich löschen?'"
+         [popoverTitle]="'Wirklich löschen?'"
+         [popoverMessage]="'Wollen Sie den Index wirklich löschen?'"
          placement="left"
          confirmText="Löschen"
          cancelText="Abbrechen"
