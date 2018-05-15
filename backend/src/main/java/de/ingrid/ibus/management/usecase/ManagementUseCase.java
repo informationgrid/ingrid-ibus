@@ -48,6 +48,6 @@ public interface ManagementUseCase {
      *            The plugId of the management iplug.
      * @return The hits according toi the query.
      */
-    public IngridHit[] execute(IngridQuery query, int start, int length, String plugId);
+    IngridHit[] execute(IngridQuery query, int start, int length, String plugId);
 
 }

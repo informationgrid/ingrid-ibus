@@ -450,7 +450,7 @@ public class Bus extends Thread implements IBus {
                 orderedHits.addAll( Arrays.asList( hits ) );
             } else if (addIPlugsWithNoResults) {
                 // add dummy hit !
-                IngridHit dummyHit = new IngridHit( hitContainer.getPlugId(), -1, -1, 0.0f );
+                IngridHit dummyHit = new IngridHit( hitContainer.getPlugId(), "-1", -1, 0.0f );
                 dummyHit.setDummyHit( true );
                 orderedHits.add( dummyHit );
                 if (fLogger.isDebugEnabled()) {
@@ -681,7 +681,7 @@ public class Bus extends Thread implements IBus {
                             if (fLogger.isErrorEnabled()) {
                                 fLogger.error( plugId + ": responded details that are null (set a pseudo responseDetail" );
                             }
-                            responseDetails[i] = new IngridHitDetail( plugId, random.nextInt(), random.nextInt(), 0.0f, "", "" );
+                            responseDetails[i] = new IngridHitDetail( plugId, String.valueOf(random.nextInt()), random.nextInt(), 0.0f, "", "" );
                         }
                         responseDetails[i].put( IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time) );
                     }

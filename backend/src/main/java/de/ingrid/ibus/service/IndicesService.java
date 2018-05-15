@@ -1,20 +1,14 @@
 package de.ingrid.ibus.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
+import com.fasterxml.jackson.databind.util.StdDateFormat;
+import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
+import de.ingrid.elasticsearch.IndexInfo;
+import de.ingrid.elasticsearch.IndexManager;
+import de.ingrid.elasticsearch.QueryBuilderService;
+import de.ingrid.ibus.model.*;
+import de.ingrid.utils.IngridHitDetail;
+import de.ingrid.utils.PlugDescription;
+import de.ingrid.utils.xml.XMLSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
@@ -39,20 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
-
-import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
-import de.ingrid.elasticsearch.IndexInfo;
-import de.ingrid.elasticsearch.IndexManager;
-import de.ingrid.elasticsearch.QueryBuilderService;
-import de.ingrid.ibus.model.ElasticsearchInfo;
-import de.ingrid.ibus.model.Index;
-import de.ingrid.ibus.model.IndexState;
-import de.ingrid.ibus.model.IndexType;
-import de.ingrid.ibus.model.IndexTypeDetail;
-import de.ingrid.utils.IngridHitDetail;
-import de.ingrid.utils.PlugDescription;
-import de.ingrid.utils.xml.XMLSerializer;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 
 @Service
 public class IndicesService {
@@ -114,7 +101,7 @@ public class IndicesService {
      */
     public ElasticsearchInfo getElasticsearchInfo() {
         ElasticsearchInfo info = new ElasticsearchInfo();
-        List<Index> indices = new ArrayList<Index>();
+        List<Index> indices = new ArrayList<>();
 
         try {
             ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().getIndices();
@@ -332,11 +319,11 @@ public class IndicesService {
                 Index indexItem = indices.stream()
                         .filter( index -> index.getName().equals( indexName ) )
                         .findFirst()
-                        .get();
+                        .orElse(null);
 
                 if (indexItem != null) {
                     String indexType = (String) hit.getSource().get( LINKED_TYPE );
-                    ISO8601DateFormat format = new ISO8601DateFormat();
+                    StdDateFormat format = new StdDateFormat();
                     Date lastIndexed = format.parse( (String) hit.getSource().get( INDEX_FIELD_LAST_INDEXED ) );
 
                     indexItem.setId( hit.getId() );
@@ -446,10 +433,10 @@ public class IndicesService {
             return new SearchHits( new SearchHit[0], 0, 0 );
         }
 
-        String[] justIndexNames = Stream.of( indices )
-                .map( indexWithType -> indexWithType.getToIndex() )
-                .collect( Collectors.toSet() )
-                .toArray( new String[0] );
+        String[] justIndexNames = Stream.of(indices)
+                .map(IndexInfo::getToIndex)
+                .distinct()
+                .toArray(String[]::new);
 
         BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
 
@@ -469,7 +456,7 @@ public class IndicesService {
      * @return
      */
     public IndexInfo[] getActiveIndices() {
-        List<IndexInfo> result = new ArrayList<IndexInfo>();
+        List<IndexInfo> result = new ArrayList<>();
 
         // get active components
         Set<String> activeComponents = settingsService.getActiveComponentIds();

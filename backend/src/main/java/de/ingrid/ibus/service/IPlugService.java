@@ -26,8 +26,7 @@ public class IPlugService {
     }
     
     public PlugDescription[] getConnectedIPlugs() {
-        PlugDescription[] allIPlugs = registry.getAllIPlugs();
-        return allIPlugs;
+        return registry.getAllIPlugs();
     }
     
     public boolean index(String plugId) {

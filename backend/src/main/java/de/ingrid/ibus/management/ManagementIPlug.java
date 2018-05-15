@@ -101,10 +101,6 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
         super(30000, null, null, null, null);
     };
     
-    @PostConstruct
-    public void init() {
-    }
-    
     /**
      * @see de.ingrid.utils.IPlug#configure(de.ingrid.utils.PlugDescription)
      */

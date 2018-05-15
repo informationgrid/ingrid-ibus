@@ -64,7 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CodeListService codelistService() {
         CodeListService codeListService = new CodeListService();
-        List<ICodeListPersistency> persistencies = new ArrayList<ICodeListPersistency>();
+        List<ICodeListPersistency> persistencies = new ArrayList<>();
         XmlCodeListPersistency<?> xmlPersistency = new XmlCodeListPersistency<>();
         xmlPersistency.setPathToXml( "data/codelists" );
         persistencies.add( xmlPersistency );

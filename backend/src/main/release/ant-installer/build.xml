@@ -97,11 +97,15 @@
 	<target name="startscript" description="Set ibus properties.">
 		<echo>Schreibe Konfiguration in application-default.properties</echo>
         <touch file="${installDir}/conf/application-default.properties" />
-        <property file="${installDir}/conf/application-default.properties"/>
-        <property name="server.port"            value="$${SERVER_PORT:${adminPort}}" />
-        <property name="security.user.name"     value="$${ADMIN_USERNAME:admin}}" />
-        <property name="security.user.password" value="$${ADMIN_PASSWORD:${adminPasswort}}" />
-        <property name="ibus.url"               value="$${IBUS_ID:${serverName}}" />
+        <propertyfile file="${installDir}/conf/application-default.properties">
+            <entry key="server.port"                    value="$${SERVER_PORT:${adminPort}}" />
+            <entry key="spring.security.user.name"      value="$${ADMIN_USERNAME:admin}}" />
+            <entry key="spring.security.user.password"  value="$${ADMIN_PASSWORD:${adminPasswort}}" />
+            <entry key="ibus.url"                       value="$${IBUS_ID:${serverName}}" />
+            <entry key="codelistrepo.url"               value="${clUrl}" />
+            <entry key="codelistrepo.username"          value="${clUsername}" />
+            <entry key="codelistrepo.password"          value="${clPassword}" />
+        </propertyfile>
 	</target>
 	
 	<target name="startComponent">

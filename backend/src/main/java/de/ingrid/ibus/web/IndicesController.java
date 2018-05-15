@@ -133,7 +133,11 @@ public class IndicesController {
     @ResponseBody
     public ResponseEntity<IngridHits> search(@RequestParam String query) {
         try {
-            IngridQuery iQuery = QueryStringParser.parse( query + " ranking:score" );
+            // for convenience we add ranking:score mainly needed to get any results
+            if (query.indexOf("ranking:") == -1) {
+                query += " ranking:score";
+            }
+            IngridQuery iQuery = QueryStringParser.parse( query );
 
             // enable debugging of query
             DebugQuery debugQ = Bus.getInstance().getDebugInfo();

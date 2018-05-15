@@ -25,39 +25,9 @@
  */
 package de.ingrid.ibus.comm;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.ibus.comm.net.IPlugProxyFactoryImpl;
-import de.ingrid.ibus.comm.processor.AddressPreProcessor;
-import de.ingrid.ibus.comm.processor.BusUrlPreProcessor;
-import de.ingrid.ibus.comm.processor.LimitedAttributesPreProcessor;
-import de.ingrid.ibus.comm.processor.QueryModePreProcessor;
-import de.ingrid.ibus.comm.processor.QueryModifierPreProcessor;
-import de.ingrid.ibus.comm.processor.UdkMetaclassPreProcessor;
+import de.ingrid.ibus.comm.processor.*;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.IBus;
 import de.ingrid.utils.PlugDescription;
@@ -65,8 +35,20 @@ import de.ingrid.utils.metadata.IMetadataInjector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.metadata.MetadataInjectorFactory;
 import net.weta.components.communication.ICommunication;
+import net.weta.components.communication.configuration.ServerConfiguration;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
 import net.weta.components.communication.tcp.StartCommunication;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * The server that starts a bus and its admin web gui.
@@ -81,46 +63,49 @@ public class BusServer {
     /**
      * IBUS SETTINGS
      */
-    @Value("${ibus.descriptor:conf/communication.xml}")
-    private String iBusDescriptor;
-
     @Value("${ibus.url}")
     private String iBusUrl;
 
     @Value("${ibus.port:9900}")
-    private String iBusPort;
+    private int iBusPort;
 
     @Value("${ibus.timeout:10}")
-    private String iBusTimeout;
+    private int iBusTimeout;
 
     @Value("${ibus.maximumSize:10485760}")
-    private String iBusMaximumSize;
+    private int iBusMaximumSize;
 
     @Value("${ibus.threadCount:100}")
-    private String iBusThreadCount;
+    private int iBusThreadCount;
 
     @Value("${ibus.handleTimeout:60}")
-    private String iBusHandleTimeout;
+    private int iBusHandleTimeout;
 
     @Value("${ibus.queueSize:2000}")
-    private String iBusQueueSize;
+    private int iBusQueueSize;
 
     /**
      * 
      * @throws Exception
      */
-    public BusServer() throws Exception {}
+    public BusServer() {}
 
     @PostConstruct
     public void postConstruct() throws Exception {
 
-        ICommunication communication = null;
+        ICommunication communication;
 
         try {
-            writeCommunication();
+            ServerConfiguration serverConfiguration = new ServerConfiguration();
+            serverConfiguration.setName(iBusUrl);
+            serverConfiguration.setPort(iBusPort);
+            serverConfiguration.setSocketTimeout(iBusTimeout);
+            serverConfiguration.setHandleTimeout(iBusHandleTimeout);
+            serverConfiguration.setMaxMessageSize(iBusMaximumSize);
+            serverConfiguration.setMessageThreadCount(iBusThreadCount);
+            serverConfiguration.setQueueSize(iBusQueueSize);
 
-            FileInputStream fileIS = new FileInputStream( iBusDescriptor );
-            communication = StartCommunication.create( fileIS );
+            communication = StartCommunication.create( serverConfiguration );
 
             communication.startup();
             communication.subscribeGroup( iBusUrl );
@@ -159,16 +144,16 @@ public class BusServer {
         } catch (Exception e) {
             log.error( "Problems on loading globalRanking.properties. Does it exist?" );
         }
-        HashMap<String, Float> globalRanking = new HashMap<String, Float>();
-        for (Iterator<?> iter = properties.keySet().iterator(); iter.hasNext();) {
-            String element = (String) iter.next();
+        HashMap<String, Float> globalRanking = new HashMap<>();
+        for (Object prop : properties.keySet()) {
+            String element = (String) prop;
             try {
-                Float value = new Float( (String) properties.get( element ) );
-                log.info( ("add boost for iplug: ".concat( element )).concat( " with value: " + value ) );
-                globalRanking.put( element, value );
+                Float value = new Float((String) properties.get(element));
+                log.info(("add boost for iplug: ".concat(element)).concat(" with value: " + value));
+                globalRanking.put(element, value);
             } catch (NumberFormatException e) {
-                log.error( "Cannot convert the value " + properties.get( element ) + " from element " + element
-                        + " to a Float." );
+                log.error("Cannot convert the value " + properties.get(element) + " from element " + element
+                        + " to a Float.");
             }
         }
         registry.setGlobalRanking( globalRanking );
@@ -179,63 +164,6 @@ public class BusServer {
         communication.getMessageQueue().getProcessorRegistry().addMessageHandler( ReflectMessageHandler.MESSAGE_TYPE,
                 messageHandler );
 
-    }
-
-    private void removeCommunicationFile() {
-        try {
-            Files.deleteIfExists( Paths.get( iBusDescriptor ) );
-        } catch (IOException e) {
-            log.error( "Could not delete communication.xml", e );
-        }
-        
-    }
-
-    private void writeCommunication() {
-        XMLStreamWriter writer = null;
-        try {
-
-            XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
-            writer = outputFactory.createXMLStreamWriter( new OutputStreamWriter(new FileOutputStream( iBusDescriptor ), Charset.forName( "utf-8" ) ) );
-            writer.writeStartDocument( "utf-8", "1.0" );
-
-            writer.writeStartElement( "communication" );
-            writer.writeAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-            writer.writeAttribute( "xsi:noNamespaceSchemaLocation", "communication.xsd" );
-
-            writer.writeStartElement( "server" );
-            writer.writeAttribute( "name", iBusUrl );
-
-            writer.writeStartElement( "socket" );
-            writer.writeAttribute( "port", iBusPort );
-            writer.writeAttribute( "timeout", iBusTimeout );
-            writer.writeEndElement();
-            writer.writeStartElement( "messages" );
-            writer.writeAttribute( "maximumSize", iBusMaximumSize );
-            writer.writeAttribute( "threadCount", iBusThreadCount );
-            writer.writeEndElement();
-
-            writer.writeEndElement();
-
-            writer.writeStartElement( "messages" );
-            writer.writeAttribute( "handleTimeout", iBusHandleTimeout );
-            writer.writeAttribute( "queueSize", iBusQueueSize );
-            writer.writeEndElement();
-
-            writer.writeEndElement();
-            writer.writeEndDocument();
-            writer.flush();
-            writer.close();
-
-        } catch (XMLStreamException | FileNotFoundException e) {
-            log.error( "Error writing communication.xml", e );
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (XMLStreamException e1) {
-                    log.error( "Writer could not be closed", e1 );
-                }
-            }
-        }
     }
 
     @PreDestroy

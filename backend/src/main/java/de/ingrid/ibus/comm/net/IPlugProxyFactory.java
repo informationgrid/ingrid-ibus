@@ -43,6 +43,6 @@ public interface IPlugProxyFactory {
      * @return The created IPlug proxy instance.
      * @throws Exception If the plug cannot be created.
      */
-    public IPlug createPlugProxy(PlugDescription plug, String busurl) throws Exception;
+    IPlug createPlugProxy(PlugDescription plug, String busurl) throws Exception;
 
 }
