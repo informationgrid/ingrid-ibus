@@ -1,7 +1,7 @@
 <div class="container">
 
   <div class="search input-group">
-    <input #query (keyup.enter)="search(query.value)" class="form-control" placeholder="Suche nach ...">
+    <input #query (keyup.enter)="search(query.value)" class="form-control" name="ibus_search_query" placeholder="Suche nach ...">
     <span class="input-group-btn">
         <button class="btn btn-info" type="button" (click)="search(query.value)">Suchen</button>
       <div class="form-check">

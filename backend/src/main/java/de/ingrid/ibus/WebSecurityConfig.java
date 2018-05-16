@@ -64,17 +64,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CodeListService codelistService() {
         CodeListService codeListService = new CodeListService();
+        codeListService.setComm(codelistCommunication());
+
         List<ICodeListPersistency> persistencies = new ArrayList<>();
         XmlCodeListPersistency<?> xmlPersistency = new XmlCodeListPersistency<>();
         xmlPersistency.setPathToXml( "data/codelists" );
         persistencies.add( xmlPersistency );
-        codeListService.setPersistencies( persistencies  );
+        codeListService.setPersistencies(persistencies);
+
         codeListService.setDefaultPersistency( 0 );
         return codeListService;
     }
     
-    @Bean
-    public ICodeListCommunication codelistCommunication() {
+    private ICodeListCommunication codelistCommunication() {
         HttpCLCommunication comm = new HttpCLCommunication();
         comm.setRequestUrl( codelistUrl );
         comm.setUsername( codelistUsername );

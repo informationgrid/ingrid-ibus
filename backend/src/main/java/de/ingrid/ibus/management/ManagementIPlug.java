@@ -25,16 +25,6 @@
  */
 package de.ingrid.ibus.management;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.ingrid.codelists.CodeListService;
 import de.ingrid.codelists.model.CodeList;
 import de.ingrid.codelists.util.CodeListUtils;
@@ -44,14 +34,17 @@ import de.ingrid.ibus.management.usecase.ManagementGetProviderAsListUseCase;
 import de.ingrid.ibus.management.usecase.ManagementUseCase;
 import de.ingrid.ibus.management.utils.ManagementUtils;
 import de.ingrid.iplug.HeartBeatPlug;
-import de.ingrid.utils.IngridCall;
-import de.ingrid.utils.IngridDocument;
-import de.ingrid.utils.IngridHit;
-import de.ingrid.utils.IngridHitDetail;
-import de.ingrid.utils.IngridHits;
-import de.ingrid.utils.PlugDescription;
+import de.ingrid.utils.*;
 import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * TODO Describe your created type (class, etc.) here.
@@ -94,12 +87,19 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
     private static final int MANAGEMENT_GET_PARTNERS = 1;
 
     private static final int MANAGEMENT_GET_PROVIDERS_AS_LIST = 2;
-    
+
     private static final int MANAGEMENT_GET_CODELISTS_AS_LIST = 3;
 
     public ManagementIPlug() {
         super(30000, null, null, null, null);
     };
+
+    @PostConstruct
+    public void init() {
+        // during startup get all codelists from remote
+        Long lastModifiedTimestamp = this.codeListService.getLastModifiedTimestamp();
+        this.codeListService.updateFromServer(lastModifiedTimestamp);
+    }
     
     /**
      * @see de.ingrid.utils.IPlug#configure(de.ingrid.utils.PlugDescription)

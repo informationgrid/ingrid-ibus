@@ -51,7 +51,7 @@ public class ManagementGetPartnerUseCase implements ManagementUseCase {
     private CodeListService codelistService;
 
     /**
-     * @param codeListService
+     *
      * 
      */
     public ManagementGetPartnerUseCase(CodeListService codelistService) {
@@ -64,8 +64,8 @@ public class ManagementGetPartnerUseCase implements ManagementUseCase {
      */
     public IngridHit[] execute(IngridQuery query, int start, int length, String plugId) {
 
-        IngridHit[] result = null;
-        List<Map<String, Object>> partnerList = new ArrayList<Map<String, Object>>();
+        IngridHit[] result;
+        List<Map<String, Object>> partnerList = new ArrayList<>();
 
         CodeList partners = codelistService.getCodeList( "110" );
         CodeList providers = codelistService.getCodeList( "111" );
@@ -95,20 +95,20 @@ public class ManagementGetPartnerUseCase implements ManagementUseCase {
     }
 
     private Map<String, Object> mapPartner(CodeListEntry entry) {
-        Map<String, Object> partnerHash = new HashMap<String, Object>();
+        Map<String, Object> partnerHash = new HashMap<>();
         partnerHash.put( "partnerid", entry.getField( "ident" ) );
         partnerHash.put( "name", entry.getField( "name" ) );
         return partnerHash;
     }
 
     private List<Map<String, Object>> mapProviders(CodeList providers, String partnerId) {
-        List<Map<String, Object>> providerList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> providerList = new ArrayList<>();
         for (CodeListEntry provider : providers.getEntries()) {
             String providerId = provider.getField( "ident" );
 
             // get all providers that start with the partner ID
             if (providerId.startsWith( partnerId + "_" )) {
-                Map<String, Object> providerHash = new HashMap<String, Object>();
+                Map<String, Object> providerHash = new HashMap<>();
                 providerHash.put( "providerid", providerId );
                 providerHash.put( "name", provider.getField( "name" ) );
                 providerHash.put( "url", provider.getField( "url" ) );
