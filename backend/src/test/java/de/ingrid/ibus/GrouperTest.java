@@ -42,7 +42,7 @@ public class GrouperTest extends TestCase {
                 group = "provider";
             }
             hits[i].addGroupedField(group);
-            hits[i].setDocumentId(i);
+            hits[i].setDocumentId(String.valueOf(i));
         }
         int startHit = 1;
         int hitsPerPage = 10;

@@ -126,7 +126,7 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
      */
     public IngridHits search(IngridQuery query, int start, int length) throws Exception {
         if (log.isDebugEnabled()) {
-            log.debug("incomming query : " + query.toString());
+            log.debug("incoming query : " + query.toString());
         }
         if (ManagementUtils.containsManagementDataType(query.getDataTypes())) {
             int type = -1;

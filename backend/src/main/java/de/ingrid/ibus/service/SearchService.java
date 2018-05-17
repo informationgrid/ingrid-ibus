@@ -135,9 +135,13 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
         
         Map<String, Object> parameters = null;
         Object parameter = null;
-        
+
         switch (targetInfo.getMethod()) {
         case "createIndex":
+            if (log.isDebugEnabled()) {
+                log.debug("Create index: " + parameters.get( "name" ));
+            }
+
             parameters = (Map<String, Object>) targetInfo.getParameter();
             boolean success = indexManager.createIndex(
                     (String) parameters.get( "name" ),
@@ -156,6 +160,12 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             break;
             
         case "switchAlias":
+            if (log.isDebugEnabled()) {
+                log.debug("Switch alias: " + parameters.get( "aliasName" ) +
+                        " from: " + parameters.get( "oldIndex" ) +
+                        " to: " + parameters.get( "newIndex" ));
+            }
+
             parameters = (Map<String, Object>) targetInfo.getParameter();
             indexManager.switchAlias(
                     (String) parameters.get( "aliasName" ),
@@ -174,6 +184,11 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             break;
             
         case "update":
+            if (log.isDebugEnabled()) {
+                IndexInfo indexinfo = (IndexInfo) parameters.get("indexinfo");
+                log.debug("Update document: " + ((ElasticDocument)parameters.get( "doc" )).get(indexinfo.getDocIdField()));
+            }
+
             parameters = (Map<String, Object>) targetInfo.getParameter();
             indexManager.update(
                     (IndexInfo) parameters.get( "indexinfo" ),
@@ -193,6 +208,10 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             break;
             
         case "deleteIndex":
+            if (log.isDebugEnabled()) {
+                IndexInfo indexinfo = (IndexInfo) parameters.get("indexinfo");
+                log.debug("Delete index: " + parameter);
+            }
             parameter = targetInfo.getParameter();
             indexManager.deleteIndex( (String) parameter );
             break;

@@ -895,6 +895,11 @@ public class Bus extends Thread implements IBus {
     public IngridDocument call(IngridCall targetInfo) throws Exception {
         IPlug plugProxy = this.fRegistry.getPlugProxy(targetInfo.getTarget());
         IngridDocument call;
+
+        if (fLogger.isDebugEnabled()) {
+            fLogger.debug("Custom iBus call: " + targetInfo.getMethod());
+        }
+
         if (plugProxy != null) {
             call = plugProxy.call( targetInfo );
         } else {
