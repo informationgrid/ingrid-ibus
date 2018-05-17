@@ -278,7 +278,7 @@ public class IndicesService {
 
         long totalHits = response.getHits().totalHits;
         if (totalHits == 1) {
-            Map<String, Object> hitSource = response.getHits().getAt( 0 ).getSource();
+            Map<String, Object> hitSource = response.getHits().getAt( 0 ).getSourceAsMap();
 
             index.setId( (String) hitSource.get( INDEX_FIELD_INDEX_ID ) );
             index.setPlugId( (String) hitSource.get( INDEX_FIELD_IPLUG_ID ) );
@@ -312,8 +312,8 @@ public class IndicesService {
         SearchHit[] hits = response.getHits().getHits();
 
         for (SearchHit hit : hits) {
-            Map<String, Object> hitSource = hit.getSource();
-            String indexName = (String) hit.getSource().get( LINKED_INDEX );
+            Map<String, Object> hitSource = hit.getSourceAsMap();
+            String indexName = (String) hit.getSourceAsMap().get( LINKED_INDEX );
 
             try {
                 Index indexItem = indices.stream()
@@ -322,9 +322,9 @@ public class IndicesService {
                         .orElse(null);
 
                 if (indexItem != null) {
-                    String indexType = (String) hit.getSource().get( LINKED_TYPE );
+                    String indexType = (String) hit.getSourceAsMap().get( LINKED_TYPE );
                     StdDateFormat format = new StdDateFormat();
-                    Date lastIndexed = format.parse( (String) hit.getSource().get( INDEX_FIELD_LAST_INDEXED ) );
+                    Date lastIndexed = format.parse( (String) hit.getSourceAsMap().get( INDEX_FIELD_LAST_INDEXED ) );
 
                     indexItem.setId( hit.getId() );
                     indexItem.setLongName( (String) hitSource.get( INDEX_FIELD_IPLUG_NAME ) );
@@ -481,8 +481,8 @@ public class IndicesService {
 
         // collect all referenced indices
         response.getHits().forEach( hit -> {
-            String index = (String) hit.getSource().get( LINKED_INDEX );
-            String type = (String) hit.getSource().get( LINKED_TYPE );
+            String index = (String) hit.getSourceAsMap().get( LINKED_INDEX );
+            String type = (String) hit.getSourceAsMap().get( LINKED_TYPE );
             if (index != null && type != null) {
                 IndexInfo info = new IndexInfo();
                 info.setToIndex( index );
@@ -551,7 +551,7 @@ public class IndicesService {
         // get first plugid found
         // it's possible that there are more than one documents returned since for each type a document exists 
         if (hits.length > 0) {
-            return (String) hits[0].getSource().get( INDEX_FIELD_IPLUG_ID );
+            return (String) hits[0].getSourceAsMap().get( INDEX_FIELD_IPLUG_ID );
         } else {
             log.error( "There should be at least one corresponding component for the index: " + id );
         }
