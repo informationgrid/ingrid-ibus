@@ -138,11 +138,11 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
 
         switch (targetInfo.getMethod()) {
         case "createIndex":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
             if (log.isDebugEnabled()) {
                 log.debug("Create index: " + parameters.get( "name" ));
             }
 
-            parameters = (Map<String, Object>) targetInfo.getParameter();
             boolean success = indexManager.createIndex(
                     (String) parameters.get( "name" ),
                     "_default_",
@@ -160,13 +160,13 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             break;
             
         case "switchAlias":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
             if (log.isDebugEnabled()) {
                 log.debug("Switch alias: " + parameters.get( "aliasName" ) +
                         " from: " + parameters.get( "oldIndex" ) +
                         " to: " + parameters.get( "newIndex" ));
             }
 
-            parameters = (Map<String, Object>) targetInfo.getParameter();
             indexManager.switchAlias(
                     (String) parameters.get( "aliasName" ),
                     (String) parameters.get( "oldIndex" ),
@@ -184,12 +184,12 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             break;
             
         case "update":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
             if (log.isDebugEnabled()) {
                 IndexInfo indexinfo = (IndexInfo) parameters.get("indexinfo");
                 log.debug("Update document: " + ((ElasticDocument)parameters.get( "doc" )).get(indexinfo.getDocIdField()));
             }
 
-            parameters = (Map<String, Object>) targetInfo.getParameter();
             indexManager.update(
                     (IndexInfo) parameters.get( "indexinfo" ),
                     (ElasticDocument) parameters.get( "doc" ),
@@ -208,11 +208,11 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
             break;
             
         case "deleteIndex":
+            parameter = targetInfo.getParameter();
             if (log.isDebugEnabled()) {
-                IndexInfo indexinfo = (IndexInfo) parameters.get("indexinfo");
                 log.debug("Delete index: " + parameter);
             }
-            parameter = targetInfo.getParameter();
+
             indexManager.deleteIndex( (String) parameter );
             break;
             
