@@ -1,20 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { IplugItemComponent } from './iplug-item.component';
+import {IPlugItemComponent} from './iplug-item.component';
 
 describe('IplugItemComponent', () => {
-  let component: IplugItemComponent;
-  let fixture: ComponentFixture<IplugItemComponent>;
+  let component: IPlugItemComponent;
+  let fixture: ComponentFixture<IPlugItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ IplugItemComponent ]
+      declarations: [ IPlugItemComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(IplugItemComponent);
+    fixture = TestBed.createComponent(IPlugItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

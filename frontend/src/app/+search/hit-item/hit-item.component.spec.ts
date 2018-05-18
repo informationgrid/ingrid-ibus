@@ -30,6 +30,7 @@ describe('HitItemComponent', () => {
   it('should be created', () => {
     component.hit = {
       id: '123',
+      score: 1,
       indexId: 'a',
       title: 'myTitle',
       summary: 'mySummary',

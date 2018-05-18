@@ -14,7 +14,8 @@ let ITEM_EXAMPLE: IndexItem = {
   name: 'myId',
   longName: 'myName',
   lastIndexed: '2014-03-12T13:37:27+00:00',
-  types: []
+  types: [],
+  isConnected: true
 };
 
 describe('IndexItemComponent', () => {

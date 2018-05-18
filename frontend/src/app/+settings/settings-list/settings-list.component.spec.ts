@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IndexService as IndexServiceMock } from '../../+indices/index-mock.service';
 import { IndexService } from '../../+indices/index.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { HttpModule } from '@angular/http';
+import {HttpClientModule} from '@angular/common/http';
 
 describe('SettingsListComponent', () => {
   let component: SettingsListComponent;
@@ -17,7 +17,7 @@ describe('SettingsListComponent', () => {
       imports: [
         FormsModule,
         HttpClientTestingModule,
-        HttpModule
+        HttpClientModule
       ],
       providers: [
         { provide: IndexService, useClass: IndexServiceMock }
