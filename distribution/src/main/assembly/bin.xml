@@ -65,10 +65,6 @@
       <outputDirectory>${project.artifactId}-${project.version}/lib</outputDirectory>
       <unpack>false</unpack>
       <scope>runtime</scope>
-      <excludes>
-        <exclude>org.springframework.boot:spring-boot-devtools</exclude>
-        <exclude>de.ingrid:ingrid-ibus-frontend</exclude>
-      </excludes>
     </dependencySet>
   </dependencySets>
 </assembly>

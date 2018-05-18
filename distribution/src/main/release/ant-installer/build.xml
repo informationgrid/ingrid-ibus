@@ -26,7 +26,6 @@
     </description>
 	<!-- set global properties for this build -->
 	<property name="componentName" value="${project.artifactId}-${project.version}"/>
-	<property name="xml-communication" value="${installDir}/conf/communication.xml"/>
 	<property name="start-script" value="${installDir}/start.sh"/>
 	
 	<!-- THIS PORPERTIES ARE NECESSARY FOR UPDATES -->
@@ -58,15 +57,12 @@
 		<move toDir="${installDir}">
 			<fileset dir="${installDir}/${componentName}"/>
 		</move>
-        
-        <mkdir dir="${installDir}/webapp/admin/WEB-INF/work"/>
 	</target>
     
     <target name="extractUpdate">
         <unzip src="${antinstaller.jar}" dest=".">
             <patternset>
                 <include name="**/*.*"/>
-                <exclude name="${componentName}/conf/communication.xml" />
                 <exclude name="${componentName}/conf/activatedIplugs.properties" />
                 <exclude name="${componentName}/conf/globalRanking.properties" />
                 <exclude name="${componentName}/conf/querymodifier.properties" />
@@ -87,24 +83,19 @@
         </move>
 	</target>
 	
-	<target name="ibus" description="Set configuration correctly for the iBus.">
-		<echo>Schreibe iBus Konfiguration in communication.xml</echo>
-		<xmlproperty file="${xml-communication}" prefix="plugXML"/>
-		<replace file="${xml-communication}" token="${plugXML.communication.server(name)}" 	value="${serverName}"/>
-		<replace file="${xml-communication}" token="${plugXML.communication.server.socket(port)}" 	value="${serverPort}"/>		
-	</target>
-
-	<target name="startscript" description="Set ibus properties.">
+	<target name="startscript" description="Set configuration.">
 		<echo>Schreibe Konfiguration in application-default.properties</echo>
         <touch file="${installDir}/conf/application-default.properties" />
         <propertyfile file="${installDir}/conf/application-default.properties">
-            <entry key="server.port"                    value="$${SERVER_PORT:${adminPort}}" />
-            <entry key="spring.security.user.name"      value="$${ADMIN_USERNAME:admin}}" />
-            <entry key="spring.security.user.password"  value="$${ADMIN_PASSWORD:${adminPasswort}}" />
-            <entry key="ibus.url"                       value="$${IBUS_ID:${serverName}}" />
+            <entry key="server.port"                    value="${adminPort}" />
+            <entry key="spring.security.user.name"      value="admin" />
+            <entry key="spring.security.user.password"  value="${adminPasswort}" />
+            <entry key="ibus.url"                       value="${serverName}" />
+            <entry key="ibus.port"                      value="${serverPort}" />
             <entry key="codelistrepo.url"               value="${clUrl}" />
             <entry key="codelistrepo.username"          value="${clUsername}" />
             <entry key="codelistrepo.password"          value="${clPassword}" />
+            <entry key="elastic.remoteHosts"            value="${elasticRemoteHost}" />
         </propertyfile>
 	</target>
 	

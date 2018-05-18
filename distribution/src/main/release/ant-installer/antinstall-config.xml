@@ -56,8 +56,7 @@
             ifTarget    ="setInstallProperty"
             type		="input"
             name		="iBusOptions"
-            displayText	="Einstellungen fuer den iBus"
-            target		="ibus">
+            displayText	="Einstellungen fuer den iBus">
             
             <text property="serverName" displayText="Server ID:" defaultValue="/ingrid-group:ibus-'Ihr-Name'"/>
             <text property="serverPort" displayText="Server Port:" defaultValue="9900"/>
@@ -84,6 +83,14 @@
         <text property="clUrl" displayText="Codelist Repository Url:" defaultValue="http://localhost/codelist-repo/rest/getCodelists" />
         <text property="clUsername" displayText="Repository-Benutzername:" defaultValue="admin" />
         <text property="clPassword" displayText="Repository Passwort:" defaultValue="" />
+    </page>
+
+    <page
+            ifTarget    ="setInstallProperty"
+            type        ="input"
+            name        ="elasticsearchOptions"
+            displayText ="Einstellungen fuer Elasticsearch">
+        <text property="elasticRemoteHost" displayText="Elasticsearch Address (IP:PORT):" defaultValue="localhost:9300" />
     </page>
 
     <!--  type="input" shows a list of editable options for the installer -->

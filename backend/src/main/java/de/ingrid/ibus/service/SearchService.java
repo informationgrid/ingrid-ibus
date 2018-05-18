@@ -1,17 +1,5 @@
 package de.ingrid.ibus.service;
 
-import java.io.Serializable;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import de.ingrid.ibus.comm.debug.DebugQuery;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.ingrid.elasticsearch.ElasticConfig;
 import de.ingrid.elasticsearch.IndexInfo;
 import de.ingrid.elasticsearch.IndexManager;
@@ -19,17 +7,18 @@ import de.ingrid.elasticsearch.search.IndexImpl;
 import de.ingrid.ibus.comm.Bus;
 import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.comm.registry.Registry;
-import de.ingrid.utils.ElasticDocument;
-import de.ingrid.utils.IPlug;
-import de.ingrid.utils.IRecordLoader;
-import de.ingrid.utils.IngridCall;
-import de.ingrid.utils.IngridDocument;
-import de.ingrid.utils.IngridHit;
-import de.ingrid.utils.IngridHitDetail;
-import de.ingrid.utils.IngridHits;
-import de.ingrid.utils.PlugDescription;
+import de.ingrid.utils.*;
 import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.query.IngridQuery;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.Serializable;
+import java.util.Map;
 
 @Service
 public class SearchService implements IPlug, IRecordLoader, Serializable {
