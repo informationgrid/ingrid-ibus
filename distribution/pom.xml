@@ -118,7 +118,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <configuration>
               <skipDocker>false</skipDocker>
-              <imageName>docker-registry.wemove.com/${project.parent.artifactId}:${project.version}</imageName>
+              <imageName>docker-registry.wemove.com/${project.artifactId}:${project.version}</imageName>
               <dockerDirectory>distribution/src/docker</dockerDirectory>
             </configuration>
           </plugin>
