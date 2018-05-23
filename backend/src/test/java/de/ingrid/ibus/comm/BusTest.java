@@ -26,7 +26,7 @@
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
-package de.ingrid.ibus;
+package de.ingrid.comm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

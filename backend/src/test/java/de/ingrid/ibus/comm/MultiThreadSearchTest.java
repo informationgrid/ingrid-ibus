@@ -20,7 +20,7 @@
  * limitations under the Licence.
  * **************************************************#
  */
-package de.ingrid.ibus;
+package de.ingrid.comm;
 
 import junit.framework.TestCase;
 import de.ingrid.ibus.comm.Bus;

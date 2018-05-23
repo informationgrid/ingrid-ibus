@@ -26,7 +26,7 @@
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
-package de.ingrid.ibus;
+package de.ingrid.comm;
 
 import junit.framework.TestCase;
 import net.weta.components.communication.configuration.ClientConfiguration;

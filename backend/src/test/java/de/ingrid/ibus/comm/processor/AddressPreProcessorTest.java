@@ -24,7 +24,7 @@
  * Copyright (c) 1997-2006 by media style GmbH
  */
 
-package de.ingrid.ibus.processor;
+package de.ingrid.comm.processor;
 
 import junit.framework.TestCase;
 import de.ingrid.ibus.comm.processor.AddressPreProcessor;

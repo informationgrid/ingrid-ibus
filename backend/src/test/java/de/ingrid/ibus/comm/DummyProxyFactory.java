@@ -26,44 +26,42 @@
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
-package de.ingrid.ibus;
+package de.ingrid.comm;
 
-import net.weta.components.communication.tcp.TimeoutException;
-import junit.framework.TestCase;
-import de.ingrid.ibus.comm.Bus;
+import de.ingrid.ibus.comm.net.IPlugProxyFactory;
+import de.ingrid.utils.IPlug;
 import de.ingrid.utils.PlugDescription;
-import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
- * TODO comment for HangingConnectionTest 
  * 
- * <p/>created on 29.04.2006
- * 
- * @version $Revision: $
- * @author jz
- * @author $Author: ${lastedit}
- *  
  */
-public class HangingConnectionTest extends TestCase {
+public class DummyProxyFactory implements IPlugProxyFactory {
+    private float[][] useScoresPerIPlug = null;
+    
+    private int numCreatedIPlugs = 0;
 
+    private int docId = 1;
+    
+    public DummyProxyFactory() {}
+    
+    public DummyProxyFactory(float[][] scores) {
+        this.useScoresPerIPlug = scores;
+    }
+    
     /**
-     * @throws Exception
+     * @throws Exception 
+     * @see de.ingrid.ibus.comm.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription, java.lang.String)
      */
-    public void testhangConnection() throws Exception {
-        Bus bus = new Bus(new HangingPlugDummyProxyFactory());
-        PlugDescription plugDescriptions = new PlugDescription();
-        plugDescriptions.setProxyServiceURL("");
-        plugDescriptions.setOrganisation("org");
-        bus.getIPlugRegistry().addPlugDescription(plugDescriptions);
-        bus.getIPlugRegistry().activatePlug("");
-        long start = System.currentTimeMillis();
-        try {
-            bus.search(QueryStringParser.parse("hallo"), 10, 1, 100, 1000);
-            fail();
-        } catch (TimeoutException e) {
-            assertTrue(start + 100 < System.currentTimeMillis());
-        }
+    public IPlug createPlugProxy(PlugDescription plugDescription, String busurl) throws Exception {
+        DummyIPlug plug;
+        if (useScoresPerIPlug != null)
+            plug = new DummyIPlug(plugDescription.getPlugId(), useScoresPerIPlug[numCreatedIPlugs++]);
+        else
+            plug = new DummyIPlug(plugDescription.getPlugId());
+        plug.configure(plugDescription);
+        plug.setDocId( docId++ );
         
+        return plug;
     }
 
 }

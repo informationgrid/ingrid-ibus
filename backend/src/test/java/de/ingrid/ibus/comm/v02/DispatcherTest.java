@@ -26,11 +26,11 @@
  * $Source: DispatcherTest.java,v $
  */
 
-package de.ingrid.ibus.v02;
+package de.ingrid.comm.v02;
 
 import junit.framework.TestCase;
-import de.ingrid.ibus.BusTest;
-import de.ingrid.ibus.registry.SyntaxInterpreterTest;
+import de.ingrid.comm.BusTest;
+import de.ingrid.comm.registry.SyntaxInterpreterTest;
 
 /**
  * Test for dispatcher feature (INGRID-2)

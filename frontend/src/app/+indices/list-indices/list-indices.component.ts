@@ -3,6 +3,7 @@ import { IndexItem } from '../index-item/index-item.component';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { Subscription } from 'rxjs/Subscription';
+import {startWith, takeWhile} from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-indices',
@@ -31,8 +32,10 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.observer = IntervalObservable.create(10000)
-      .startWith(0)
-      .takeWhile( _ => this.autoRefresh )
+      .pipe(
+        startWith(0),
+        takeWhile( _ => this.autoRefresh )
+      )
       .subscribe( () => {
         this.getIndexNames();
       } )

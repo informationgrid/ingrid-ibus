@@ -26,42 +26,44 @@
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
-package de.ingrid.ibus;
+package de.ingrid.comm;
 
-import de.ingrid.ibus.comm.net.IPlugProxyFactory;
-import de.ingrid.utils.IPlug;
+import net.weta.components.communication.tcp.TimeoutException;
+import junit.framework.TestCase;
+import de.ingrid.ibus.comm.Bus;
 import de.ingrid.utils.PlugDescription;
+import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
+ * TODO comment for HangingConnectionTest 
  * 
+ * <p/>created on 29.04.2006
+ * 
+ * @version $Revision: $
+ * @author jz
+ * @author $Author: ${lastedit}
+ *  
  */
-public class DummyProxyFactory implements IPlugProxyFactory {
-    private float[][] useScoresPerIPlug = null;
-    
-    private int numCreatedIPlugs = 0;
+public class HangingConnectionTest extends TestCase {
 
-    private int docId = 1;
-    
-    public DummyProxyFactory() {}
-    
-    public DummyProxyFactory(float[][] scores) {
-        this.useScoresPerIPlug = scores;
-    }
-    
     /**
-     * @throws Exception 
-     * @see de.ingrid.ibus.comm.net.IPlugProxyFactory#createPlugProxy(de.ingrid.utils.PlugDescription, java.lang.String)
+     * @throws Exception
      */
-    public IPlug createPlugProxy(PlugDescription plugDescription, String busurl) throws Exception {
-        DummyIPlug plug;
-        if (useScoresPerIPlug != null)
-            plug = new DummyIPlug(plugDescription.getPlugId(), useScoresPerIPlug[numCreatedIPlugs++]);
-        else
-            plug = new DummyIPlug(plugDescription.getPlugId());
-        plug.configure(plugDescription);
-        plug.setDocId( docId++ );
+    public void testhangConnection() throws Exception {
+        Bus bus = new Bus(new HangingPlugDummyProxyFactory());
+        PlugDescription plugDescriptions = new PlugDescription();
+        plugDescriptions.setProxyServiceURL("");
+        plugDescriptions.setOrganisation("org");
+        bus.getIPlugRegistry().addPlugDescription(plugDescriptions);
+        bus.getIPlugRegistry().activatePlug("");
+        long start = System.currentTimeMillis();
+        try {
+            bus.search(QueryStringParser.parse("hallo"), 10, 1, 100, 1000);
+            fail();
+        } catch (TimeoutException e) {
+            assertTrue(start + 100 < System.currentTimeMillis());
+        }
         
-        return plug;
     }
 
 }

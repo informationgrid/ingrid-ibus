@@ -20,7 +20,7 @@
  * limitations under the Licence.
  * **************************************************#
  */
-package de.ingrid.ibus;
+package de.ingrid.comm;
 
 import static org.junit.Assert.*;
 

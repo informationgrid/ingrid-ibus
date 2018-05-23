@@ -26,13 +26,13 @@
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
-package de.ingrid.ibus.registry;
+package de.ingrid.comm.registry;
 
 import java.io.StringReader;
 
 import junit.framework.TestCase;
-import de.ingrid.ibus.DummyCommunication;
-import de.ingrid.ibus.DummyProxyFactory;
+import de.ingrid.comm.DummyCommunication;
+import de.ingrid.comm.DummyProxyFactory;
 import de.ingrid.ibus.comm.debug.DebugQuery;
 import de.ingrid.ibus.comm.processor.UdkMetaclassPreProcessor;
 import de.ingrid.ibus.comm.registry.Registry;

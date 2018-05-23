@@ -23,43 +23,48 @@
 /*
  * Copyright (c) 1997-2006 by media style GmbH
  */
-
-package de.ingrid.ibus.processor;
+package de.ingrid.comm.processor;
 
 import junit.framework.TestCase;
-import de.ingrid.ibus.comm.processor.QueryModePreProcessor;
-import de.ingrid.utils.query.FieldQuery;
+import de.ingrid.ibus.comm.processor.LimitedAttributesPreProcessor;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
- * Test for {@link QueryModePreProcessor}.
+ * Test for {@link de.ingrid.ibus.comm.processor.LimitedAttributesPreProcessor}.
  * 
- * <p/>created on 01.06.2006
+ * <p/>created on 31.05.2006
  * 
  * @version $Revision: $
  * @author jz
  * @author $Author: ${lastedit}
  * 
  */
-public class QueryModePreProcessorTest extends TestCase {
+public class LimitedAttributesPreProcessorTest extends TestCase {
 
     /**
      * @throws Exception
      */
-    public void testProcessQuerymodeSubstring() throws Exception {
-        IngridQuery query = QueryStringParser.parse("query (clauseQuery1 OR clauseQuery2)");
-        query.addField(new FieldQuery(true, false, QueryModePreProcessor.QUERYMODE,
-                QueryModePreProcessor.QUERYMODE_SUBSTRING));
-        assertEquals(1, query.getTerms().length);
-        assertEquals(2, query.getClauses()[0].getTerms().length);
-        QueryModePreProcessor preProcessor = new QueryModePreProcessor();
-        preProcessor.process(query);
-        assertEquals(1, query.getTerms().length);
-        assertEquals("query*", query.getTerms()[0].getTerm());
-        assertEquals(2, query.getClauses()[0].getTerms().length);
-        assertEquals("clauseQuery1*", query.getClauses()[0].getTerms()[0].getTerm());
-        assertEquals("clauseQuery2*", query.getClauses()[0].getTerms()[1].getTerm());
+    public void testIt() throws Exception {
+        LimitedAttributesPreProcessor preProcessor = new LimitedAttributesPreProcessor();
+        IngridQuery query = QueryStringParser.parse("wasser AND (brot OR wein) "
+                + LimitedAttributesPreProcessor.ATTRIBUTE_RANGE + ":"
+                + LimitedAttributesPreProcessor.ATTRIBUTE_RANGE_LIMITED);
 
+        assertEquals(1, query.getTerms().length);
+        assertEquals(1, query.getClauses().length);
+        assertEquals(2, query.getClauses()[0].getTerms().length);
+        preProcessor.process(query);
+
+        // check terms and clauses
+        assertEquals(0, query.getTerms().length);
+        assertEquals(2, query.getClauses().length);
+        assertEquals(0, query.getClauses()[0].getTerms().length);
+        assertEquals(2, query.getClauses()[0].getClauses().length);
+
+        // check fields
+        assertEquals(5, query.getClauses()[1].getFields().length);
+        assertEquals(5, query.getClauses()[0].getClauses()[0].getFields().length);
+        assertEquals(5, query.getClauses()[0].getClauses()[1].getFields().length);
     }
 }

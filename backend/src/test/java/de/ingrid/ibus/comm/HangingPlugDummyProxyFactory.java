@@ -26,7 +26,7 @@
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
-package de.ingrid.ibus;
+package de.ingrid.comm;
 
 import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.utils.IPlug;

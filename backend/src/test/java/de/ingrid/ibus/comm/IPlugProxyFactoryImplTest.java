@@ -26,7 +26,7 @@
  * $Source: $
  */
 
-package de.ingrid.ibus;
+package de.ingrid.comm;
 
 import junit.framework.TestCase;
 import net.weta.components.communication.configuration.ClientConfiguration;

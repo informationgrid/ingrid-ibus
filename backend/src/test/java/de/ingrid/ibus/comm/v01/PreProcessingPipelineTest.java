@@ -25,28 +25,32 @@
  * 
  * $Source: DispatcherTest.java,v $
  */
-package de.ingrid.ibus.v01;
+package de.ingrid.comm.v01;
 import junit.framework.TestCase;
 
 /**
- * Test for iplug-connector-feature (INGRID-6)
+ * Test for preprocessing-pipeline-feature (INGRID-3).
  * created on 21.07.2005 <p>
  *
  * @author hs
  */
-public class IPlugConnectorTest extends TestCase {
-
+public class PreProcessingPipelineTest extends TestCase {
     /**
      * 
      */
-    public void testCommunicationWithIPlug() {
-        fail("INGRID-34 not yet implemented");
+    public void testProcessRequest() {
+        fail("INGRID-21 not yet implemented");
     }
     /**
      * 
      */
-    public void testUsageOfJXTASockets() {
-        fail("INGRID-35 not yet implemented");
+    public void testProcessResults() {
+        fail("INGRID-22 not yet implemented");
     }
-    
+    /**
+     * 
+     */
+    public void testImproveQuery() {
+        fail("INGRID-23 not yet implemented");
+    }
 }
