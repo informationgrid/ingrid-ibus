@@ -69,11 +69,6 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
     private static Log log = LogFactory.getLog(ManagementIPlug.class);
 
     /**
-     * The <code>PlugDescription</code> object passed at startup
-     */
-    private PlugDescription fPlugDesc = null;
-
-    /**
      * Unique Plug-iD
      */
     private String fPlugId = null;
@@ -92,7 +87,7 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
 
     public ManagementIPlug() {
         super(30000, null, null, null, null);
-    };
+    }
 
     @PostConstruct
     public void init() {
@@ -100,31 +95,12 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
         Long lastModifiedTimestamp = this.codeListService.getLastModifiedTimestamp();
         this.codeListService.updateFromServer(lastModifiedTimestamp);
     }
-    
-    /**
-     * @see de.ingrid.utils.IPlug#configure(de.ingrid.utils.PlugDescription)
-     */
-    @Override
-    public void configure(PlugDescription plugDescription) {
-        super.configure(plugDescription);
-        log.info("Configuring Management-iPlug...");
-
-        this.fPlugDesc = plugDescription;
-        this.fPlugId = fPlugDesc.getPlugId();
-    }
-
-    /**
-     * @see de.ingrid.utils.IPlug#close()
-     */
-    public void close() throws Exception {
-
-    }
 
     /**
      * @see de.ingrid.utils.ISearcher#search(de.ingrid.utils.query.IngridQuery,
      *      int, int)
      */
-    public IngridHits search(IngridQuery query, int start, int length) throws Exception {
+    public IngridHits search(IngridQuery query, int start, int length) {
         if (log.isDebugEnabled()) {
             log.debug("incoming query : " + query.toString());
         }
@@ -132,12 +108,10 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
             int type = -1;
             try {
                 type = Integer.parseInt(ManagementUtils.getField(query, MANAGEMENT_REQUEST_TYPE));
-            } catch (NumberFormatException e) {
-            }
-            int totalSize = 0;
+            } catch (NumberFormatException ignored) {}
             try {
                 IngridHit[] hitsTemp = null;
-                ManagementUseCase uc = null;
+                ManagementUseCase uc;
 
                 switch (type) {
                 // authenticate a user
@@ -191,7 +165,7 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
                 int max = Math.min((hits.length - start), length);
                 IngridHit[] finalHits = new IngridHit[max];
                 System.arraycopy(hits, start, finalHits, 0, max);
-                totalSize = max;
+                int totalSize = max;
                 if (log.isDebugEnabled()) {
                     log.debug("hits: " + totalSize);
                 }
@@ -225,7 +199,7 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
      * @see de.ingrid.utils.IDetailer#getDetail(de.ingrid.utils.IngridHit,
      *      de.ingrid.utils.query.IngridQuery, java.lang.String[])
      */
-    public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) throws Exception {
+    public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) {
         return new IngridHitDetail();
     }
 
@@ -233,17 +207,12 @@ public class ManagementIPlug extends HeartBeatPlug implements Serializable {
      * @see de.ingrid.utils.IDetailer#getDetails(de.ingrid.utils.IngridHit[],
      *      de.ingrid.utils.query.IngridQuery, java.lang.String[])
      */
-    public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
+    public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) {
         return new IngridHitDetail[0];
     }
 
-    
-    public void setCodeListService(CodeListService codeListService) {
-        this.codeListService = codeListService;
-    }
-
     @Override
-    public IngridDocument call(IngridCall targetInfo) throws Exception {
+    public IngridDocument call(IngridCall targetInfo) {
         throw new RuntimeException( "call-function not implemented in Management-iPlug" );
     }
 }

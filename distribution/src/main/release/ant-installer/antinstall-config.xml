@@ -75,24 +75,6 @@
             <text property="adminPort" displayText="Port f. Administrationsoberfläche:" defaultValue="9901"/>
     </page>
 
-    <page
-            ifTarget    ="setInstallProperty"
-            type        ="input"
-            name        ="codelistRepoOptions"
-            displayText ="Einstellungen fuer das Codelist Repository">
-        <text property="clUrl" displayText="Codelist Repository Url:" defaultValue="http://localhost/codelist-repo/rest/getCodelists" />
-        <text property="clUsername" displayText="Repository-Benutzername:" defaultValue="admin" />
-        <text property="clPassword" displayText="Repository Passwort:" defaultValue="" />
-    </page>
-
-    <page
-            ifTarget    ="setInstallProperty"
-            type        ="input"
-            name        ="elasticsearchOptions"
-            displayText ="Einstellungen fuer Elasticsearch">
-        <text property="elasticRemoteHost" displayText="Elasticsearch Address (IP:PORT):" defaultValue="localhost:9300" />
-    </page>
-
     <!--  type="input" shows a list of editable options for the installer -->
     <page
             ifTarget    ="setInstallProperty"

@@ -1,5 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {IPlugItemComponent} from './iplug-item.component';
+import {IPlugService} from '../iplug-service.service';
+import {iPlugServiceStub} from '../../../../testing';
 
 describe('IplugItemComponent', () => {
   let component: IPlugItemComponent;
@@ -7,9 +9,12 @@ describe('IplugItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ IPlugItemComponent ]
+      declarations: [IPlugItemComponent],
+      providers: [
+        {provide: IPlugService, useValue: iPlugServiceStub}
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

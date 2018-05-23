@@ -26,11 +26,10 @@
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
-package de.ingrid.comm;
+package de.ingrid.ibus.comm;
 
 import net.weta.components.communication.tcp.TimeoutException;
 import junit.framework.TestCase;
-import de.ingrid.ibus.comm.Bus;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.queryparser.QueryStringParser;
 

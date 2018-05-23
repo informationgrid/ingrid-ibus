@@ -92,10 +92,6 @@
             <entry key="spring.security.user.password"  value="${adminPasswort}" />
             <entry key="ibus.url"                       value="${serverName}" />
             <entry key="ibus.port"                      value="${serverPort}" />
-            <entry key="codelistrepo.url"               value="${clUrl}" />
-            <entry key="codelistrepo.username"          value="${clUsername}" />
-            <entry key="codelistrepo.password"          value="${clPassword}" />
-            <entry key="elastic.remoteHosts"            value="${elasticRemoteHost}" />
         </propertyfile>
 	</target>
 	
@@ -113,7 +109,7 @@ und rufen sie von der Kommandozeile folgendes auf
 "sh start.sh start", um den iBus zu starten.
 
 Die iBus-Administration starten Sie im Webbrowser unter
-der folgenden Adresse "http://localhost:${adminPort}/admin".
+der folgenden Adresse "http://localhost:${adminPort}".
 Anstelle von localhost koennen Sie auch die IP-Adresse
 des Computers eingeben!
 Authentifizieren Sie sich als 'admin' mit dem von Ihnen 

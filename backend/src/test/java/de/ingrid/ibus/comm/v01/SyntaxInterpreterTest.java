@@ -25,7 +25,7 @@
  * 
  * $Source: DispatcherTest.java,v $
  */
-package de.ingrid.comm.v01;
+package de.ingrid.ibus.comm.v01;
 
 import junit.framework.TestCase;
 import de.ingrid.utils.query.FieldQuery;
@@ -60,8 +60,8 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testFindAddressedDataSources() throws Exception {
-        new de.ingrid.comm.registry.SyntaxInterpreterTest().testGetIPlugs_DataTypes();
-        new de.ingrid.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
+        new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIPlugs_DataTypes();
+        new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
     }
 
     /**
@@ -70,8 +70,8 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testFindDataFields() throws Exception {
-        new de.ingrid.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
-        new de.ingrid.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
+        new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
+        new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
     }
 
     // ------------private------------------

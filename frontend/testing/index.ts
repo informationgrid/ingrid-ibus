@@ -4,6 +4,8 @@ import { DebugElement } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { By } from '@angular/platform-browser';
+import {ConfigService} from '../src/app/config.service';
+import {IPlugService} from '../src/app/+iplugs/iplug-service.service';
 
 /** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
 export const ButtonClickEvents = {
@@ -61,3 +63,25 @@ export function shouldShowError(element: DebugElement, message: string) {
   expect(element.queryAll(By.css('.alert')).length).toBe(1);
   expect(element.query(By.css('.alert')).nativeElement.textContent).toContain(message);
 }
+
+
+let configServiceStubTmpl: Partial<ConfigService> = {
+  getConfiguration: () => {
+    return {
+      backendUrl: '',
+      useIndices: true
+    }
+  }
+};
+
+export const configServiceStub = configServiceStubTmpl;
+
+export const iPlugServiceStub = {
+  getConnectedIPlugs() {
+    return [];
+  },
+
+  setActive(id, active) {
+
+  }
+};

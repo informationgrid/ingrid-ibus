@@ -54,7 +54,7 @@ public class SettingsService {
                 private static final long serialVersionUID = 6956076060462348684L;
                 @Override
                 public synchronized Enumeration<Object> keys() {
-                    return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+                    return Collections.enumeration(new TreeSet<>(super.keySet()));
                 }
             };
             
@@ -64,12 +64,12 @@ public class SettingsService {
             if (propActiveIndices != null) {
                 
                 List<String> activeList = propActiveIndices.trim().length() == 0 
-                        ? new ArrayList<String>()
+                        ? new ArrayList<>()
                         : Arrays.asList( propActiveIndices.split( "," ) );
                         
-                activeIndices = new HashSet<String>( activeList );
+                activeIndices = new HashSet<>( activeList );
             } else {
-                activeIndices = new HashSet<String>();
+                activeIndices = new HashSet<>();
             }
 
         } catch (Exception e) {
@@ -108,7 +108,7 @@ public class SettingsService {
             try {
                 if (out != null) out.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Error writing active indices", e);
                 throw e;
             }
         }

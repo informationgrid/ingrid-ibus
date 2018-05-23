@@ -24,7 +24,7 @@
  * Copyright (c) 1997-2006 by media style GmbH
  */
 
-package de.ingrid.comm;
+package de.ingrid.ibus.comm;
 
 import java.io.IOException;
 

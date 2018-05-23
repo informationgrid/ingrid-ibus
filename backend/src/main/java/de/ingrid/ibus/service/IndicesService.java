@@ -103,39 +103,34 @@ public class IndicesService {
         ElasticsearchInfo info = new ElasticsearchInfo();
         List<Index> indices = new ArrayList<>();
 
-        try {
-            ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().getIndices();
-            esIndices.forEach( (indexMap) -> {
-                System.out.println( "Index: " + indexMap.key );
-    
-                // skip indices that do not start with the configured prefix, since we don't want to have all indices of a cluster
-                if (!indexMap.key.startsWith( indexPrefixFilter )) {
-                    return;
-                }
-    
-                Index index = new Index();
-    
-                addDefaultIndexInfo( indexMap.key, null, index, indexMap.value.getSettings() );
-    
-                // applyAdditionalData( indexMap.key, index, false );
-                // addMapping( indexMap.key, null, index );
-    
-                addTypes( indexMap.key, index );
-    
-                // check if iPlug is connected through InGrid Communication
-                //iPlugService.getIPlugDetail()
-                
-                indices.add( index );
-            } );
-    
-            addComponentData( indices );
-            
-    
-            info.setIndices( indices );
-            
-        } catch (Exception ex) {
-            log.error( "Problem querying Elasticsearch:", ex );
-        }
+        ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().getIndices();
+        esIndices.forEach( (indexMap) -> {
+            System.out.println( "Index: " + indexMap.key );
+
+            // skip indices that do not start with the configured prefix, since we don't want to have all indices of a cluster
+            if (!indexMap.key.startsWith( indexPrefixFilter )) {
+                return;
+            }
+
+            Index index = new Index();
+
+            addDefaultIndexInfo( indexMap.key, null, index, indexMap.value.getSettings() );
+
+            // applyAdditionalData( indexMap.key, index, false );
+            // addMapping( indexMap.key, null, index );
+
+            addTypes( indexMap.key, index );
+
+            // check if iPlug is connected through InGrid Communication
+            //iPlugService.getIPlugDetail()
+
+            indices.add( index );
+        } );
+
+        addComponentData( indices );
+
+
+        info.setIndices( indices );
 
         return info;
     }

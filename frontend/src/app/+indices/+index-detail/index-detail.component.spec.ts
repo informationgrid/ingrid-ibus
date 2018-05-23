@@ -1,4 +1,4 @@
-import { click, indexServiceStub } from '../../../../testing/index';
+import { click, indexServiceStub } from '../../../../testing';
 import { IndexService } from '../index.service';
 import { RouterTestingModule } from '@angular/router/testing';
 /* tslint:disable:no-unused-variable */
@@ -38,6 +38,8 @@ describe('IndexDetailComponent', () => {
 
   it('should show detail page with all information', () => {
     expect(component).toBeTruthy();
+
+    fixture.detectChanges();
 
     const detailDiv = <HTMLElement>fixture.debugElement.query(By.css('.detail-container')).nativeElement;
 

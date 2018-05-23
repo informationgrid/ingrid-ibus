@@ -26,7 +26,7 @@
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
-package de.ingrid.comm;
+package de.ingrid.ibus.comm;
 
 import java.util.Random;
 

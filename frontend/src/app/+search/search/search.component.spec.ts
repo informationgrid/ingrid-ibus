@@ -6,8 +6,8 @@ import { SearchModule } from '../search.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IndexService } from '../../+indices/index.service';
 import { IndexService as IndexServiceMock } from '../../+indices/index-mock.service';
-import { HttpModule } from '@angular/http';
 import { HitItemComponent } from '../hit-item/hit-item.component';
+import {HttpClientModule} from '@angular/common/http';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -19,7 +19,7 @@ describe('SearchComponent', () => {
       imports: [
         RouterTestingModule,
         SharedModule,
-        HttpModule
+        HttpClientModule
       ],
       providers: [
         { provide: IndexService, useClass: IndexServiceMock }

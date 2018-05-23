@@ -1,39 +1,62 @@
 <div class="container">
-  <form class="form-horizontal">
-    <div class="panel panel-default">
-      <div class="panel-heading">Elasticsearch</div>
-      <div class="panel-body">
+  <form class="form-horizontal" disabled="true">
+
+    <div class="card">
+      <div class="card-header">
+        Codelist Repository
+        <span [class]="getStatusClass('codelistrepo')"></span>
+      </div>
+
+      <div class="card-body">
 
         <div class="form-group">
-
-          <label class="col-sm-2 control-label">Urls</label>
-
-          <div *ngFor="let url of esUrls; let i = index"
-               class="col-sm-10"
-               [class.col-sm-offset-2]="i > 0"
-               [class.input-group]="i === esUrls.length - 1">
-            <input type="text" class="form-control" placeholder="https://..." [name]="'url' + i" [ngModel]="url">
-            <span *ngIf="i === esUrls.length - 1" class="input-group-btn">
-              <button class="btn btn-secondary" type="button">
-                <span class="glyphicon glyphicon-plus"></span>
-              </button>
-            </span>
-          </div>
-
+          <label class="control-label">URL</label>
+          <input type="text" class="form-control" placeholder="https://..." name="codelistUrl" [(ngModel)]="config['codelistrepo.url']">
         </div>
-
         <div class="form-group">
-          <label for="esPortHttp" class="col-sm-2 control-label">Http-Port</label>
-          <div class="col-sm-10">
-            <input type="url" class="form-control" id="esPortHttp" placeholder="9200">
+          <label class="control-label">Benutzername</label>
+          <input type="text" class="form-control" name="codelistUsername" [(ngModel)]="config['codelistrepo.username']">
+        </div>
+        <div class="form-group">
+          <label class="control-label">Passwort</label>
+          <input type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['codelistrepo.password']" [disabled]="isEmptyPassword">
+          <div class="form-check">
+            <label class="form-check-label">
+              <input type="checkbox" class="form-check-input" (change)="handleEmptyPassword($event)">
+              leeres Passwort
+            </label>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="panel panel-default">
-      <div class="panel-heading">Sucheinstellungen</div>
-      <div class="panel-body">
+    <div class="card">
+      <div class="card-header">Elasticsearch</div>
+      <div class="card-body">
+
+        <div class="form-group">
+          <label class="control-label">Urls</label>
+          <input type="text" class="form-control" placeholder="<ip:port>,<ip:port>,..." name="elasticUrls" [(ngModel)]="config['elastic.remoteHosts']" required="true">
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Server Einstellungen</div>
+      <div class="card-body">
+
+        <div class="form-group">
+          <label class="control-label">Passwort</label>
+          <input type="text" class="form-control" placeholder="<aktuelles Passwort>" name="adminPasswort" [(ngModel)]="config['spring.security.user.password']">
+        </div>
+
+      </div>
+    </div>
+<!--
+    <div class="card">
+      <div class="card-header">Sucheinstellungen</div>
+      <div class="card-body">
 
         <div class="form-group">
           <label class="col-sm-2 control-label">Such-Indizes</label>
@@ -43,8 +66,10 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
+    -->
+
+    <button class="btn btn-primary pull-right" (click)="saveSettings()">Speichern</button>
   </form>
 </div>

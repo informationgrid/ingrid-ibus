@@ -25,10 +25,10 @@
  * 
  * $Source: DispatcherTest.java,v $
  */
-package de.ingrid.comm.v01;
+package de.ingrid.ibus.comm.v01;
 
-import de.ingrid.comm.registry.RegistryTest;
-import de.ingrid.comm.registry.SyntaxInterpreterTest;
+import de.ingrid.ibus.comm.registry.RegistryTest;
+import de.ingrid.ibus.comm.registry.SyntaxInterpreterTest;
 import junit.framework.TestCase;
 
 /**
@@ -62,7 +62,7 @@ public class IPlugRegistryTest extends TestCase {
      */
     public void testStoreIndexStructures() throws Exception {
         new RegistryTest().testAddAndGet();
-        new de.ingrid.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
+        new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
 
     }
 
@@ -90,8 +90,8 @@ public class IPlugRegistryTest extends TestCase {
      * @throws Exception 
      */
     public void testSearchAPI() throws Exception {
-        new de.ingrid.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
-        new de.ingrid.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
+        new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
+        new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
         new SyntaxInterpreterTest().testGetIPlugs_DataTypes();
     }
 }

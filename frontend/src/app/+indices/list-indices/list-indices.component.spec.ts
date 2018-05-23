@@ -6,13 +6,13 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { ListIndicesComponent } from './list-indices.component';
-import { Observable } from 'rxjs/Observable';
 import { indexServiceStub, shouldNotShowError, shouldShowError, testIndexItem } from '../../../../testing/index';
 import { IndexService } from '../index.service';
 import { SharedModule } from '../../shared/shared.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs/observable/of';
+import {throwError} from 'rxjs/internal/observable/throwError';
 
 describe('ListIndicesComponent', () => {
   let component: ListIndicesComponent;
@@ -60,7 +60,7 @@ describe('ListIndicesComponent', () => {
 
   it('should show an error if indices could not be fetched', () => {
     const service = fixture.debugElement.injector.get(IndexService);
-    indexServiceStub.getIndices.and.returnValue(Observable.throw('fake error'));
+    indexServiceStub.getIndices.and.returnValue(throwError('fake error'));
 
     fixture.detectChanges();
     shouldShowError(element, 'fake error');
@@ -69,7 +69,7 @@ describe('ListIndicesComponent', () => {
 
   it('should show an error if indices could not be activated', () => {
     const service = fixture.debugElement.injector.get(IndexService);
-    indexServiceStub.setActive.and.returnValue(Observable.throw('fake error'));
+    indexServiceStub.setActive.and.returnValue(throwError('fake error'));
 
     fixture.detectChanges();
     shouldShowError(element, 'fake error');

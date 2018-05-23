@@ -20,11 +20,9 @@
  * limitations under the Licence.
  * **************************************************#
  */
-package de.ingrid.comm;
+package de.ingrid.ibus.comm;
 
 import junit.framework.TestCase;
-import de.ingrid.ibus.comm.Grouper;
-import de.ingrid.ibus.comm.IGrouper;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;

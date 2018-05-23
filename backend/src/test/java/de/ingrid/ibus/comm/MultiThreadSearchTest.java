@@ -20,10 +20,9 @@
  * limitations under the Licence.
  * **************************************************#
  */
-package de.ingrid.comm;
+package de.ingrid.ibus.comm;
 
 import junit.framework.TestCase;
-import de.ingrid.ibus.comm.Bus;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;

@@ -10,8 +10,11 @@ export class ErrorComponent implements OnInit {
 
   private _msg: any;
 
+  showResponse = false;
+
   @Input()
   set msg(message: any) {
+    this.showResponse = false;
     if (message && message.url && message.url.indexOf('/login') !== -1) {
       this._msg = 'Sie sind ausgeloggt. Weiterleitung zur Login-Seite in 5 Sekunden';
       setTimeout( () => window.location.replace('./login'), 5000);

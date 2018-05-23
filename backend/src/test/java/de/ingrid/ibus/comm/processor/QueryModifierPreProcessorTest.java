@@ -20,7 +20,7 @@
  * limitations under the Licence.
  * **************************************************#
  */
-package de.ingrid.comm.processor;
+package de.ingrid.ibus.comm.processor;
 
 import junit.framework.TestCase;
 import de.ingrid.ibus.comm.processor.QueryModifierPreProcessor;

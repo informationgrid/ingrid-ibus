@@ -23,7 +23,7 @@
 /*
  * Copyright (c) 1997-2006 by media style GmbH
  */
-package de.ingrid.comm.processor;
+package de.ingrid.ibus.comm.processor;
 
 import junit.framework.TestCase;
 import de.ingrid.ibus.comm.processor.LimitedAttributesPreProcessor;

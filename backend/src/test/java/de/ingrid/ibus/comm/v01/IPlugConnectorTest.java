@@ -25,7 +25,7 @@
  * 
  * $Source: DispatcherTest.java,v $
  */
-package de.ingrid.comm.v01;
+package de.ingrid.ibus.comm.v01;
 import junit.framework.TestCase;
 
 /**
