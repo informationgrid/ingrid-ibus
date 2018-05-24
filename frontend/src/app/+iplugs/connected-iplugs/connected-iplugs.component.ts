@@ -55,4 +55,7 @@ export class ConnectedIplugsComponent implements OnInit, OnDestroy {
     this.error = error;
   }
 
+  getIPlugIdentifier(index, item) {
+    return item.proxyServiceUrl;
+  }
 }

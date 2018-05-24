@@ -22,12 +22,12 @@
 
   <ng-container *ngIf="iplugsLocalIndex?.length > 0">
     <h6>IPlugs mit eigenem Suchindex</h6>
-    <iplug-item [data]="data" *ngFor="let data of iplugsLocalIndex"></iplug-item>
+    <iplug-item [data]="data" *ngFor="let data of iplugsLocalIndex; trackBy: getIPlugIdentifier"></iplug-item>
   </ng-container>
 
   <ng-container *ngIf="iplugsCentralIndex?.length > 0">
     <h6>IPlugs mit zentralem Suchindex</h6>
-    <iplug-item [data]="data" *ngFor="let data of iplugsCentralIndex"></iplug-item>
+    <iplug-item [data]="data" *ngFor="let data of iplugsCentralIndex; trackBy: getIPlugIdentifier"></iplug-item>
   </ng-container>
 
   <div *ngIf="iplugsLocalIndex?.length === 0 && iplugsCentralIndex?.length === 0" class="card text-white bg-info">
