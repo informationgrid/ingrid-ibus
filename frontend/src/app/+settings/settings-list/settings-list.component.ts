@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {IndexService} from '../../+indices/index.service';
 import {AppConfiguation, SettingsService} from '../settings.service';
 import {Subscription} from 'rxjs/Rx';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-settings-list',
@@ -20,6 +21,11 @@ export class SettingsListComponent implements OnInit, OnDestroy {
   private status: any = {};
   private status$: Subscription;
 
+  isReloading = false;
+  saveSuccess = false;
+
+  error = null;
+
   constructor(private indexService: IndexService, private settingsService: SettingsService) {
   }
 
@@ -28,7 +34,7 @@ export class SettingsListComponent implements OnInit, OnDestroy {
       ids => this.activeIndices = ids
     );
     this.settingsService.get().subscribe(cfg => this.config = cfg);
-    this.status$ = this.settingsService.status().subscribe( status => this.status = status );
+    this.status$ = this.settingsService.status().subscribe(status => this.status = status);
   }
 
   ngOnDestroy() {
@@ -42,9 +48,16 @@ export class SettingsListComponent implements OnInit, OnDestroy {
       delete this.config['codelistrepo.password'];
     }
 
-    this.settingsService.save(<AppConfiguation>this.config).subscribe(status => {
-      console.log('Status', status);
-    });
+    this.settingsService.save(<AppConfiguation>this.config).subscribe(() => {
+      this.saveSuccess = true;
+      setTimeout( () => this.saveSuccess = false, 5000);
+
+      // redirect if password was changed
+      if (this.config['spring.security.user.password'] && this.config['spring.security.user.password'].length > 0) {
+        this.isReloading = true;
+        setTimeout( () => window.location.replace('./login'), 5000);
+      }
+    }, (error) => this.handleError(error));
   }
 
   handleEmptyPassword(event: Event) {
@@ -56,9 +69,13 @@ export class SettingsListComponent implements OnInit, OnDestroy {
     switch (component) {
       case 'codelistrepo':
         state = this.status['codelistrepo'] === 'true'
-            ? 'connected' : 'disconnected';
+          ? 'connected' : 'disconnected';
     }
     return 'fa fa-circle ' + state;
   }
 
+  handleError(error: any) {
+    console.error('Error happened: ', error);
+    this.error = error.statusText || error.message || error.json().message;
+  }
 }

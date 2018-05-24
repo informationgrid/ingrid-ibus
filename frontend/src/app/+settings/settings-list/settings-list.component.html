@@ -1,5 +1,19 @@
 <div class="container">
-  <form class="form-horizontal" disabled="true">
+
+  <div *ngIf="config['needPasswordChange']" class="alert alert-warning">
+    Sie müssen hier unter den "Server Einstellungen" ein neues Passwort für die Administrationsoberfläche setzen
+  </div>
+
+  <div *ngIf="saveSuccess" class="fixed-bottom text-center">
+    <div class="alert alert-info">
+      Die Änderungen wurden erfolgreich gespeichert.
+      <div *ngIf="isReloading">
+           Durch die Änderung des Administrationspassworts werden Sie in kürze weitergeleitet, um sich neu anzumelden.
+      </div>
+    </div>
+  </div>
+
+  <form *ngIf="!isReloading" class="form-horizontal">
 
     <div class="card">
       <div class="card-header">
@@ -48,7 +62,7 @@
 
         <div class="form-group">
           <label class="control-label">Passwort</label>
-          <input type="text" class="form-control" placeholder="<aktuelles Passwort>" name="adminPasswort" [(ngModel)]="config['spring.security.user.password']">
+          <input type="password" class="form-control" placeholder="<aktuelles Passwort>" name="adminPasswort" [(ngModel)]="config['spring.security.user.password']">
         </div>
 
       </div>
@@ -71,5 +85,8 @@
     -->
 
     <button class="btn btn-primary pull-right" (click)="saveSettings()">Speichern</button>
+    <div class="clearfix"></div>
   </form>
 </div>
+
+<ingrid-error [msg]="error"></ingrid-error>

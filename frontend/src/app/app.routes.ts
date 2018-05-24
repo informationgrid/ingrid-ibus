@@ -6,13 +6,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { SettingsListComponent } from './+settings/settings-list/settings-list.component';
 import { ConnectedIplugsComponent } from './+iplugs/connected-iplugs/connected-iplugs.component';
 import { environment } from '../environments/environment';
+import {FirstPasswordGuard} from './shared/first-password.guard';
 
 const appRoutes: Routes = [
-  {path: 'iplugs', component: ConnectedIplugsComponent},
-  {path: 'indices', component: ListIndicesComponent},
-  {path: 'indices/:id', component: IndexDetailComponent},
-  {path: 'search', component: SearchComponent},
-  {path: 'search/:indexId/:hitId', component: SearchDetailComponent},
+  {path: 'iplugs', component: ConnectedIplugsComponent, canActivate: [FirstPasswordGuard]},
+  {path: 'indices', component: ListIndicesComponent, canActivate: [FirstPasswordGuard]},
+  {path: 'indices/:id', component: IndexDetailComponent, canActivate: [FirstPasswordGuard]},
+  {path: 'search', component: SearchComponent, canActivate: [FirstPasswordGuard]},
+  {path: 'search/:indexId/:hitId', component: SearchDetailComponent, canActivate: [FirstPasswordGuard]},
   {path: 'settings', component: SettingsListComponent},
   {
     path: '',
