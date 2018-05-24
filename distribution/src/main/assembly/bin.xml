@@ -60,6 +60,12 @@
       <outputDirectory>${project.artifactId}-${project.version}/doc</outputDirectory>
     </fileSet>
   </fileSets>
+  <files>
+    <file>
+      <source>../backend/src/main/resources/application.properties</source>
+      <outputDirectory>${project.artifactId}-${project.version}/conf</outputDirectory>
+    </file>
+  </files>
   <dependencySets>
     <dependencySet>
       <outputDirectory>${project.artifactId}-${project.version}/lib</outputDirectory>
