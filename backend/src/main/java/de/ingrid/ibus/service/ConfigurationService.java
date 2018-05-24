@@ -126,6 +126,7 @@ public class ConfigurationService {
         String adminPassword = (String) configuration.get("spring.security.user.password");
         if (adminPassword != null && !"".equals(adminPassword)) {
             webSecurityConfig.secureWebapp(adminPassword);
+            this.userPassword = adminPassword;
         }
 
     }
@@ -147,12 +148,12 @@ public class ConfigurationService {
         Enumeration<Object> propKeys = this.properties.keys();
         while (propKeys.hasMoreElements()) {
             String key = (String) propKeys.nextElement();
-            boolean isJustOverriden = otherProps.containsKey(key);
-            boolean modIsDifferentFromSystem = isJustOverriden && !(otherProps.get(key).equals(this.propertiesSystem.get(key)));
+            boolean isJustOverridden = otherProps.containsKey(key);
+            boolean modIsDifferentFromSystem = isJustOverridden && !(otherProps.get(key).equals(this.propertiesSystem.get(key)));
             boolean userIsDifferentFromSystem = !this.properties.get(key).equals(this.propertiesSystem.get(key));
             if (modIsDifferentFromSystem) {
                 modProps.put(key, otherProps.get(key));
-            } else if (!isJustOverriden && userIsDifferentFromSystem) {
+            } else if (!isJustOverridden && userIsDifferentFromSystem) {
                 modProps.put(key, this.properties.get(key));
             }
         }

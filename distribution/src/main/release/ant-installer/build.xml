@@ -88,8 +88,6 @@
         <touch file="${installDir}/conf/application-default.properties" />
         <propertyfile file="${installDir}/conf/application-default.properties">
             <entry key="server.port"                    value="${adminPort}" />
-            <entry key="spring.security.user.name"      value="admin" />
-            <entry key="spring.security.user.password"  value="${adminPasswort}" />
             <entry key="ibus.url"                       value="${serverName}" />
             <entry key="ibus.port"                      value="${serverPort}" />
         </propertyfile>

@@ -69,8 +69,6 @@
             displayText	="Einstellungen fuer den iBus (2)"
             target		="startscript">
             
-            <comment displayText="" explanatoryText="Passwort f. die Administrationsoberfläche. Login ist hier immer 'admin'."/>
-            <text property="adminPasswort" displayText="Administrationspasswort:" defaultValue="admin"/>
             <comment displayText="" explanatoryText="Port f. die Administrationsoberfläche. Die Administrationsoberfläche ist erreichbar unter http://localhost:PORT/"/>
             <text property="adminPort" displayText="Port f. Administrationsoberfläche:" defaultValue="9901"/>
     </page>
