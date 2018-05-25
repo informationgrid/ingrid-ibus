@@ -55,6 +55,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
         Registry registry = busServer.getRegistry();
         PlugDescription pd = new PlugDescription();
         pd.setProxyServiceURL( CENTRAL_INDEX_ID );
+        pd.setDataSourceName("Central Index");
         pd.setIPlugClass( "igesearchplug" );
         pd.setRecordLoader( true );
         pd.setDataSourceDescription( "central index" );

@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@
  */
 /*
  * Copyright (c) 1997-2005 by media style GmbH
- * 
+ *
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
@@ -85,41 +85,38 @@ public class Registry {
     private Properties fActivatedIplugs;
 
     private File fFile;
-    
+
     private class RegistryIPlugTimeoutScanner extends Thread {
-    	
-		@Override
-		public void run() {
-			while (!this.isInterrupted()) {
-				try {
-					sleep(fLifeTime);
-					if (fLogger.isInfoEnabled()) {
-						fLogger.info("Check for timed out iPlugs.");
-					}
-					removeIPlugsWithTimeout();
-				} catch (InterruptedException e) {
-					fLogger.warn("Timeout iPlug scanner has been interrupted and shut down!");
-				}
-			}
-		}
+
+        @Override
+        public void run() {
+            while (!this.isInterrupted()) {
+                try {
+                    sleep(fLifeTime);
+                    if (fLogger.isInfoEnabled()) {
+                        fLogger.info("Check for timed out iPlugs.");
+                    }
+                    removeIPlugsWithTimeout();
+                } catch (InterruptedException e) {
+                    fLogger.warn("Timeout iPlug scanner has been interrupted and shut down!");
+                }
+            }
+        }
     }
-    
+
 
     /**
      * Creates a registry with a given lifetime for IPlugs, a given auto activation value for new IPlugs and a IPlug
      * factory.
-     * 
-     * @param lifeTimeOfPlugs
-     *            Life time of IPlugs. If the last life sign of a IPlug is longer than this value the IPlug is removed.
-     * @param iplugAutoActivation
-     *            The auto activation feature. If this is true all new IPlugs are activated by default otherwise not.
-     * @param factory
-     *            The factory that creates IPlugs.
+     *
+     * @param lifeTimeOfPlugs     Life time of IPlugs. If the last life sign of a IPlug is longer than this value the IPlug is removed.
+     * @param iplugAutoActivation The auto activation feature. If this is true all new IPlugs are activated by default otherwise not.
+     * @param factory             The factory that creates IPlugs.
      */
     public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation, IPlugProxyFactory factory) {
-        
-        ClassPathResource ibusSettings = new ClassPathResource( "/activatedIplugs.properties" );
-        
+
+        ClassPathResource ibusSettings = new ClassPathResource("/activatedIplugs.properties");
+
         try {
             if (ibusSettings.exists()) {
                 this.fFile = ibusSettings.getFile();
@@ -132,7 +129,7 @@ public class Registry {
                 if (!this.fFile.exists()) {
                     this.fFile.createNewFile();
                 }
-                
+
             }
         } catch (Exception e) {
             if (fLogger.isErrorEnabled()) {
@@ -144,16 +141,15 @@ public class Registry {
         this.fLifeTime = lifeTimeOfPlugs;
         this.fIplugAutoActivation = iplugAutoActivation;
         this.fProxyFactory = factory;
-        
+
         // start iplug timeout scanner
         PooledThreadExecutor.getInstance().execute(new RegistryIPlugTimeoutScanner());
     }
 
     /**
      * Adds a IPlug to the registry.
-     * 
-     * @param plugDescription
-     *            The PlugDescrption of the IPlug. Changed PlugDescrptions are updated.
+     *
+     * @param plugDescription The PlugDescrption of the IPlug. Changed PlugDescrptions are updated.
      */
     public void addPlugDescription(PlugDescription plugDescription) {
         if (null != plugDescription) {
@@ -176,14 +172,14 @@ public class Registry {
                 plugDescription.setActivate(this.fIplugAutoActivation);
             }
             plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
-            
-            Object overrideProxy = plugDescription.get( "overrideProxy" );
+
+            Object overrideProxy = plugDescription.get("overrideProxy");
             if (overrideProxy != null) {
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), (IPlug) overrideProxy);
             } else {
                 createPlugProxy(plugDescription);
             }
-            
+
             synchronized (this.fPlugDescriptionByPlugId) {
                 this.fPlugDescriptionByPlugId.put(plugDescription.getPlugId(), plugDescription);
                 if (fLogger.isDebugEnabled()) {
@@ -200,19 +196,17 @@ public class Registry {
 
     /**
      * Tests whether a PlugDescription already exists and sets a new value for the last life sign.
-     * 
-     * @param plugId
-     *            The id of the IPlug.
-     * @param md5Hash
-     *            The MD5 hash of the new plugdescrption.
+     *
+     * @param plugId  The id of the IPlug.
+     * @param md5Hash The MD5 hash of the new plugdescrption.
      * @return True if the registry contains a IPlug with the given hash.
      */
     public boolean containsPlugDescription(String plugId, String md5Hash) {
         PlugDescription plugDescription = getPlugDescription(plugId);
         if (plugDescription == null) {
-        	fLogger
-					.warn("plugdescription not found. do not update last lifesign: "
-							+ plugId);
+            fLogger
+                    .warn("plugdescription not found. do not update last lifesign: "
+                            + plugId);
             return false;
         }
         plugDescription.putLong(LAST_LIFESIGN, System.currentTimeMillis());
@@ -258,19 +252,18 @@ public class Registry {
 
         // establish connection
         try {
-        	fLogger.info("establish connection [" + plugId + "] ...");
-			plugProxy.toString();
-			fLogger.info("... success [" + plugId + "]");
+            fLogger.info("establish connection [" + plugId + "] ...");
+            plugProxy.toString();
+            fLogger.info("... success [" + plugId + "]");
         } catch (Exception e) {
-        	fLogger.error("... fails [" + plugId + "]", e);
+            fLogger.error("... fails [" + plugId + "]", e);
         }
     }
 
     /**
      * Removes a IPlug from cache, e.g. if the connection permanently fails.
-     * 
-     * @param plugId
-     *            The id of the IPlug that fails.
+     *
+     * @param plugId The id of the IPlug that fails.
      */
     public void removePlug(String plugId) {
         synchronized (this.fPlugProxyByPlugId) {
@@ -280,7 +273,7 @@ public class Registry {
             this.fPlugDescriptionByPlugId.remove(plugId);
         }
     }
-    
+
     private void closeConnectionToIplug(PlugDescription plugDescription) {
         if (plugDescription != null && this.fCommunication != null) {
             try {
@@ -292,14 +285,13 @@ public class Registry {
                     fLogger.warn("problems on closing connection", e);
                 }
             }
-        }        
+        }
     }
 
     /**
      * Returns a PlugDescrption to an IPlug id.
-     * 
-     * @param id
-     *            The IPlug id to that a PlugDescrption should be returned.
+     *
+     * @param id The IPlug id to that a PlugDescrption should be returned.
      * @return The IPlug to the id or <code>null</code> if doesn't exist.
      */
     public PlugDescription getPlugDescription(String id) {
@@ -314,7 +306,7 @@ public class Registry {
 
     /**
      * Returns all registered IPlugs.
-     * 
+     *
      * @return All registered IPlugs without checking the time stamp.
      */
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
@@ -323,18 +315,26 @@ public class Registry {
         synchronized (this.fPlugDescriptionByPlugId) {
             plugDescriptions = this.fPlugDescriptionByPlugId.values();
 
-            return plugDescriptions.stream()
-                    .filter( pd -> {
-                        return !ManagementService.MANAGEMENT_IPLUG_ID.equals(pd.getProxyServiceURL())
-                                && !SearchService.CENTRAL_INDEX_ID.equals(pd.getProxyServiceURL());
-                    })
-                    .toArray(PlugDescription[]::new);
+            PlugDescription[] pdCopy = plugDescriptions.stream()
+                    .map( pd -> {
+                        PlugDescription pdCopy1 = new PlugDescription();
+                        pdCopy1.putAll(pd);
+                        return pdCopy1;
+                    }).toArray(PlugDescription[]::new);
+
+            for (PlugDescription pd : pdCopy) {
+                if (ManagementService.MANAGEMENT_IPLUG_ID.equals(pd.getProxyServiceURL())
+                        || SearchService.CENTRAL_INDEX_ID.equals(pd.getProxyServiceURL())) {
+                    pd.remove("overrideProxy");
+                }
+            }
+            return pdCopy;
         }
     }
 
     /**
      * Returns all IPlugs that are still alive.
-     * 
+     *
      * @return All registered IPlugs younger than the given life time.
      */
     public PlugDescription[] getAllIPlugs() {
@@ -343,40 +343,38 @@ public class Registry {
         long now = System.currentTimeMillis();
         for (int i = 0; i < plugDescriptions.length; i++) {
             long plugLifeSign = plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime;
-			if (plugLifeSign > now) {
+            if (plugLifeSign > now) {
                 plugs.add(plugDescriptions[i]);
             }
         }
         return plugs.toArray(new PlugDescription[0]);
     }
-    
+
     /**
-     * Removes all iPlugs that have timed out. The timeout is derived from 
-     * the last life sign of the iPlug + a 120 sec timeout. 
-     * 
+     * Removes all iPlugs that have timed out. The timeout is derived from
+     * the last life sign of the iPlug + a 120 sec timeout.
      */
     public void removeIPlugsWithTimeout() {
         PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
         long now = System.currentTimeMillis();
         for (int i = 0; i < plugDescriptions.length; i++) {
             long plugLifeSign = plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime;
-			if (plugLifeSign <= now) {
+            if (plugLifeSign <= now) {
                 fLogger.warn("remove iplug '"
-						+ plugDescriptions[i].getPlugId()
-						+ "' because last life sign is too old ("
-						+ new Date(plugLifeSign) + " < " + new Date(now) + ")");
+                        + plugDescriptions[i].getPlugId()
+                        + "' because last life sign is too old ("
+                        + new Date(plugLifeSign) + " < " + new Date(now) + ")");
                 removePlug(plugDescriptions[i].getPlugId());
                 closeConnectionToIplug(plugDescriptions[i]);
             }
         }
     }
-    
+
 
     /**
      * Returns a IPlug proxy to a given IPlug id.
-     * 
-     * @param plugId
-     *            A IPlug id to that the IPlug proxy should be returned.
+     *
+     * @param plugId A IPlug id to that the IPlug proxy should be returned.
      * @return The IPlug proxy.
      */
     public IPlug getPlugProxy(String plugId) {
@@ -400,16 +398,17 @@ public class Registry {
     private void loadProperties() {
         try {
             FileInputStream fis = new FileInputStream(this.fFile);
-            
+
             // create a sorted properties file
             this.fActivatedIplugs = new Properties() {
                 private static final long serialVersionUID = 6956076060462348684L;
+
                 @Override
                 public synchronized Enumeration<Object> keys() {
                     return Collections.enumeration(new TreeSet<>(super.keySet()));
                 }
             };
-            
+
             this.fActivatedIplugs.load(fis);
             fis.close();
         } catch (IOException e) {
@@ -421,11 +420,9 @@ public class Registry {
 
     /**
      * Activates the IPlug to the given IPlug id.
-     * 
-     * @param plugId
-     *            A IPlug id from the IPlug that should be activated.
-     * @throws IllegalArgumentException
-     *             If the IPlug is unknown.
+     *
+     * @param plugId A IPlug id from the IPlug that should be activated.
+     * @throws IllegalArgumentException If the IPlug is unknown.
      */
     public void activatePlug(String plugId) {
         PlugDescription plugDescription = getPlugDescription(plugId);
@@ -440,11 +437,9 @@ public class Registry {
 
     /**
      * Deactivates the IPlug to the given IPlug id.
-     * 
-     * @param plugId
-     *            A IPlug id from the IPlug that should be deactivated.
-     * @throws IllegalArgumentException
-     *             If the IPlugId is unknown.
+     *
+     * @param plugId A IPlug id from the IPlug that should be deactivated.
+     * @throws IllegalArgumentException If the IPlugId is unknown.
      */
     public void deActivatePlug(String plugId) {
         PlugDescription plugDescription = getPlugDescription(plugId);
@@ -459,7 +454,7 @@ public class Registry {
 
     /**
      * Returns a communication object to connect the IPlugs.
-     * 
+     *
      * @return The communication object to connect the IPlugs.
      */
     public ICommunication getCommunication() {
@@ -468,9 +463,8 @@ public class Registry {
 
     /**
      * Sets a communication object to connect the IPlugs.
-     * 
-     * @param communication
-     *            The communication object to connect the IPlugs.
+     *
+     * @param communication The communication object to connect the IPlugs.
      */
     public void setCommunication(ICommunication communication) {
         this.fCommunication = communication;
@@ -478,9 +472,8 @@ public class Registry {
 
     /**
      * Sets the global ranking for all IPlugs.
-     * 
-     * @param globalRanking
-     *            A HashMap containing a boost factor to a IPlug id.
+     *
+     * @param globalRanking A HashMap containing a boost factor to a IPlug id.
      */
     public void setGlobalRanking(HashMap<String, Float> globalRanking) {
         this.fGlobalRanking = globalRanking;
@@ -488,9 +481,8 @@ public class Registry {
 
     /**
      * Returns a ranking boost for a given IPlug id.
-     * 
-     * @param plugId
-     *            A boosting for IPlug id.
+     *
+     * @param plugId A boosting for IPlug id.
      * @return The boost factor to a IPlug.
      */
     public Float getGlobalRankingBoost(String plugId) {
@@ -504,9 +496,8 @@ public class Registry {
 
     /**
      * Sets the bus url the IPlugs connected with.
-     * 
-     * @param busurl
-     *            The bus url. The form looks like /<group name>:<bus name>
+     *
+     * @param busurl The bus url. The form looks like /<group name>:<bus name>
      */
     public void setUrl(final String busurl) {
         this.fBusUrl = busurl;
