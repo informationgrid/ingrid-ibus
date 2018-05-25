@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import de.ingrid.ibus.management.ManagementService;
+import de.ingrid.ibus.service.SearchService;
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.WetagURL;
 import net.weta.components.communication.util.PooledThreadExecutor;
@@ -68,9 +70,9 @@ public class Registry {
 
     private IPlugProxyFactory fProxyFactory;
 
-    private HashMap<String, IPlug> fPlugProxyByPlugId = new HashMap<String, IPlug>();
+    private HashMap<String, IPlug> fPlugProxyByPlugId = new HashMap<>();
 
-    private HashMap<String, PlugDescription> fPlugDescriptionByPlugId = new HashMap<String, PlugDescription>();
+    private HashMap<String, PlugDescription> fPlugDescriptionByPlugId = new HashMap<>();
 
     private boolean fIplugAutoActivation;
 
@@ -320,7 +322,13 @@ public class Registry {
 
         synchronized (this.fPlugDescriptionByPlugId) {
             plugDescriptions = this.fPlugDescriptionByPlugId.values();
-            return plugDescriptions.toArray(new PlugDescription[plugDescriptions.size()]);
+
+            return plugDescriptions.stream()
+                    .filter( pd -> {
+                        return !ManagementService.MANAGEMENT_IPLUG_ID.equals(pd.getProxyServiceURL())
+                                && !SearchService.CENTRAL_INDEX_ID.equals(pd.getProxyServiceURL());
+                    })
+                    .toArray(PlugDescription[]::new);
         }
     }
 
@@ -331,7 +339,7 @@ public class Registry {
      */
     public PlugDescription[] getAllIPlugs() {
         PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
-        List<PlugDescription> plugs = new ArrayList<PlugDescription>(plugDescriptions.length);
+        List<PlugDescription> plugs = new ArrayList<>(plugDescriptions.length);
         long now = System.currentTimeMillis();
         for (int i = 0; i < plugDescriptions.length; i++) {
             long plugLifeSign = plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime;
@@ -339,7 +347,7 @@ public class Registry {
                 plugs.add(plugDescriptions[i]);
             }
         }
-        return (PlugDescription[]) plugs.toArray(new PlugDescription[plugs.size()]);
+        return plugs.toArray(new PlugDescription[0]);
     }
     
     /**
@@ -398,7 +406,7 @@ public class Registry {
                 private static final long serialVersionUID = 6956076060462348684L;
                 @Override
                 public synchronized Enumeration<Object> keys() {
-                    return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+                    return Collections.enumeration(new TreeSet<>(super.keySet()));
                 }
             };
             
