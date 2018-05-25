@@ -65,12 +65,9 @@ export class SettingsListComponent implements OnInit, OnDestroy {
   }
 
   getStatusClass(component: string) {
-    let state = '';
-    switch (component) {
-      case 'codelistrepo':
-        state = this.status['codelistrepo'] === 'true'
+    let state = this.status[component] === 'true'
           ? 'connected' : 'disconnected';
-    }
+
     return 'fa fa-circle ' + state;
   }
 

@@ -25,7 +25,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable {
     
     private static Logger log = LogManager.getLogger( SearchService.class );
     
-    private static final String CENTRAL_INDEX_ID = "__centralIndex__";
+    public static final String CENTRAL_INDEX_ID = "__centralIndex__";
 
     /**
      * 

@@ -45,7 +45,10 @@
     </div>
 
     <div class="card">
-      <div class="card-header">Elasticsearch</div>
+      <div class="card-header">
+        Elasticsearch
+        <span [class]="getStatusClass('elasticsearch')"></span>
+      </div>
       <div class="card-body">
 
         <div class="form-group">

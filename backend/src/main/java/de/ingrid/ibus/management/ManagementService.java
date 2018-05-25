@@ -14,7 +14,7 @@ import de.ingrid.utils.PlugDescription;
 @Service
 public class ManagementService {
 
-    private static final String MANAGEMENT_IPLUG_ID = "__managementIPlug__";
+    public static final String MANAGEMENT_IPLUG_ID = "__managementIPlug__";
 
     @Autowired
     private BusServer busServer;
@@ -49,7 +49,7 @@ public class ManagementService {
 
         pd.put( "overrideProxy", managementIPlug );
         registry.addPlugDescription( pd );
-        
+
         registry.activatePlug( MANAGEMENT_IPLUG_ID );
 
         new SimulatedLifesign( registry, pd );

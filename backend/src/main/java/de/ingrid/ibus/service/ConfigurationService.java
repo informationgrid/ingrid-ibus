@@ -5,14 +5,17 @@ import de.ingrid.codelists.comm.HttpCLCommunication;
 import de.ingrid.codelists.model.CodeList;
 import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
 import de.ingrid.ibus.WebSecurityConfig;
+import de.ingrid.ibus.config.IBusConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DefaultPropertiesPersister;
+import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -26,9 +29,6 @@ public class ConfigurationService {
     private static Logger log = LogManager.getLogger(ConfigurationService.class);
     private File settingsFile;
 
-    @Value("${spring.security.user.password:}")
-    private String userPassword;
-
     @Autowired
     private final CodeListService codeListService = null;
 
@@ -37,6 +37,9 @@ public class ConfigurationService {
 
     @Autowired
     private final WebSecurityConfig webSecurityConfig = null;
+
+    @Autowired
+    private final IBusConfiguration appConfiguration = null;
 
     private Properties propertiesSystem;
     private Properties properties;
@@ -70,6 +73,18 @@ public class ConfigurationService {
         this.properties = new Properties();
         this.properties.putAll(propertiesSystem);
         this.properties.putAll(propertiesOverride);
+    }
+
+    @PostConstruct
+    public void init() {
+        // use resolved properties values (instead of ${xxx:yyy})
+        this.properties.put("codelistrepo.url", appConfiguration.codelistrepo.url);
+        this.properties.put("codelistrepo.username", appConfiguration.codelistrepo.username);
+        this.properties.put("codelistrepo.password", appConfiguration.codelistrepo.password);
+        this.properties.put("elastic.remoteHosts", String.join(",", appConfiguration.elastic.remoteHosts));
+        this.properties.put("server.port", appConfiguration.server.port);
+        this.properties.put("spring.security.user.password", appConfiguration.spring.security.user.password);
+
     }
 
     public boolean writeConfiguration(Properties configuration) throws Exception {
@@ -107,9 +122,12 @@ public class ConfigurationService {
         HttpCLCommunication communication = new HttpCLCommunication();
         communication.setRequestUrl((String) configuration.get("codelistrepo.url"));
         communication.setUsername((String) configuration.get("codelistrepo.username"));
+
+        // only update password if new one was set, otherwise use the old one
         if (configuration.get("codelistrepo.password") != null) {
-            communication.setPassword((String) configuration.get("codelistrepo.password"));
+            appConfiguration.codelistrepo.password = (String) configuration.get("codelistrepo.password");
         }
+        communication.setPassword(appConfiguration.codelistrepo.password);
         codeListService.setComm(communication);
 
         // Elasticsearch
@@ -126,7 +144,7 @@ public class ConfigurationService {
         String adminPassword = (String) configuration.get("spring.security.user.password");
         if (adminPassword != null && !"".equals(adminPassword)) {
             webSecurityConfig.secureWebapp(adminPassword);
-            this.userPassword = adminPassword;
+            appConfiguration.spring.security.user.password = adminPassword;
         }
 
     }
@@ -168,7 +186,7 @@ public class ConfigurationService {
             sparseConfig.put(key, properties.getProperty(key));
         }
 
-        if (userPassword.isEmpty()) {
+        if (appConfiguration.spring.security.user.password.isEmpty()) {
             sparseConfig.put("needPasswordChange", "true");
         }
 
@@ -180,6 +198,7 @@ public class ConfigurationService {
 
         List<CodeList> codeLists = codeListService.updateFromServer(new Date().getTime());
         props.put("codelistrepo", codeLists == null ? "false" : "true");
+        props.put("elasticsearch", ((TransportClient)elasticsearchBean.getClient()).connectedNodes().size() > 0 ? "true" : "false");
 
         return props;
     }
