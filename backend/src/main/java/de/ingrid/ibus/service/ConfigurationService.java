@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DefaultPropertiesPersister;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
@@ -132,9 +131,15 @@ public class ConfigurationService {
 
         // Elasticsearch
         String remoteHosts = (String) configuration.get("elastic.remoteHosts");
-        if (remoteHosts != null && !"".equals(remoteHosts)) {
+        if (remoteHosts != null) {
             try {
-                elasticsearchBean.createTransportClient(remoteHosts.split(","));
+                String[] remoteHostsArray;
+                if ("".equals(remoteHosts)) {
+                    remoteHostsArray = new String[0];
+                } else {
+                    remoteHostsArray = remoteHosts.split(",");
+                }
+                elasticsearchBean.createTransportClient(remoteHostsArray);
             } catch (UnknownHostException e) {
                 log.error("Error updating elasticsearch connection", e);
             }
