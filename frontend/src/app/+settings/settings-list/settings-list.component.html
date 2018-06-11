@@ -33,7 +33,7 @@
         </div>
         <div class="form-group">
           <label class="control-label">Passwort</label>
-          <input type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['codelistrepo.password']" [disabled]="isEmptyPassword">
+          <input id="codelistPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['codelistrepo.password']" [disabled]="isEmptyPassword">
           <div class="form-check">
             <label class="form-check-label">
               <input type="checkbox" class="form-check-input" (change)="handleEmptyPassword($event)">
@@ -65,7 +65,7 @@
 
         <div class="form-group">
           <label class="control-label">Passwort</label>
-          <input type="password" class="form-control" placeholder="<aktuelles Passwort>" name="adminPasswort" [(ngModel)]="config['spring.security.user.password']">
+          <input id="adminPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [(ngModel)]="config['spring.security.user.password']">
         </div>
 
       </div>
