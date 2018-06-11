@@ -65,7 +65,7 @@
 
         <div class="form-group">
           <label class="control-label">Passwort</label>
-          <input id="adminPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [(ngModel)]="config['spring.security.user.password']">
+          <input id="adminPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['spring.security.user.password']">
         </div>
 
       </div>
