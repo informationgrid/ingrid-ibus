@@ -26,14 +26,13 @@
     </description>
 	<!-- set global properties for this build -->
 	<property name="componentName" value="${project.artifactId}-${project.version}"/>
-	<property name="start-script" value="${installDir}/start.sh"/>
-	
-	<!-- THIS PORPERTIES ARE NECESSARY FOR UPDATES -->
+
+	<!-- THESE PORPERTIES ARE NECESSARY FOR UPDATES -->
     <property name="libraryDir"         value="lib" />
     <property name="libraryIdent"       value="ingrid-ibus-" />
     <!-- <property name="libraryIdent"       value="MANIFEST.MF" /> -->
     <property name="versionsWithConfigurations"  value="3.3.0" />
-    <property name="minSupportedVersion" value="3.3.0" />
+    <property name="minSupportedVersion" value="4.4.0" />
 
     <import file="build-installer-utils.xml"  as="utils" />
     <import file="build-patch.xml"            as="patch" />
@@ -66,18 +65,13 @@
                 <exclude name="${componentName}/conf/activatedIplugs.properties" />
                 <exclude name="${componentName}/conf/globalRanking.properties" />
                 <exclude name="${componentName}/conf/querymodifier.properties" />
-                <exclude name="${componentName}/start.sh" />
             </patternset>
         </unzip>
         
         <delete>
             <fileset dir="${installDir}/lib" includes="**/*"/>
-            <fileset dir="${installDir}/webapp/admin/WEB-INF/work" includes="**/*"/>
         </delete>
-        <delete>
-            <fileset dir="${installDir}/webapp/admin/WEB-INF/work" includes="**/*"/>
-        </delete>
-        
+
         <move toDir="${installDir}">
             <fileset dir="./${componentName}"/>
         </move>
@@ -88,9 +82,11 @@
         <touch file="${installDir}/conf/application-default.properties" />
         <propertyfile file="${installDir}/conf/application-default.properties">
             <entry key="server.port"                    value="${adminPort}" />
-            <entry key="ibus.url"                       value="${serverName}" />
-            <entry key="ibus.port"                      value="${serverPort}" />
+            <entry key="elastic.remoteHosts"            value="" />
         </propertyfile>
+
+        <echo>Schalte zentralen Index aus in Admin-GUI</echo>
+        <replace file="${installDir}/conf/static/assets/config.json" token='"useIndices": true' value='"useIndices": false'/>
 	</target>
 	
 	<target name="startComponent">

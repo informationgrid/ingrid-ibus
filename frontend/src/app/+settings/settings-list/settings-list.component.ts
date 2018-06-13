@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {IndexService} from '../../+indices/index.service';
 import {AppConfiguation, SettingsService} from '../settings.service';
 import {Subscription} from 'rxjs/Rx';
-import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-settings-list',

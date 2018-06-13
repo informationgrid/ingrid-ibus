@@ -29,17 +29,22 @@ import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.ibus.comm.net.IPlugProxyFactoryImpl;
 import de.ingrid.ibus.comm.processor.*;
 import de.ingrid.ibus.comm.registry.Registry;
+import de.ingrid.ibus.comm.registry.RegistryConfigurable;
+import de.ingrid.ibus.config.IBusConfiguration;
 import de.ingrid.utils.IBus;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.metadata.IMetadataInjector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.metadata.MetadataInjectorFactory;
+import de.ingrid.utils.processor.IPreProcessor;
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.configuration.ServerConfiguration;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
 import net.weta.components.communication.tcp.StartCommunication;
+import net.weta.components.communication.tcp.TcpCommunication;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -63,12 +68,6 @@ public class BusServer {
     /**
      * IBUS SETTINGS
      */
-    @Value("${ibus.url}")
-    private String iBusUrl;
-
-    @Value("${ibus.port:9900}")
-    private int iBusPort;
-
     @Value("${ibus.timeout:10}")
     private int iBusTimeout;
 
@@ -84,6 +83,12 @@ public class BusServer {
     @Value("${ibus.queueSize:2000}")
     private int iBusQueueSize;
 
+    @Autowired
+    private final IBusConfiguration appConfiguration = null;
+
+    @Autowired
+    private RegistryConfigurable[] classesUsingRegistry = null;
+
     /**
      * 
      * @throws Exception
@@ -92,13 +97,34 @@ public class BusServer {
 
     @PostConstruct
     public void postConstruct() throws Exception {
+        configureIBus();
+    }
 
+    @PreDestroy
+    private void onDestroy() {
+        this.registry.getCommunication().shutdown();
+    }
+
+    public void configureIBus() throws Exception {
         ICommunication communication;
+
+        if (Bus.getInstance() != null) {
+            Registry iPlugRegistry = Bus.getInstance().getIPlugRegistry();
+            ICommunication previousCommunication = iPlugRegistry.getCommunication();
+            if (previousCommunication != null) previousCommunication.shutdown();
+
+            // List<String> registeredClients = ((TcpCommunication) iPlugRegistry.getCommunication()).getRegisteredClients();
+
+            for (PlugDescription iPlug : iPlugRegistry.getAllIPlugs()) {
+                iPlugRegistry.getCommunication().closeConnection(iPlug.getPlugId());
+                iPlugRegistry.removePlug(iPlug.getPlugId());
+            }
+        }
 
         try {
             ServerConfiguration serverConfiguration = new ServerConfiguration();
-            serverConfiguration.setName(iBusUrl);
-            serverConfiguration.setPort(iBusPort);
+            serverConfiguration.setName(appConfiguration.ibus.url);
+            serverConfiguration.setPort(appConfiguration.ibus.port);
             serverConfiguration.setSocketTimeout(iBusTimeout);
             serverConfiguration.setHandleTimeout(iBusHandleTimeout);
             serverConfiguration.setMaxMessageSize(iBusMaximumSize);
@@ -108,8 +134,8 @@ public class BusServer {
             communication = StartCommunication.create( serverConfiguration );
 
             communication.startup();
-            communication.subscribeGroup( iBusUrl );
-            
+            communication.subscribeGroup( appConfiguration.ibus.url );
+
             // removeCommunicationFile();
         } catch (Exception e) {
             log.error( "Cannot start the communication: " + e.getMessage() );
@@ -124,15 +150,21 @@ public class BusServer {
         injectMetadatas( metadata, bus );
         bus.setMetadata( metadata );
         registry = bus.getIPlugRegistry();
-        registry.setUrl( iBusUrl );
+        registry.setUrl( appConfiguration.ibus.url );
         registry.setCommunication( communication );
+
+        // remove all processors first
+        IPreProcessor[] preProcessors = bus.getProccessorPipe().getPreProcessors();
+        for (IPreProcessor pre: preProcessors) {
+            bus.getProccessorPipe().removePreProcessor(pre);
+        }
 
         // add processors
         bus.getProccessorPipe().addPreProcessor( new UdkMetaclassPreProcessor() );
         bus.getProccessorPipe().addPreProcessor( new LimitedAttributesPreProcessor() );
         bus.getProccessorPipe().addPreProcessor( new QueryModePreProcessor() );
         bus.getProccessorPipe().addPreProcessor( new AddressPreProcessor() );
-        bus.getProccessorPipe().addPreProcessor( new BusUrlPreProcessor( iBusUrl ) );
+        bus.getProccessorPipe().addPreProcessor( new BusUrlPreProcessor( appConfiguration.ibus.url ) );
         bus.getProccessorPipe().addPreProcessor( new QueryModifierPreProcessor( "/querymodifier.properties" ) );
 
         // read in the boost for iplugs
@@ -161,14 +193,13 @@ public class BusServer {
         // start the proxy service
         ReflectMessageHandler messageHandler = new ReflectMessageHandler();
         messageHandler.addObjectToCall( IBus.class, bus );
-        communication.getMessageQueue().getProcessorRegistry().addMessageHandler( ReflectMessageHandler.MESSAGE_TYPE,
+        registry.getCommunication().getMessageQueue().getProcessorRegistry().addMessageHandler( ReflectMessageHandler.MESSAGE_TYPE,
                 messageHandler );
 
-    }
-
-    @PreDestroy
-    private void onDestroy() {
-        this.registry.getCommunication().shutdown();
+        // update all classes that use the registry, since it has changed now (new Bus())
+        for (RegistryConfigurable registryConfigurable : classesUsingRegistry) {
+            registryConfigurable.handleRegistryUpdate(registry);
+        }
     }
 
     private void injectMetadatas(Metadata metadata, IBus bus) throws Exception {

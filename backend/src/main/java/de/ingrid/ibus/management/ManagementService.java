@@ -1,18 +1,16 @@
 package de.ingrid.ibus.management;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.comm.registry.Registry;
+import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import de.ingrid.ibus.service.SettingsService;
 import de.ingrid.ibus.service.SimulatedLifesign;
 import de.ingrid.utils.PlugDescription;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
-public class ManagementService {
+public class ManagementService implements RegistryConfigurable {
 
     public static final String MANAGEMENT_IPLUG_ID = "__managementIPlug__";
 
@@ -27,11 +25,14 @@ public class ManagementService {
 
     private String[] fields = new String[] { "incl_meta", "login", "digest", "management_request_type" };
     private String[] datatypes = new String[] { "management" };
+    private SimulatedLifesign currentSimulatedLifesign = null;
 
-    @PostConstruct
-    public void init() {
-        
-        Registry registry = busServer.getRegistry();
+    @Override
+    public void handleRegistryUpdate(Registry registry) {
+        if (currentSimulatedLifesign != null) {
+            currentSimulatedLifesign.close();
+        }
+
         PlugDescription pd = new PlugDescription();
         pd.setProxyServiceURL( MANAGEMENT_IPLUG_ID );
         pd.setIPlugClass( "managementiplug" );
@@ -52,6 +53,6 @@ public class ManagementService {
 
         registry.activatePlug( MANAGEMENT_IPLUG_ID );
 
-        new SimulatedLifesign( registry, pd );
+        currentSimulatedLifesign = new SimulatedLifesign( registry, pd );
     }
 }

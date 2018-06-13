@@ -56,19 +56,9 @@
             ifTarget    ="setInstallProperty"
             type		="input"
             name		="iBusOptions"
-            displayText	="Einstellungen fuer den iBus">
-            
-            <text property="serverName" displayText="Server ID:" defaultValue="/ingrid-group:ibus-'Ihr-Name'"/>
-            <text property="serverPort" displayText="Server Port:" defaultValue="9900"/>
-    </page>
-
-    <page
-            ifTarget    ="setInstallProperty"
-            type		="input"
-            name		="iBusOptions2"
-            displayText	="Einstellungen fuer den iBus (2)"
+            displayText	="Einstellungen fuer den iBus"
             target		="startscript">
-            
+
             <comment displayText="" explanatoryText="Port f. die Administrationsoberfläche. Die Administrationsoberfläche ist erreichbar unter http://localhost:PORT/"/>
             <text property="adminPort" displayText="Port f. Administrationsoberfläche:" defaultValue="9901"/>
     </page>

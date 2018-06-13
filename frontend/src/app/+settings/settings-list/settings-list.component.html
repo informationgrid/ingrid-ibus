@@ -60,9 +60,24 @@
     </div>
 
     <div class="card">
-      <div class="card-header">Server Einstellungen</div>
+      <div class="card-header">iBus</div>
       <div class="card-body">
 
+        <div class="form-group">
+          <label class="control-label">ID</label>
+          <input id="ibusId" type="text" class="form-control" placeholder="/ingrid-group:ibus" name="ibusId" [(ngModel)]="config['ibus.url']">
+        </div>
+
+        <div class="form-group">
+          <label class="control-label">Port</label>
+          <input id="ibusPort" type="number" class="form-control" placeholder="9900" name="ibusPort" [(ngModel)]="config['ibus.port']">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Server Einstellungen</div>
+      <div class="card-body">
         <div class="form-group">
           <label class="control-label">Passwort</label>
           <input id="adminPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['spring.security.user.password']">

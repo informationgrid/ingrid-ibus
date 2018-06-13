@@ -5,6 +5,7 @@ import de.ingrid.codelists.comm.HttpCLCommunication;
 import de.ingrid.codelists.model.CodeList;
 import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
 import de.ingrid.ibus.WebSecurityConfig;
+import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.config.IBusConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,13 +39,16 @@ public class ConfigurationService {
     private final WebSecurityConfig webSecurityConfig = null;
 
     @Autowired
+    private final BusServer busServer = null;
+
+    @Autowired
     private final IBusConfiguration appConfiguration = null;
 
     private Properties propertiesSystem;
     private Properties properties;
 
     private static String[] configurableProps = new String[]{
-            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts"
+            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port"
     };
 
     public ConfigurationService() throws IOException {
@@ -82,6 +86,7 @@ public class ConfigurationService {
         this.properties.put("codelistrepo.password", appConfiguration.codelistrepo.password);
         this.properties.put("elastic.remoteHosts", String.join(",", appConfiguration.elastic.remoteHosts));
         this.properties.put("server.port", appConfiguration.server.port);
+        this.properties.put("ibus.url", appConfiguration.ibus.url);
         this.properties.put("spring.security.user.password", appConfiguration.spring.security.user.password);
 
     }
@@ -111,12 +116,19 @@ public class ConfigurationService {
             }
         }
 
-        updateBeansConfiguration(configuration);
+        // map configuration to ConfigBean
+        boolean ibusChanged = !appConfiguration.ibus.url.equals((String) configuration.get("ibus.url")) || (appConfiguration.ibus.port != Integer.valueOf((String) configuration.get("ibus.port")));
+        appConfiguration.ibus.url = (String) configuration.get("ibus.url");
+        appConfiguration.ibus.port = Integer.valueOf((String) configuration.get("ibus.port"));
+        appConfiguration.codelistrepo.url = (String) configuration.get("codelistrepo.url");
+        appConfiguration.codelistrepo.username = (String) configuration.get("codelistrepo.username");
+
+        updateBeansConfiguration(configuration, ibusChanged);
 
         return true;
     }
 
-    private void updateBeansConfiguration(Properties configuration) throws Exception {
+    private void updateBeansConfiguration(Properties configuration, boolean ibusChanged) throws Exception {
         // update codelist repository connection
         HttpCLCommunication communication = new HttpCLCommunication();
         communication.setRequestUrl((String) configuration.get("codelistrepo.url"));
@@ -139,6 +151,8 @@ public class ConfigurationService {
                 } else {
                     remoteHostsArray = remoteHosts.split(",");
                 }
+
+                appConfiguration.elastic.remoteHosts = remoteHostsArray;
                 elasticsearchBean.createTransportClient(remoteHostsArray);
             } catch (UnknownHostException e) {
                 log.error("Error updating elasticsearch connection", e);
@@ -152,6 +166,10 @@ public class ConfigurationService {
             appConfiguration.spring.security.user.password = adminPassword;
         }
 
+        // iBus
+        if (ibusChanged) {
+            busServer.configureIBus();
+        }
     }
 
     /**

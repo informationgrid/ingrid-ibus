@@ -45,6 +45,11 @@ public class IBusConfiguration {
 
     public static class IBus {
         public String url;
+        public int port;
+
+        public void setPort(int port) {
+            this.port = port;
+        }
 
         public void setUrl(String url) {
             this.url = url;
@@ -79,6 +84,7 @@ public class IBusConfiguration {
 
     public static class Spring {
         public final Security security = new Security();
+
         public Security getSecurity() {
             return security;
         }
@@ -86,6 +92,7 @@ public class IBusConfiguration {
         public static class Security {
 
             public final User user = new User();
+
             public User getUser() {
                 return user;
             }

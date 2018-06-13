@@ -2,6 +2,7 @@ package de.ingrid.ibus.service;
 
 import javax.annotation.PostConstruct;
 
+import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +14,13 @@ import de.ingrid.utils.IngridDocument;
 import de.ingrid.utils.PlugDescription;
 
 @Service
-public class IPlugService {
+public class IPlugService implements RegistryConfigurable {
 
-    @Autowired 
-    private BusServer busServer;
-    
     private Registry registry;
     
-    @PostConstruct
-    public void init() {
-        registry = busServer.getRegistry();
+    @Override
+    public void handleRegistryUpdate(Registry registry) {
+        this.registry = registry;
     }
     
     public PlugDescription[] getConnectedIPlugs() {
