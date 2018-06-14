@@ -1,0 +1,88 @@
+<div *ngIf="detail">
+
+
+  <div class="detail-container container">
+
+    <ingrid-error [msg]="error"></ingrid-error>
+
+    <dl class="row">
+      <dt class="col-4 text-right text-right">Index-Name</dt>
+      <dd class="col-8">{{detail.name}}
+        <span class="fa fa-power-off"
+              [class.text-success]="detail.active"
+              [class.text-danger]="!detail.active"
+        ></span>
+      </dd>
+
+      <dt class="col-4 text-right">Index-Type</dt>
+      <dd class="col-8">{{detail.type}}</dd>
+
+      <dt class="col-4 text-right">Name der Komponente</dt>
+      <dd class="col-8">{{detail.longName}}</dd>
+
+      <dt class="col-4 text-right">Admin-URL</dt>
+      <dd class="col-8"><a target="_blank" [href]="detail.adminUrl">{{detail.adminUrl}}</a></dd>
+
+      <dt class="col-4 text-right">Anzahl Dokumente</dt>
+      <dd class="col-8">{{detail.numberDocs}}</dd>
+
+      <dt class="col-4 text-right">Letzte Aktualisierung</dt>
+      <dd class="col-8">{{detail.lastIndexed | date:'medium'}}</dd>
+
+      <dt class="col-4 text-right">Letzter Heartbeat</dt>
+      <dd class="col-8">{{detail.lastHeartbeat | dateRelative}} ({{detail.lastHeartbeat | date:'medium'}})</dd>
+
+      <dt class="col-4 text-right">Mapping</dt>
+      <dd class="col-8">
+        <button (click)="showMapping = !showMapping" class="btn btn-sm btn-outline-info">
+          {{showMapping ? 'Verstecken' : 'Anzeigen'}}
+        </button>
+        <pre *ngIf="showMapping" class="mapping">{{detail.mapping | json}}</pre>
+      </dd>
+
+      <dt class="col-4 text-right">Status</dt>
+      <dd class="col-8" *ngIf="detail.indexingState?.running">
+        {{detail.indexingState?.numProcessed}} / {{detail.indexingState?.totalDocs}}:
+        {{detail.indexingState?.message}}
+      </dd>
+      <dd class="col-8" *ngIf="!detail.indexingState?.running">
+        Bereit
+      </dd>
+    </dl>
+
+  </div>
+
+  <div class="footer">
+    <div class="container">
+      <form class="form-inline">
+
+        <!-- DELETE BUTTON-->
+        <button type="button" class="btn btn-light deleteIndex" confirmbuttontype="danger" mwlConfirmationPopover
+           [popoverTitle]="'Wirklich löschen?'"
+           [popoverMessage]="'Achtung! Der Index kann noch weitere Typen enthalten, die ebenfalls entfernt werden. Wollen Sie den Index wirklich löschen?'"
+           placement="top"
+           confirmText="Löschen"
+           cancelText="Abbrechen"
+           (confirm)="deleteIndex()">Löschen</button>
+
+        <!-- ACTIVATE / DEACTIVATE -->
+        <button type="button" class="btn btn-light toggleActiveIndex" (click)="toggleActive()">{{ detail.active ? 'Deaktivieren' :
+          'Aktivieren'}}</button>
+
+        <!-- INDEX -->
+        <button type="button" class="btn btn-light doIndex" (click)="index()">Indexierung vormerken</button>
+
+        <!-- TOGGLE WHEN NO HEARTBEAT-->
+        <div class="form-check">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input"
+                   [checked]="detail.deactivateWhenNoHeartbeat"
+                   (click)="toggleHeartbeatDeactivation()">
+            deaktivieren, wenn kein Heartbeat
+          </label>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

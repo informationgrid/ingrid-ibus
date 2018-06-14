@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>de.ingrid</groupId>
+    <artifactId>ingrid-ibus-project</artifactId>
+    <version>5.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>ingrid-ibus</artifactId>
+  <packaging>pom</packaging>
+  <name>ingrid-ibus-distribution</name>
+  <scm>
+    <connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git/distribution</connection>
+    <developerConnection>scm:git:git@github.com:informationgrid/ingrid-ibus.git/distribution</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  <repositories>
+    <!-- Repo of parent pom needed, parent pom may not be installed locally yet -->
+    <repository>
+      <id>de.ingrid.all</id>
+      <name>Maven Repo InGrid</name>
+      <url>https://dev.informationgrid.eu/archiva/repository/ingrid-all</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>de.ingrid</groupId>
+      <artifactId>ingrid-ibus-backend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.ingrid</groupId>
+      <artifactId>ingrid-ibus-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>de.ingrid</groupId>
+                  <artifactId>ingrid-ibus-frontend</artifactId>
+                  <outputDirectory>${project.build.directory}/frontend</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4.1</version>
+        <!-- Add Type of Component to Manifest of Installer for Upgrade Server -->
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <ingridComponentType>IBUS</ingridComponentType>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-installer</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <!-- Activate docker image build and push integration (see parent-pom) -->
+<!--       <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <configuration>
+          since we call the command from the parent we also have to set the path to the child module
+               where the docker configuration is
+          <dockerDirectory>distribution/src/docker</dockerDirectory>
+        </configuration>
+      </plugin> -->
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>docker</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <skipDocker>false</skipDocker>
+              <imageName>docker-registry.wemove.com/${project.artifactId}:${project.version}</imageName>
+              <dockerDirectory>distribution/src/docker</dockerDirectory>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <!--<profiles>
+
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>wagon-maven-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-changes-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>changes-report</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>changes-report</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>changes-announcement-mail</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>announcement-mail</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>-->
+</project>

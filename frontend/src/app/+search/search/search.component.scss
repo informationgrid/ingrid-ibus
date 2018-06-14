@@ -1,0 +1,39 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.container > div {
+  flex: 0 0 auto;
+}
+
+.container .flexy {
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.search {
+  margin-bottom: 15px;
+}
+
+.total {
+  text-align: right;
+}
+
+.input-group-btn {
+  padding-left: 10px;
+}
+
+.debug-title {
+  font-weight: bold;
+}
+.debug-info {
+  padding-bottom: 10px;
+}

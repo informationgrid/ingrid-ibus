@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  height: 100%;
+}
+
+app-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+    padding: 10px 15px 0;
+}
+
+button.fa-info {
+  padding: 2px 7px;
+}
+
+dt {
+  padding-bottom: 15px;
+}
+
+.error {
+  padding: 15px;
+}
+
+.clickable, .clickable-only {
+  cursor: pointer;
+}
+.clickable:hover {
+  background-color: #f8f8f8;
+
+  &.glyphicon {
+    background-color: inherit;
+  }
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@-webkit-keyframes spin2 {
+  from { -webkit-transform: rotate(0deg);}
+  to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+  from { transform: scale(1) rotate(0deg);}
+  to { transform: scale(1) rotate(360deg);}
+}
