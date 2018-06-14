@@ -131,7 +131,7 @@ public class ConfigurationService {
     private void updateBeansConfiguration(Properties configuration, boolean ibusChanged) throws Exception {
         // update codelist repository connection
         HttpCLCommunication communication = new HttpCLCommunication();
-        communication.setRequestUrl((String) configuration.get("codelistrepo.url"));
+        communication.setRequestUrl((String) configuration.get("codelistrepo.url") + "/rest/getCodelists");
         communication.setUsername((String) configuration.get("codelistrepo.username"));
 
         // only update password if new one was set, otherwise use the old one

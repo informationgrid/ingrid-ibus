@@ -30,7 +30,7 @@
     <iplug-item [data]="data" *ngFor="let data of iplugsCentralIndex; trackBy: getIPlugIdentifier"></iplug-item>
   </ng-container>
 
-  <div *ngIf="iplugsLocalIndex?.length === 0 && iplugsCentralIndex?.length === 0" class="card text-white bg-info">
+  <div *ngIf="iplugsLocalIndex?.length === 0 && iplugsCentralIndex?.length === 0" class="card text-white bg-warning">
     <div class="card-body">
       Es sind keine iPlugs mit dem iBus verbunden.
     </div>

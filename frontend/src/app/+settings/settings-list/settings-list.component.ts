@@ -17,7 +17,8 @@ export class SettingsListComponent implements OnInit, OnDestroy {
   config: AppConfiguation = {};
 
   isEmptyPassword = false;
-  private status: any = {};
+  private statusCodelistRepo = true;
+  private statusElasticsearch = false;
   private status$: Subscription;
 
   isReloading = false;
@@ -33,7 +34,11 @@ export class SettingsListComponent implements OnInit, OnDestroy {
       ids => this.activeIndices = ids
     );
     this.settingsService.get().subscribe(cfg => this.config = cfg);
-    this.status$ = this.settingsService.status().subscribe(status => this.status = status);
+    this.status$ = this.settingsService.status().subscribe(status => {
+      console.log('.');
+      this.statusCodelistRepo = status['codelistrepo'] === 'true';
+      this.statusElasticsearch = status['elasticsearch'] === 'true';
+    });
   }
 
   ngOnDestroy() {
@@ -61,13 +66,6 @@ export class SettingsListComponent implements OnInit, OnDestroy {
 
   handleEmptyPassword(event: Event) {
     this.isEmptyPassword = (<HTMLInputElement>event.target).checked;
-  }
-
-  getStatusClass(component: string) {
-    let state = this.status[component] === 'true'
-          ? 'connected' : 'disconnected';
-
-    return 'fa fa-circle ' + state;
   }
 
   handleError(error: any) {

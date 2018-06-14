@@ -24,10 +24,20 @@
 
 <document>
   <properties>
-      <title>History Ingrid iBus</title>
-      <author email="joachim@wemove.com">Joachim Müller</author>
+    <title>History Ingrid iBus</title>
+    <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+
+  <release version="4.4.0" date="2018-xx-xx" description="Release 4.4.0">
+    <action type="add" dev="wemove" issue="4">
+      Consolidation of Management-iPlug into the iBus. Partner and Provider are managed by the Codelist-Repository
+      now.
+    </action>
+    <action type="add" dev="wemove" issue="835">
+      A central index can be used now. An Elasticsearch Cluster is needed which can be configured in Admin-GUI.
+    </action>
+  </release>
 
     <release version="4.2.0" date="2018-01-05" description="Release 4.2.0">
       <action type="add" dev="wemove">

@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,21 +36,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${development:false}")
     private boolean developmentMode;
 
-    @Value("${elastic.remoteHosts:localhost:9300}")
-    private String[] remoteHosts;
-
-    @Value("${elastic.defaultFields:title,content}")
-    private String[] defaultFields;
-
-    @Value("${elastic.indexName:__centralIndex__}")
-    private String indexName;
-
-    @Value("${elastic.indexFieldTitle:title}")
-    private String titleField;
-
-    @Value("${elastic.indexFieldSummary:abstract}")
-    private String summaryField;
-    
     @Value("${codelistrepo.url:http://not-configured}")
     private String codelistUrl;
     
@@ -60,9 +44,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Value("${codelistrepo.password:}")
     private String codelistPassword;
-
-    @Value("${spring.security.user.password:}")
-    private String userPassword;
 
     @Autowired
     private SecurityService securityService;
@@ -113,7 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return codeListService;
     }
 
-    public void secureWebapp(String adminPassword) throws Exception {
+    public void secureWebapp(String adminPassword) {
         this.securityService.isPasswordDefined = true;
         InMemoryUserDetailsManager userService = (InMemoryUserDetailsManager) this.userDetailsService;
         UserDetails adminUser = new User("admin", adminPassword, new ArrayList<>());
@@ -122,7 +103,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private ICodeListCommunication codelistCommunication() {
         HttpCLCommunication comm = new HttpCLCommunication();
-        comm.setRequestUrl( codelistUrl );
+        comm.setRequestUrl( codelistUrl + "/rest/getCodelists" );
         comm.setUsername( codelistUsername );
         comm.setPassword( codelistPassword );
         return comm;
@@ -131,7 +112,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private void initProductionMode(HttpSecurity http) throws Exception {
         // @formatter:off
-        LogoutConfigurer<HttpSecurity> configurer = http
+        http
             .csrf()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // make cookies readable within JS
                 .and()
