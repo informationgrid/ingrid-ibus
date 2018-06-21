@@ -29,13 +29,16 @@
   </properties>
   <body>
 
-  <release version="4.4.0" date="2018-xx-xx" description="Release 4.4.0">
+  <release version="4.4.0" date="2018-06-21" description="Release 4.4.0">
     <action type="add" dev="wemove" issue="4">
       Consolidation of Management-iPlug into the iBus. Partner and Provider are managed by the Codelist-Repository
       now.
     </action>
     <action type="add" dev="wemove" issue="835">
       A central index can be used now. An Elasticsearch Cluster is needed which can be configured in Admin-GUI.
+    </action>
+    <action type="add" dev="wemove" issue="835">
+      Completely new Admin GUI, for easier configuration and management of connected iPlugs and indices.
     </action>
   </release>
 
