@@ -125,10 +125,6 @@
         </plugins>
       </build>
     </profile>
-  </profiles>
-
-  <!--<profiles>
-
     <profile>
       <id>release</id>
       <build>
@@ -163,5 +159,5 @@
         </plugins>
       </build>
     </profile>
-  </profiles>-->
+  </profiles>
 </project>
