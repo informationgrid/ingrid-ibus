@@ -40,7 +40,7 @@
         <dependency>
             <groupId>de.ingrid</groupId>
             <artifactId>ingrid-communication</artifactId>
-            <version>5.0.0-SNAPSHOT</version>
+            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>de.ingrid</groupId>
@@ -99,12 +99,12 @@
         <dependency>
             <groupId>de.ingrid</groupId>
             <artifactId>ingrid-elasticsearch-tools</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>de.ingrid</groupId>
             <artifactId>ingrid-codelist-service</artifactId>
-            <version>4.4.0-SNAPSHOT</version>
+            <version>4.4.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
