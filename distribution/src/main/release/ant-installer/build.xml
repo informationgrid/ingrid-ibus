@@ -1,0 +1,116 @@
+<!--
+  **************************************************-
+  InGrid iBus
+  ==================================================
+  Copyright (C) 2014 wemove digital solutions GmbH
+  ==================================================
+  Licensed under the EUPL, Version 1.1 or – as soon they will be
+  approved by the European Commission - subsequent versions of the
+  EUPL (the "Licence");
+  
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at:
+  
+  http://ec.europa.eu/idabc/eupl5
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the Licence is distributed on an "AS IS" basis,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the Licence for the specific language governing permissions and
+  limitations under the Licence.
+  **************************************************#
+  -->
+<project name="InGrid iBus Installation" basedir=".">
+    <description>
+        iBus Installation Script
+    </description>
+	<!-- set global properties for this build -->
+	<property name="componentName" value="${project.artifactId}-${project.version}"/>
+
+	<!-- THESE PORPERTIES ARE NECESSARY FOR UPDATES -->
+    <property name="libraryDir"         value="lib" />
+    <property name="libraryIdent"       value="ingrid-ibus-" />
+    <!-- <property name="libraryIdent"       value="MANIFEST.MF" /> -->
+    <property name="versionsWithConfigurations"  value="3.3.0" />
+    <property name="minSupportedVersion" value="4.4.0" />
+
+    <import file="build-installer-utils.xml"  as="utils" />
+    <import file="build-patch.xml"            as="patch" />
+
+    <target name="setUpdateProperty" depends="extractUpdate">
+        <property name="installType" value="update" />
+        <property name="updateProcedure" value="true" />
+    </target>
+    
+    <target name="setInstallProperty" depends="extract">
+        <property name="installProcedure" value="true" />
+    </target>
+    
+	<target name="extract" description="Extract all files to the installation directory.">
+		<unzip src="${antinstaller.jar}" dest="${installDir}">
+			<patternset>
+				<include name="${componentName}/**/*.*"/>
+			</patternset>
+		</unzip>
+		
+		<move toDir="${installDir}">
+			<fileset dir="${installDir}/${componentName}"/>
+		</move>
+	</target>
+    
+    <target name="extractUpdate">
+        <unzip src="${antinstaller.jar}" dest=".">
+            <patternset>
+                <include name="**/*.*"/>
+                <exclude name="${componentName}/conf/activatedIplugs.properties" />
+                <exclude name="${componentName}/conf/globalRanking.properties" />
+                <exclude name="${componentName}/conf/querymodifier.properties" />
+            </patternset>
+        </unzip>
+        
+        <delete>
+            <fileset dir="${installDir}/lib" includes="**/*"/>
+        </delete>
+
+        <move toDir="${installDir}">
+            <fileset dir="./${componentName}"/>
+        </move>
+	</target>
+	
+	<target name="startscript" description="Set configuration.">
+		<echo>Schreibe Konfiguration in application-default.properties</echo>
+        <touch file="${installDir}/conf/application-default.properties" />
+        <propertyfile file="${installDir}/conf/application-default.properties">
+            <entry key="server.port"                    value="${adminPort}" />
+            <entry key="elastic.remoteHosts"            value="" />
+        </propertyfile>
+
+        <echo>Schalte zentralen Index aus in Admin-GUI</echo>
+        <replace file="${installDir}/conf/static/assets/config.json" token='"useIndices": true' value='"useIndices": false'/>
+	</target>
+	
+	<target name="startComponent">
+		<echo>
+=================
+Weiteres Vorgehen
+=================
+
+		</echo>
+		<echo>
+Gehen Sie ins Verzeichnis:
+${installDir}
+und rufen sie von der Kommandozeile folgendes auf
+"sh start.sh start", um den iBus zu starten.
+
+Die iBus-Administration starten Sie im Webbrowser unter
+der folgenden Adresse "http://localhost:${adminPort}".
+Anstelle von localhost koennen Sie auch die IP-Adresse
+des Computers eingeben!
+Authentifizieren Sie sich als 'admin' mit dem von Ihnen 
+vergebenen Passwort.
+    
+Bitte lesen Sie bzgl. der Administration die Kapitel unter "http://www.ingrid-oss.eu".
+		</echo>
+	</target>
+	
+</project>

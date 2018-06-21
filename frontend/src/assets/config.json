@@ -1,0 +1,4 @@
+{
+  "backendUrl": "./api",
+  "useIndices": true
+}

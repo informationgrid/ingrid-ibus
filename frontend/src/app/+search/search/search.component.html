@@ -1,0 +1,68 @@
+<!--
+  **************************************************-
+  ingrid-ibus-frontend
+  ==================================================
+  Copyright (C) 2014 - 2018 wemove digital solutions GmbH
+  ==================================================
+  Licensed under the EUPL, Version 1.1 or – as soon they will be
+  approved by the European Commission - subsequent versions of the
+  EUPL (the "Licence");
+  
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at:
+  
+  http://ec.europa.eu/idabc/eupl5
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the Licence is distributed on an "AS IS" basis,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the Licence for the specific language governing permissions and
+  limitations under the Licence.
+  **************************************************#
+  -->
+<div class="container">
+
+  <div class="search input-group">
+    <input #query (keyup.enter)="search(query.value)" class="form-control" name="ibus_search_query" placeholder="Suche nach ...">
+    <span class="input-group-btn">
+        <button class="btn btn-info" type="button" (click)="search(query.value)">Suchen</button>
+      <div class="form-check">
+        <input #isDebug class="form-check-input" type="checkbox" value="true" id="chkShowDebug" (change)="showDebug = isDebug.checked">
+        <label class="form-check-label" for="chkShowDebug">
+          debug
+        </label>
+      </div>
+      </span>
+  </div>
+
+  <div *ngIf="hits" class="total">Gesamt: {{totalDocs}}</div>
+
+
+
+  <div class="results flexy">
+    <div class="debug-info collapse" [class.show]="showDebug">
+      <div class="card text-white bg-secondary">
+        <div class="card-header">Debug Information</div>
+        <div class="card-body">
+          <div *ngFor="let info of debugInfo">
+            <span class="debug-title">{{info.title}}:</span> {{info.message}} <span *ngIf="info.duration">(took: {{info.duration}}ms)</span>
+            <ul *ngIf="info.messageList">
+              <li *ngFor="let msg of info.messageList">{{msg}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngFor="let hit of hits">
+      <hit-item [hit]="hit"></hit-item>
+    </div>
+
+    <div *ngIf="hits.length === 0">
+      Die Suche ergab keine Treffer.
+    </div>
+  </div>
+
+  <ingrid-error [msg]="error"></ingrid-error>
+
+</div>

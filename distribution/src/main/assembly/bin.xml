@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  **************************************************-
+  InGrid iBus
+  ==================================================
+  Copyright (C) 2014 wemove digital solutions GmbH
+  ==================================================
+  Licensed under the EUPL, Version 1.1 or – as soon they will be
+  approved by the European Commission - subsequent versions of the
+  EUPL (the "Licence");
+  
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at:
+  
+  http://ec.europa.eu/idabc/eupl5
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the Licence is distributed on an "AS IS" basis,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the Licence for the specific language governing permissions and
+  limitations under the Licence.
+  **************************************************#
+  -->
+
+<assembly>
+  <id>installer</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/release/conf</directory>
+      <outputDirectory>${project.artifactId}-${project.version}/conf</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/release/scripts</directory>
+      <outputDirectory>${project.artifactId}-${project.version}/</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/release/ant-installer</directory>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered>
+    </fileSet>
+    <fileSet>
+      <directory>target/installer</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>target/frontend/static</directory>
+      <outputDirectory>${project.artifactId}-${project.version}/conf/static</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>target/installer/resources/scripts</directory>
+      <outputDirectory>${project.artifactId}-${project.version}/</outputDirectory>
+      <lineEnding>unix</lineEnding>
+    </fileSet>
+    <fileSet>
+      <directory>target/site</directory>
+      <outputDirectory>${project.artifactId}-${project.version}/doc</outputDirectory>
+    </fileSet>
+  </fileSets>
+  <files>
+    <file>
+      <source>../backend/src/main/resources/application.properties</source>
+      <outputDirectory>${project.artifactId}-${project.version}/conf</outputDirectory>
+    </file>
+  </files>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>${project.artifactId}-${project.version}/lib</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <excludes>
+        <exclude>de.ingrid:ingrid-ibus-frontend</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>

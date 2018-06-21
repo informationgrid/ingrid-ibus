@@ -1,0 +1,24 @@
+.input-group {
+  padding: 5px 15px 0;
+}
+
+.card {
+  margin-bottom: 10px;
+
+  .card-header > span {
+    float: right;
+    padding-top: 4px;
+  }
+}
+
+
+
+.unknown {
+  color: #aaaaaa;
+}
+.connected {
+  color: #51e691;
+}
+.disconnected {
+  color: #ae001d;
+}

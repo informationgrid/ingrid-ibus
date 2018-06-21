@@ -1,0 +1,48 @@
+<!--
+  **************************************************-
+  ingrid-ibus-frontend
+  ==================================================
+  Copyright (C) 2014 - 2018 wemove digital solutions GmbH
+  ==================================================
+  Licensed under the EUPL, Version 1.1 or – as soon they will be
+  approved by the European Commission - subsequent versions of the
+  EUPL (the "Licence");
+  
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at:
+  
+  http://ec.europa.eu/idabc/eupl5
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the Licence is distributed on an "AS IS" basis,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the Licence for the specific language governing permissions and
+  limitations under the Licence.
+  **************************************************#
+  -->
+<div class="card list mb-3" [id]="data.proxyServiceUrl | normalizeId">
+  <span class="index-id">{{data.proxyServiceUrl}}</span>
+
+  <div class="card-body">
+    <div class="flex-row">
+        <span *ngIf="data.useRemoteElasticsearch" class="btn iplugState btn-secondary disabled"
+              title="Dieses iPlug verwendet den zentralen Index und wird über die Indexverwaltung gesteuert.">
+          <i class="fa fa-power-off"></i>
+        </span>
+      <span *ngIf="!data.useRemoteElasticsearch"
+            class="btn iplugState" [class.btn-success]="data.activated" [class.btn-danger]="!data.activated"
+            title="Aktiviere/Deaktiviere IPlug"
+            (click)="activateIPlug(data, $event)"><i class="fa fa-power-off"></i></span>
+      <div class="flex-column">
+        <div>
+          <span class="index-name" [title]="'Index: ' + data.name">{{data.dataSourceName}}</span>
+          <span><a href="{{data.IPLUG_ADMIN_GUI_URL}}"
+                   title="Admin-GUI"
+                   target="_blank"
+                   class="bookmark fa fa-bookmark"></a></span>
+        </div>
+        <div>{{data.dataSourceDescription}}</div>
+      </div>
+    </div>
+  </div>
+</div>

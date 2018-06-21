@@ -1,0 +1,25 @@
+.iplugState {
+  position: relative;
+  padding: 5px;
+  margin: 5px;
+  left: 0;
+  top: 0;
+}
+
+.index-id {
+  width: fit-content;
+}
+
+.list .card-body {
+  padding: 1rem 0.5rem;
+}
+
+.bookmark {
+  margin-left: 10px;
+  color: #17a2b8;
+
+  &:hover {
+    color: #138496;
+    text-decoration: none;
+  }
+}

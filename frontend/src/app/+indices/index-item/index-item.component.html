@@ -1,0 +1,66 @@
+<!--
+  **************************************************-
+  ingrid-ibus-frontend
+  ==================================================
+  Copyright (C) 2014 - 2018 wemove digital solutions GmbH
+  ==================================================
+  Licensed under the EUPL, Version 1.1 or – as soon they will be
+  approved by the European Commission - subsequent versions of the
+  EUPL (the "Licence");
+  
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at:
+  
+  http://ec.europa.eu/idabc/eupl5
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the Licence is distributed on an "AS IS" basis,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the Licence for the specific language governing permissions and
+  limitations under the Licence.
+  **************************************************#
+  -->
+<div class="card mb-3" [class.short]="view === 'short mb-1'">
+  <span *ngIf="view === 'short'" class="index-id">{{data.name}}</span>
+
+  <div *ngIf="view !== 'short'" class="dropdown" [class.show]="dropDownOpen">
+    <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
+    </button>
+    <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
+      <button *ngIf="data.isConnected" class="dropdown-item"(click)="index()">Indexieren</button>
+      <button class="dropdown-item" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
+         [popoverTitle]="'Wirklich löschen?'"
+         [popoverMessage]="'Wollen Sie den Index wirklich löschen?'"
+         placement="left"
+         confirmText="Löschen"
+         cancelText="Abbrechen"
+         (confirm)="deleteIndex(data)">Löschen
+      </button>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <!--<div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>-->
+    <div class="pull-left">
+      <div class="index-name" [title]="'Index: ' + data.name">
+        {{data.longName}}
+        <span *ngIf="view !== 'short' && data.isConnected" title="Verbunden mit iBus" class="fa fa-link text-success"></span>
+        <span *ngIf="view !== 'short' && !data.isConnected" title="Nicht verbunden mit iBus" class="fa fa-link text-danger"></span>
+      </div>
+      <!--<div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>-->
+    </div>
+    <div class="index-last-indexed pull-right">{{data.lastIndexed | date:'medium'}}</div>
+  </div>
+
+  <ul *ngIf="view !== 'short'" class="list-group">
+    <li *ngFor="let type of data.types" class="list-group-item clickable" (click)="showIndexItem(data, type.name)">
+      <div class="indexState fa fa-power-off" [class.text-success]="type.active"
+           [class.text-danger]="!type.active"
+           title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
+      <span class="content">{{type.name}}</span>
+      <div class="pull-right small">{{type.lastIndexed | date:'medium'}}</div>
+      <div *ngIf="data.hasLinkedComponent && !type.hasLinkedComponent" class="text-danger">Nicht referenziert!</div>
+    </li>
+  </ul>
+</div>

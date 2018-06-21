@@ -28,7 +28,7 @@ Download from https://dev.informationgrid.eu/ingrid-distributions/ingrid-ibus/
  
 or
 
-build from source with `mvn package assembly:single`.
+build from source with `mvn package`.
 
 Execute
 
@@ -40,31 +40,61 @@ and follow the install instructions.
 
 Obtain further information at http://informationgrid.github.io/
 
+# Apache-Configuration
+
+ProxyPass /ibus-gui/ http://<ip-address>:<port>/
+ProxyPassReverse /ibus-gui/ http://<ip-address>:<port>/
 
 Contribute
 ----------
 
 - Issue Tracker: https://github.com/informationgrid/ingrid-ibus/issues
 - Source Code: https://github.com/informationgrid/ingrid-ibus
- 
+
+### Setup IntelliJ Idea
+
+* add project as Maven-module
+* add "src/test/resources" to dependency class-directory
+* mark directory "target/frontend" as Resources
+* run IBusApplication.java
+
 ### Set up eclipse project
 
-```
-mvn eclipse:eclipse
-```
+Import this project as Maven-Project and add the folder "src/test/resources" to the classpath for the run configuration.
+The configuration can be done in the file application-default.properties under the test resources.
 
-and import project into eclipse.
+You need an external elasticsearch node you want to store your indexed documents. Make sure to have the following properties correctly configured:
+
+- elastic.remoteHosts
+- cluster.name (elasticsearch.properties)
+
 
 ### Debug under eclipse
+- Start up an Elasticsearch Cluster (docker)
 
-- execute `mvn install` to expand the base web application
-- set up a java application Run Configuration with start class `de.ingrid.ibus.BusServer`
-- add the program arguments `--descriptor src/test/resources/communication.xml --busurl /ibus-test --adminport 8100 --adminpassword admin` to the Run Configuration
-- as VM-argument the path to the webapp must be added "-DwebappDir=src/main/release"
-- make sure the tools.jar (from JDK) is added to the classpath of the runtime configuration
+> docker-compose up -d
+
+Run as Java 
+
+> "src\main\java\de\ingrid\ibus\IBusApplication.java"
+
+or with maven
+
+> mvn spring-boot:run
+
+- execute `mvn package` to build the frontend and let it copy to the resource directory
 - add `src/test/resources`, `src/main/release/webapp`  to class path
 - the admin gui starts in this sample on port 8100
 
+### Frontend development
+
+To start a local server for the angular application call:
+
+> cd frontend
+> npm install # only once
+> npm start
+
+Afterwards the server can be accessed through http://localhost:4200. Doing any change on the sources the browser will be automatically updated.
 
 Support
 -------
