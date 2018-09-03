@@ -29,6 +29,12 @@
   </properties>
   <body>
 
+  <release version="4.5.0" date="2018-xx-xx" description="Release 4.5.0">
+      <action type="fix" dev="wemove" issue="1153">
+          Fix compatibility with IE11.
+      </action>
+  </release>
+
   <release version="4.4.0" date="2018-06-21" description="Release 4.4.0">
     <action type="add" dev="wemove" issue="4">
       Consolidation of Management-iPlug into the iBus. Partner and Provider are managed by the Codelist-Repository
