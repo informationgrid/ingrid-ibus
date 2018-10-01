@@ -29,7 +29,7 @@
   </properties>
   <body>
 
-  <release version="4.5.0" date="2018-xx-xx" description="Release 4.5.0">
+  <release version="4.5.0" date="2018-10-01" description="Release 4.5.0">
       <action type="fix" dev="wemove" issue="1153">
           Fix compatibility with IE11.
       </action>
