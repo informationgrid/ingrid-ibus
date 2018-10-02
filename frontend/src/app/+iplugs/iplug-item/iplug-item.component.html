@@ -25,14 +25,10 @@
 
   <div class="card-body">
     <div class="flex-row">
-        <span *ngIf="data.useRemoteElasticsearch" class="btn iplugState btn-secondary disabled"
-              title="Dieses iPlug verwendet den zentralen Index und wird über die Indexverwaltung gesteuert.">
-          <i class="fa fa-power-off"></i>
-        </span>
-      <span *ngIf="!data.useRemoteElasticsearch"
+      <span *ngIf="showActivateToggle"
             class="btn iplugState" [class.btn-success]="data.activated" [class.btn-danger]="!data.activated"
             title="Aktiviere/Deaktiviere IPlug"
-            (click)="activateIPlug(data, $event)"><i class="fa fa-power-off"></i></span>
+            (click)="activateIPlug(data)"><i class="fa fa-power-off"></i></span>
       <div class="flex-column">
         <div>
           <span class="index-name" [title]="'Index: ' + data.name">{{data.dataSourceName}}</span>

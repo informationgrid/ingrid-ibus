@@ -31,6 +31,7 @@ import { IPlugService, PlugDescription } from '../iplug-service.service';
 export class IPlugItemComponent implements OnInit {
 
   @Input() data: any;
+  @Input() showActivateToggle = true;
 
   constructor(private iPlugService: IPlugService) { }
 

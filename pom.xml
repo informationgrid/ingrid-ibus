@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ingrid-ibus-project</artifactId>
-    <version>4.6.0-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>iBus</name>
     <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
@@ -16,20 +16,13 @@
         <developerConnection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-    <!--
-        <parent>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-parent</artifactId>
-            <version>1.5.2.RELEASE</version>
-            <relativePath />
-        </parent>
-    -->
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <spring.version>2.0.2.RELEASE</spring.version>
-        <elasticsearch.version>6.2.4</elasticsearch.version>
+        <spring.version>2.0.5.RELEASE</spring.version>
+        <elasticsearch.version>6.4.0</elasticsearch.version>
     </properties>
     <modules>
         <module>frontend</module>

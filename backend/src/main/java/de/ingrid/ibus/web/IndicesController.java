@@ -165,7 +165,7 @@ public class IndicesController {
             DebugQuery debugQ = Bus.getInstance().getDebugInfo();
             debugQ.setActiveAndReset();
 
-            IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
+            IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, null);
 
             searchAndDetail.put("debug", debugQ.getEvents());
 

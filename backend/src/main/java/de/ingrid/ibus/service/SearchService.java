@@ -105,7 +105,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
         try {
 
             @SuppressWarnings("deprecation")
-            IngridHits iPlugsResult = Bus.getInstance().searchAndDetail( query, 10, 0, 0, 30000, null );
+            IngridHits iPlugsResult = Bus.getInstance().searchAndDetail( query, hitsPerPage, currentPage, startHit, maxMilliseconds, requestedFields );
             IngridHit[] iPlugHits = iPlugsResult.getHits();
             
             return new IngridHits( (int) iPlugsResult.length(), iPlugHits );
