@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,11 +20,10 @@
  * limitations under the Licence.
  * **************************************************#
  */
-import { PlugDescription, IPlugService } from '../iplug-service.service';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import {IPlugInfo, IPlugService} from '../iplug-service.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {IntervalObservable} from 'rxjs/observable/IntervalObservable';
+import {Subscription} from 'rxjs/Subscription';
 import {startWith, takeWhile} from 'rxjs/operators';
 
 @Component({
@@ -34,8 +33,8 @@ import {startWith, takeWhile} from 'rxjs/operators';
 })
 export class ConnectedIplugsComponent implements OnInit, OnDestroy {
 
-  iplugsLocalIndex: PlugDescription[];
-  iplugsCentralIndex: PlugDescription[];
+  iplugsLocalIndex: IPlugInfo[];
+  iplugsCentralIndex: IPlugInfo[];
 
   showInfo = false;
 
@@ -53,14 +52,20 @@ export class ConnectedIplugsComponent implements OnInit, OnDestroy {
     this.observer = IntervalObservable.create(10000)
       .pipe(
         startWith(0),
-        takeWhile(_ => this.autoRefresh )
+        takeWhile(() => this.autoRefresh )
       )
       .subscribe( () => {
         this.iPlugService.getConnectedIPlugs()
           .subscribe(
           iPlugs => {
-            this.iplugsLocalIndex = iPlugs.filter(p => !p.proxyServiceUrl.startsWith('__') && !p.useRemoteElasticsearch);
-            this.iplugsCentralIndex = iPlugs.filter(p => !p.proxyServiceUrl.startsWith('__') && p.useRemoteElasticsearch);
+              console.log('iPlugs:', iPlugs);
+              this.iplugsLocalIndex = iPlugs
+                  .filter(p => !p.id.startsWith('__') && !p.useCentralIndex)
+                  .sort(ConnectedIplugsComponent.compareIPlugInfoName);
+              this.iplugsCentralIndex = iPlugs
+                  .filter(p => !p.id.startsWith('__') && p.useCentralIndex)
+                  .sort(ConnectedIplugsComponent.compareIPlugInfoName);
+
             this.error = '';
           },
           error => this.handleError( error )
@@ -72,12 +77,16 @@ export class ConnectedIplugsComponent implements OnInit, OnDestroy {
     this.observer.unsubscribe();
   }
 
+  private static compareIPlugInfoName(info1, info2) {
+      return info1.name.localeCompare(info2.name);
+  }
+
   private handleError(error) {
     console.error( 'Problem getting connected iPlugs', error );
     this.error = error;
   }
 
   getIPlugIdentifier(index, item) {
-    return item.proxyServiceUrl;
+    return item.id;
   }
 }

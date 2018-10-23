@@ -21,7 +21,7 @@
  * **************************************************#
  */
 import { Component, Input, OnInit } from '@angular/core';
-import { IPlugService, PlugDescription } from '../iplug-service.service';
+import { IPlugService, IPlugInfo } from '../iplug-service.service';
 
 @Component({
   selector: 'iplug-item',
@@ -30,7 +30,7 @@ import { IPlugService, PlugDescription } from '../iplug-service.service';
 })
 export class IPlugItemComponent implements OnInit {
 
-  @Input() data: any;
+  @Input() component: any;
   @Input() showActivateToggle = true;
 
   constructor(private iPlugService: IPlugService) { }
@@ -38,9 +38,9 @@ export class IPlugItemComponent implements OnInit {
   ngOnInit() {
   }
 
-  activateIPlug(iPlug: PlugDescription) {
-    iPlug.activated = !iPlug.activated;
-    this.iPlugService.setActive( iPlug.proxyServiceUrl, iPlug.activated ).subscribe(
+  activateIPlug(iPlug: IPlugInfo) {
+    iPlug.active = !iPlug.active;
+    this.iPlugService.setActive( iPlug.id, iPlug.active ).subscribe(
       null,
       error => this.handleError(error)
     );

@@ -106,6 +106,10 @@ export class IndexItemComponent implements OnInit {
     }
   }
 
+  getIndexTypeItemIdentifier(item: IndexType) {
+    return item.id;
+  }
+
   handleError(error: any) {
     console.error('Error happened: ', error);
   }

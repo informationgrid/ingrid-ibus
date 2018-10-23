@@ -54,7 +54,7 @@
   </div>
 
   <ul *ngIf="view !== 'short'" class="list-group">
-    <li *ngFor="let type of data.types" class="list-group-item clickable" (click)="showIndexItem(data, type.name)">
+    <li *ngFor="let type of data.types; trackBy: getIndexTypeItemIdentifier" class="list-group-item clickable" (click)="showIndexItem(data, type.name)">
       <div class="indexState fa fa-power-off" [class.text-success]="type.active"
            [class.text-danger]="!type.active"
            title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
