@@ -3,13 +3,13 @@
     <parent>
         <groupId>de.ingrid</groupId>
         <artifactId>ingrid-releases-pom</artifactId>
-        <version>4.2.2</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ingrid-ibus-project</artifactId>
     <version>5.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>iBus</name>
+    <name>InGrid iBus</name>
     <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
     <scm>
         <connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git</connection>
@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <spring.version>2.0.5.RELEASE</spring.version>
+        <spring.version>2.0.6.RELEASE</spring.version>
         <elasticsearch.version>6.4.0</elasticsearch.version>
     </properties>
     <modules>
