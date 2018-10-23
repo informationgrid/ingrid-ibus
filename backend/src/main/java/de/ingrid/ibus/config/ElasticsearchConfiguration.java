@@ -20,18 +20,21 @@
  * limitations under the Licence.
  * **************************************************#
  */
-package de.ingrid.ibus;
+package de.ingrid.ibus.config;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@SpringBootApplication
-@ComponentScan(basePackages = { "de.ingrid" })
-public class IBusApplication {
+@ConfigurationProperties("elastic")
+public class ElasticsearchConfiguration {
 
-    public static void main(String[] args) {
-        SpringApplication.run( IBusApplication.class, args );
+    private String[] remoteHosts;
+
+
+    public String[] getRemoteHosts() {
+        return remoteHosts;
     }
 
+    public void setRemoteHosts(String[] remoteHosts) {
+        this.remoteHosts = remoteHosts;
+    }
 }

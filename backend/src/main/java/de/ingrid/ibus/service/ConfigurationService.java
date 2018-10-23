@@ -28,11 +28,13 @@ import de.ingrid.codelists.model.CodeList;
 import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
 import de.ingrid.ibus.WebSecurityConfig;
 import de.ingrid.ibus.comm.BusServer;
-import de.ingrid.ibus.config.IBusConfiguration;
+import de.ingrid.ibus.config.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DefaultPropertiesPersister;
@@ -51,20 +53,23 @@ public class ConfigurationService {
     private static Logger log = LogManager.getLogger(ConfigurationService.class);
     private File settingsFile;
 
-    @Autowired
-    private final CodeListService codeListService = null;
+    private final CodeListService codeListService;
 
-    @Autowired
-    private final ElasticsearchNodeFactoryBean elasticsearchBean = null;
+    private final ElasticsearchNodeFactoryBean elasticsearchBean;
 
-    @Autowired
-    private final WebSecurityConfig webSecurityConfig = null;
+    private final WebSecurityConfig webSecurityConfig;
 
-    @Autowired
-    private final BusServer busServer = null;
+    private final BusServer busServer;
 
-    @Autowired
-    private final IBusConfiguration appConfiguration = null;
+    private final CodelistConfiguration codelistConfiguration;
+
+    private final IBusConfiguration busConfiguration;
+
+    private final ElasticsearchConfiguration elasticConfiguration;
+
+    private final SecurityProperties springConfiguration;
+
+    private final ServerProperties serverConfiguration;
 
     private Properties propertiesSystem;
     private Properties properties;
@@ -73,7 +78,8 @@ public class ConfigurationService {
             "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port"
     };
 
-    public ConfigurationService() throws IOException {
+    @Autowired
+    public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration) throws IOException {
         ClassPathResource ibusSystemConfig = new ClassPathResource("/application.properties");
         ClassPathResource ibusConfig = new ClassPathResource("/application-default.properties");
 
@@ -98,18 +104,27 @@ public class ConfigurationService {
         this.properties = new Properties();
         this.properties.putAll(propertiesSystem);
         this.properties.putAll(propertiesOverride);
+        this.codeListService = codeListService;
+        this.elasticsearchBean = elasticsearchBean;
+        this.webSecurityConfig = webSecurityConfig;
+        this.busServer = busServer;
+        this.codelistConfiguration = codelistConfiguration;
+        this.busConfiguration = busConfiguration;
+        this.elasticConfiguration = elasticConfiguration;
+        this.springConfiguration = securityConfiguration;
+        this.serverConfiguration = serverConfiguration;
     }
 
     @PostConstruct
     public void init() {
         // use resolved properties values (instead of ${xxx:yyy})
-        this.properties.put("codelistrepo.url", appConfiguration.codelistrepo.url);
-        this.properties.put("codelistrepo.username", appConfiguration.codelistrepo.username);
-        this.properties.put("codelistrepo.password", appConfiguration.codelistrepo.password);
-        this.properties.put("elastic.remoteHosts", String.join(",", appConfiguration.elastic.remoteHosts));
-        this.properties.put("server.port", appConfiguration.server.port);
-        this.properties.put("ibus.url", appConfiguration.ibus.url);
-        this.properties.put("spring.security.user.password", appConfiguration.spring.security.user.password);
+        this.properties.put("codelistrepo.url", codelistConfiguration.getUrl());
+        this.properties.put("codelistrepo.username", codelistConfiguration.getUsername());
+        this.properties.put("codelistrepo.password", codelistConfiguration.getPassword());
+        this.properties.put("elastic.remoteHosts", String.join(",", elasticConfiguration.getRemoteHosts()));
+        this.properties.put("server.port", String.valueOf( serverConfiguration.getPort() ));
+        this.properties.put("ibus.url", busConfiguration.getUrl());
+        this.properties.put("spring.security.user.password", springConfiguration.getUser().getPassword());
 
     }
 
@@ -134,16 +149,15 @@ public class ConfigurationService {
                 if (out != null) out.close();
             } catch (IOException e) {
                 log.error("Error closing configuration file", e);
-                throw e;
             }
         }
 
         // map configuration to ConfigBean
-        boolean ibusChanged = !appConfiguration.ibus.url.equals((String) configuration.get("ibus.url")) || (appConfiguration.ibus.port != Integer.valueOf((String) configuration.get("ibus.port")));
-        appConfiguration.ibus.url = (String) configuration.get("ibus.url");
-        appConfiguration.ibus.port = Integer.valueOf((String) configuration.get("ibus.port"));
-        appConfiguration.codelistrepo.url = (String) configuration.get("codelistrepo.url");
-        appConfiguration.codelistrepo.username = (String) configuration.get("codelistrepo.username");
+        boolean ibusChanged = !busConfiguration.getUrl().equals(configuration.get("ibus.url")) || (busConfiguration.getPort() != Integer.valueOf((String) configuration.get("ibus.port")));
+        busConfiguration.setUrl( (String) configuration.get("ibus.url") );
+        busConfiguration.setPort( Integer.valueOf((String) configuration.get("ibus.port")) );
+        codelistConfiguration.setUrl( (String) configuration.get("codelistrepo.url") );
+        codelistConfiguration.setUsername( (String) configuration.get("codelistrepo.username") );
 
         updateBeansConfiguration(configuration, ibusChanged);
 
@@ -153,14 +167,14 @@ public class ConfigurationService {
     private void updateBeansConfiguration(Properties configuration, boolean ibusChanged) throws Exception {
         // update codelist repository connection
         HttpCLCommunication communication = new HttpCLCommunication();
-        communication.setRequestUrl((String) configuration.get("codelistrepo.url") + "/rest/getCodelists");
+        communication.setRequestUrl(configuration.get("codelistrepo.url") + "/rest/getCodelists");
         communication.setUsername((String) configuration.get("codelistrepo.username"));
 
         // only update password if new one was set, otherwise use the old one
         if (configuration.get("codelistrepo.password") != null) {
-            appConfiguration.codelistrepo.password = (String) configuration.get("codelistrepo.password");
+            codelistConfiguration.setPassword( (String) configuration.get("codelistrepo.password") );
         }
-        communication.setPassword(appConfiguration.codelistrepo.password);
+        communication.setPassword(codelistConfiguration.getPassword());
         codeListService.setComm(communication);
 
         // Elasticsearch
@@ -174,7 +188,7 @@ public class ConfigurationService {
                     remoteHostsArray = remoteHosts.split(",");
                 }
 
-                appConfiguration.elastic.remoteHosts = remoteHostsArray;
+                elasticConfiguration.setRemoteHosts( remoteHostsArray );
                 elasticsearchBean.createTransportClient(remoteHostsArray);
             } catch (UnknownHostException e) {
                 log.error("Error updating elasticsearch connection", e);
@@ -185,7 +199,7 @@ public class ConfigurationService {
         String adminPassword = (String) configuration.get("spring.security.user.password");
         if (adminPassword != null && !"".equals(adminPassword)) {
             webSecurityConfig.secureWebapp(adminPassword);
-            appConfiguration.spring.security.user.password = adminPassword;
+            springConfiguration.getUser().setPassword( adminPassword );
         }
 
         // iBus
@@ -231,7 +245,7 @@ public class ConfigurationService {
             sparseConfig.put(key, properties.getProperty(key));
         }
 
-        if (appConfiguration.spring.security.user.password.isEmpty()) {
+        if (springConfiguration.getUser().getPassword().isEmpty()) {
             sparseConfig.put("needPasswordChange", "true");
         }
 

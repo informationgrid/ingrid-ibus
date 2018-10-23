@@ -246,8 +246,7 @@ public class IndicesService {
             index.setTypes( indexTypes );
 
         } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Error adding types to index", e);
         }
     }
 
@@ -431,7 +430,7 @@ public class IndicesService {
     // result.setIndexId( hit.getIndex() );
     // result.setTitle( (String) hit.getSource().get( "title" ) );
     // result.setSummary( (String) hit.getSource().get( "summary" ) );
-    // result.setSource( (String) hit.getSource().get( "dataSourceName" ) );
+    // result.setSource( (String) hit.getSource().get( "name" ) );
     // results.add( result );
     // }
     // return results;
@@ -584,7 +583,7 @@ public class IndicesService {
                 String mappingString = XMLSerializer.getContents( defaultMappingStream );
                 indexManager.createIndex( INDEX_INFO_NAME, "info", mappingString );
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Error preparing index", e);
             }
         }
         

@@ -27,11 +27,15 @@ import de.ingrid.codelists.comm.HttpCLCommunication;
 import de.ingrid.codelists.comm.ICodeListCommunication;
 import de.ingrid.codelists.persistency.ICodeListPersistency;
 import de.ingrid.codelists.persistency.XmlCodeListPersistency;
+import de.ingrid.ibus.config.CodelistConfiguration;
+import de.ingrid.ibus.config.ElasticsearchConfiguration;
+import de.ingrid.ibus.config.IBusConfiguration;
 import de.ingrid.ibus.service.SecurityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -50,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@EnableConfigurationProperties({CodelistConfiguration.class, ElasticsearchConfiguration.class, IBusConfiguration.class})
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -67,8 +72,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${codelistrepo.password:}")
     private String codelistPassword;
 
+    private final SecurityService securityService;
+    private final UserDetailsService userDetailsService;
+
     @Autowired
-    private SecurityService securityService;
+    public WebSecurityConfig(SecurityService securityService, UserDetailsService userDetailsService) {
+        this.securityService = securityService;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -82,8 +93,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // ************************
     // Use encoded passwords for authentication
     // ************************
-    @Autowired
-    UserDetailsService userDetailsService;
 
     @Bean
     public static PasswordEncoder passwordEncoder() {

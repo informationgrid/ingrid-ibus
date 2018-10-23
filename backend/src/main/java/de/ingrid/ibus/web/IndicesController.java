@@ -26,6 +26,7 @@ import java.util.List;
 
 import de.ingrid.ibus.comm.Bus;
 import de.ingrid.ibus.comm.debug.DebugQuery;
+import de.ingrid.utils.queryparser.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class IndicesController {
         try {
             index = this.indicesService.getIndexDetail( id, type );
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error getting index detail", e);
             return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( null );
         }
         return ResponseEntity.ok( index );
@@ -153,27 +154,26 @@ public class IndicesController {
     
     @GetMapping("/search")
     @ResponseBody
-    public ResponseEntity<IngridHits> search(@RequestParam String query) {
-        try {
-            // for convenience we add ranking:score mainly needed to get any results
-            if (query.indexOf("ranking:") == -1) {
-                query += " ranking:score";
-            }
-            IngridQuery iQuery = QueryStringParser.parse( query );
-
-            // enable debugging of query
-            DebugQuery debugQ = Bus.getInstance().getDebugInfo();
-            debugQ.setActiveAndReset();
-
-            IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, null);
-
-            searchAndDetail.put("debug", debugQ.getEvents());
-
-            return ResponseEntity.ok(searchAndDetail);
-        } catch (Exception ex) {
-            log.error(ex);
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<IngridHits> search(@RequestParam String query) throws ParseException {
+        // for convenience we add ranking:score mainly needed to get any results
+        if (!query.contains("ranking:")) {
+            query += " ranking:score";
         }
+        IngridQuery iQuery = QueryStringParser.parse( query );
+
+        // enable debugging of query
+        DebugQuery debugQ = Bus.getInstance().getDebugInfo();
+        debugQ.setActiveAndReset();
+
+        IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, null);
+
+        if (searchAndDetail != null) {
+            searchAndDetail.put("debug", debugQ.getEvents());
+            return ResponseEntity.ok(searchAndDetail);
+        } else {
+            throw new RuntimeException("Search error! Please check the log file from the iBus.");
+        }
+
     }
     
     @GetMapping("/indices/detail")

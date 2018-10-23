@@ -25,6 +25,8 @@ package de.ingrid.ibus.service;
 import javax.annotation.PostConstruct;
 
 import de.ingrid.ibus.comm.registry.RegistryConfigurable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,8 @@ import de.ingrid.utils.PlugDescription;
 
 @Service
 public class IPlugService implements RegistryConfigurable {
+
+    private static Logger log = LogManager.getLogger(IPlugService.class);
 
     private Registry registry;
     
@@ -62,8 +66,7 @@ public class IPlugService implements RegistryConfigurable {
             IngridDocument response = proxy.call( targetInfo  );
             return true;
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Error calling index method for an iPlug", e);
             return false;
         }
     }

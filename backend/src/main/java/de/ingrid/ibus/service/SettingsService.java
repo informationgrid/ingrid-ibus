@@ -124,7 +124,7 @@ public class SettingsService {
             out = new FileOutputStream( settingsFile );
             p.store( properties, out, "Written by SettingsService" );
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error writing settings", e);
             throw e;
         } finally {
             try {
