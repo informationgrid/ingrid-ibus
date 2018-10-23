@@ -62,6 +62,7 @@ public class IPlugService implements RegistryConfigurable {
         
         IngridCall targetInfo = new IngridCall();
         targetInfo.setMethod( "index" );
+        targetInfo.setParameter("doNotUseCache: " + Math.random());
         try {
             IngridDocument response = proxy.call( targetInfo  );
             return true;
