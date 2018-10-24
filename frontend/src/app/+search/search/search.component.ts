@@ -32,8 +32,12 @@ import {DebugEvent, SearchHits} from '../SearchHits';
 })
 export class SearchComponent implements OnInit {
 
+  numPerPage = 10;
+
   hits: SearchHit[] = [];
   totalDocs: number;
+  pages: number[] = [];
+  currentPage = 0;
 
   error: string = null;
   showDebug = false;
@@ -46,10 +50,11 @@ export class SearchComponent implements OnInit {
     this.search('');
   }
 
-  search(query: string) {
+  search(query: string, page: number = 0) {
     this.error = null;
+    this.currentPage = page;
 
-    this.indexService.search(query).subscribe(
+    this.indexService.search(query, page, this.numPerPage).subscribe(
       hits => this.prepareHits(hits),
       error => this.error = error
     );
@@ -58,6 +63,16 @@ export class SearchComponent implements OnInit {
   private prepareHits(hits: SearchHits) {
     this.hits = hits.hits;
     this.totalDocs = hits.length;
+
+    // calculate the number of pages to show
+    let numPages = Math.round(this.totalDocs / this.numPerPage);
+    if (this.totalDocs > this.numPerPage && this.totalDocs % this.numPerPage !== 0) {
+      numPages += 1;
+    } else if(this.totalDocs <= this.numPerPage) {
+      numPages = 1;
+    }
+
+    this.pages = Array(numPages).fill(0).map((x, i)=>i);
     this.debugInfo = hits.debug;
   }
 

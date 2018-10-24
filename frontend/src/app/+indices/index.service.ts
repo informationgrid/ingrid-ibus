@@ -68,8 +68,8 @@ export class IndexService {
     }, {observe: 'response', responseType: 'text'});
   }
 
-  search(query: string): Observable<SearchHits> {
-    return this.http.get<SearchHits>(this.configuration.backendUrl + '/search?query=' + query);
+  search(query: string, page: number, numPerPage: number): Observable<SearchHits> {
+    return this.http.get<SearchHits>(this.configuration.backendUrl + '/search?query=' + query + '&page=' + page + '&hitsPerPage=' + numPerPage);
   }
 
   getSearchDetail(indexId: string, hitId: string): Observable<SearchHit> {

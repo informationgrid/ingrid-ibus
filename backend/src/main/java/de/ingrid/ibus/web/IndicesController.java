@@ -154,7 +154,7 @@ public class IndicesController {
     
     @GetMapping("/search")
     @ResponseBody
-    public ResponseEntity<IngridHits> search(@RequestParam String query) throws ParseException {
+    public ResponseEntity<IngridHits> search(@RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int hitsPerPage) throws ParseException {
         // for convenience we add ranking:score mainly needed to get any results
         if (!query.contains("ranking:")) {
             query += " ranking:score";
@@ -165,7 +165,7 @@ public class IndicesController {
         DebugQuery debugQ = Bus.getInstance().getDebugInfo();
         debugQ.setActiveAndReset();
 
-        IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, null);
+        IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, hitsPerPage, page, page*hitsPerPage, 1000, null);
 
         if (searchAndDetail != null) {
             searchAndDetail.put("debug", debugQ.getEvents());

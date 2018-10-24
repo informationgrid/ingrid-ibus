@@ -35,9 +35,27 @@
       </span>
   </div>
 
-  <div *ngIf="hits" class="total">Gesamt: {{totalDocs}}</div>
 
-
+  <nav aria-label="Search result paging">
+    <div *ngIf="hits" class="pull-left">Gesamt: {{totalDocs}}</div>
+    <ul class="pagination justify-content-end">
+      <li class="page-item" [class.disabled]="currentPage === 0">
+        <a class="page-link" aria-label="Previous" (click)="search(query.value, currentPage - 1)">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+      <li class="page-item" *ngFor="let pageNum of pages" [class.active]="currentPage === pageNum">
+        <a class="page-link" (click)="search(query.value, pageNum)">{{pageNum + 1}}</a>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === (pages.length - 1)">
+        <a class="page-link" aria-label="Next" (click)="search(query.value, currentPage + 1)">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 
   <div class="results flexy">
     <div class="debug-info collapse" [class.show]="showDebug">

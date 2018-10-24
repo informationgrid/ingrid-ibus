@@ -531,9 +531,18 @@ public class IndicesService {
      */
     private IngridHitDetail mapHitDetail(GetResponse hit) {
         Map<String, Object> source = hit.getSource();
-        
+
+        String iPlugIdString;
+        Object iPlugId = source.get("iPlugId");
+
+        if (iPlugId instanceof ArrayList) {
+            iPlugIdString = (String) ((ArrayList) iPlugId).get(0);
+        } else {
+            iPlugIdString = (String) iPlugId;
+        }
+
         IngridHitDetail result = new IngridHitDetail(
-                (String) source.get( "iPlugId" ),
+                iPlugIdString,
                 hit.getId(),
                 -1,
                 -1.0f,
