@@ -73,6 +73,7 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
             map( items => items.sort((a,b) => a.name.localeCompare(b.name)))
         )
         .subscribe(items => {
+          this.error = '';
           this.indexItems = items;
           this.isLoading = false;
         },

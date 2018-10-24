@@ -46,14 +46,15 @@ export class DateRelativePipe implements PipeTransform {
         // add next epoch for more detailed information
         let nextTimeAgoInSeconds = timeAgoInSeconds - (interval * seconds);
         let postInterval = this.getDuration(nextTimeAgoInSeconds).interval;
-        if (postInterval !== 0) {
+        /*if (postInterval !== 0) {
           postInterval = ':' + ((postInterval < 10) ? '0' + postInterval : postInterval + '');
         } else {
           postInterval = '';
-        }
+        }*/
+        let suffix = interval === 1 ? '' : plural;
 
         return {
-          interval: interval + postInterval,
+          interval: interval + ' ' + name + suffix + (postInterval === 0 ? '' : ' ' + postInterval),
           epoch: name,
           plural: plural
         };
@@ -69,10 +70,11 @@ export class DateRelativePipe implements PipeTransform {
   transform(dateStamp: number): string {
 
     let timeAgoInSeconds = Math.floor((new Date().getTime() - new Date(dateStamp).getTime()) / 1000);
+    debugger;
     let {interval, epoch, plural} = this.getDuration(timeAgoInSeconds);
-    let suffix = interval === 1 ? '' : plural;
+    // let suffix = interval === 1 ? '' : plural;
 
-    return `vor ${interval} ${epoch}${suffix}`;
+    return `vor ${interval}`;
 
   }
 
