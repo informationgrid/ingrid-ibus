@@ -40,6 +40,6 @@ export class HitItemComponent implements OnInit {
   }
 
   showDetailHit(hit: SearchHit) {
-    // this.router.navigate(['/search/' + hit.es_index + '/' + hit.hitDetail['0']]);
+    this.router.navigate(['/search/' + hit.es_index + '/' + hit.hitDetail['0']]);
   }
 }

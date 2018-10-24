@@ -66,7 +66,7 @@ public class IPlugsController {
                 IPlugInfo iPlugInfo = new IPlugInfo();
                 iPlugInfo.setActive((Boolean) pd.get("activated"));
                 iPlugInfo.setId(pd.getProxyServiceURL());
-                iPlugInfo.setName(pd.getDataSourceName());
+                iPlugInfo.setName(pd.getDataSourceName() == null ? "" : pd.getDataSourceName());
                 iPlugInfo.setDescription(pd.getDataSourceDescription());
                 iPlugInfo.setAdminUrl(pd.getIplugAdminGuiUrl());
                 iPlugInfo.setUseCentralIndex((Boolean) pd.getOrDefault("useRemoteElasticsearch", false));

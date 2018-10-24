@@ -176,13 +176,11 @@ public class IndicesController {
 
     }
     
-    @GetMapping("/indices/detail")
+    @GetMapping("/indices/{indexId}/{docId}")
     @ResponseBody
-    public ResponseEntity<IngridHitDetail> getHitDetail(@RequestBody JsonNode json) {
-        String indexId = json.get( "indexId" ).asText();
-        String hitId = json.get( "hitId" ).asText();
-        
-        IngridHitDetail hitDetail = this.indicesService.getHitDetail(indexId, hitId);
+    public ResponseEntity<IngridHitDetail> getHitDetail(@PathVariable String indexId, @PathVariable String docId) {
+
+        IngridHitDetail hitDetail = this.indicesService.getHitDetail(indexId, docId);
         return ResponseEntity.ok( hitDetail );
     }
 
