@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-ibus-project</artifactId>
@@ -9,20 +10,20 @@
   <artifactId>ingrid-ibus</artifactId>
   <packaging>pom</packaging>
   <name>InGrid iBus Distribution</name>
+
+  <!-- ==================== Source Code Management ==================== -->
   <scm>
     <connection>scm:git:git@github.com:informationgrid/ingrid-ibus.git/distribution</connection>
     <developerConnection>scm:git:git@github.com:informationgrid/ingrid-ibus.git/distribution</developerConnection>
     <tag>HEAD</tag>
   </scm>
-  <repositories>
-    <!-- Repo of parent pom needed, parent pom may not be installed locally yet -->
-    <repository>
-      <id>de.ingrid.all</id>
-      <name>Maven Repo InGrid</name>
-      <url>https://dev.informationgrid.eu/archiva/repository/ingrid-all</url>
-    </repository>
-  </repositories>
 
+  <!-- ==================== PROPERTIES ==================== -->
+  <properties>
+    <iplug.type>IBUS</iplug.type>
+  </properties>
+
+  <!-- ==================== DEPENDENCIES ==================== -->
   <dependencies>
     <dependency>
       <groupId>de.ingrid</groupId>
@@ -36,6 +37,7 @@
     </dependency>
   </dependencies>
 
+  <!-- ==================== Build Configuration ==================== -->
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
@@ -73,38 +75,6 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.4.1</version>
-        <!-- Add Type of Component to Manifest of Installer for Upgrade Server -->
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <ingridComponentType>IBUS</ingridComponentType>
-            </manifestEntries>
-          </archive>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-installer</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      
-      <!-- Activate docker image build and push integration (see parent-pom) -->
-<!--       <plugin>
-        <groupId>com.spotify</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <configuration>
-          since we call the command from the parent we also have to set the path to the child module
-               where the docker configuration is
-          <dockerDirectory>distribution/src/docker</dockerDirectory>
-        </configuration>
-      </plugin> -->
     </plugins>
   </build>
 
@@ -125,10 +95,12 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>release</id>
       <build>
         <plugins>
+
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>wagon-maven-plugin</artifactId>
@@ -136,6 +108,7 @@
               <skip>false</skip>
             </configuration>
           </plugin>
+
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-changes-plugin</artifactId>
