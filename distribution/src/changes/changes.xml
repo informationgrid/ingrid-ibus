@@ -29,6 +29,12 @@
   </properties>
   <body>
 
+  <release version="4.6.0-SNAPSHOT" date="????-??-??" description="??">
+      <action type="fix" dev="wemove" issue="1193">
+        Fix initial codelists (1320, 6005, 6100), data was lost when codelists were separated.
+      </action>
+  </release>
+
   <release version="4.5.0" date="2018-10-01" description="Release 4.5.0">
       <action type="fix" dev="wemove" issue="1153">
           Fix compatibility with IE11.
