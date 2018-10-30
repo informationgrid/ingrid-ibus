@@ -29,6 +29,7 @@ export class SearchHit {
   detail: string;
   dataSourceName: string;
   score: number;
+  iPlugId: string;
 
   es_index: string;
   es_type: string;

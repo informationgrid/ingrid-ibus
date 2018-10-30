@@ -25,7 +25,10 @@
     <div class="title">{{hit.hitDetail.title}}</div>
     <p class="summary">{{hit.hitDetail.abstract}}</p>
     <div class="source">Quelle: {{hit.hitDetail.name}}</div>
-    <div class="source pull-left text-muted">Index/Type: {{hit.es_index}}/{{hit.es_type}}</div>
+    <div *ngIf="hit.es_index; else noCentralIndex" class="source pull-left text-muted">Index/Type: {{hit.es_index}}/{{hit.es_type}}</div>
+    <ng-template #noCentralIndex>
+      <div class="source pull-left text-muted">iPlug: {{hit.iPlugId}}</div>
+    </ng-template>
     <div class="source pull-right text-muted">Score: {{hit.score}}</div>
   </div>
 </div>

@@ -23,8 +23,13 @@
 package de.ingrid.ibus.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.ingrid.ibus.comm.BusServer;
+import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.model.IPlugInfo;
 import de.ingrid.ibus.service.IPlugService;
+import de.ingrid.utils.IPlug;
+import de.ingrid.utils.IngridHit;
+import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.PlugDescription;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +39,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,10 +52,12 @@ public class IPlugsController {
     private static Logger log = LogManager.getLogger(IPlugsController.class);
 
     private final IPlugService iPlugService;
+    private final Registry registry;
 
     @Autowired
-    public IPlugsController(IPlugService iPlugService) {
+    public IPlugsController(IPlugService iPlugService, BusServer busServer) {
         this.iPlugService = iPlugService;
+        this.registry = busServer.getRegistry();
     }
 
     @GetMapping("/iplugs")
@@ -58,10 +67,10 @@ public class IPlugsController {
         return ResponseEntity.ok(mapFromPlugdescription(indices));
     }
 
-    private IPlugInfo[] mapFromPlugdescription(PlugDescription[] indices) {
+    private IPlugInfo[] mapFromPlugdescription(PlugDescription[] plugDescriptions) {
         List<IPlugInfo> infos = new ArrayList<>();
 
-        for (PlugDescription pd : indices) {
+        for (PlugDescription pd : plugDescriptions) {
             if (!"__managementIPlug__".equals(pd.getProxyServiceURL()) && !"__centralIndex__".equals(pd.getProxyServiceURL())) {
                 IPlugInfo iPlugInfo = new IPlugInfo();
                 iPlugInfo.setActive((Boolean) pd.get("activated"));
@@ -75,6 +84,24 @@ public class IPlugsController {
         }
 
         return infos.toArray(new IPlugInfo[0]);
+    }
+
+    @GetMapping("/iplugs/recordDetail")
+    @ResponseBody
+    public ResponseEntity<IngridHitDetail> getRecordFromIPlug(@RequestParam String plugId,
+                                                              @RequestParam String docId) {
+        IngridHitDetail detail;
+        try {
+            String plugIdDecoded = URLDecoder.decode(plugId, "UTF-8");
+            IPlug plugProxy = this.registry.getPlugProxy(plugIdDecoded);
+            IngridHit hit = new IngridHit();
+            hit.setDocumentId(docId);
+            detail = plugProxy.getDetail(hit, null, null);
+        } catch (Exception e) {
+            log.error("Error getting iPlug Detail", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(detail);
     }
 
     @GetMapping("/iplugs/detail")

@@ -43,7 +43,7 @@
 
 
   <ng-container *ngIf="iplugsLocalIndex?.length > 0">
-    <h6>IPlugs mit eigenem Suchindex</h6>
+    <h6>IPlugs mit eigenem/keinem Suchindex</h6>
     <iplug-item [component]="data" *ngFor="let data of iplugsLocalIndex; trackBy: getIPlugIdentifier"></iplug-item>
   </ng-container>
 
