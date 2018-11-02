@@ -75,6 +75,10 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+
     </plugins>
   </build>
 
