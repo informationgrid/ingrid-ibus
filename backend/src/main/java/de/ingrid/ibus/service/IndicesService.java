@@ -551,6 +551,7 @@ public class IndicesService {
         
         result.put( "source", source.get( "iPlugId" ) );
         result.put( "idf", source.get( "idf" ) );
+        result.put("indexDoc", source);
         
         return result;
     }

@@ -30,6 +30,7 @@ export class SearchHit {
   dataSourceName: string;
   score: number;
   iPlugId: string;
+  indexDoc: string;
 
   es_index: string;
   es_type: string;
