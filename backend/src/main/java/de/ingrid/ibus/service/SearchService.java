@@ -27,7 +27,6 @@ import de.ingrid.elasticsearch.IndexInfo;
 import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.elasticsearch.search.IndexImpl;
 import de.ingrid.ibus.comm.Bus;
-import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import de.ingrid.utils.*;
@@ -39,7 +38,6 @@ import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -117,7 +115,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     }
     
     @Override
-    public IngridHits search(IngridQuery query, int start, int length) throws Exception {
+    public IngridHits search(IngridQuery query, int start, int length) {
         
         elasticConfig.communicationProxyUrl = CENTRAL_INDEX_ID;
         elasticConfig.partner = new String[] { "???" };
@@ -133,12 +131,12 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     }
 
     @Override
-    public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) throws Exception {
+    public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) {
         return indexUtils.getDetail( hit, query, requestedFields );
     }
 
     @Override
-    public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
+    public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) {
         return indexUtils.getDetails( hits, query, requestedFields );
     }
 
@@ -147,8 +145,8 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     public IngridDocument call(IngridCall targetInfo) throws Exception {
         IngridDocument doc = new IngridDocument();
         
-        Map<String, Object> parameters = null;
-        Object parameter = null;
+        Map<String, Object> parameters;
+        Object parameter;
 
         switch (targetInfo.getMethod()) {
         case "createIndex":
@@ -209,7 +207,14 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
                     (ElasticDocument) parameters.get( "doc" ),
                     (boolean) parameters.get( "updateOldIndex" ) );
             break;
-            
+
+        case "getAllIPlugInformation":
+            return indexManager.getAllIPlugInformation();
+
+        case "getIPlugInformation":
+            parameter = targetInfo.getParameter();
+            return indexManager.getIPlugInformation(String.valueOf(parameter));
+
         case "updateIPlugInformation":
             parameters = (Map<String, Object>) targetInfo.getParameter();
             indexManager.updateIPlugInformation(
@@ -248,25 +253,37 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     }
 
     @Override
-    public void configure(PlugDescription plugDescription) throws Exception {
+    public void configure(PlugDescription plugDescription) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public Record getRecord(IngridHit hit) throws Exception {
-        Record record = new Record();
+    public Record getRecord(IngridHit hit) {
+        Record record = null;
         
         ElasticDocument doc = indexUtils.getDocById( hit.getDocumentId() );
-        String data = (String) doc.get( "idf" );
-        record.put( "data", data );
-        record.put( "compressed", "false" );
+        if (doc != null) {
+            log.debug("Found record in central index with id: " + hit.getDocumentId());
+            String data = (String) doc.get("idf");
+
+            // if no idf field is present then try default record mapper
+            if (data == null) {
+                return indexUtils.getRecord(hit);
+
+            } else {
+                record = new Record();
+                record.put("data", data);
+                record.put("compressed", "false");
+            }
+        }
+
         return record;
     }
 }

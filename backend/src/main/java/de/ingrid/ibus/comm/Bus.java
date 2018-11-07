@@ -41,6 +41,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import de.ingrid.ibus.service.SearchService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -581,16 +582,31 @@ public class Bus extends Thread implements IBus {
         }
 
         PlugDescription plugDescription = getIPlugRegistry().getPlugDescription( hit.getPlugId() );
-        IPlug plugProxy = this.fRegistry.getPlugProxy( hit.getPlugId() );
-        if (plugProxy == null) {
-            throw new IllegalStateException( "plug '" + hit.getPlugId() + "' currently not available." );
+
+        if (plugDescription == null) {
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("Using central index for getting record");
+            }
+
+            IPlug centralIndexPlugProxy = this.fRegistry.getPlugProxy(SearchService.CENTRAL_INDEX_ID);
+            return ((IRecordLoader) centralIndexPlugProxy).getRecord( hit );
+
+        } else {
+
+            IPlug plugProxy = this.fRegistry.getPlugProxy( hit.getPlugId() );
+            if (plugProxy == null) {
+                throw new IllegalStateException( "plug '" + hit.getPlugId() + "' currently not available." );
+            }
+
+            if (plugDescription.isRecordloader()) {
+                return ((IRecordLoader) plugProxy).getRecord( hit );
+            }
+            if (fLogger.isWarnEnabled()) {
+                fLogger.warn( "plug does not implement record loader: " + plugDescription.getPlugId() + " but was requested to load a record" );
+            }
+
         }
-        if (plugDescription.isRecordloader()) {
-            return ((IRecordLoader) plugProxy).getRecord( hit );
-        }
-        if (fLogger.isWarnEnabled()) {
-            fLogger.warn( "plug does not implement record loader: " + plugDescription.getPlugId() + " but was requested to load a record" );
-        }
+
         return null;
     }
 
@@ -620,7 +636,7 @@ public class Bus extends Thread implements IBus {
             return detail;
         } catch (Exception e) {
             if (fLogger.isErrorEnabled()) {
-                fLogger.error( e.toString() );
+                fLogger.error("Error getting detail", e);
             }
         }
 
@@ -666,30 +682,29 @@ public class Bus extends Thread implements IBus {
             if (requestHitList != null) {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray( new IngridHit[requestHitList.size()] );
                 plugProxy = this.fRegistry.getPlugProxy( plugId );
-                if (plugProxy != null) {
-                    if (fLogger.isDebugEnabled()) {
-                        fLogger.debug( "(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode() );
-                    }
-                    time = System.currentTimeMillis();
-                    IngridHitDetail[] responseDetails = plugProxy.getDetails( requestHits, query, requestedFields );
-                    if (fLogger.isDebugEnabled()) {
-                        fLogger.debug( "(search) details ends (" + responseDetails.length + ")" + plugId + " query:" + query.hashCode() + " within "
-                                + (System.currentTimeMillis() - time) + " ms." );
-                    }
-                    for (int i = 0; i < responseDetails.length; i++) {
-                        if (responseDetails[i] == null) {
-                            if (fLogger.isErrorEnabled()) {
-                                fLogger.error( plugId + ": responded details that are null (set a pseudo responseDetail" );
-                            }
-                            responseDetails[i] = new IngridHitDetail( plugId, String.valueOf(random.nextInt()), random.nextInt(), 0.0f, "", "" );
-                        }
-                        responseDetails[i].put( IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time) );
-                    }
 
-                    resultList.addAll( Arrays.asList( responseDetails ) );
-                    // FIXME: to improve performance we can use an Array instead
-                    // of a list here.
+                if (fLogger.isDebugEnabled()) {
+                    fLogger.debug( "(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode() );
                 }
+                time = System.currentTimeMillis();
+                IngridHitDetail[] responseDetails = plugProxy.getDetails( requestHits, query, requestedFields );
+                if (fLogger.isDebugEnabled()) {
+                    fLogger.debug( "(search) details ends (" + responseDetails.length + ")" + plugId + " query:" + query.hashCode() + " within "
+                            + (System.currentTimeMillis() - time) + " ms." );
+                }
+                for (int i = 0; i < responseDetails.length; i++) {
+                    if (responseDetails[i] == null) {
+                        if (fLogger.isErrorEnabled()) {
+                            fLogger.error( plugId + ": responded details that are null (set a pseudo responseDetail" );
+                        }
+                        responseDetails[i] = new IngridHitDetail( plugId, String.valueOf(random.nextInt()), random.nextInt(), 0.0f, "", "" );
+                    }
+                    responseDetails[i].put( IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time) );
+                }
+
+                resultList.addAll( Arrays.asList( responseDetails ) );
+                // FIXME: to improve performance we can use an Array instead
+                // of a list here.
             }
 
             if (null != requestHitList) {
@@ -828,7 +843,9 @@ public class Bus extends Thread implements IBus {
 
     public PlugDescription getIPlug(String plugId) {
         PlugDescription plugDescription = this.fRegistry.getPlugDescription( plugId );
-        if (plugDescription != null) {
+        if (plugDescription == null) {
+            plugDescription = this.fRegistry.getPlugDescriptionFromIndex(plugId);
+        } else {
             plugDescription = (PlugDescription) plugDescription.clone();
             plugDescription.remove( "overrideProxy" );
         }
