@@ -371,7 +371,7 @@ public class Registry {
             boolean pdAlreadyExists = plugs.stream().anyMatch(plug -> plug.getProxyServiceURL().equals(plugDescription.getProxyServiceURL()));
 
             // do not add same iPlug (one that is connected to iBus and one created from index)
-            if (!pdAlreadyExists) {
+            if (!pdAlreadyExists && plugDescription != null) {
                 plugs.add(plugDescription);
             }
         }
