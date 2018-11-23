@@ -592,7 +592,7 @@ public class Registry {
     private PlugDescription mapIPlugInfoToPlugdescription(IngridDocument info) {
         PlugDescription virtualPD = null;
 
-        if (info != null) {
+        if (info != null && info.get("plugdescription") != null) {
             HashMap pdFromIndex = (HashMap) info.get("plugdescription");
 
             virtualPD = new PlugDescription();
@@ -625,5 +625,9 @@ public class Registry {
             virtualPD.activate();
         }
         return virtualPD;
+    }
+
+    public void addIPlugNotUsingCentralIndex(String id) {
+        this.iPlugsNotUsingCentralIndex.add(id);
     }
 }
