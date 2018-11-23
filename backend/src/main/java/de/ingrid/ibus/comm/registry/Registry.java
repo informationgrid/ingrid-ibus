@@ -361,6 +361,12 @@ public class Registry {
         // iPlug which once had indexed the data
         // TODO: iterate through index ingrid_meta and get all iPlug infos
         List<PlugDescription> plugDescriptionsFromIndex = getAllPlugDescriptionsFromIndex();
+
+        // if it's a new installation with no indices at all, then return an empty result
+        if (plugDescriptionsFromIndex == null) {
+            return new PlugDescription[0];
+        }
+
         for (PlugDescription plugDescription : plugDescriptionsFromIndex) {
             boolean pdAlreadyExists = plugs.stream().anyMatch(plug -> plug.getProxyServiceURL().equals(plugDescription.getProxyServiceURL()));
 
