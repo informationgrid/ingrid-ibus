@@ -127,7 +127,7 @@ public class IndicesService {
 
         ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().getIndices();
         esIndices.forEach( (indexMap) -> {
-            System.out.println( "Index: " + indexMap.key );
+            // System.out.println( "Index: " + indexMap.key );
 
             // skip indices that do not start with the configured prefix, since we don't want to have all indices of a cluster
             if (!indexMap.key.startsWith( indexPrefixFilter )) {
