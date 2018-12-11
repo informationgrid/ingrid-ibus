@@ -4,7 +4,7 @@ ENV RUN_DIRECTLY=true
 ENV IBUS_ID=/ingrid-group:ibus
 ENV SERVER_PORT=80
 
-ADD ingrid-ibus-*-installer.jar wait-for-it.sh /
+ADD ingrid-ibus-*-installer.jar wait-for-elasticsearch.sh /
 
 RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
     && mkdir -p /opt/ingrid/ingrid-ibus \
