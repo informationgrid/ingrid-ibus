@@ -7,7 +7,7 @@ host="$1"
 shift
 cmd="$@"
 
-until curl $host; do
+until wget -qO - $host; do
   >&2 echo "Elasticsearch is unavailable - sleeping"
   sleep 1
 done
