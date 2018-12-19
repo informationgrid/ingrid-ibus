@@ -48,6 +48,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.indices.IndexClosedException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.joda.time.DateTime;
@@ -136,17 +137,21 @@ public class IndicesService {
 
             Index index = new Index();
 
-            addDefaultIndexInfo( indexMap.key, null, index, indexMap.value.getSettings() );
+            try {
+                addDefaultIndexInfo(indexMap.key, null, index, indexMap.value.getSettings());
 
-            // applyAdditionalData( indexMap.key, index, false );
-            // addMapping( indexMap.key, null, index );
+                // applyAdditionalData( indexMap.key, index, false );
+                // addMapping( indexMap.key, null, index );
 
-            addTypes( indexMap.key, index );
+                addTypes(indexMap.key, index);
 
-            // check if iPlug is connected through InGrid Communication
-            //iPlugService.getIPlugDetail()
+                // check if iPlug is connected through InGrid Communication
+                //iPlugService.getIPlugDetail()
 
-            indices.add( index );
+                indices.add(index);
+            } catch (IndexClosedException ex) {
+                log.warn("Could not get index, since it is closed: " + indexMap.key);
+            }
         } );
 
         addComponentData( indices );
