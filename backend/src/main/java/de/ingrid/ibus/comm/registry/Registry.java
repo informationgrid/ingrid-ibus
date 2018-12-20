@@ -235,7 +235,9 @@ public class Registry {
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
             }
             synchronized (this.iPlugsNotUsingCentralIndex) {
-                this.iPlugsNotUsingCentralIndex.add(plugDescription.getPlugId());
+                if (!((boolean) plugDescription.get("useRemoteElasticsearch"))) {
+                    this.iPlugsNotUsingCentralIndex.add(plugDescription.getPlugId());
+                }
             }
         } catch (Exception e) {
             if (fLogger.isErrorEnabled()) {
