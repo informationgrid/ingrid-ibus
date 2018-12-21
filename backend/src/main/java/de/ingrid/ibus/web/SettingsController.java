@@ -93,6 +93,7 @@ public class SettingsController {
                 String password = next.getValue().asText();
                 if (!password.isEmpty()) {
                     configuration.put(key, passwordEncoder.encode(password));
+                    configuration.put("needPasswordChange", "false");
                 }
             } else if (key.equals("needPasswordChange")) {
                 // skip

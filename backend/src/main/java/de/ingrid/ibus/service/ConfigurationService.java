@@ -75,7 +75,7 @@ public class ConfigurationService {
     private Properties properties;
 
     private static String[] configurableProps = new String[]{
-            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port"
+            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port", "needPasswordChange"
     };
 
     @Autowired
@@ -195,7 +195,7 @@ public class ConfigurationService {
             }
         }
 
-        // Admin Passwort
+        // Admin Password
         String adminPassword = (String) configuration.get("spring.security.user.password");
         if (adminPassword != null && !"".equals(adminPassword)) {
             webSecurityConfig.secureWebapp(adminPassword);
@@ -243,10 +243,6 @@ public class ConfigurationService {
 
         for (String key : configurableProps) {
             sparseConfig.put(key, properties.getProperty(key));
-        }
-
-        if (springConfiguration.getUser().getPassword().isEmpty()) {
-            sparseConfig.put("needPasswordChange", "true");
         }
 
         return sparseConfig;

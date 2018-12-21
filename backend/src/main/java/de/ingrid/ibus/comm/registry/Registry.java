@@ -28,27 +28,25 @@
 
 package de.ingrid.ibus.comm.registry;
 
+import de.ingrid.ibus.comm.net.IPlugProxyFactory;
+import de.ingrid.ibus.management.ManagementService;
+import de.ingrid.ibus.service.SearchService;
+import de.ingrid.utils.IPlug;
+import de.ingrid.utils.IngridCall;
+import de.ingrid.utils.IngridDocument;
+import de.ingrid.utils.PlugDescription;
+import net.weta.components.communication.ICommunication;
+import net.weta.components.communication.WetagURL;
+import net.weta.components.communication.util.PooledThreadExecutor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.core.io.ClassPathResource;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-
-import de.ingrid.ibus.management.ManagementService;
-import de.ingrid.ibus.service.SearchService;
-import de.ingrid.utils.IngridCall;
-import de.ingrid.utils.IngridDocument;
-import net.weta.components.communication.ICommunication;
-import net.weta.components.communication.WetagURL;
-import net.weta.components.communication.util.PooledThreadExecutor;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.ClassPathResource;
-
-import de.ingrid.ibus.comm.net.IPlugProxyFactory;
-import de.ingrid.utils.IPlug;
-import de.ingrid.utils.PlugDescription;
 
 /**
  * A IPlug registry. All connected IPlugs are registered and by default are deactivated.
@@ -235,7 +233,8 @@ public class Registry {
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
             }
             synchronized (this.iPlugsNotUsingCentralIndex) {
-                if (!((boolean) plugDescription.get("useRemoteElasticsearch"))) {
+                Object useRemoteElasticsearch = plugDescription.get("useRemoteElasticsearch");
+                if (useRemoteElasticsearch != null && !((boolean) useRemoteElasticsearch)) {
                     this.iPlugsNotUsingCentralIndex.add(plugDescription.getPlugId());
                 }
             }

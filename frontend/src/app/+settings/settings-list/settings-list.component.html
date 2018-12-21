@@ -22,7 +22,7 @@
   -->
 <div class="container">
 
-  <div *ngIf="!isReloading && config['needPasswordChange']" class="alert alert-warning">
+  <div *ngIf="!isReloading && config['needPasswordChange'] === 'true'" class="alert alert-warning">
     Sie müssen hier unter den "Server Einstellungen" ein neues Passwort für die Administrationsoberfläche setzen
   </div>
 
@@ -37,7 +37,7 @@
 
   <form *ngIf="!isReloading" class="form-horizontal">
 
-    <ng-container *ngIf="!config['needPasswordChange']">
+    <ng-container *ngIf="config['needPasswordChange'] === 'false'">
       <div class="card">
         <div class="card-header">
           Codelist Repository
