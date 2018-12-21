@@ -430,6 +430,17 @@ public class Registry {
         }
     }
 
+    /**
+     * Only return the proxy to the real iPlug and not the central index.
+     * @param plugId
+     * @return
+     */
+    public IPlug getRealPlugProxy(String plugId) {
+        synchronized (this.fPlugProxyByPlugId) {
+            return this.fPlugProxyByPlugId.get(plugId);
+        }
+    }
+
     private void saveProperties() {
         try {
             FileOutputStream fos = new FileOutputStream(this.fFile);

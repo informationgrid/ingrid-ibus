@@ -41,6 +41,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import de.ingrid.ibus.management.ManagementService;
 import de.ingrid.ibus.service.SearchService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -910,7 +911,13 @@ public class Bus extends Thread implements IBus {
 
     @Override
     public IngridDocument call(IngridCall targetInfo) throws Exception {
-        IPlug plugProxy = this.fRegistry.getPlugProxy(targetInfo.getTarget());
+
+        IPlug plugProxy;
+        if (SearchService.CENTRAL_INDEX_ID.equals(targetInfo.getTarget()) || ManagementService.MANAGEMENT_IPLUG_ID.equals(targetInfo.getTarget())) {
+            plugProxy = this.fRegistry.getPlugProxy(targetInfo.getTarget());
+        } else {
+            plugProxy = this.fRegistry.getRealPlugProxy(targetInfo.getTarget());
+        }
         IngridDocument call;
 
         if (fLogger.isDebugEnabled()) {
