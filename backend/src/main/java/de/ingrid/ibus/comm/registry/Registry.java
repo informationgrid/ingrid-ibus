@@ -234,7 +234,7 @@ public class Registry {
             }
             synchronized (this.iPlugsNotUsingCentralIndex) {
                 Object useRemoteElasticsearch = plugDescription.get("useRemoteElasticsearch");
-                if (useRemoteElasticsearch != null && !((boolean) useRemoteElasticsearch)) {
+                if (useRemoteElasticsearch == null || !((boolean) useRemoteElasticsearch)) {
                     this.iPlugsNotUsingCentralIndex.add(plugDescription.getPlugId());
                 }
             }
