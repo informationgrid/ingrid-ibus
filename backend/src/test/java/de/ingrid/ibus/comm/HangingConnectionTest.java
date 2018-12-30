@@ -49,7 +49,7 @@ public class HangingConnectionTest extends TestCase {
      * @throws Exception
      */
     public void testhangConnection() throws Exception {
-        Bus bus = new Bus(new HangingPlugDummyProxyFactory());
+        Bus bus = new Bus(new HangingPlugDummyProxyFactory(), null);
         PlugDescription plugDescriptions = new PlugDescription();
         plugDescriptions.setProxyServiceURL("");
         plugDescriptions.setOrganisation("org");

@@ -43,6 +43,7 @@ import java.util.concurrent.Future;
 
 import de.ingrid.ibus.management.ManagementService;
 import de.ingrid.ibus.service.SearchService;
+import de.ingrid.ibus.service.SettingsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -85,6 +86,8 @@ public class Bus extends Thread implements IBus {
 
     private static Bus fInstance;
 
+    private final SettingsService settingsService;
+
     // TODO INGRID-398 we need to made the lifetime configurable.
     private Registry fRegistry;
 
@@ -108,9 +111,10 @@ public class Bus extends Thread implements IBus {
      * @see de.ingrid.ibus.comm.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery,
      *      Registry)
      */
-    public Bus(IPlugProxyFactory factory) {
+    public Bus(IPlugProxyFactory factory, SettingsService settingsService) {
         this.fRegistry = new Registry( 120000, false, factory );
         fInstance = this;
+        this.settingsService = settingsService;
         _grouper = new Grouper( this.fRegistry );
         debug = new DebugQuery();
         SyntaxInterpreter.debug = this.debug;
@@ -915,6 +919,8 @@ public class Bus extends Thread implements IBus {
         IPlug plugProxy;
         if (SearchService.CENTRAL_INDEX_ID.equals(targetInfo.getTarget()) || ManagementService.MANAGEMENT_IPLUG_ID.equals(targetInfo.getTarget())) {
             plugProxy = this.fRegistry.getPlugProxy(targetInfo.getTarget());
+        } else if ("iBus".equals(targetInfo.getTarget())) {
+            return handleIBusCalls(targetInfo);
         } else {
             plugProxy = this.fRegistry.getRealPlugProxy(targetInfo.getTarget());
         }
@@ -932,5 +938,29 @@ public class Bus extends Thread implements IBus {
             call.put( "error", "iPlug not found: " + targetInfo.getTarget() );
         }
         return call;
+    }
+
+    private IngridDocument handleIBusCalls(IngridCall targetInfo) throws Exception {
+        IngridDocument doc = null;
+        Set<String> result = null;
+        boolean success = false;
+        switch (targetInfo.getMethod()) {
+            case "activateIndex":
+                success = this.settingsService.activateIndexType((String) targetInfo.getParameter());
+                break;
+            case "deactivateIndex":
+                success = this.settingsService.deactivateIndexType((String) targetInfo.getParameter());
+                break;
+            case "getActiveIndices":
+                result = this.settingsService.getActiveComponentIds();
+                break;
+            default:
+                fLogger.warn( "The following method is not supported: " + targetInfo.getMethod() );
+        }
+
+        doc = new IngridDocument();
+        doc.put("success", success);
+        doc.put("result", result);
+        return doc;
     }
 }

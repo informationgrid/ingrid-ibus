@@ -67,6 +67,7 @@ public class SettingsService {
                 if (path.toFile().exists()) {
                     this.settingsFile = path.toFile();
                 } else {
+                    // TODO: if conf dir does not exist there will be an error an activeIndices is not initialized!
                     this.settingsFile = Files.createFile( path ).toFile();
                 }
             }

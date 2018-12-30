@@ -55,7 +55,7 @@ public class RemoteBusTest extends TestCase {
 		com.configure(serverConfiguration);
         com.setPeerName(iBusUrl);
         com.startup();
-        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), null));
 
         TcpCommunication com2 = new TcpCommunication();
         ClientConfiguration clientConfiguration = new ClientConfiguration();
@@ -84,7 +84,7 @@ public class RemoteBusTest extends TestCase {
 		com.configure(serverConfiguration);
         com.setPeerName(iBusUrl);
         com.startup();
-        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), null));
 
         TcpCommunication com2 = new TcpCommunication();
         ClientConfiguration clientConfiguration = new ClientConfiguration();
@@ -117,7 +117,7 @@ public class RemoteBusTest extends TestCase {
 		com.configure(serverConfiguration);
         com.setPeerName(iBusUrl);
         com.startup();
-        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), null));
         System.out.println("Restart iBus... done.");
         
         Thread.sleep(1000);
@@ -140,7 +140,7 @@ public class RemoteBusTest extends TestCase {
         
         Thread.sleep(3000);
         
-        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory()));
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), null));
         TcpCommunication com2 = new TcpCommunication();
         ClientConfiguration clientConfiguration = new ClientConfiguration();
 		clientConfiguration.setName("/101tec-group:iplug");

@@ -49,7 +49,7 @@ import de.ingrid.utils.queryparser.QueryStringParser;
 public class ScoreNormalizingTest extends TestCase {
 
     private Bus setUp(float[][] scores) {
-        Bus bus = new Bus(new DummyProxyFactory(scores));
+        Bus bus = new Bus(new DummyProxyFactory(scores), null);
         Registry registry = bus.getIPlugRegistry();
         registry.setCommunication(new DummyCommunication());
 

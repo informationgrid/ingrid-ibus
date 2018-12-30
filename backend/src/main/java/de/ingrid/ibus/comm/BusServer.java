@@ -31,6 +31,7 @@ import de.ingrid.ibus.comm.processor.*;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import de.ingrid.ibus.config.IBusConfiguration;
+import de.ingrid.ibus.service.SettingsService;
 import de.ingrid.utils.IBus;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.metadata.IMetadataInjector;
@@ -88,6 +89,9 @@ public class BusServer {
     @Autowired
     private RegistryConfigurable[] classesUsingRegistry = null;
 
+    @Autowired
+    private SettingsService settingsService;
+
     /**
      * 
      *
@@ -143,7 +147,7 @@ public class BusServer {
 
         // instantiate the IBus
         IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl( communication );
-        Bus bus = new Bus( proxyFactory );
+        Bus bus = new Bus( proxyFactory, settingsService );
         Metadata metadata = new Metadata();
         injectMetadatas( metadata, bus );
         bus.setMetadata( metadata );
