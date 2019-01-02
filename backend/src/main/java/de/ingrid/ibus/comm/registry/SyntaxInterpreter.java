@@ -65,7 +65,7 @@ public class SyntaxInterpreter {
      * @return The IPlugs that have the fields the query requires.
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
-        PlugDescription[] plugs = registry.getAllIPlugs();
+        PlugDescription[] plugs = registry.getAllIPlugsConnected();
         List<PlugDescription> plugList = new ArrayList<>(plugs.length);
         if (LOG.isDebugEnabled()) {
             LOG.debug("plugs before filtering");

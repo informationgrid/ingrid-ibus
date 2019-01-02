@@ -349,6 +349,24 @@ public class Registry {
     }
 
     /**
+     * Returns all IPlugs that are still alive and directly connected to iBus.
+     *
+     * @return All registered IPlugs younger than the given life time.
+     */
+    public PlugDescription[] getAllIPlugsConnected() {
+        PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
+        List<PlugDescription> plugs = new ArrayList<>(plugDescriptions.length);
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < plugDescriptions.length; i++) {
+            long plugLifeSign = plugDescriptions[i].getLong(LAST_LIFESIGN) + this.fLifeTime;
+            if (plugLifeSign > now) {
+                plugs.add(plugDescriptions[i]);
+            }
+        }
+        return plugs.toArray(new PlugDescription[0]);
+    }
+
+    /**
      * Returns all IPlugs that are still alive.
      * Also generate those who indexed into central index.
      *

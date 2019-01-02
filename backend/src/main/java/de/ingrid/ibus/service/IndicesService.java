@@ -349,11 +349,11 @@ public class IndicesService {
 
                     indexItem.setId( hit.getId() );
                     indexItem.setLongName( (String) hitSource.get( INDEX_FIELD_IPLUG_NAME ) );
+
                     // check if linked component / iPlug is connected
-                    PlugDescription iPlugDetail = iPlugService.getIPlugDetail( (String) hitSource.get( "plugId" ) );
-                    if (iPlugDetail != null) {
-                        indexItem.setConnected( true );
-                    }
+                    boolean iPlugIsConnected = iPlugService.isConnectedDirectly((String) hitSource.get("plugId"));
+                    indexItem.setConnected( iPlugIsConnected );
+
                     indexItem.setHasLinkedComponent( true );
 
                     for (IndexType type : indexItem.getTypes()) {

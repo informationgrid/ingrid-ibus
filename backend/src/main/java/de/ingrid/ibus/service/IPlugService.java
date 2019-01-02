@@ -80,6 +80,21 @@ public class IPlugService implements RegistryConfigurable {
         }
         return null;
     }
+
+    /**
+     * Check if an iPlug is connected to the iBus via the communication.
+     * @param plugId is the ID of the iPlug
+     * @return true if iPlug is connected otherwise false
+     */
+    public boolean isConnectedDirectly(String plugId) {
+        PlugDescription[] allIPlugsConnected = registry.getAllIPlugsConnected();
+        for (PlugDescription iPlug : allIPlugsConnected) {
+            if (iPlug.getProxyServiceURL().equals(plugId)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     public void activate(String plugId) {
         registry.activatePlug( plugId );
