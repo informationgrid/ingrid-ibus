@@ -821,7 +821,7 @@ public class Bus extends Thread implements IBus {
     public void addPlugDescription(PlugDescription plugDescription) {
         if (null != plugDescription) {
             if (fLogger.isInfoEnabled()) {
-                fLogger.info( "adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length );
+                fLogger.info( "adding or updating plug '" + plugDescription.getPlugId() ); // + "' current plug count:" + getAllIPlugs().length );
             }
             this.fRegistry.addPlugDescription( plugDescription );
         } else {
@@ -833,7 +833,7 @@ public class Bus extends Thread implements IBus {
 
     public void removePlugDescription(PlugDescription plugDescription) {
         if (fLogger.isInfoEnabled()) {
-            fLogger.info( "removing plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length );
+            fLogger.info( "removing plug '" + plugDescription.getPlugId() ); // + "' current plug count:" + getAllIPlugs().length );
         }
         this.fRegistry.removePlug( plugDescription.getPlugId() );
     }
