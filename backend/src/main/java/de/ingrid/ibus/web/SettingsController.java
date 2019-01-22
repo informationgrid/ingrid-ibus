@@ -33,6 +33,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -73,16 +75,16 @@ public class SettingsController {
 
     @PostMapping("/settings")
     @ResponseBody
-    public ResponseEntity<Properties> writeConfiguration(@RequestBody JsonNode json) throws Exception {
+    public ResponseEntity<Properties> writeConfiguration(HttpServletRequest request, @RequestBody JsonNode json) throws Exception {
         Properties configuration = this.configurationService.getConfiguration();
 
-        mergeConfiguration(configuration, json);
+        mergeConfiguration(configuration, json, request);
 
         this.configurationService.writeConfiguration(configuration);
         return ResponseEntity.ok(configuration);
     }
 
-    private void mergeConfiguration(Properties configuration, JsonNode json) {
+    private void mergeConfiguration(Properties configuration, JsonNode json, HttpServletRequest request) throws ServletException {
         Iterator<Map.Entry<String, JsonNode>> fields = json.fields();
 
         while (fields.hasNext()) {
@@ -94,6 +96,7 @@ public class SettingsController {
                 if (!password.isEmpty()) {
                     configuration.put(key, passwordEncoder.encode(password));
                     configuration.put("needPasswordChange", "false");
+                    request.logout();
                 }
             } else if (key.equals("needPasswordChange")) {
                 // skip
