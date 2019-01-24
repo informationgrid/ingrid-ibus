@@ -597,7 +597,8 @@ public class Registry {
         List<IngridDocument> infos = (List<IngridDocument>) response.get("iPlugInfos");
 
         for (IngridDocument info : infos) {
-             plugDescriptions.add(mapIPlugInfoToPlugdescription(info));
+            PlugDescription pd = mapIPlugInfoToPlugdescription(info);
+            if (pd != null) plugDescriptions.add(pd);
         }
 
         return plugDescriptions;
