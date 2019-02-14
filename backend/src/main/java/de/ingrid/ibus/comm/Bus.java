@@ -843,7 +843,19 @@ public class Bus extends Thread implements IBus {
     }
 
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
-        return this.fRegistry.getAllIPlugsWithoutTimeLimitation();
+        PlugDescription[] iplugs = this.fRegistry.getAllIPlugsWithoutTimeLimitation();
+
+        // check if iPlug data is in central index and activated
+        Set<String> activeComponentIds = this.settingsService.getActiveComponentIds();
+        for(PlugDescription iplug : iplugs) {
+            String uuid = (String) iplug.get("uuid");
+            boolean present = activeComponentIds.stream()
+                    .anyMatch(id -> id.indexOf(uuid) == 0);
+            if (present) {
+                iplug.put("activated", true);
+            }
+        }
+        return iplugs;
     }
 
     public PlugDescription getIPlug(String plugId) {
