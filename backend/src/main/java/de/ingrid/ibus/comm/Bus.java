@@ -849,10 +849,12 @@ public class Bus extends Thread implements IBus {
         Set<String> activeComponentIds = this.settingsService.getActiveComponentIds();
         for(PlugDescription iplug : iplugs) {
             String uuid = (String) iplug.get("uuid");
-            boolean present = activeComponentIds.stream()
-                    .anyMatch(id -> id.indexOf(uuid) == 0);
-            if (present) {
-                iplug.put("activated", true);
+            if (uuid != null) {
+                boolean present = activeComponentIds.stream()
+                        .anyMatch(id -> id.indexOf(uuid) == 0);
+                if (present) {
+                    iplug.put("activated", true);
+                }
             }
         }
         return iplugs;
