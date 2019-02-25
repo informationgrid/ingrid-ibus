@@ -332,6 +332,7 @@ public class IndicesService {
 
         SearchHit[] hits = response.getHits().getHits();
 
+        // iterate over all index informations and apply info to Index-object
         for (SearchHit hit : hits) {
             Map<String, Object> hitSource = hit.getSourceAsMap();
             String indexName = (String) hit.getSourceAsMap().get( LINKED_INDEX );
@@ -343,9 +344,12 @@ public class IndicesService {
                         .orElse(null);
 
                 if (indexItem != null) {
-                    String indexType = (String) hit.getSourceAsMap().get( LINKED_TYPE );
+                    String indexType = (String) hit.getSourceAsMap().get(LINKED_TYPE);
                     StdDateFormat format = new StdDateFormat();
-                    Date lastIndexed = format.parse( (String) hit.getSourceAsMap().get( INDEX_FIELD_LAST_INDEXED ) );
+                    String lastIndexedString = (String) hit.getSourceAsMap().get(INDEX_FIELD_LAST_INDEXED);
+                    Date lastIndexed = null;
+                    if (lastIndexedString != null) lastIndexed = format.parse(lastIndexedString);
+
 
                     indexItem.setId( hit.getId() );
                     indexItem.setLongName( (String) hitSource.get( INDEX_FIELD_IPLUG_NAME ) );
