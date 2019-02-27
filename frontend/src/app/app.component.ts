@@ -33,6 +33,8 @@ import {Router} from '@angular/router';
 export class AppComponent {
   showMenu = false;
   showIndicesPage = true;
+  version: string;
+  timestamp: string;
 
   constructor(private config: ConfigService, settingsService: SettingsService, router: Router) {
     if (config.getConfiguration().useIndices === false) {
@@ -42,6 +44,8 @@ export class AppComponent {
       if (appCfg['needPasswordChange'] === 'true') {
         router.navigate(['/settings']);
       }
+      this.version = appCfg['version'];
+      this.timestamp = appCfg['timestamp'];
     })
   }
 

@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.core.io.ClassPathResource;
@@ -51,6 +52,13 @@ import java.util.*;
 public class ConfigurationService {
 
     private static Logger log = LogManager.getLogger(ConfigurationService.class);
+
+    @Value("${app.version}")
+    private String appVersion;
+
+    @Value("${app.timestamp}")
+    private String appTimestamp;
+
     private File settingsFile;
 
     private final CodeListService codeListService;
@@ -240,6 +248,8 @@ public class ConfigurationService {
 
     public Properties getConfiguration() {
         Properties sparseConfig = new Properties();
+        sparseConfig.put("version", appVersion);
+        sparseConfig.put("timestamp", appTimestamp);
 
         for (String key : configurableProps) {
             sparseConfig.put(key, properties.getProperty(key));
