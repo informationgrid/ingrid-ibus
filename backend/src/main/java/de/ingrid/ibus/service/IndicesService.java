@@ -600,7 +600,7 @@ public class IndicesService {
             InputStream defaultMappingStream = getClass().getClassLoader().getResourceAsStream( "ingrid-meta-mapping.json" );
             try {
                 String mappingString = XMLSerializer.getContents( defaultMappingStream );
-                indexManager.createIndex( INDEX_INFO_NAME, "info", mappingString );
+                indexManager.createIndex( INDEX_INFO_NAME, "info", mappingString, null );
             } catch (IOException e) {
                 log.error("Error preparing index", e);
             }
