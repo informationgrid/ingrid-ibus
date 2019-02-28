@@ -158,7 +158,8 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
             boolean success = indexManager.createIndex(
                     (String) parameters.get( "name" ),
                     (String) parameters.get( "type" ),
-                    (String) parameters.get( "mapping" ));
+                    (String) parameters.get( "esMapping" ),
+                    (String) parameters.get( "esSettings" ));
 
             doc.put( "result", success );
             break;
