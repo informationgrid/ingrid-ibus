@@ -40,6 +40,7 @@ import net.weta.components.communication.WetagURL;
 import net.weta.components.communication.util.PooledThreadExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -379,22 +380,26 @@ public class Registry {
         // if an iPlug is not connected anymore to the iBus then we want the information from the
         // iPlug which once had indexed the data
         // TODO: iterate through index ingrid_meta and get all iPlug infos
-        List<PlugDescription> plugDescriptionsFromIndex = getAllPlugDescriptionsFromIndex();
+        try {
+            List<PlugDescription> plugDescriptionsFromIndex = getAllPlugDescriptionsFromIndex();
 
-        // if it's a new installation with no indices at all, then return an empty result
-        if (plugDescriptionsFromIndex == null) {
-            return new PlugDescription[0];
-        }
-
-        for (PlugDescription plugDescription : plugDescriptionsFromIndex) {
-            if (plugDescription.getProxyServiceURL() == null) continue;
-
-            boolean pdAlreadyExists = plugs.stream().anyMatch(plug -> plug.getProxyServiceURL().equals(plugDescription.getProxyServiceURL()));
-
-            // do not add same iPlug (one that is connected to iBus and one created from index)
-            if (!pdAlreadyExists && plugDescription != null) {
-                plugs.add(plugDescription);
+            // if it's a new installation with no indices at all, then return an empty result
+            if (plugDescriptionsFromIndex == null) {
+                return new PlugDescription[0];
             }
+
+            for (PlugDescription plugDescription : plugDescriptionsFromIndex) {
+                if (plugDescription.getProxyServiceURL() == null) continue;
+
+                boolean pdAlreadyExists = plugs.stream().anyMatch(plug -> plug.getProxyServiceURL().equals(plugDescription.getProxyServiceURL()));
+
+                // do not add same iPlug (one that is connected to iBus and one created from index)
+                if (!pdAlreadyExists && plugDescription != null) {
+                    plugs.add(plugDescription);
+                }
+            }
+        } catch (NoNodeAvailableException ex) {
+            fLogger.warn("Elasticsearch cluster not available");
         }
 
         // with a lower priority check if any connected iPlug should be used

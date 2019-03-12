@@ -593,7 +593,7 @@ public class IndicesService {
         return null;
     }
     
-    private void prepareIndices() {
+    public void prepareIndices() {
         boolean indexExists = indexManager.indexExists( INDEX_INFO_NAME );
         
         if (!indexExists) {

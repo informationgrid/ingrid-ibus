@@ -79,6 +79,8 @@ public class ConfigurationService {
 
     private final ServerProperties serverConfiguration;
 
+    private final IndicesService indicesService;
+
     private Properties propertiesSystem;
     private Properties properties;
 
@@ -87,7 +89,7 @@ public class ConfigurationService {
     };
 
     @Autowired
-    public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration) throws IOException {
+    public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration, IndicesService indicesService) throws IOException {
         ClassPathResource ibusSystemConfig = new ClassPathResource("/application.properties");
         ClassPathResource ibusConfig = new ClassPathResource("/application-default.properties");
 
@@ -121,6 +123,7 @@ public class ConfigurationService {
         this.elasticConfiguration = elasticConfiguration;
         this.springConfiguration = securityConfiguration;
         this.serverConfiguration = serverConfiguration;
+        this.indicesService = indicesService;
     }
 
     @PostConstruct
@@ -168,6 +171,9 @@ public class ConfigurationService {
         codelistConfiguration.setUsername( (String) configuration.get("codelistrepo.username") );
 
         updateBeansConfiguration(configuration, ibusChanged);
+
+        // check if elasticsearch connection was established the first time and needs index "ingrid_meta"
+        this.indicesService.prepareIndices();
 
         return true;
     }
