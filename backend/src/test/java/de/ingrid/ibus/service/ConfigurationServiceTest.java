@@ -75,7 +75,7 @@ public class ConfigurationServiceTest {
     }
 
     private Properties getProperties(Properties props) throws Exception {
-        ConfigurationService service = new ConfigurationService(null, null, null, null, null, null, null, null, null);
+        ConfigurationService service = new ConfigurationService(null, null, null, null, null, null, null, null, null, null);
         Method getModifiedProperties = service.getClass().getDeclaredMethod("getModifiedProperties", Properties.class);
         Field serviceProperties = service.getClass().getDeclaredField("properties");
         Field servicePropertiesSystem = service.getClass().getDeclaredField("propertiesSystem");
