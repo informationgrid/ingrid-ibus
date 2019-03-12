@@ -296,7 +296,8 @@ public class SyntaxInterpreter {
     private static void filterForElasticsearch(long ms, IngridQuery ingridQuery, List<PlugDescription> allIPlugs) {
         for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = iter.next();
-            boolean createdFromIndex = plugDescription.containsKey("createdFromIndex") && (boolean) plugDescription.get("createdFromIndex");
+            // boolean createdFromIndex = plugDescription.containsKey("createdFromIndex") && (boolean) plugDescription.get("createdFromIndex");
+            boolean createdFromIndex = plugDescription.containsKey("useRemoteElasticsearch") && (boolean) plugDescription.get("useRemoteElasticsearch");
             if (createdFromIndex) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(ms + " Is using central index! Remove iplug: " + plugDescription.getProxyServiceURL());

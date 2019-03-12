@@ -659,7 +659,7 @@ public class Registry {
             virtualPD.setRecordLoader(true);
             virtualPD.setRankinTypes(true, false, false);
 
-            virtualPD.put("createdFromIndex", true);
+            // virtualPD.put("createdFromIndex", true);
             virtualPD.activate();
         }
         return virtualPD;
