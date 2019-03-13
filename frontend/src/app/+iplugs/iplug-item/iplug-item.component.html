@@ -32,10 +32,12 @@
       <div class="flex-column">
         <div>
           <span class="index-name" [title]="'Index: ' + component.name">{{component.name}}</span>
-          <span><a href="{{component.adminUrl}}"
+          <span class="bookmark">
+            <a href="{{component.adminUrl}}"
                    title="Admin-GUI"
                    target="_blank"
-                   class="bookmark fa fa-bookmark"></a></span>
+                   class="fa fa-bookmark"></a>
+          </span>
         </div>
         <div>{{component.description}}</div>
       </div>

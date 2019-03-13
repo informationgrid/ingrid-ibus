@@ -126,7 +126,9 @@ public class IndicesService {
         ElasticsearchInfo info = new ElasticsearchInfo();
         List<Index> indices = new ArrayList<>();
 
-        ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().getIndices();
+        ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet()
+                .getState().getMetaData().getIndices();
+
         esIndices.forEach( (indexMap) -> {
             // System.out.println( "Index: " + indexMap.key );
 
@@ -359,6 +361,7 @@ public class IndicesService {
                     indexItem.setConnected( iPlugIsConnected );
 
                     indexItem.setHasLinkedComponent( true );
+                    indexItem.setAdminUrl((String) ((Map)hitSource.get("plugdescription")).get("IPLUG_ADMIN_GUI_URL"));
 
                     for (IndexType type : indexItem.getTypes()) {
                         if (type.getName().equals( indexType )) {
