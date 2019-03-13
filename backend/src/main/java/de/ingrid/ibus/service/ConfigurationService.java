@@ -31,6 +31,7 @@ import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.config.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,7 @@ import java.util.*;
 public class ConfigurationService {
 
     private static Logger log = LogManager.getLogger(ConfigurationService.class);
+    private boolean needPasswordChange;
 
     @Value("${app.version}")
     private String appVersion;
@@ -85,7 +87,7 @@ public class ConfigurationService {
     private Properties properties;
 
     private static String[] configurableProps = new String[]{
-            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port", "needPasswordChange"
+            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port"
     };
 
     @Autowired
@@ -110,6 +112,10 @@ public class ConfigurationService {
 
         Properties propertiesOverride = new Properties();
         propertiesOverride.load(new FileReader(this.settingsFile));
+
+        // if no password has been set in override configuration, then we need to change it
+        // use property to tell frontend
+        this.needPasswordChange = propertiesOverride.get("spring.security.user.password") == null;
 
         this.properties = new Properties();
         this.properties.putAll(propertiesSystem);
@@ -173,7 +179,11 @@ public class ConfigurationService {
         updateBeansConfiguration(configuration, ibusChanged);
 
         // check if elasticsearch connection was established the first time and needs index "ingrid_meta"
-        this.indicesService.prepareIndices();
+        try {
+            this.indicesService.prepareIndices();
+        } catch (NoNodeAvailableException e) {
+            log.warn("Elasticsearch does not seem to be configured, since we could not connect to it. Please check the settings.");
+        }
 
         return true;
     }
@@ -214,6 +224,7 @@ public class ConfigurationService {
         if (adminPassword != null && !"".equals(adminPassword)) {
             webSecurityConfig.secureWebapp(adminPassword);
             springConfiguration.getUser().setPassword( adminPassword );
+            needPasswordChange = false;
         }
 
         // iBus
@@ -256,6 +267,7 @@ public class ConfigurationService {
         Properties sparseConfig = new Properties();
         sparseConfig.put("version", appVersion);
         sparseConfig.put("timestamp", appTimestamp);
+        sparseConfig.put("needPasswordChange", String.valueOf(this.needPasswordChange));
 
         for (String key : configurableProps) {
             sparseConfig.put(key, properties.getProperty(key));
