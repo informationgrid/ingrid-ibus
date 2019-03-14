@@ -378,7 +378,7 @@ public class Bus extends Thread implements IBus {
                                 }
                             } catch (InterruptedException e) {
                                 if (fLogger.isWarnEnabled()) {
-                                    fLogger.warn( "Waiting for results iterrupted.", e );
+                                    fLogger.warn( "Waiting for results interrupted.", e );
                                 }
                                 if (fLogger.isDebugEnabled()) {
                                     fLogger.debug( "Waiting for results thread [" + Thread.currentThread().getName() + "] iterrupted after " + (System.currentTimeMillis() - startTimer) + " ms." );
