@@ -60,6 +60,7 @@ import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.dsc.Record;
+import de.ingrid.utils.iplug.IPlugVersionInspector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
@@ -78,6 +79,9 @@ import net.weta.components.communication.util.PooledThreadExecutor;
 public class Bus extends Thread implements IBus {
 
     private static final long serialVersionUID = Bus.class.getName().hashCode();
+
+    // TODO: Change to release version 4.7.0
+    private static final String IPLUG_OLD_VERSION_REMOVE_FIELDS = "4.7.0-SNAPSHOT";
 
     private static Log fLogger = LogFactory.getLog( Bus.class );
 
@@ -667,6 +671,19 @@ public class Bus extends Thread implements IBus {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray( new IngridHit[requestHitList.size()] );
                 plugProxy = this.fRegistry.getPlugProxy( plugId );
                 if (plugProxy != null) {
+                    PlugDescription pd = this.fRegistry.getPlugDescription(plugId);
+                    if(pd != null) {
+                        Metadata metadata = pd.getMetadata();
+                        if(metadata != null) {
+                            String pdVersion = metadata.getVersion();
+                            if(!IPlugVersionInspector.compareVersion(pdVersion, IPLUG_OLD_VERSION_REMOVE_FIELDS)) {
+                                List<String> list = new ArrayList<String>(Arrays.asList(requestedFields));
+                                list.remove("title");
+                                list.remove("summary");
+                                requestedFields = list.toArray(new String[0]);
+                            }
+                        }
+                    }
                     if (fLogger.isDebugEnabled()) {
                         fLogger.debug( "(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode() );
                     }
