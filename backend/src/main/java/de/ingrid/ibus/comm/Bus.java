@@ -671,6 +671,13 @@ public class Bus extends Thread implements IBus {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray( new IngridHit[requestHitList.size()] );
                 plugProxy = this.fRegistry.getPlugProxy( plugId );
                 if (plugProxy != null) {
+                    /*
+                     * iPlugs with older base-webapp than version 4.7.0 set requested fields "title" and "summary" on detail search by default.
+                     * The base-webapp since version 4.7.0 set no fields by default. Requested field "title" and "summary" must set
+                     * by the search component like portal.
+                     * To make older iPlugs running with duplicate fields (default and requested fields) field "title" and "summary" must
+                     * be remove on requested fields.
+                     */
                     PlugDescription pd = this.fRegistry.getPlugDescription(plugId);
                     if(pd != null) {
                         Metadata metadata = pd.getMetadata();
