@@ -687,6 +687,7 @@ public class Bus extends Thread implements IBus {
                                 List<String> list = new ArrayList<String>(Arrays.asList(requestedFields));
                                 list.remove("title");
                                 list.remove("summary");
+                                list.remove("content");
                                 requestedFields = list.toArray(new String[0]);
                             }
                         }
