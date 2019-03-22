@@ -25,7 +25,7 @@ import { IndexItem } from '../index-item/index-item.component';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { Subscription } from 'rxjs/Subscription';
-import {startWith, takeWhile} from 'rxjs/operators';
+import {map, startWith, takeWhile} from 'rxjs/operators';
 
 @Component({
   selector: 'app-list-indices',
@@ -68,15 +68,19 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
   }
 
   getIndexNames() {
-    this.indexService.getIndices().subscribe(
-      items => {
-        this.indexItems = items;
-        this.isLoading = false;
-      },
-      error => {
-        this.error = error;
-        this.isLoading = false;
-      }
+    this.indexService.getIndices()
+        .pipe(
+            map( items => items.sort((a,b) => a.name.localeCompare(b.name)))
+        )
+        .subscribe(items => {
+          this.error = '';
+          this.indexItems = items;
+          this.isLoading = false;
+        },
+        error => {
+          this.error = error;
+          this.isLoading = false;
+        }
     );
   }
 

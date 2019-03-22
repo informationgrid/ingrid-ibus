@@ -10,6 +10,22 @@ app-root {
   flex-direction: column;
 }
 
+a:hover {
+    text-decoration: none;
+}
+
+.bookmark {
+    padding-left: 10px;
+
+    a {
+        color: #dddddd;
+    }
+
+    a:hover {
+        color: #17a2b8;
+    }
+}
+
 .container {
     padding: 10px 15px 0;
 }

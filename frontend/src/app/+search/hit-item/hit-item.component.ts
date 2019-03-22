@@ -40,6 +40,13 @@ export class HitItemComponent implements OnInit {
   }
 
   showDetailHit(hit: SearchHit) {
-    // this.router.navigate(['/search/' + hit.es_index + '/' + hit.hitDetail['0']]);
+    if (hit.es_index) {
+      this.router.navigate(['/search/' + hit.es_index + '/' + hit.hitDetail['0']]);
+    } else {
+      let plugIdEncoded = encodeURIComponent(hit.iPlugId);
+      this.router.navigate(['/search/' + plugIdEncoded + '/' + hit.hitDetail['0']], {
+        queryParams: {requestIPlug: true}
+      });
+    }
   }
 }

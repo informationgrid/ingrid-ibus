@@ -53,7 +53,7 @@ public class GroupingTest {
 
     @Before
     public void setUp() throws Exception {
-        this.fBus = new Bus(new DummyProxyFactory());
+        this.fBus = new Bus(new DummyProxyFactory(), null);
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setProxyServiceURL("plug:" + i);
@@ -214,7 +214,7 @@ public class GroupingTest {
     @Test
     public void testPaging() throws Exception {
         // setup
-        Bus bus = new Bus(new DummyProxyFactory());
+        Bus bus = new Bus(new DummyProxyFactory(), null);
         int plugCount = 0;
         for (int i = 0; i < 25; i++) {
             // 50 different organisations

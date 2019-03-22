@@ -48,6 +48,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.indices.IndexClosedException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.joda.time.DateTime;
@@ -125,9 +126,11 @@ public class IndicesService {
         ElasticsearchInfo info = new ElasticsearchInfo();
         List<Index> indices = new ArrayList<>();
 
-        ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet().getState().getMetaData().getIndices();
+        ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet()
+                .getState().getMetaData().getIndices();
+
         esIndices.forEach( (indexMap) -> {
-            System.out.println( "Index: " + indexMap.key );
+            // System.out.println( "Index: " + indexMap.key );
 
             // skip indices that do not start with the configured prefix, since we don't want to have all indices of a cluster
             if (!indexMap.key.startsWith( indexPrefixFilter )) {
@@ -136,17 +139,21 @@ public class IndicesService {
 
             Index index = new Index();
 
-            addDefaultIndexInfo( indexMap.key, null, index, indexMap.value.getSettings() );
+            try {
+                addDefaultIndexInfo(indexMap.key, null, index, indexMap.value.getSettings());
 
-            // applyAdditionalData( indexMap.key, index, false );
-            // addMapping( indexMap.key, null, index );
+                // applyAdditionalData( indexMap.key, index, false );
+                // addMapping( indexMap.key, null, index );
 
-            addTypes( indexMap.key, index );
+                addTypes(indexMap.key, index);
 
-            // check if iPlug is connected through InGrid Communication
-            //iPlugService.getIPlugDetail()
+                // check if iPlug is connected through InGrid Communication
+                //iPlugService.getIPlugDetail()
 
-            indices.add( index );
+                indices.add(index);
+            } catch (IndexClosedException ex) {
+                log.warn("Could not get index, since it is closed: " + indexMap.key);
+            }
         } );
 
         addComponentData( indices );
@@ -246,8 +253,7 @@ public class IndicesService {
             index.setTypes( indexTypes );
 
         } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Error adding types to index", e);
         }
     }
 
@@ -328,6 +334,7 @@ public class IndicesService {
 
         SearchHit[] hits = response.getHits().getHits();
 
+        // iterate over all index informations and apply info to Index-object
         for (SearchHit hit : hits) {
             Map<String, Object> hitSource = hit.getSourceAsMap();
             String indexName = (String) hit.getSourceAsMap().get( LINKED_INDEX );
@@ -339,18 +346,22 @@ public class IndicesService {
                         .orElse(null);
 
                 if (indexItem != null) {
-                    String indexType = (String) hit.getSourceAsMap().get( LINKED_TYPE );
+                    String indexType = (String) hit.getSourceAsMap().get(LINKED_TYPE);
                     StdDateFormat format = new StdDateFormat();
-                    Date lastIndexed = format.parse( (String) hit.getSourceAsMap().get( INDEX_FIELD_LAST_INDEXED ) );
+                    String lastIndexedString = (String) hit.getSourceAsMap().get(INDEX_FIELD_LAST_INDEXED);
+                    Date lastIndexed = null;
+                    if (lastIndexedString != null) lastIndexed = format.parse(lastIndexedString);
+
 
                     indexItem.setId( hit.getId() );
                     indexItem.setLongName( (String) hitSource.get( INDEX_FIELD_IPLUG_NAME ) );
+
                     // check if linked component / iPlug is connected
-                    PlugDescription iPlugDetail = iPlugService.getIPlugDetail( (String) hitSource.get( "plugId" ) );
-                    if (iPlugDetail != null) {
-                        indexItem.setConnected( true );
-                    }
+                    boolean iPlugIsConnected = iPlugService.isConnectedDirectly((String) hitSource.get("plugId"));
+                    indexItem.setConnected( iPlugIsConnected );
+
                     indexItem.setHasLinkedComponent( true );
+                    indexItem.setAdminUrl((String) ((Map)hitSource.get("plugdescription")).get("IPLUG_ADMIN_GUI_URL"));
 
                     for (IndexType type : indexItem.getTypes()) {
                         if (type.getName().equals( indexType )) {
@@ -431,7 +442,7 @@ public class IndicesService {
     // result.setIndexId( hit.getIndex() );
     // result.setTitle( (String) hit.getSource().get( "title" ) );
     // result.setSummary( (String) hit.getSource().get( "summary" ) );
-    // result.setSource( (String) hit.getSource().get( "dataSourceName" ) );
+    // result.setSource( (String) hit.getSource().get( "name" ) );
     // results.add( result );
     // }
     // return results;
@@ -532,9 +543,18 @@ public class IndicesService {
      */
     private IngridHitDetail mapHitDetail(GetResponse hit) {
         Map<String, Object> source = hit.getSource();
-        
+
+        String iPlugIdString;
+        Object iPlugId = source.get("iPlugId");
+
+        if (iPlugId instanceof ArrayList) {
+            iPlugIdString = (String) ((ArrayList) iPlugId).get(0);
+        } else {
+            iPlugIdString = (String) iPlugId;
+        }
+
         IngridHitDetail result = new IngridHitDetail(
-                (String) source.get( "iPlugId" ),
+                iPlugIdString,
                 hit.getId(),
                 -1,
                 -1.0f,
@@ -543,6 +563,7 @@ public class IndicesService {
         
         result.put( "source", source.get( "iPlugId" ) );
         result.put( "idf", source.get( "idf" ) );
+        result.put("indexDoc", source);
         
         return result;
     }
@@ -575,16 +596,16 @@ public class IndicesService {
         return null;
     }
     
-    private void prepareIndices() {
+    public void prepareIndices() {
         boolean indexExists = indexManager.indexExists( INDEX_INFO_NAME );
         
         if (!indexExists) {
             InputStream defaultMappingStream = getClass().getClassLoader().getResourceAsStream( "ingrid-meta-mapping.json" );
             try {
                 String mappingString = XMLSerializer.getContents( defaultMappingStream );
-                indexManager.createIndex( INDEX_INFO_NAME, "info", mappingString );
+                indexManager.createIndex( INDEX_INFO_NAME, "info", mappingString, null );
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Error preparing index", e);
             }
         }
         

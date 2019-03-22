@@ -1,8 +1,8 @@
 /*-
  * **************************************************-
- * ingrid-ibus-frontend
+ * ingrid-ibus-backend
  * ==================================================
- * Copyright (C) 2014 - 2019 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2018 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -20,19 +20,21 @@
  * limitations under the Licence.
  * **************************************************#
  */
-export class SearchHit {
-  id: string;
-  indexId: string;
-  title: string;
-  summary: string;
-  source: string;
-  detail: string;
-  dataSourceName: string;
-  score: number;
-  iPlugId: string;
-  indexDoc: string;
+package de.ingrid.ibus.config;
 
-  es_index: string;
-  es_type: string;
-  hitDetail: any;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties("elastic")
+public class ElasticsearchConfiguration {
+
+    private String[] remoteHosts;
+
+
+    public String[] getRemoteHosts() {
+        return remoteHosts;
+    }
+
+    public void setRemoteHosts(String[] remoteHosts) {
+        this.remoteHosts = remoteHosts;
+    }
 }

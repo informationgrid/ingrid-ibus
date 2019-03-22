@@ -72,6 +72,7 @@ public class ManagementService implements RegistryConfigurable {
 
         pd.put( "overrideProxy", managementIPlug );
         registry.addPlugDescription( pd );
+        registry.addIPlugNotUsingCentralIndex(MANAGEMENT_IPLUG_ID);
 
         registry.activatePlug( MANAGEMENT_IPLUG_ID );
 

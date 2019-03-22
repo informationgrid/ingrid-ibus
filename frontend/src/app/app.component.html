@@ -21,7 +21,7 @@
   **************************************************#
   -->
 <div>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <a routerLink="/" class="navbar-brand">iBus</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -34,13 +34,13 @@
 
       <ul class="navbar-nav mr-auto">
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/iplugs">Angeschlossene iPlugs</a>
+          <a class="nav-link menuIplugs" routerLink="/iplugs">Angeschlossene iPlugs</a>
         </li>
         <li *ngIf="showIndicesPage" class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/indices">Index-Verwaltung</a>
+          <a class="nav-link menuIndices" routerLink="/indices">Index-Verwaltung</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/search">Such-Analyse</a>
+          <a class="nav-link menuSearch" routerLink="/search">Such-Analyse</a>
         </li>
       </ul>
 
@@ -53,3 +53,5 @@
 </div>
 
 <router-outlet></router-outlet>
+
+<div id="version-info" [title]="timestamp">Version: {{version}}</div>

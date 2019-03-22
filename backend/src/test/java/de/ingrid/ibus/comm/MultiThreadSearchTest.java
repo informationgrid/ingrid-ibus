@@ -46,7 +46,7 @@ public class MultiThreadSearchTest extends TestCase {
      */
     public void testTreads() throws Exception {
         PlugDescription[] plugDescriptions = new PlugDescription[fSearchCount];
-        Bus bus = new Bus(new DummyProxyFactory());
+        Bus bus = new Bus(new DummyProxyFactory(), null);
         for (int i = 0; i < plugDescriptions.length; i++) {
             plugDescriptions[i] = new PlugDescription();
             plugDescriptions[i].setProxyServiceURL("" + i);

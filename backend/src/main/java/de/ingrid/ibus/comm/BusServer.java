@@ -31,6 +31,7 @@ import de.ingrid.ibus.comm.processor.*;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import de.ingrid.ibus.config.IBusConfiguration;
+import de.ingrid.ibus.service.SettingsService;
 import de.ingrid.utils.IBus;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.metadata.IMetadataInjector;
@@ -41,7 +42,6 @@ import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.configuration.ServerConfiguration;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
 import net.weta.components.communication.tcp.StartCommunication;
-import net.weta.components.communication.tcp.TcpCommunication;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,14 +84,17 @@ public class BusServer {
     private int iBusQueueSize;
 
     @Autowired
-    private final IBusConfiguration appConfiguration = null;
+    private IBusConfiguration busConfiguration;
 
     @Autowired
     private RegistryConfigurable[] classesUsingRegistry = null;
 
+    @Autowired
+    private SettingsService settingsService;
+
     /**
      * 
-     * @throws Exception
+     *
      */
     public BusServer() {}
 
@@ -123,8 +126,8 @@ public class BusServer {
 
         try {
             ServerConfiguration serverConfiguration = new ServerConfiguration();
-            serverConfiguration.setName(appConfiguration.ibus.url);
-            serverConfiguration.setPort(appConfiguration.ibus.port);
+            serverConfiguration.setName(busConfiguration.getUrl());
+            serverConfiguration.setPort(busConfiguration.getPort());
             serverConfiguration.setSocketTimeout(iBusTimeout);
             serverConfiguration.setHandleTimeout(iBusHandleTimeout);
             serverConfiguration.setMaxMessageSize(iBusMaximumSize);
@@ -134,23 +137,22 @@ public class BusServer {
             communication = StartCommunication.create( serverConfiguration );
 
             communication.startup();
-            communication.subscribeGroup( appConfiguration.ibus.url );
+            communication.subscribeGroup( busConfiguration.getUrl() );
 
             // removeCommunicationFile();
         } catch (Exception e) {
-            log.error( "Cannot start the communication: " + e.getMessage() );
-            e.printStackTrace();
+            log.error( "Cannot start the communication: ", e );
             return;
         }
 
         // instantiate the IBus
         IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl( communication );
-        Bus bus = new Bus( proxyFactory );
+        Bus bus = new Bus( proxyFactory, settingsService );
         Metadata metadata = new Metadata();
         injectMetadatas( metadata, bus );
         bus.setMetadata( metadata );
         registry = bus.getIPlugRegistry();
-        registry.setUrl( appConfiguration.ibus.url );
+        registry.setUrl( busConfiguration.getUrl() );
         registry.setCommunication( communication );
 
         // remove all processors first
@@ -164,7 +166,7 @@ public class BusServer {
         bus.getProccessorPipe().addPreProcessor( new LimitedAttributesPreProcessor() );
         bus.getProccessorPipe().addPreProcessor( new QueryModePreProcessor() );
         bus.getProccessorPipe().addPreProcessor( new AddressPreProcessor() );
-        bus.getProccessorPipe().addPreProcessor( new BusUrlPreProcessor( appConfiguration.ibus.url ) );
+        bus.getProccessorPipe().addPreProcessor( new BusUrlPreProcessor( busConfiguration.getUrl() ) );
         bus.getProccessorPipe().addPreProcessor( new QueryModifierPreProcessor( "/querymodifier.properties" ) );
 
         // read in the boost for iplugs

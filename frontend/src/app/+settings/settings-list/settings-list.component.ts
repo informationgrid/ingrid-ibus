@@ -39,7 +39,7 @@ export class SettingsListComponent implements OnInit, OnDestroy {
   config: AppConfiguation = {};
 
   isEmptyPassword = false;
-  private statusCodelistRepo = true;
+  private statusCodelistRepo = false;
   private statusElasticsearch = false;
   private status$: Subscription;
 

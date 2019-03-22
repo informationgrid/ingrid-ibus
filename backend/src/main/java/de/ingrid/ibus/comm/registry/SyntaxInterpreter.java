@@ -28,20 +28,20 @@
 
 package de.ingrid.ibus.comm.registry;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.ingrid.ibus.comm.debug.DebugEvent;
 import de.ingrid.ibus.comm.debug.DebugQuery;
+import de.ingrid.ibus.service.SearchService;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.tool.QueryUtil;
 import de.ingrid.utils.tool.StringUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Supports you with static methods to extract various informations out of a
@@ -61,17 +61,17 @@ public class SyntaxInterpreter {
      * @param query
      *            The search query.
      * @param registry
-     *            The plug regestry.
+     *            The plug registry.
      * @return The IPlugs that have the fields the query requires.
      */
     public static PlugDescription[] getIPlugsForQuery(IngridQuery query, Registry registry) {
-        PlugDescription[] plugs = registry.getAllIPlugs();
-        List<PlugDescription> plugList = new ArrayList<PlugDescription>(plugs.length);
+        PlugDescription[] plugs = registry.getAllIPlugsConnected();
+        List<PlugDescription> plugList = new ArrayList<>(plugs.length);
         if (LOG.isDebugEnabled()) {
             LOG.debug("plugs before filtering");
         }
         if (debug.isActive(query)) {
-            List<String> connectedIPlugs = new ArrayList<String>();
+            List<String> connectedIPlugs = new ArrayList<>();
             for (PlugDescription pd : plugs) {
                 connectedIPlugs.add( pd.getPlugId() );
             }
@@ -85,6 +85,10 @@ public class SyntaxInterpreter {
             plugList.add(plugs[i]);
         }
 
+        // remove central index from filtering, since it's added afterwards because we always want
+        // to search in index
+        plugList.removeIf( pd -> SearchService.CENTRAL_INDEX_ID.equals(pd.getProxyServiceURL()));
+
         long ms = System.currentTimeMillis();
         filterActivatedIplugs(ms, query, plugList);
         filterForIPlugs(ms, query, plugList);
@@ -93,6 +97,12 @@ public class SyntaxInterpreter {
         filterForFields(ms, query, plugList);
         filterForProvider(ms, query, plugList);
         filterForPartner(ms, query, plugList);
+        filterForElasticsearch(ms, query, plugList);
+
+        // always add central index for search which might have been removed by filtering
+        PlugDescription centralIndexIPlug = registry.getPlugDescription(SearchService.CENTRAL_INDEX_ID);
+        LOG.debug("Add central index to iPlug list");
+        plugList.add(centralIndexIPlug);
 
         PlugDescription[] filteredPlugs = (PlugDescription[]) plugList.toArray(new PlugDescription[plugList.size()]);
         if (LOG.isDebugEnabled()) {
@@ -103,7 +113,7 @@ public class SyntaxInterpreter {
             }
         }
         if (debug.isActive(query)) {
-            List<String> connectedIPlugsAfter = new ArrayList<String>();
+            List<String> connectedIPlugsAfter = new ArrayList<>();
             for (PlugDescription pd : filteredPlugs) {
                 connectedIPlugsAfter.add( pd.getPlugId() );
             }
@@ -218,7 +228,7 @@ public class SyntaxInterpreter {
                 // with negative datatype and keep others
                 // if positive datatypes are supplied, exclude all except those
                 // with the positive datatype
-                boolean toRemove = allowedDataTypes.length == 0 ? false : true;
+                boolean toRemove = allowedDataTypes.length != 0;
                 for (int i = 0; i < dataTypes.length; i++) {
                     if (containsString(notAllowedDataTypes, dataTypes[i]) || containsString(notAllowedDataTypes, "all")) {
                         toRemove = true;
@@ -277,6 +287,23 @@ public class SyntaxInterpreter {
                 }
                 if (debug.isActive(ingridQueries)) {
                     debug.addEvent( new DebugEvent( "Removed iPlug from Search, because of Provider", plugDescription.getPlugId() ) );
+                }
+                iter.remove();
+            }
+        }
+    }
+
+    private static void filterForElasticsearch(long ms, IngridQuery ingridQuery, List<PlugDescription> allIPlugs) {
+        for (Iterator<PlugDescription> iter = allIPlugs.iterator(); iter.hasNext();) {
+            PlugDescription plugDescription = iter.next();
+            // boolean createdFromIndex = plugDescription.containsKey("createdFromIndex") && (boolean) plugDescription.get("createdFromIndex");
+            boolean createdFromIndex = plugDescription.containsKey("useRemoteElasticsearch") && (boolean) plugDescription.get("useRemoteElasticsearch");
+            if (createdFromIndex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(ms + " Is using central index! Remove iplug: " + plugDescription.getProxyServiceURL());
+                }
+                if (debug.isActive(ingridQuery)) {
+                    debug.addEvent( new DebugEvent( "Removed iPlug from Search, because data is in central index", plugDescription.getPlugId() ) );
                 }
                 iter.remove();
             }
@@ -357,7 +384,7 @@ public class SyntaxInterpreter {
      * @return all fields of a given query and subqueries
      */
     private static String[] getAllFieldsNamesFromQuery(IngridQuery query) {
-        ArrayList<String> fieldsList = new ArrayList<String>();
+        ArrayList<String> fieldsList = new ArrayList<>();
         QueryUtil.getFieldNamesFromQuery(query, fieldsList);
         return (String[]) fieldsList.toArray(new String[fieldsList.size()]);
     }

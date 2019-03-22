@@ -38,6 +38,7 @@ export class IndexItem {
   lastIndexed: string;
   active?: boolean;
   hasLinkedComponent?: boolean;
+  adminUrl?: string;
   isConnected: boolean;
   types: IndexType[];
 }
@@ -104,6 +105,10 @@ export class IndexItemComponent implements OnInit {
     if (!this.eRef.nativeElement.contains(event.target)) {
       this.dropDownOpen = false;
     }
+  }
+
+  getIndexTypeItemIdentifier(item: IndexType) {
+    return item.id;
   }
 
   handleError(error: any) {

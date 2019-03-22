@@ -20,28 +20,26 @@
   limitations under the Licence.
   **************************************************#
   -->
-<div class="card list mb-3" [id]="data.proxyServiceUrl | normalizeId">
-  <span class="index-id">{{data.proxyServiceUrl}}</span>
+<div class="card list mb-3" [id]="component.id | normalizeId">
+  <span class="index-id">{{component.id}}</span>
 
   <div class="card-body">
     <div class="flex-row">
-        <span *ngIf="data.useRemoteElasticsearch" class="btn iplugState btn-secondary disabled"
-              title="Dieses iPlug verwendet den zentralen Index und wird über die Indexverwaltung gesteuert.">
-          <i class="fa fa-power-off"></i>
-        </span>
-      <span *ngIf="!data.useRemoteElasticsearch"
-            class="btn iplugState" [class.btn-success]="data.activated" [class.btn-danger]="!data.activated"
+      <span *ngIf="showActivateToggle"
+            class="btn iplugState" [class.btn-success]="component.active" [class.btn-danger]="!component.active"
             title="Aktiviere/Deaktiviere IPlug"
-            (click)="activateIPlug(data, $event)"><i class="fa fa-power-off"></i></span>
+            (click)="activateIPlug(component)"><i class="fa fa-power-off"></i></span>
       <div class="flex-column">
         <div>
-          <span class="index-name" [title]="'Index: ' + data.name">{{data.dataSourceName}}</span>
-          <span><a href="{{data.IPLUG_ADMIN_GUI_URL}}"
+          <span class="index-name" [title]="'Index: ' + component.name">{{component.name}}</span>
+          <span class="bookmark">
+            <a href="{{component.adminUrl}}"
                    title="Admin-GUI"
                    target="_blank"
-                   class="bookmark fa fa-bookmark"></a></span>
+                   class="fa fa-bookmark"></a>
+          </span>
         </div>
-        <div>{{data.dataSourceDescription}}</div>
+        <div>{{component.description}}</div>
       </div>
     </div>
   </div>

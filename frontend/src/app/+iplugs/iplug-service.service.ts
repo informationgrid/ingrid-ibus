@@ -25,13 +25,13 @@ import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-export class PlugDescription {
-  proxyServiceUrl: string;
-  dataSourceName: string;
-  IPLUG_ADMIN_GUI_URL: string;
-  dataSourceDescription: string;
-  activated: boolean;
-  useRemoteElasticsearch: boolean;
+export class IPlugInfo {
+  id: string;
+  name: string;
+  adminUrl: string;
+  description: string;
+  active: boolean;
+  useCentralIndex: boolean;
 
   setActive(arg0: any, arg1: any): any {
     throw new Error('Method not implemented.');
@@ -48,8 +48,8 @@ export class IPlugService {
     this.configuration = configService.getConfiguration();
   }
 
-  getConnectedIPlugs(): Observable<PlugDescription[]> {
-    return this.http.get<PlugDescription[]>(this.configuration.backendUrl + '/iplugs');
+  getConnectedIPlugs(): Observable<IPlugInfo[]> {
+    return this.http.get<IPlugInfo[]>(this.configuration.backendUrl + '/iplugs');
   }
 
   setActive(id: string, active: boolean): Observable<any> {

@@ -20,14 +20,14 @@
  * limitations under the Licence.
  * **************************************************#
  */
-import { ConfigService, Configuration } from '../config.service';
-import { IndexDetail } from './+index-detail/index-detail.component';
-import { IndexItem } from './index-item/index-item.component';
-import { SearchHit } from '../+search/SearchHit';
-import { SearchHits } from '../+search/SearchHits';
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import {ConfigService, Configuration} from '../config.service';
+import {IndexDetail} from './+index-detail/index-detail.component';
+import {IndexItem} from './index-item/index-item.component';
+import {SearchHit} from '../+search/SearchHit';
+import {SearchHits} from '../+search/SearchHits';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
 
 @Injectable()
 export class IndexService {
@@ -51,15 +51,15 @@ export class IndexService {
   }
 
   deleteIndex(id: string): Observable<HttpResponse<void>> {
-    return this.http.request<void>( 'DELETE',  this.configuration.backendUrl + '/indices', {body: { id: id }, observe: 'response'});
-      // .map(response => response.status);
+    return this.http.request<void>('DELETE', this.configuration.backendUrl + '/indices', {body: {id: id}, observe: 'response'});
+    // .map(response => response.status);
   }
 
   setActive(id: string, active: boolean) {
     let command = active ? 'activate' : 'deactivate';
     return this.http.put(this.configuration.backendUrl + '/indices/' + command, {
       id: id
-    }, { responseType: 'text' });
+    }, {responseType: 'text'});
   }
 
   index(id: string) {
@@ -68,12 +68,17 @@ export class IndexService {
     }, {observe: 'response', responseType: 'text'});
   }
 
-  search(query: string): Observable<SearchHits> {
-    return this.http.get<SearchHits>(this.configuration.backendUrl + '/search?query=' + query);
+  search(query: string, page: number, numPerPage: number): Observable<SearchHits> {
+    return this.http.get<SearchHits>(this.configuration.backendUrl + '/search?query=' + query + '&page=' + page + '&hitsPerPage=' + numPerPage);
   }
 
-  getSearchDetail(indexId: string, hitId: string): Observable<SearchHit> {
-    return this.http.get<SearchHit>(this.configuration.backendUrl + '/indices/' + indexId + '/' + hitId);
+  getSearchDetail(indexId: string, hitId: string, requestIPlug?: boolean): Observable<SearchHit> {
+    return requestIPlug
+      ? this.http.get<SearchHit>(this.configuration.backendUrl + '/iplugs/recordDetail',
+        {
+          params: {plugId: indexId, docId: hitId}
+        })
+      : this.http.get<SearchHit>(this.configuration.backendUrl + '/indices/' + indexId + '/' + hitId);
   }
 
   getActiveComponentIds(): Observable<string[]> {

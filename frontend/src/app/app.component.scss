@@ -7,3 +7,15 @@
     text-decoration: none;
   }
 }
+
+:host {
+    padding-top: 60px;
+}
+
+#version-info {
+    position: fixed;
+    bottom: 3px;
+    right: 5px;
+    font-size: 12px;
+    color: #aaaaaa;
+}

@@ -27,7 +27,6 @@ import de.ingrid.elasticsearch.IndexInfo;
 import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.elasticsearch.search.IndexImpl;
 import de.ingrid.ibus.comm.Bus;
-import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import de.ingrid.utils.*;
@@ -39,7 +38,6 @@ import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -67,7 +65,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     @Autowired
     private ElasticConfig elasticConfig;
     
-    private String[] fields = new String[] { "metainfo", "t01_object.obj_id", "t02_address","t02_address.adr_id", "capabilities_url","parent","city","iPlugId","organisation","kml","refering","title","content","t011_obj_geo","t02_address4","t02_address3","t02_address5","children","datatype","provider","additional_html_1","street","y1","y2","t021_communication","t011_obj_serv","t02_address2","t022_adr_adr3","summary","t011_obj_serv_op_connpoint","zip","publish_id","t022_adr_adr","t03_catalogue","t012_obj_adr","idf","title2","title3","dataSourceName","t01_object","partner","refering_service_uuid","x1","boost","x2","parent4","parent5","object_reference","parent2","parent3","incl_meta","t01_object.org_obj_id", "t01_object.obj_class","metaclass" };
+    private String[] fields = new String[] { "metainfo", "t01_object.obj_id", "t02_address","t02_address.adr_id", "capabilities_url","parent","city","iPlugId","organisation","kml","refering","title","content","t011_obj_geo","t02_address4","t02_address3","t02_address5","children","datatype","provider","additional_html_1","street","y1","y2","t021_communication","t011_obj_serv","t02_address2","t022_adr_adr3","summary","t011_obj_serv_op_connpoint","zip","publish_id","t022_adr_adr","t03_catalogue","t012_obj_adr","idf","title2","title3","name","t01_object","partner","refering_service_uuid","x1","boost","x2","parent4","parent5","object_reference","parent2","parent3","incl_meta","t01_object.org_obj_id", "t01_object.obj_class","metaclass" };
     private String[] datatypes = new String[] { "metadata", "dsc_ecs", "default", "topics", "dsc_ecs_address", "address", "IDF_1.0" };
     private SimulatedLifesign currentSimulatedLifesign = null;
 
@@ -105,20 +103,19 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
         try {
 
             @SuppressWarnings("deprecation")
-            IngridHits iPlugsResult = Bus.getInstance().searchAndDetail( query, 10, 0, 0, 30000, null );
+            IngridHits iPlugsResult = Bus.getInstance().searchAndDetail( query, hitsPerPage, currentPage, startHit, maxMilliseconds, requestedFields );
             IngridHit[] iPlugHits = iPlugsResult.getHits();
             
             return new IngridHits( (int) iPlugsResult.length(), iPlugHits );
             
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Error searching", e);
             return null;
         }
     }
     
     @Override
-    public IngridHits search(IngridQuery query, int start, int length) throws Exception {
+    public IngridHits search(IngridQuery query, int start, int length) {
         
         elasticConfig.communicationProxyUrl = CENTRAL_INDEX_ID;
         elasticConfig.partner = new String[] { "???" };
@@ -134,12 +131,12 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     }
 
     @Override
-    public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) throws Exception {
+    public IngridHitDetail getDetail(IngridHit hit, IngridQuery query, String[] requestedFields) {
         return indexUtils.getDetail( hit, query, requestedFields );
     }
 
     @Override
-    public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) throws Exception {
+    public IngridHitDetail[] getDetails(IngridHit[] hits, IngridQuery query, String[] requestedFields) {
         return indexUtils.getDetails( hits, query, requestedFields );
     }
 
@@ -148,8 +145,8 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     public IngridDocument call(IngridCall targetInfo) throws Exception {
         IngridDocument doc = new IngridDocument();
         
-        Map<String, Object> parameters = null;
-        Object parameter = null;
+        Map<String, Object> parameters;
+        Object parameter;
 
         switch (targetInfo.getMethod()) {
         case "createIndex":
@@ -160,8 +157,9 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
 
             boolean success = indexManager.createIndex(
                     (String) parameters.get( "name" ),
-                    "_default_",
-                    (String) parameters.get( "mapping" ));
+                    (String) parameters.get( "type" ),
+                    (String) parameters.get( "esMapping" ),
+                    (String) parameters.get( "esSettings" ));
 
             doc.put( "result", success );
             break;
@@ -210,7 +208,14 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
                     (ElasticDocument) parameters.get( "doc" ),
                     (boolean) parameters.get( "updateOldIndex" ) );
             break;
-            
+
+        case "getAllIPlugInformation":
+            return indexManager.getAllIPlugInformation();
+
+        case "getIPlugInformation":
+            parameter = targetInfo.getParameter();
+            return indexManager.getIPlugInformation(String.valueOf(parameter));
+
         case "updateIPlugInformation":
             parameters = (Map<String, Object>) targetInfo.getParameter();
             indexManager.updateIPlugInformation(
@@ -249,25 +254,37 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     }
 
     @Override
-    public void configure(PlugDescription plugDescription) throws Exception {
+    public void configure(PlugDescription plugDescription) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public Record getRecord(IngridHit hit) throws Exception {
-        Record record = new Record();
+    public Record getRecord(IngridHit hit) {
+        Record record = null;
         
         ElasticDocument doc = indexUtils.getDocById( hit.getDocumentId() );
-        String data = (String) doc.get( "idf" );
-        record.put( "data", data );
-        record.put( "compressed", "false" );
+        if (doc != null) {
+            log.debug("Found record in central index with id: " + hit.getDocumentId());
+            String data = (String) doc.get("idf");
+
+            // if no idf field is present then try default record mapper
+            if (data == null) {
+                return indexUtils.getRecord(hit);
+
+            } else {
+                record = new Record();
+                record.put("data", data);
+                record.put("compressed", "false");
+            }
+        }
+
         return record;
     }
 }

@@ -19,7 +19,7 @@
   -->
 <div class="container">
 
-  <div *ngIf="config['needPasswordChange']" class="alert alert-warning">
+  <div *ngIf="!isReloading && config['needPasswordChange'] === 'true'" class="alert alert-warning">
     Sie müssen hier unter den "Server Einstellungen" ein neues Passwort für die Administrationsoberfläche setzen
   </div>
 
@@ -34,117 +34,119 @@
 
   <form *ngIf="!isReloading" class="form-horizontal">
 
-    <div class="card">
-      <div class="card-header">
-        Codelist Repository
-        <span class="fa fa-circle"
-              [class.connected]="statusCodelistRepo"
-              [class.disconnected]="!statusCodelistRepo"
-              [title]="statusCodelistRepo ? 'Verbunden' : 'Nicht verbunden'"
-        ></span>
-      </div>
-
-      <div class="card-body">
-
-        <div class="form-group">
-          <label class="control-label">URL</label>
-          <div class="pull-right text-info mb-1">
-            <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoCLUrl = !showInfoCLUrl"></button>
-          </div>
-
-          <input type="text" class="form-control" placeholder="https://<IP>/codelistRepo" name="codelistUrl" [(ngModel)]="config['codelistrepo.url']">
-          <div *ngIf="showInfoCLUrl" class="alert alert-info" role="alert">
-            Die URL verweist auf das Codelist-Repository. Dies ist dieselbe, die auch verwendet wird, um direkt auf das Repository zuzugreifen.
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="control-label">Benutzername</label>
-          <div class="pull-right text-info mb-1">
-            <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoCLUsername = !showInfoCLUsername"></button>
-          </div>
-
-          <input type="text" class="form-control" name="codelistUsername" [(ngModel)]="config['codelistrepo.username']">
-          <div *ngIf="showInfoCLUsername" class="alert alert-info" role="alert">
-            Der Benutzername, um auf das Codelist-Repository zuzugreifen. Dies ist üblicherweise "admin", kann aber auch einen anderen konfigurierten Benutzer haben.
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="control-label">Passwort</label>
-          <div class="pull-right text-info mb-1">
-            <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoCLPassword = !showInfoCLPassword"></button>
-          </div>
-
-          <input id="codelistPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['codelistrepo.password']" [disabled]="isEmptyPassword">
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="checkbox" class="form-check-input" (change)="handleEmptyPassword($event)">
-              leeres Passwort
-            </label>
-          </div>
-          <div *ngIf="showInfoCLPassword" class="alert alert-info" role="alert">
-            Das Passwort, um auf das Codelist-Repository zuzugreifen.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        Elasticsearch
-        <span class="fa fa-circle"
-              [class.connected]="statusElasticsearch"
-              [class.disconnected]="!statusElasticsearch"
-              [title]="statusElasticsearch ? 'Verbunden' : 'Nicht verbunden'"
-        ></span>
-      </div>
-      <div class="card-body">
-
-        <div class="form-group">
-          <label class="control-label">Urls</label>
-          <div class="pull-right text-info mb-1">
-            <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoElasticUrls = !showInfoElasticUrls"></button>
-          </div>
-
-          <input type="text" class="form-control" placeholder="<ip:port>,<ip:port>,..." name="elasticUrls" [(ngModel)]="config['elastic.remoteHosts']" required="true">
-          <div *ngIf="showInfoElasticUrls" class="alert alert-info" role="alert">
-            Hier werden die TCP-Adressen zu allen verfügbaren Elasticsearch-Knoten angegeben. Der Standard-Port ist üblicherweise 9300.
-          </div>
+    <ng-container *ngIf="config['needPasswordChange'] === 'false'">
+      <div class="card">
+        <div class="card-header">
+          Codelist Repository
+          <span class="fa fa-circle"
+                [class.connected]="statusCodelistRepo"
+                [class.disconnected]="!statusCodelistRepo"
+                [title]="statusCodelistRepo ? 'Verbunden' : 'Nicht verbunden'"
+          ></span>
         </div>
 
-      </div>
-    </div>
+        <div class="card-body">
 
-    <div class="card">
-      <div class="card-header">iBus</div>
-      <div class="card-body">
+          <div class="form-group">
+            <label class="control-label">URL</label>
+            <div class="pull-right text-info mb-1">
+              <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoCLUrl = !showInfoCLUrl"></button>
+            </div>
 
-        <div class="form-group">
-          <label class="control-label">ID</label>
-          <div class="pull-right text-info mb-1">
-            <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoBusId = !showInfoBusId"></button>
+            <input type="text" class="form-control" placeholder="https://<IP>/codelistRepo" name="codelistUrl" [(ngModel)]="config['codelistrepo.url']">
+            <div *ngIf="showInfoCLUrl" class="alert alert-info" role="alert">
+              Die URL verweist auf das Codelist-Repository. Dies ist dieselbe, die auch verwendet wird, um direkt auf das Repository zuzugreifen.
+            </div>
           </div>
+          <div class="form-group">
+            <label class="control-label">Benutzername</label>
+            <div class="pull-right text-info mb-1">
+              <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoCLUsername = !showInfoCLUsername"></button>
+            </div>
 
-          <input id="ibusId" type="text" class="form-control" placeholder="/ingrid-group:ibus" name="ibusId" [(ngModel)]="config['ibus.url']">
-          <div *ngIf="showInfoBusId" class="alert alert-info" role="alert">
-            Die Kennzeichnung des iBus, welche verwendet wird, um bspw. im Portal angezeigt zu werden. Diese ID wird
-              allerdings nicht zwingend benötigt, um sich mit dem iBus zu verbinden. Hierfür genügt der Port allein.
+            <input type="text" class="form-control" name="codelistUsername" [(ngModel)]="config['codelistrepo.username']">
+            <div *ngIf="showInfoCLUsername" class="alert alert-info" role="alert">
+              Der Benutzername, um auf das Codelist-Repository zuzugreifen. Dies ist üblicherweise "admin", kann aber auch einen anderen konfigurierten Benutzer haben.
+            </div>
           </div>
-        </div>
+          <div class="form-group">
+            <label class="control-label">Passwort</label>
+            <div class="pull-right text-info mb-1">
+              <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoCLPassword = !showInfoCLPassword"></button>
+            </div>
 
-        <div class="form-group">
-          <label class="control-label">Port</label>
-          <div class="pull-right text-info mb-1">
-            <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoBusPort = !showInfoBusPort"></button>
-          </div>
-
-          <input id="ibusPort" type="number" class="form-control" placeholder="9900" name="ibusPort" [(ngModel)]="config['ibus.port']">
-          <div *ngIf="showInfoBusPort" class="alert alert-info" role="alert">
-            Der Port für den iBus, über den eine Verbindung hergestellt wird. Ein iPlug kann sich über diesen Port an
-              diesem iBus registrieren, um Suchanfragen zu erhalten und Ergebnisse zurückzugeben.
+            <input id="codelistPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['codelistrepo.password']" [disabled]="isEmptyPassword">
+            <div class="form-check">
+              <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" (change)="handleEmptyPassword($event)">
+                leeres Passwort
+              </label>
+            </div>
+            <div *ngIf="showInfoCLPassword" class="alert alert-info" role="alert">
+              Das Passwort, um auf das Codelist-Repository zuzugreifen.
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <div class="card">
+        <div class="card-header">
+          Elasticsearch
+          <span class="fa fa-circle"
+                [class.connected]="statusElasticsearch"
+                [class.disconnected]="!statusElasticsearch"
+                [title]="statusElasticsearch ? 'Verbunden' : 'Nicht verbunden'"
+          ></span>
+        </div>
+        <div class="card-body">
+
+          <div class="form-group">
+            <label class="control-label">Urls</label>
+            <div class="pull-right text-info mb-1">
+              <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoElasticUrls = !showInfoElasticUrls"></button>
+            </div>
+
+            <input type="text" class="form-control" placeholder="<ip:port>,<ip:port>,..." name="elasticUrls" [(ngModel)]="config['elastic.remoteHosts']" required="true">
+            <div *ngIf="showInfoElasticUrls" class="alert alert-info" role="alert">
+              Hier werden die TCP-Adressen zu allen verfügbaren Elasticsearch-Knoten angegeben. Der Standard-Port ist üblicherweise 9300.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">iBus</div>
+        <div class="card-body">
+
+          <div class="form-group">
+            <label class="control-label">ID</label>
+            <div class="pull-right text-info mb-1">
+              <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoBusId = !showInfoBusId"></button>
+            </div>
+
+            <input id="ibusId" type="text" class="form-control" placeholder="/ingrid-group:ibus" name="ibusId" [(ngModel)]="config['ibus.url']">
+            <div *ngIf="showInfoBusId" class="alert alert-info" role="alert">
+              Die Kennzeichnung des iBus, welche verwendet wird, um bspw. im Portal angezeigt zu werden. Diese ID wird
+                allerdings nicht zwingend benötigt, um sich mit dem iBus zu verbinden. Hierfür genügt der Port allein.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label">Port</label>
+            <div class="pull-right text-info mb-1">
+              <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoBusPort = !showInfoBusPort"></button>
+            </div>
+
+            <input id="ibusPort" type="number" class="form-control" placeholder="9900" name="ibusPort" [(ngModel)]="config['ibus.port']">
+            <div *ngIf="showInfoBusPort" class="alert alert-info" role="alert">
+              Der Port für den iBus, über den eine Verbindung hergestellt wird. Ein iPlug kann sich über diesen Port an
+                diesem iBus registrieren, um Suchanfragen zu erhalten und Ergebnisse zurückzugeben.
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
 
     <div class="card">
       <div class="card-header">Server Einstellungen</div>

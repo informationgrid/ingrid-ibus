@@ -20,10 +20,11 @@
  * limitations under the Licence.
  * **************************************************#
  */
-import { Component, OnInit } from '@angular/core';
-import { IndexService } from '../../+indices/index.service';
-import { ActivatedRoute } from '@angular/router';
-import { SearchHit } from '../SearchHit';
+import {Component, OnInit} from '@angular/core';
+import {IndexService} from '../../+indices/index.service';
+import {ActivatedRoute} from '@angular/router';
+import {SearchHit} from '../SearchHit';
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'search-detail',
@@ -34,14 +35,16 @@ export class SearchDetailComponent implements OnInit {
 
   detail: SearchHit;
 
-  constructor(private activeRoute: ActivatedRoute, private indexService: IndexService) { }
+  constructor(private activeRoute: ActivatedRoute, private indexService: IndexService) {
+  }
 
   ngOnInit() {
-    this.activeRoute.paramMap
-      .switchMap(params => this.indexService.getSearchDetail(params.get('indexId'), params.get('hitId')))
-      .subscribe(
-        detail => this.detail = detail
-      )
+    const queryParams = this.activeRoute.snapshot.queryParams;
+    const routeParams = this.activeRoute.snapshot.params;
+
+    const requestIPlug = queryParams['requestIPlug'];
+    this.indexService.getSearchDetail(routeParams['indexId'], routeParams['hitId'], requestIPlug === 'true')
+      .subscribe(detail => this.detail = detail);
   }
 
 }
