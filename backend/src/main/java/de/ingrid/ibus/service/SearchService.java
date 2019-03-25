@@ -246,7 +246,43 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
             parameter = targetInfo.getParameter();
             indexManager.updateHearbeatInformation( (Map<String, String>) parameter );
             break;
-            
+
+        case "search":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            IngridHits result = this.search(
+                    (IngridQuery) parameters.get("query"),
+                    (int) parameters.get("start"),
+                    (int) parameters.get("length")
+            );
+            doc.put( "result", result );
+            break;
+
+        case "getDetail":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            IngridHitDetail resultDetail = this.getDetail(
+                    (IngridHit) parameters.get("hit"),
+                    (IngridQuery) parameters.get("query"),
+                    (String[]) parameters.get("fields")
+            );
+            doc.put( "result", resultDetail );
+            break;
+
+        case "getDetails":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            IngridHitDetail[] resultDetails = this.getDetails(
+                    (IngridHit[]) parameters.get("hits"),
+                    (IngridQuery) parameters.get("query"),
+                    (String[]) parameters.get("fields")
+            );
+            doc.put( "result", resultDetails );
+            break;
+
+        case "indexExists":
+            parameter = targetInfo.getParameter();
+            boolean indexExists = this.indexManager.indexExists((String)parameter);
+            doc.put( "result", indexExists );
+            break;
+
         default:
             log.error( "Calling method not supported: " + targetInfo.getMethod() );
         }
