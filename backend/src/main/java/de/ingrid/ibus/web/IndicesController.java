@@ -24,6 +24,7 @@ package de.ingrid.ibus.web;
 
 import java.util.List;
 
+import de.ingrid.elasticsearch.ElasticConfig;
 import de.ingrid.ibus.comm.Bus;
 import de.ingrid.ibus.comm.debug.DebugQuery;
 import de.ingrid.utils.queryparser.ParseException;
@@ -76,6 +77,9 @@ public class IndicesController {
     
     @Autowired
     private IPlugService iplugService;
+
+    @Autowired
+    private ElasticConfig elasticConfig;
 
     @JsonView(View.Summary.class)
     @GetMapping("/indices")
@@ -165,7 +169,8 @@ public class IndicesController {
         DebugQuery debugQ = Bus.getInstance().getDebugInfo();
         debugQ.setActiveAndReset();
 
-        IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, hitsPerPage, page, page*hitsPerPage, 1000, null);
+        String[] requestedFields = new String[] {elasticConfig.indexFieldTitle, elasticConfig.indexFieldSummary};
+        IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, hitsPerPage, page, page*hitsPerPage, 1000, requestedFields);
 
         if (searchAndDetail != null) {
             searchAndDetail.put("debug", debugQ.getEvents());
