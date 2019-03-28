@@ -269,7 +269,7 @@ public class Registry {
     public void removePlug(String plugId) {
         // do not remove local iPlugs which are always connected
         if (SearchService.CENTRAL_INDEX_ID.equals(plugId) || ManagementService.MANAGEMENT_IPLUG_ID.equals(plugId)) {
-            fLogger.info("Do not remove iPlug because it's always connected: " + plugId);
+            fLogger.debug("Do not remove iPlug because it's always connected: " + plugId);
             return;
         }
 
