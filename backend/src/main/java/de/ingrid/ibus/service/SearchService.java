@@ -289,6 +289,14 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
             doc.put( "result", docById );
             break;
 
+        case "deleteDocById":
+            parameters = (Map<String, Object>) targetInfo.getParameter();
+            this.indexManager.delete(
+                    (IndexInfo) parameters.get( "indexinfo" ),
+                    (String) parameters.get( "doc" ),
+                    (boolean) parameters.get( "updateOldIndex" ) );
+            break;
+
         default:
             log.error( "Calling method not supported: " + targetInfo.getMethod() );
         }
