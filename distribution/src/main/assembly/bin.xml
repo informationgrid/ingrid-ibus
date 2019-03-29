@@ -64,7 +64,8 @@
   </fileSets>
   <files>
     <file>
-      <source>../backend/src/main/resources/application.properties</source>
+      <!-- Use property which has been updated with maven pom version  -->
+      <source>../backend/target/classes/application.properties</source>
       <outputDirectory>${project.artifactId}-${project.version}/conf</outputDirectory>
     </file>
   </files>
