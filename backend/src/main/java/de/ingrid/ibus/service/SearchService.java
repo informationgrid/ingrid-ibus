@@ -291,6 +291,11 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
 
         case "deleteDocById":
             parameters = (Map<String, Object>) targetInfo.getParameter();
+
+            if (log.isDebugEnabled()) {
+                log.debug("Delete document: " + parameters.get("doc"));
+            }
+
             this.indexManager.delete(
                     (IndexInfo) parameters.get( "indexinfo" ),
                     (String) parameters.get( "doc" ),
