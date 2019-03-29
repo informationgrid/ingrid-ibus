@@ -655,6 +655,8 @@ public class Registry {
             virtualPD.setDataSourceName((String) pdFromIndex.get("dataSourceName"));
             virtualPD.setDataSourceDescription((String) pdFromIndex.get("dataSourceDescription"));
             virtualPD.setIPlugClass((String) pdFromIndex.get("iPlugClass"));
+            virtualPD.put("partner", pdFromIndex.get("partner"));
+            virtualPD.put("provider", pdFromIndex.get("provider"));
             virtualPD.put("useRemoteElasticsearch", true);
             virtualPD.setRecordLoader(true);
             virtualPD.setRankinTypes(true, false, false);
