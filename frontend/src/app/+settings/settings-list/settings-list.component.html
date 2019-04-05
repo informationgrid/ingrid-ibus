@@ -64,7 +64,7 @@
               <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoCLUsername = !showInfoCLUsername"></button>
             </div>
 
-            <input type="text" class="form-control" name="codelistUsername" [(ngModel)]="config['codelistrepo.username']">
+            <input type="text" class="form-control" name="codelistUsername" autocomplete="off" [(ngModel)]="config['codelistrepo.username']">
             <div *ngIf="showInfoCLUsername" class="alert alert-info" role="alert">
               Der Benutzername, um auf das Codelist-Repository zuzugreifen. Dies ist üblicherweise "admin", kann aber auch einen anderen konfigurierten Benutzer haben.
             </div>
@@ -75,7 +75,7 @@
               <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoCLPassword = !showInfoCLPassword"></button>
             </div>
 
-            <input id="codelistPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['codelistrepo.password']" [disabled]="isEmptyPassword">
+            <input id="codelistPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="new-password" [(ngModel)]="config['codelistrepo.password']" [disabled]="isEmptyPassword">
             <div class="form-check">
               <label class="form-check-label">
                 <input type="checkbox" class="form-check-input" (change)="handleEmptyPassword($event)">

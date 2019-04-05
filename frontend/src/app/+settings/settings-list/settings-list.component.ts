@@ -47,6 +47,13 @@ export class SettingsListComponent implements OnInit, OnDestroy {
   saveSuccess = false;
 
   error = null;
+  showInfoCLUrl = false;
+  showInfoCLUsername = false;
+  showInfoCLPassword = false;
+  showInfoElasticUrls = false;
+  showInfoBusId = false;
+  showInfoBusPort = false;
+  showInfoServerPassword = false;
 
   constructor(private indexService: IndexService, private settingsService: SettingsService) {
   }
