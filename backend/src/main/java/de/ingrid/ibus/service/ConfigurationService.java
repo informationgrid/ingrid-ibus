@@ -113,10 +113,13 @@ public class ConfigurationService {
         Properties propertiesOverride = new Properties();
         propertiesOverride.load(new FileReader(this.settingsFile));
 
-        // if no password has been set in override configuration, then we need to change it
-        // use property to tell frontend
-        this.needPasswordChange = propertiesOverride.get("spring.security.user.password") == null;
+        // if no password has been set in override configuration or set through environment variable,
+        // then we need to change it and tell frontend
+        this.needPasswordChange =
+                propertiesOverride.get("spring.security.user.password") == null
+                && System.getenv("IBUS_PASSWORD") == null;
 
+        // TODO: Refactor to let beans reconfigure themselves by implementing same interface
         this.properties = new Properties();
         this.properties.putAll(propertiesSystem);
         this.properties.putAll(propertiesOverride);
