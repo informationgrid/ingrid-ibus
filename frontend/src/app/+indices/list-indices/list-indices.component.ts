@@ -70,7 +70,7 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
   getIndexNames() {
     this.indexService.getIndices()
         .pipe(
-            map( items => items.sort((a,b) => a.name.localeCompare(b.name)))
+            map( items => items.sort((a,b) => a.longName ? a.longName.localeCompare(b.longName) : -1) )
         )
         .subscribe(items => {
           this.error = '';

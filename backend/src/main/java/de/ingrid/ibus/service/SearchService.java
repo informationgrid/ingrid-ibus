@@ -293,12 +293,12 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
             parameters = (Map<String, Object>) targetInfo.getParameter();
 
             if (log.isDebugEnabled()) {
-                log.debug("Delete document: " + parameters.get("doc"));
+                log.debug("Delete document: " + parameters.get("id"));
             }
 
             this.indexManager.delete(
                     (IndexInfo) parameters.get( "indexinfo" ),
-                    (String) parameters.get( "doc" ),
+                    (String) parameters.get( "id" ),
                     (boolean) parameters.get( "updateOldIndex" ) );
             break;
 

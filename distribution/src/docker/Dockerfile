@@ -11,10 +11,9 @@ RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
     && mkdir -p /opt/ingrid/ingrid-ibus/logs \
     && cp -R /tmp/ingrid-ibus-*/* /opt/ingrid/ingrid-ibus/ \
     && rm -Rf /tmp/* \
+    && sed -i -r 's/(<AppenderRef.*\/>)/\1<AppenderRef ref="Console" \/>/g' /opt/ingrid/ingrid-ibus/conf/log4j2.xml \
     && rm ingrid-*.jar
     
-RUN ln -sf /dev/stdout /opt/ingrid/ingrid-ibus/logs/log.log
-
 WORKDIR /opt/ingrid/ingrid-ibus
 EXPOSE 80
 EXPOSE 9901
