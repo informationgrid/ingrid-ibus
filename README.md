@@ -24,11 +24,11 @@ Requirements
 Installation
 ------------
 
-Download from https://dev.informationgrid.eu/ingrid-distributions/ingrid-ibus/
+Download from https://distributions.informationgrid.eu/ingrid-ibus/
  
 or
 
-build from source with `mvn package`.
+build from source with `mvn clean package`.
 
 Execute
 
