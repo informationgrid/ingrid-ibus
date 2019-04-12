@@ -595,6 +595,9 @@ public class Registry {
         options.setMethod("getAllIPlugInformation");
         try {
             response = centralIPlug.call(options);
+        } catch (NoNodeAvailableException e) {
+            fLogger.debug("No connection to Elasticsearch");
+            return new ArrayList<>();
         } catch (Exception e) {
             fLogger.error("Could not get iPlug Info from ingrid_meta index", e);
             return null;
