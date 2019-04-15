@@ -82,11 +82,10 @@
         <touch file="${installDir}/conf/application-default.properties" />
         <propertyfile file="${installDir}/conf/application-default.properties">
             <entry key="server.port"                    value="${adminPort}" />
-            <entry key="elastic.remoteHosts"            value="" />
         </propertyfile>
 
         <echo>Schalte zentralen Index aus in Admin-GUI</echo>
-        <replace file="${installDir}/conf/static/assets/config.json" token='"useIndices": true' value='"useIndices": false'/>
+        <replace file="${installDir}/conf/static/assets/config.json" token='"useIndices": false' value='"useIndices": true'/>
 	</target>
 	
 	<target name="startComponent">

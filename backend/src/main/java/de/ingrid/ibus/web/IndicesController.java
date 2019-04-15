@@ -24,8 +24,10 @@ package de.ingrid.ibus.web;
 
 import java.util.List;
 
+import de.ingrid.elasticsearch.ElasticConfig;
 import de.ingrid.ibus.comm.Bus;
 import de.ingrid.ibus.comm.debug.DebugQuery;
+import de.ingrid.utils.queryparser.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +78,9 @@ public class IndicesController {
     @Autowired
     private IPlugService iplugService;
 
+    @Autowired
+    private ElasticConfig elasticConfig;
+
     @JsonView(View.Summary.class)
     @GetMapping("/indices")
     @ResponseBody
@@ -91,7 +96,7 @@ public class IndicesController {
         try {
             index = this.indicesService.getIndexDetail( id, type );
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error getting index detail", e);
             return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( null );
         }
         return ResponseEntity.ok( index );
@@ -153,36 +158,34 @@ public class IndicesController {
     
     @GetMapping("/search")
     @ResponseBody
-    public ResponseEntity<IngridHits> search(@RequestParam String query) {
-        try {
-            // for convenience we add ranking:score mainly needed to get any results
-            if (query.indexOf("ranking:") == -1) {
-                query += " ranking:score";
-            }
-            IngridQuery iQuery = QueryStringParser.parse( query );
-
-            // enable debugging of query
-            DebugQuery debugQ = Bus.getInstance().getDebugInfo();
-            debugQ.setActiveAndReset();
-
-            IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
-
-            searchAndDetail.put("debug", debugQ.getEvents());
-
-            return ResponseEntity.ok(searchAndDetail);
-        } catch (Exception ex) {
-            log.error(ex);
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<IngridHits> search(@RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int hitsPerPage) throws ParseException {
+        // for convenience we add ranking:score mainly needed to get any results
+        if (!query.contains("ranking:")) {
+            query += " ranking:score";
         }
+        IngridQuery iQuery = QueryStringParser.parse( query );
+
+        // enable debugging of query
+        DebugQuery debugQ = Bus.getInstance().getDebugInfo();
+        debugQ.setActiveAndReset();
+
+        String[] requestedFields = new String[] {elasticConfig.indexFieldTitle, elasticConfig.indexFieldSummary};
+        IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, hitsPerPage, page, page*hitsPerPage, 1000, requestedFields);
+
+        if (searchAndDetail != null) {
+            searchAndDetail.put("debug", debugQ.getEvents());
+            return ResponseEntity.ok(searchAndDetail);
+        } else {
+            throw new RuntimeException("Search error! Please check the log file from the iBus.");
+        }
+
     }
     
-    @GetMapping("/indices/detail")
+    @GetMapping("/indices/{indexId}/{docId}")
     @ResponseBody
-    public ResponseEntity<IngridHitDetail> getHitDetail(@RequestBody JsonNode json) {
-        String indexId = json.get( "indexId" ).asText();
-        String hitId = json.get( "hitId" ).asText();
-        
-        IngridHitDetail hitDetail = this.indicesService.getHitDetail(indexId, hitId);
+    public ResponseEntity<IngridHitDetail> getHitDetail(@PathVariable String indexId, @PathVariable String docId) {
+
+        IngridHitDetail hitDetail = this.indicesService.getHitDetail(indexId, docId);
         return ResponseEntity.ok( hitDetail );
     }
 

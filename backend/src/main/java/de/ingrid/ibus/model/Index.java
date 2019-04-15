@@ -59,6 +59,7 @@ public class Index {
 
     private IndexState indexingState;
 
+    @JsonView(View.Summary.class)
     private String adminUrl;
 
     @JsonView(View.Summary.class)

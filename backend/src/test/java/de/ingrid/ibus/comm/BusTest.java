@@ -73,7 +73,7 @@ public class BusTest {
 
     @Before
     public void setUp() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory());
+        this.bus = new Bus(new DummyProxyFactory(), null);
         Registry registry = this.bus.getIPlugRegistry();
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
@@ -189,7 +189,7 @@ public class BusTest {
      */
     @Test
     public void testUnrankedSearch() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory());
+        this.bus = new Bus(new DummyProxyFactory(), null);
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
@@ -224,7 +224,7 @@ public class BusTest {
      */
     @Test
     public void testUnrankedGroupedDatatypeSearch() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory());
+        this.bus = new Bus(new DummyProxyFactory(), null);
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
@@ -247,7 +247,7 @@ public class BusTest {
      */
     @Test
     public void testFilterForPartner() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory());
+        this.bus = new Bus(new DummyProxyFactory(), null);
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
@@ -269,7 +269,7 @@ public class BusTest {
      */
     @Test
     public void testGroupByPlugId() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory());
+        this.bus = new Bus(new DummyProxyFactory(), null);
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {

@@ -41,6 +41,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import de.ingrid.ibus.management.ManagementService;
+import de.ingrid.ibus.service.SearchService;
+import de.ingrid.ibus.service.SettingsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -60,6 +63,7 @@ import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.dsc.Record;
+import de.ingrid.utils.iplug.IPlugVersionInspector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.processor.ProcessorPipe;
 import de.ingrid.utils.query.IngridQuery;
@@ -79,9 +83,14 @@ public class Bus extends Thread implements IBus {
 
     private static final long serialVersionUID = Bus.class.getName().hashCode();
 
+    // TODO: Change to release version 4.7.0
+    private static final String IPLUG_OLD_VERSION_REMOVE_FIELDS = "4.7.0-SNAPSHOT";
+
     private static Log fLogger = LogFactory.getLog( Bus.class );
 
     private static Bus fInstance;
+
+    private final SettingsService settingsService;
 
     // TODO INGRID-398 we need to made the lifetime configurable.
     private Registry fRegistry;
@@ -106,9 +115,10 @@ public class Bus extends Thread implements IBus {
      * @see de.ingrid.ibus.comm.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery,
      *      Registry)
      */
-    public Bus(IPlugProxyFactory factory) {
+    public Bus(IPlugProxyFactory factory, SettingsService settingsService) {
         this.fRegistry = new Registry( 120000, false, factory );
         fInstance = this;
+        this.settingsService = settingsService;
         _grouper = new Grouper( this.fRegistry );
         debug = new DebugQuery();
         SyntaxInterpreter.debug = this.debug;
@@ -372,7 +382,7 @@ public class Bus extends Thread implements IBus {
                                 }
                             } catch (InterruptedException e) {
                                 if (fLogger.isWarnEnabled()) {
-                                    fLogger.warn( "Waiting for results iterrupted.", e );
+                                    fLogger.warn( "Waiting for results interrupted.", e );
                                 }
                                 if (fLogger.isDebugEnabled()) {
                                     fLogger.debug( "Waiting for results thread [" + Thread.currentThread().getName() + "] iterrupted after " + (System.currentTimeMillis() - startTimer) + " ms." );
@@ -581,16 +591,31 @@ public class Bus extends Thread implements IBus {
         }
 
         PlugDescription plugDescription = getIPlugRegistry().getPlugDescription( hit.getPlugId() );
-        IPlug plugProxy = this.fRegistry.getPlugProxy( hit.getPlugId() );
-        if (plugProxy == null) {
-            throw new IllegalStateException( "plug '" + hit.getPlugId() + "' currently not available." );
+
+        if (plugDescription == null) {
+            if (fLogger.isDebugEnabled()) {
+                fLogger.debug("Using central index for getting record");
+            }
+
+            IPlug centralIndexPlugProxy = this.fRegistry.getPlugProxy(SearchService.CENTRAL_INDEX_ID);
+            return ((IRecordLoader) centralIndexPlugProxy).getRecord( hit );
+
+        } else {
+
+            IPlug plugProxy = this.fRegistry.getPlugProxy( hit.getPlugId() );
+            if (plugProxy == null) {
+                throw new IllegalStateException( "plug '" + hit.getPlugId() + "' currently not available." );
+            }
+
+            if (plugDescription.isRecordloader()) {
+                return ((IRecordLoader) plugProxy).getRecord( hit );
+            }
+            if (fLogger.isWarnEnabled()) {
+                fLogger.warn( "plug does not implement record loader: " + plugDescription.getPlugId() + " but was requested to load a record" );
+            }
+
         }
-        if (plugDescription.isRecordloader()) {
-            return ((IRecordLoader) plugProxy).getRecord( hit );
-        }
-        if (fLogger.isWarnEnabled()) {
-            fLogger.warn( "plug does not implement record loader: " + plugDescription.getPlugId() + " but was requested to load a record" );
-        }
+
         return null;
     }
 
@@ -620,7 +645,7 @@ public class Bus extends Thread implements IBus {
             return detail;
         } catch (Exception e) {
             if (fLogger.isErrorEnabled()) {
-                fLogger.error( e.toString() );
+                fLogger.error("Error getting detail", e);
             }
         }
 
@@ -666,30 +691,51 @@ public class Bus extends Thread implements IBus {
             if (requestHitList != null) {
                 IngridHit[] requestHits = (IngridHit[]) requestHitList.toArray( new IngridHit[requestHitList.size()] );
                 plugProxy = this.fRegistry.getPlugProxy( plugId );
-                if (plugProxy != null) {
-                    if (fLogger.isDebugEnabled()) {
-                        fLogger.debug( "(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode() );
-                    }
-                    time = System.currentTimeMillis();
-                    IngridHitDetail[] responseDetails = plugProxy.getDetails( requestHits, query, requestedFields );
-                    if (fLogger.isDebugEnabled()) {
-                        fLogger.debug( "(search) details ends (" + responseDetails.length + ")" + plugId + " query:" + query.hashCode() + " within "
-                                + (System.currentTimeMillis() - time) + " ms." );
-                    }
-                    for (int i = 0; i < responseDetails.length; i++) {
-                        if (responseDetails[i] == null) {
-                            if (fLogger.isErrorEnabled()) {
-                                fLogger.error( plugId + ": responded details that are null (set a pseudo responseDetail" );
-                            }
-                            responseDetails[i] = new IngridHitDetail( plugId, String.valueOf(random.nextInt()), random.nextInt(), 0.0f, "", "" );
-                        }
-                        responseDetails[i].put( IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time) );
-                    }
 
-                    resultList.addAll( Arrays.asList( responseDetails ) );
-                    // FIXME: to improve performance we can use an Array instead
-                    // of a list here.
+                /*
+                 * iPlugs with older base-webapp than version 4.7.0 set requested fields "title" and "summary" on detail search by default.
+                 * The base-webapp since version 4.7.0 set no fields by default. Requested field "title" and "summary" must set
+                 * by the search component like portal.
+                 * To make older iPlugs running with duplicate fields (default and requested fields) field "title" and "summary" must
+                 * be remove on requested fields.
+                 */
+                PlugDescription pd = this.fRegistry.getPlugDescription(plugId);
+                if(pd != null) {
+                    Metadata metadata = pd.getMetadata();
+                    if(metadata != null) {
+                        String pdVersion = metadata.getVersion();
+                        if(!IPlugVersionInspector.compareVersion(pdVersion, IPLUG_OLD_VERSION_REMOVE_FIELDS)) {
+                            List<String> list = new ArrayList<String>(Arrays.asList(requestedFields));
+                            list.remove("title");
+                            list.remove("summary");
+                            list.remove("content");
+                            requestedFields = list.toArray(new String[0]);
+                        }
+                    }
                 }
+
+                if (fLogger.isDebugEnabled()) {
+                    fLogger.debug( "(search) details start " + plugId + " (" + requestHits.length + ") " + query.hashCode() );
+                }
+                time = System.currentTimeMillis();
+                IngridHitDetail[] responseDetails = plugProxy.getDetails( requestHits, query, requestedFields );
+                if (fLogger.isDebugEnabled()) {
+                    fLogger.debug( "(search) details ends (" + responseDetails.length + ")" + plugId + " query:" + query.hashCode() + " within "
+                            + (System.currentTimeMillis() - time) + " ms." );
+                }
+                for (int i = 0; i < responseDetails.length; i++) {
+                    if (responseDetails[i] == null) {
+                        if (fLogger.isErrorEnabled()) {
+                            fLogger.error( plugId + ": responded details that are null (set a pseudo responseDetail" );
+                        }
+                        responseDetails[i] = new IngridHitDetail( plugId, String.valueOf(random.nextInt()), random.nextInt(), 0.0f, "", "" );
+                    }
+                    responseDetails[i].put( IngridHitDetail.DETAIL_TIMING, (System.currentTimeMillis() - time) );
+                }
+
+                resultList.addAll( Arrays.asList( responseDetails ) );
+                // FIXME: to improve performance we can use an Array instead
+                // of a list here.
             }
 
             if (null != requestHitList) {
@@ -801,7 +847,7 @@ public class Bus extends Thread implements IBus {
     public void addPlugDescription(PlugDescription plugDescription) {
         if (null != plugDescription) {
             if (fLogger.isInfoEnabled()) {
-                fLogger.info( "adding or updating plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length );
+                fLogger.info( "adding or updating plug '" + plugDescription.getPlugId() ); // + "' current plug count:" + getAllIPlugs().length );
             }
             this.fRegistry.addPlugDescription( plugDescription );
         } else {
@@ -813,7 +859,7 @@ public class Bus extends Thread implements IBus {
 
     public void removePlugDescription(PlugDescription plugDescription) {
         if (fLogger.isInfoEnabled()) {
-            fLogger.info( "removing plug '" + plugDescription.getPlugId() + "' current plug count:" + getAllIPlugs().length );
+            fLogger.info( "removing plug '" + plugDescription.getPlugId() ); // + "' current plug count:" + getAllIPlugs().length );
         }
         this.fRegistry.removePlug( plugDescription.getPlugId() );
     }
@@ -823,12 +869,28 @@ public class Bus extends Thread implements IBus {
     }
 
     public PlugDescription[] getAllIPlugsWithoutTimeLimitation() {
-        return this.fRegistry.getAllIPlugsWithoutTimeLimitation();
+        PlugDescription[] iplugs = this.fRegistry.getAllIPlugsWithoutTimeLimitation();
+
+        // check if iPlug data is in central index and activated
+        Set<String> activeComponentIds = this.settingsService.getActiveComponentIds();
+        for(PlugDescription iplug : iplugs) {
+            String uuid = (String) iplug.get("uuid");
+            if (uuid != null) {
+                boolean present = activeComponentIds.stream()
+                        .anyMatch(id -> id.indexOf(uuid) == 0);
+                if (present) {
+                    iplug.put("activated", true);
+                }
+            }
+        }
+        return iplugs;
     }
 
     public PlugDescription getIPlug(String plugId) {
         PlugDescription plugDescription = this.fRegistry.getPlugDescription( plugId );
-        if (plugDescription != null) {
+        if (plugDescription == null) {
+            plugDescription = this.fRegistry.getPlugDescriptionFromIndex(plugId);
+        } else {
             plugDescription = (PlugDescription) plugDescription.clone();
             plugDescription.remove( "overrideProxy" );
         }
@@ -893,7 +955,15 @@ public class Bus extends Thread implements IBus {
 
     @Override
     public IngridDocument call(IngridCall targetInfo) throws Exception {
-        IPlug plugProxy = this.fRegistry.getPlugProxy(targetInfo.getTarget());
+
+        IPlug plugProxy;
+        if (SearchService.CENTRAL_INDEX_ID.equals(targetInfo.getTarget()) || ManagementService.MANAGEMENT_IPLUG_ID.equals(targetInfo.getTarget())) {
+            plugProxy = this.fRegistry.getPlugProxy(targetInfo.getTarget());
+        } else if ("iBus".equals(targetInfo.getTarget())) {
+            return handleIBusCalls(targetInfo);
+        } else {
+            plugProxy = this.fRegistry.getRealPlugProxy(targetInfo.getTarget());
+        }
         IngridDocument call;
 
         if (fLogger.isDebugEnabled()) {
@@ -908,5 +978,29 @@ public class Bus extends Thread implements IBus {
             call.put( "error", "iPlug not found: " + targetInfo.getTarget() );
         }
         return call;
+    }
+
+    private IngridDocument handleIBusCalls(IngridCall targetInfo) throws Exception {
+        IngridDocument doc = null;
+        Set<String> result = null;
+        boolean success = false;
+        switch (targetInfo.getMethod()) {
+            case "activateIndex":
+                success = this.settingsService.activateIndexType((String) targetInfo.getParameter());
+                break;
+            case "deactivateIndex":
+                success = this.settingsService.deactivateIndexType((String) targetInfo.getParameter());
+                break;
+            case "getActiveIndices":
+                result = this.settingsService.getActiveComponentIds();
+                break;
+            default:
+                fLogger.warn( "The following method is not supported: " + targetInfo.getMethod() );
+        }
+
+        doc = new IngridDocument();
+        doc.put("success", success);
+        doc.put("result", result);
+        return doc;
     }
 }

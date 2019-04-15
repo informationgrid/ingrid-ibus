@@ -22,7 +22,9 @@
   **************************************************#
   -->
 
-<assembly>
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
   <id>installer</id>
   <formats>
     <format>jar</format>
@@ -39,12 +41,12 @@
     </fileSet>
     <fileSet>
       <directory>src/main/release/ant-installer</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory/>
       <filtered>true</filtered>
     </fileSet>
     <fileSet>
       <directory>target/installer</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory/>
     </fileSet>
     <fileSet>
       <directory>target/frontend/static</directory>
@@ -62,7 +64,8 @@
   </fileSets>
   <files>
     <file>
-      <source>../backend/src/main/resources/application.properties</source>
+      <!-- Use property which has been updated with maven pom version  -->
+      <source>../backend/target/classes/application.properties</source>
       <outputDirectory>${project.artifactId}-${project.version}/conf</outputDirectory>
     </file>
   </files>

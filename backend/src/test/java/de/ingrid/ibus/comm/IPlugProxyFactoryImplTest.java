@@ -65,7 +65,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         this.fBusComm.setPeerName("/101tec-group:ibus1");
         this.fBusComm.startup();
 
-        this.fBus = new Bus(new IPlugProxyFactoryImpl(this.fBusComm));
+        this.fBus = new Bus(new IPlugProxyFactoryImpl(this.fBusComm), null);
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.fPlugComms[i] = new TcpCommunication();
             ClientConfiguration clientConfiguration = new ClientConfiguration();

@@ -16,7 +16,7 @@
         <Logger name="de.ingrid" level="debug" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
-        <Logger name="de.ingrid.admin.elasticsearch.converter" level="warn" additivity="false">
+        <Logger name="de.ingrid.elasticsearch.search.converter" level="warn" additivity="false">
             <AppenderRef ref="Console" />
         </Logger>
         <Logger name="net" level="info" additivity="false">
@@ -29,7 +29,7 @@
             <AppenderRef ref="Console" />
         </Logger>
         <Root level="warn">
-            <AppenderRef ref="LogFile" />
+            <AppenderRef ref="Console" />
         </Root>
     </Loggers>
 </Configuration>

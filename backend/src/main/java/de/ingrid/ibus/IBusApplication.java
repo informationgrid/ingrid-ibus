@@ -30,7 +30,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = { "de.ingrid" })
 public class IBusApplication {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run( IBusApplication.class, args );
     }
 

@@ -28,34 +28,26 @@
 
 package de.ingrid.ibus.comm.registry;
 
+import de.ingrid.ibus.comm.net.IPlugProxyFactory;
+import de.ingrid.ibus.management.ManagementService;
+import de.ingrid.ibus.service.SearchService;
+import de.ingrid.utils.IPlug;
+import de.ingrid.utils.IngridCall;
+import de.ingrid.utils.IngridDocument;
+import de.ingrid.utils.PlugDescription;
+import net.weta.components.communication.ICommunication;
+import net.weta.components.communication.WetagURL;
+import net.weta.components.communication.util.PooledThreadExecutor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.springframework.core.io.ClassPathResource;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.TreeSet;
-
-import de.ingrid.ibus.management.ManagementService;
-import de.ingrid.ibus.service.SearchService;
-import net.weta.components.communication.ICommunication;
-import net.weta.components.communication.WetagURL;
-import net.weta.components.communication.util.PooledThreadExecutor;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.ClassPathResource;
-
-import de.ingrid.ibus.comm.net.IPlugProxyFactory;
-import de.ingrid.utils.IPlug;
-import de.ingrid.utils.PlugDescription;
+import java.util.*;
 
 /**
  * A IPlug registry. All connected IPlugs are registered and by default are deactivated.
@@ -70,9 +62,11 @@ public class Registry {
 
     private IPlugProxyFactory fProxyFactory;
 
-    private HashMap<String, IPlug> fPlugProxyByPlugId = new HashMap<>();
+    private final HashMap<String, IPlug> fPlugProxyByPlugId = new HashMap<>();
 
     private HashMap<String, PlugDescription> fPlugDescriptionByPlugId = new HashMap<>();
+
+    private List<String> iPlugsNotUsingCentralIndex = new ArrayList<>();
 
     private boolean fIplugAutoActivation;
 
@@ -161,6 +155,7 @@ public class Registry {
                 throw new IllegalArgumentException("md5 hash not set - plug '" + plugDescription.getPlugId());
             }
 
+            // iPlug is active in central index
             if (this.fActivatedIplugs.containsKey(plugDescription.getProxyServiceURL())) {
                 final String activated = (String) this.fActivatedIplugs.get(plugDescription.getProxyServiceURL());
                 if (activated.equals("true")) {
@@ -238,6 +233,12 @@ public class Registry {
             synchronized (this.fPlugProxyByPlugId) {
                 this.fPlugProxyByPlugId.put(plugDescription.getPlugId(), plugProxy);
             }
+            synchronized (this.iPlugsNotUsingCentralIndex) {
+                Object useRemoteElasticsearch = plugDescription.get("useRemoteElasticsearch");
+                if (useRemoteElasticsearch == null || !((boolean) useRemoteElasticsearch)) {
+                    this.iPlugsNotUsingCentralIndex.add(plugDescription.getPlugId());
+                }
+            }
         } catch (Exception e) {
             if (fLogger.isErrorEnabled()) {
                 fLogger.error("(REMOVING IPLUG '" + plugId + "' !): could not create proxy object: ", e);
@@ -266,11 +267,20 @@ public class Registry {
      * @param plugId The id of the IPlug that fails.
      */
     public void removePlug(String plugId) {
+        // do not remove local iPlugs which are always connected
+        if (SearchService.CENTRAL_INDEX_ID.equals(plugId) || ManagementService.MANAGEMENT_IPLUG_ID.equals(plugId)) {
+            fLogger.debug("Do not remove iPlug because it's always connected: " + plugId);
+            return;
+        }
+
         synchronized (this.fPlugProxyByPlugId) {
             this.fPlugProxyByPlugId.remove(plugId);
         }
         synchronized (this.fPlugDescriptionByPlugId) {
             this.fPlugDescriptionByPlugId.remove(plugId);
+        }
+        synchronized (this.iPlugsNotUsingCentralIndex) {
+            iPlugsNotUsingCentralIndex.remove(plugId);
         }
     }
 
@@ -298,7 +308,14 @@ public class Registry {
         PlugDescription result;
 
         synchronized (this.fPlugDescriptionByPlugId) {
-            result = (PlugDescription) this.fPlugDescriptionByPlugId.get(id);
+            boolean isManagementIPlug = ManagementService.MANAGEMENT_IPLUG_ID.equals(id);
+            boolean isCentralSearchIPlug = SearchService.CENTRAL_INDEX_ID.equals(id);
+
+            if (isManagementIPlug || isCentralSearchIPlug || this.iPlugsNotUsingCentralIndex.contains(id)) {
+                result = this.fPlugDescriptionByPlugId.get(id);
+            } else {
+                result = getPlugDescriptionFromIndex(id);
+            }
         }
 
         return result;
@@ -333,11 +350,11 @@ public class Registry {
     }
 
     /**
-     * Returns all IPlugs that are still alive.
+     * Returns all IPlugs that are still alive and directly connected to iBus.
      *
      * @return All registered IPlugs younger than the given life time.
      */
-    public PlugDescription[] getAllIPlugs() {
+    public PlugDescription[] getAllIPlugsConnected() {
         PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
         List<PlugDescription> plugs = new ArrayList<>(plugDescriptions.length);
         long now = System.currentTimeMillis();
@@ -347,6 +364,55 @@ public class Registry {
                 plugs.add(plugDescriptions[i]);
             }
         }
+        return plugs.toArray(new PlugDescription[0]);
+    }
+
+    /**
+     * Returns all IPlugs that are still alive.
+     * Also generate those who indexed into central index.
+     *
+     * @return All registered IPlugs younger than the given life time.
+     */
+    public PlugDescription[] getAllIPlugs() {
+        List<PlugDescription> plugs = new ArrayList<>();
+
+        // check central index (ingrid_meta-index) and generate PlugDescriptions from
+        // if an iPlug is not connected anymore to the iBus then we want the information from the
+        // iPlug which once had indexed the data
+        // TODO: iterate through index ingrid_meta and get all iPlug infos
+        try {
+            List<PlugDescription> plugDescriptionsFromIndex = getAllPlugDescriptionsFromIndex();
+
+            // if it's a new installation with no indices at all, then skip plug generation
+            if (plugDescriptionsFromIndex != null) {
+                for (PlugDescription plugDescription : plugDescriptionsFromIndex) {
+                    if (plugDescription.getProxyServiceURL() == null) continue;
+
+                    boolean pdAlreadyExists = plugs.stream().anyMatch(plug -> plug.getProxyServiceURL().equals(plugDescription.getProxyServiceURL()));
+
+                    // do not add same iPlug (one that is connected to iBus and one created from index)
+                    if (!pdAlreadyExists && plugDescription != null) {
+                        plugs.add(plugDescription);
+                    }
+                }
+            }
+        } catch (NoNodeAvailableException ex) {
+            fLogger.warn("Elasticsearch cluster not available");
+        }
+
+        // with a lower priority check if any connected iPlug should be used
+        PlugDescription[] plugDescriptions = getAllIPlugsWithoutTimeLimitation();
+        long now = System.currentTimeMillis();
+        for (PlugDescription plugDescription : plugDescriptions) {
+            long plugLifeSign = plugDescription.getLong(LAST_LIFESIGN) + this.fLifeTime;
+            boolean pdAlreadyExists = plugs.stream().anyMatch(plug -> plug.getProxyServiceURL().equals(plugDescription.getProxyServiceURL()));
+
+            // do not add same iPlug (one that is connected to iBus and one created from index)
+            if (!pdAlreadyExists && plugLifeSign > now) {
+                plugs.add(plugDescription);
+            }
+        }
+
         return plugs.toArray(new PlugDescription[0]);
     }
 
@@ -379,7 +445,22 @@ public class Registry {
      */
     public IPlug getPlugProxy(String plugId) {
         synchronized (this.fPlugProxyByPlugId) {
-            return (IPlug) this.fPlugProxyByPlugId.get(plugId);
+            if (iPlugsNotUsingCentralIndex.contains(plugId)) {
+                return this.fPlugProxyByPlugId.get(plugId);
+            } else {
+                return this.fPlugProxyByPlugId.get(SearchService.CENTRAL_INDEX_ID);
+            }
+        }
+    }
+
+    /**
+     * Only return the proxy to the real iPlug and not the central index.
+     * @param plugId
+     * @return
+     */
+    public IPlug getRealPlugProxy(String plugId) {
+        synchronized (this.fPlugProxyByPlugId) {
+            return this.fPlugProxyByPlugId.get(plugId);
         }
     }
 
@@ -488,7 +569,7 @@ public class Registry {
     public Float getGlobalRankingBoost(String plugId) {
         Float result = null;
         if (null != this.fGlobalRanking) {
-            result = (Float) this.fGlobalRanking.get(plugId);
+            result = this.fGlobalRanking.get(plugId);
         }
 
         return result;
@@ -501,5 +582,93 @@ public class Registry {
      */
     public void setUrl(final String busurl) {
         this.fBusUrl = busurl;
+    }
+
+    private List<PlugDescription> getAllPlugDescriptionsFromIndex() {
+        List<PlugDescription> plugDescriptions = new ArrayList<>();
+
+        IPlug centralIPlug = this.getPlugProxy(SearchService.CENTRAL_INDEX_ID);
+        IngridDocument response;
+        IngridCall options = new IngridCall();
+        options.setMethod("getAllIPlugInformation");
+        try {
+            response = centralIPlug.call(options);
+        } catch (NoNodeAvailableException e) {
+            fLogger.debug("No connection to Elasticsearch");
+            return new ArrayList<>();
+        } catch (Exception e) {
+            fLogger.error("Could not get iPlug Info from ingrid_meta index", e);
+            return null;
+        }
+
+
+        List<IngridDocument> infos = (List<IngridDocument>) response.get("iPlugInfos");
+
+        for (IngridDocument info : infos) {
+            PlugDescription pd = mapIPlugInfoToPlugdescription(info);
+            if (pd != null) plugDescriptions.add(pd);
+        }
+
+        return plugDescriptions;
+    }
+
+    public PlugDescription getPlugDescriptionFromIndex(String plugId) {
+        IPlug centralIPlug = this.getPlugProxy(SearchService.CENTRAL_INDEX_ID);
+        IngridDocument response;
+        IngridCall options = new IngridCall();
+        options.setMethod("getIPlugInformation");
+        options.setParameter(plugId);
+        try {
+            response = centralIPlug.call(options);
+        } catch (Exception e) {
+            fLogger.error("Could not get iPlug Info from ingrid_meta index", e);
+            return null;
+        }
+
+        return mapIPlugInfoToPlugdescription(response);
+    }
+
+    private PlugDescription mapIPlugInfoToPlugdescription(IngridDocument info) {
+        PlugDescription virtualPD = null;
+
+        if (info != null && info.get("plugdescription") != null) {
+            HashMap pdFromIndex = (HashMap) info.get("plugdescription");
+
+            virtualPD = new PlugDescription();
+
+
+            virtualPD.setProxyServiceURL((String) pdFromIndex.get("proxyServiceUrl"));
+
+            List<String> datatypes = (List<String>) pdFromIndex.get("dataType");
+            if (datatypes != null) {
+                for (String datatype : datatypes) {
+                    virtualPD.addDataType(datatype);
+                }
+            }
+
+            List<String> fields = (List<String>) pdFromIndex.get("fields");
+            if (fields != null) {
+                for (String field : fields) {
+                    virtualPD.addField(field);
+                }
+            }
+
+            virtualPD.setDataSourceName((String) pdFromIndex.get("dataSourceName"));
+            virtualPD.setDataSourceDescription((String) pdFromIndex.get("dataSourceDescription"));
+            virtualPD.setIPlugClass((String) pdFromIndex.get("iPlugClass"));
+            virtualPD.put("partner", pdFromIndex.get("partner"));
+            virtualPD.put("provider", pdFromIndex.get("provider"));
+            virtualPD.put("useRemoteElasticsearch", true);
+            virtualPD.setRecordLoader(true);
+            virtualPD.setRankinTypes(true, false, false);
+
+            // virtualPD.put("createdFromIndex", true);
+            virtualPD.activate();
+        }
+        return virtualPD;
+    }
+
+    public void addIPlugNotUsingCentralIndex(String id) {
+        this.iPlugsNotUsingCentralIndex.add(id);
     }
 }

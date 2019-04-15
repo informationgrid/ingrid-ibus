@@ -28,13 +28,16 @@
     <ingrid-error [msg]="error"></ingrid-error>
 
     <dl class="row">
-      <dt class="col-4 text-right text-right">Index-Name</dt>
-      <dd class="col-8">{{detail.name}}
+      <dt class="col-4 text-right text-right">Für Suche verwenden</dt>
+      <dd class="col-8">
         <span class="fa fa-power-off"
               [class.text-success]="detail.active"
               [class.text-danger]="!detail.active"
         ></span>
       </dd>
+
+      <dt class="col-4 text-right text-right">Index-Name</dt>
+      <dd class="col-8">{{detail.name}}</dd>
 
       <dt class="col-4 text-right">Index-Type</dt>
       <dd class="col-8">{{detail.type}}</dd>
@@ -79,7 +82,7 @@
       <form class="form-inline">
 
         <!-- DELETE BUTTON-->
-        <button type="button" class="btn btn-light deleteIndex" confirmbuttontype="danger" mwlConfirmationPopover
+        <button type="button" class="btn btn-danger deleteIndex" confirmbuttontype="danger" mwlConfirmationPopover
            [popoverTitle]="'Wirklich löschen?'"
            [popoverMessage]="'Achtung! Der Index kann noch weitere Typen enthalten, die ebenfalls entfernt werden. Wollen Sie den Index wirklich löschen?'"
            placement="top"
@@ -88,21 +91,22 @@
            (confirm)="deleteIndex()">Löschen</button>
 
         <!-- ACTIVATE / DEACTIVATE -->
-        <button type="button" class="btn btn-light toggleActiveIndex" (click)="toggleActive()">{{ detail.active ? 'Deaktivieren' :
-          'Aktivieren'}}</button>
+        <button type="button" class="btn btn-light toggleActiveIndex" (click)="toggleActive()">
+          {{ detail.active ? 'Deaktivieren' : 'Aktivieren'}}
+        </button>
 
         <!-- INDEX -->
-        <button type="button" class="btn btn-light doIndex" (click)="index()">Indexierung vormerken</button>
+        <button type="button" class="btn btn-light doIndex" (click)="index()">Indexieren</button>
 
         <!-- TOGGLE WHEN NO HEARTBEAT-->
-        <div class="form-check">
+        <!--<div class="form-check">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input"
                    [checked]="detail.deactivateWhenNoHeartbeat"
                    (click)="toggleHeartbeatDeactivation()">
             deaktivieren, wenn kein Heartbeat
           </label>
-        </div>
+        </div>-->
 
       </form>
     </div>
