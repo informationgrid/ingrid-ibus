@@ -102,6 +102,7 @@ public class ConfigurationService {
             if (path.toFile().exists()) {
                 this.settingsFile = path.toFile();
             } else {
+                path.toFile().getParentFile().mkdirs();
                 this.settingsFile = Files.createFile(path).toFile();
             }
         }

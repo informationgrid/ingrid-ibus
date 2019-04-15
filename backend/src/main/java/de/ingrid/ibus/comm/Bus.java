@@ -83,8 +83,10 @@ public class Bus extends Thread implements IBus {
 
     private static final long serialVersionUID = Bus.class.getName().hashCode();
 
-    // TODO: Change to release version 4.7.0
-    private static final String IPLUG_OLD_VERSION_REMOVE_FIELDS = "4.7.0-SNAPSHOT";
+    // since version 5 the fields title and summary are not received automatically anymore
+    // this constant defines the version where we need to add those fields in case we have
+    // an old iPlug/Portal connected
+    private static final String IPLUG_OLD_VERSION_REMOVE_FIELDS = "5.0.0";
 
     private static Log fLogger = LogFactory.getLog( Bus.class );
 
@@ -693,8 +695,8 @@ public class Bus extends Thread implements IBus {
                 plugProxy = this.fRegistry.getPlugProxy( plugId );
 
                 /*
-                 * iPlugs with older base-webapp than version 4.7.0 set requested fields "title" and "summary" on detail search by default.
-                 * The base-webapp since version 4.7.0 set no fields by default. Requested field "title" and "summary" must set
+                 * iPlugs with older base-webapp than version 5.0.0 set requested fields "title" and "summary" on detail search by default.
+                 * The base-webapp since version 5.0.0 set no fields by default. Requested field "title" and "summary" must set
                  * by the search component like portal.
                  * To make older iPlugs running with duplicate fields (default and requested fields) field "title" and "summary" must
                  * be remove on requested fields.
