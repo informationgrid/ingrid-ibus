@@ -383,19 +383,17 @@ public class Registry {
         try {
             List<PlugDescription> plugDescriptionsFromIndex = getAllPlugDescriptionsFromIndex();
 
-            // if it's a new installation with no indices at all, then return an empty result
-            if (plugDescriptionsFromIndex == null) {
-                return new PlugDescription[0];
-            }
+            // if it's a new installation with no indices at all, then skip plug generation
+            if (plugDescriptionsFromIndex != null) {
+                for (PlugDescription plugDescription : plugDescriptionsFromIndex) {
+                    if (plugDescription.getProxyServiceURL() == null) continue;
 
-            for (PlugDescription plugDescription : plugDescriptionsFromIndex) {
-                if (plugDescription.getProxyServiceURL() == null) continue;
+                    boolean pdAlreadyExists = plugs.stream().anyMatch(plug -> plug.getProxyServiceURL().equals(plugDescription.getProxyServiceURL()));
 
-                boolean pdAlreadyExists = plugs.stream().anyMatch(plug -> plug.getProxyServiceURL().equals(plugDescription.getProxyServiceURL()));
-
-                // do not add same iPlug (one that is connected to iBus and one created from index)
-                if (!pdAlreadyExists && plugDescription != null) {
-                    plugs.add(plugDescription);
+                    // do not add same iPlug (one that is connected to iBus and one created from index)
+                    if (!pdAlreadyExists && plugDescription != null) {
+                        plugs.add(plugDescription);
+                    }
                 }
             }
         } catch (NoNodeAvailableException ex) {

@@ -102,7 +102,11 @@ public class SyntaxInterpreter {
         // always add central index for search which might have been removed by filtering
         PlugDescription centralIndexIPlug = registry.getPlugDescription(SearchService.CENTRAL_INDEX_ID);
         LOG.debug("Add central index to iPlug list");
-        plugList.add(centralIndexIPlug);
+        if (centralIndexIPlug != null) {
+            plugList.add(centralIndexIPlug);
+        } else {
+            LOG.warn("No central index PlugDescription found");
+        }
 
         PlugDescription[] filteredPlugs = (PlugDescription[]) plugList.toArray(new PlugDescription[plugList.size()]);
         if (LOG.isDebugEnabled()) {
