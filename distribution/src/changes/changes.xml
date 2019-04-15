@@ -29,9 +29,12 @@
   </properties>
   <body>
 
-  <release version="4.7.0-SNAPSHOT" date="2019-xx-xx" description="Release 4.7.0">
+  <release version="5.0.0" date="2019-04-15" description="Release 5.0.0">
       <action type="fix" dev="wemove" issue="1285">
         Fix problem with codelists not been able to fetch via HTTP proxy.
+      </action>
+      <action type="update" dev="wemove" issue="835">
+        Handling of old and new iPlugs with central index.
       </action>
   </release>
 
