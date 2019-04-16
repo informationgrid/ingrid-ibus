@@ -16,6 +16,6 @@ RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
     
 WORKDIR /opt/ingrid/ingrid-ibus
 EXPOSE 80
-EXPOSE 9901
+EXPOSE 9900
 
 CMD /bin/sh start.sh start
