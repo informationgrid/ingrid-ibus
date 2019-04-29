@@ -262,6 +262,10 @@
         <resources>
           <resource>
             <directory>src/develop/resources</directory>
+            <!-- We need to set filtering to true here to correctly copy files to target/classes
+                 This might be a problem with multi-module projects or the usage of filtering in
+                 another resource directory -->
+            <filtering>true</filtering>
           </resource>
           <resource>
             <directory>src/main/resources</directory>
