@@ -33,6 +33,9 @@
       <action type="fix" dev="wemove" issue="1428">
           Behebung von Login-Problemen am iBus
       </action>
+      <action type="fix" dev="wemove" issue="1371">
+          Remove menu item "Indexieren" since it does not work for all iPlugs
+      </action>
   </release>
 
   <release version="5.0.0" date="2019-04-15" description="Release 5.0.0">
