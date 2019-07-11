@@ -150,6 +150,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
                 .antMatchers( "/css/**" ).permitAll()
                 .and()
+            // make access to login page more permissive because 'formLogin' is very strict
+            // for instance is prevents access to login?lang=de which produces a redirect loop
+            // in some cases
+            // see https://stackoverflow.com/a/29379310
+            .authorizeRequests()
+                .antMatchers("/login*").permitAll()
+                .and()
             .authorizeRequests()
                 .anyRequest()
                 .access("@security.hasPermission(authentication)")

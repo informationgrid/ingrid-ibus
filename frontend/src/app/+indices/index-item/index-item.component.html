@@ -7,12 +7,12 @@
   Licensed under the EUPL, Version 1.1 or – as soon they will be
   approved by the European Commission - subsequent versions of the
   EUPL (the "Licence");
-  
+
   You may not use this work except in compliance with the Licence.
   You may obtain a copy of the Licence at:
-  
+
   http://ec.europa.eu/idabc/eupl5
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the Licence is distributed on an "AS IS" basis,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,7 @@
             aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
     </button>
     <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
-      <button *ngIf="data.isConnected" class="dropdown-item"(click)="index()">Indexieren</button>
+      <!--<button *ngIf="data.isConnected" class="dropdown-item"(click)="index()">Indexieren</button>-->
       <button class="dropdown-item" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
          [popoverTitle]="'Wirklich löschen?'"
          [popoverMessage]="'Wollen Sie den Index wirklich löschen?'"

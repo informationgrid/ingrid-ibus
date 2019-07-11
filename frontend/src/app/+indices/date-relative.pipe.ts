@@ -70,7 +70,6 @@ export class DateRelativePipe implements PipeTransform {
   transform(dateStamp: number): string {
 
     let timeAgoInSeconds = Math.floor((new Date().getTime() - new Date(dateStamp).getTime()) / 1000);
-    debugger;
     let {interval, epoch, plural} = this.getDuration(timeAgoInSeconds);
     // let suffix = interval === 1 ? '' : plural;
 

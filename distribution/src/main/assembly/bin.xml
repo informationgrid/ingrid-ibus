@@ -32,8 +32,15 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>src/main/release/conf</directory>
+      <directory>../backend/src/main/resources</directory>
       <outputDirectory>${project.artifactId}-${project.version}/conf</outputDirectory>
+      <includes>
+        <include>querymodifier.properties</include>
+        <include>globalRanking.properties</include>
+        <include>log4j2.xml</include>
+        <include>application.properties</include>
+        <include>elasticsearch.properties</include>
+      </includes>
     </fileSet>
     <fileSet>
       <directory>src/main/release/scripts</directory>
