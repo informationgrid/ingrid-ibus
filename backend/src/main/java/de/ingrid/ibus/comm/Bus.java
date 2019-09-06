@@ -210,7 +210,7 @@ public class Bus extends Thread implements IBus {
             // if we only query one, than it doesn't matter how high the score
             // is
             // since we don't need to merge the results with other ones
-            hitContainer = normalizeScores( resultSet, oneIPlugOnly ? true : false );
+            hitContainer = normalizeScores( resultSet, oneIPlugOnly);
 
             if (fLogger.isDebugEnabled()) {
                 fLogger.debug( "(search) normalize ends: " + query.hashCode() );
@@ -491,7 +491,7 @@ public class Bus extends Thread implements IBus {
         return Integer.MAX_VALUE;
     }
 
-    private IngridHits normalizeScores(List<IngridHits> resultSet, boolean skipNormalization) {
+    private IngridHits normalizeScores(List<IngridHits> resultSet, boolean oneIPlugOnly) {
         if (fLogger.isDebugEnabled()) {
             fLogger.debug( "normalize the results" );
         }
@@ -519,7 +519,7 @@ public class Bus extends Thread implements IBus {
 
                 // normalize scores of the results of this iPlug
                 // so maxScore will never get bigger than 1 now!
-                if (!skipNormalization && maxScore < resultHits[0].getScore()) {
+                if (!oneIPlugOnly && maxScore < resultHits[0].getScore()) {
                     normalizeHits( hitContainer, resultHits[0].getScore() );
                 }
             }
@@ -530,7 +530,20 @@ public class Bus extends Thread implements IBus {
             }
         }
 
-        IngridHits result = new IngridHits( totalHits, sortHits( (IngridHit[]) documents.toArray( new IngridHit[documents.size()] ) ) );
+        IngridHits result;
+        if (oneIPlugOnly) {
+            result = new IngridHits(totalHits, documents.toArray(new IngridHit[documents.size()]));
+        } else {
+            // Only sort hits of more than one iplug delivers hits.
+            // From InGrid 5.0.0 onwards usually only one iplug delivers hits (central indexing).
+            // It is considered that this iPlug cares for sorting the results.
+            //
+            // This was introduced in connection with sorting by date #1467.
+            // In case of sorting by modification date the scores of the results do not
+            // reflect the sort order and sorting in iBus would destroy the sort
+            // order my modification date.
+            result = new IngridHits( totalHits, sortHits(documents.toArray( new IngridHit[documents.size()] )) );
+        }
 
         // add timings for the corresponding iplugs
         HashMap<String, Long> timings = new HashMap<String, Long>();
