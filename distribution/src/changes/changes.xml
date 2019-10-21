@@ -29,6 +29,12 @@
   </properties>
   <body>
 
+  <release version="5.2.0" date="2019-10-21" description="Release 5.2.0">
+      <action type="fix" dev="wemove" issue="1467">
+          Sortierung nach Datum funktioniert nicht.
+      </action>
+  </release>
+
   <release version="5.1.0" date="2019-07-09" description="Release 5.1.0">
       <action type="fix" dev="wemove" issue="1428">
           Behebung von Login-Problemen am iBus

@@ -3,7 +3,7 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-ibus-project</artifactId>
-    <version>5.1.0</version>
+    <version>5.2.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-frontend</artifactId>
@@ -15,10 +15,10 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.6</version>
+        <version>1.8.0</version>
         <configuration>
-          <nodeVersion>v8.9.1</nodeVersion>
-          <npmVersion>6.0.0</npmVersion>
+          <nodeVersion>v10.16.3</nodeVersion>
+          <npmVersion>6.9.0</npmVersion>
           <workingDirectory>.</workingDirectory>
         </configuration>
         <executions>
