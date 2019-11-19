@@ -36,6 +36,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import de.ingrid.ibus.service.SettingsService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,7 +74,7 @@ public class BusTest {
 
     @Before
     public void setUp() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory(), null);
+        this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         Registry registry = this.bus.getIPlugRegistry();
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
@@ -189,7 +190,7 @@ public class BusTest {
      */
     @Test
     public void testUnrankedSearch() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory(), null);
+        this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
@@ -224,7 +225,7 @@ public class BusTest {
      */
     @Test
     public void testUnrankedGroupedDatatypeSearch() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory(), null);
+        this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
@@ -247,7 +248,7 @@ public class BusTest {
      */
     @Test
     public void testFilterForPartner() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory(), null);
+        this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
@@ -269,7 +270,7 @@ public class BusTest {
      */
     @Test
     public void testGroupByPlugId() throws Exception {
-        this.bus = new Bus(new DummyProxyFactory(), null);
+        this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {

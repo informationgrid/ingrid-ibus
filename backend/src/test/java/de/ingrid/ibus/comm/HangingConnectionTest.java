@@ -28,6 +28,7 @@
 
 package de.ingrid.ibus.comm;
 
+import de.ingrid.ibus.service.SettingsService;
 import net.weta.components.communication.tcp.TimeoutException;
 import junit.framework.TestCase;
 import de.ingrid.utils.PlugDescription;
@@ -49,7 +50,7 @@ public class HangingConnectionTest extends TestCase {
      * @throws Exception
      */
     public void testhangConnection() throws Exception {
-        Bus bus = new Bus(new HangingPlugDummyProxyFactory(), null);
+        Bus bus = new Bus(new HangingPlugDummyProxyFactory(), new SettingsService());
         PlugDescription plugDescriptions = new PlugDescription();
         plugDescriptions.setProxyServiceURL("");
         plugDescriptions.setOrganisation("org");

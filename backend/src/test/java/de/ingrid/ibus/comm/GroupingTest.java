@@ -24,6 +24,7 @@ package de.ingrid.ibus.comm;
 
 import static org.junit.Assert.*;
 
+import de.ingrid.ibus.service.SettingsService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,7 +54,7 @@ public class GroupingTest {
 
     @Before
     public void setUp() throws Exception {
-        this.fBus = new Bus(new DummyProxyFactory(), null);
+        this.fBus = new Bus(new DummyProxyFactory(), new SettingsService());
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.plugDescriptions[i] = new PlugDescription();
             this.plugDescriptions[i].setProxyServiceURL("plug:" + i);
@@ -214,7 +215,7 @@ public class GroupingTest {
     @Test
     public void testPaging() throws Exception {
         // setup
-        Bus bus = new Bus(new DummyProxyFactory(), null);
+        Bus bus = new Bus(new DummyProxyFactory(), new SettingsService());
         int plugCount = 0;
         for (int i = 0; i < 25; i++) {
             // 50 different organisations

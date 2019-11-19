@@ -28,6 +28,7 @@
 
 package de.ingrid.ibus.comm;
 
+import de.ingrid.ibus.service.SettingsService;
 import junit.framework.TestCase;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.IngridHit;
@@ -49,7 +50,7 @@ import de.ingrid.utils.queryparser.QueryStringParser;
 public class ScoreNormalizingTest extends TestCase {
 
     private Bus setUp(float[][] scores) {
-        Bus bus = new Bus(new DummyProxyFactory(scores), null);
+        Bus bus = new Bus(new DummyProxyFactory(scores), new SettingsService());
         Registry registry = bus.getIPlugRegistry();
         registry.setCommunication(new DummyCommunication());
 

@@ -22,6 +22,7 @@
  */
 package de.ingrid.ibus.comm;
 
+import de.ingrid.ibus.service.SettingsService;
 import junit.framework.TestCase;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
@@ -46,7 +47,7 @@ public class MultiThreadSearchTest extends TestCase {
      */
     public void testTreads() throws Exception {
         PlugDescription[] plugDescriptions = new PlugDescription[fSearchCount];
-        Bus bus = new Bus(new DummyProxyFactory(), null);
+        Bus bus = new Bus(new DummyProxyFactory(), new SettingsService());
         for (int i = 0; i < plugDescriptions.length; i++) {
             plugDescriptions[i] = new PlugDescription();
             plugDescriptions[i].setProxyServiceURL("" + i);
