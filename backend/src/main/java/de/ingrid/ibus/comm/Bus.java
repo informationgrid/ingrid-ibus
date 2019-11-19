@@ -118,7 +118,7 @@ public class Bus extends Thread implements IBus {
      *      Registry)
      */
     public Bus(IPlugProxyFactory factory, SettingsService settingsService) {
-        this.fRegistry = new Registry( 120000, false, factory );
+        this.fRegistry = new Registry( 120000, false, factory, settingsService );
         fInstance = this;
         this.settingsService = settingsService;
         _grouper = new Grouper( this.fRegistry );

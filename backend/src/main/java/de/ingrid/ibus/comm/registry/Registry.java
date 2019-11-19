@@ -31,6 +31,7 @@ package de.ingrid.ibus.comm.registry;
 import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.ibus.management.ManagementService;
 import de.ingrid.ibus.service.SearchService;
+import de.ingrid.ibus.service.SettingsService;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridCall;
 import de.ingrid.utils.IngridDocument;
@@ -41,11 +42,7 @@ import net.weta.components.communication.util.PooledThreadExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -76,9 +73,7 @@ public class Registry {
 
     private String fBusUrl;
 
-    private Properties fActivatedIplugs;
-
-    private File fFile;
+    private SettingsService settingsService;
 
     private class RegistryIPlugTimeoutScanner extends Thread {
 
@@ -107,34 +102,12 @@ public class Registry {
      * @param iplugAutoActivation The auto activation feature. If this is true all new IPlugs are activated by default otherwise not.
      * @param factory             The factory that creates IPlugs.
      */
-    public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation, IPlugProxyFactory factory) {
+    public Registry(long lifeTimeOfPlugs, boolean iplugAutoActivation, IPlugProxyFactory factory, SettingsService settingsService) {
 
-        ClassPathResource ibusSettings = new ClassPathResource("/activatedIplugs.properties");
-
-        try {
-            if (ibusSettings.exists()) {
-                this.fFile = ibusSettings.getFile();
-            } else {
-                File dir = new File("conf");
-                if (!dir.exists()) {
-                    dir.mkdir();
-                }
-                this.fFile = new File(dir, "activatedIplugs.properties");
-                if (!this.fFile.exists()) {
-                    this.fFile.createNewFile();
-                }
-
-            }
-        } catch (Exception e) {
-            if (fLogger.isErrorEnabled()) {
-                fLogger.error("Cannot open the file for saving the activation state of the iplugs.", e);
-            }
-        }
-
-        loadProperties();
         this.fLifeTime = lifeTimeOfPlugs;
         this.fIplugAutoActivation = iplugAutoActivation;
         this.fProxyFactory = factory;
+        this.settingsService = settingsService;
 
         // start iplug timeout scanner
         PooledThreadExecutor.getInstance().execute(new RegistryIPlugTimeoutScanner());
@@ -156,13 +129,10 @@ public class Registry {
             }
 
             // iPlug is active in central index
-            if (this.fActivatedIplugs.containsKey(plugDescription.getProxyServiceURL())) {
-                final String activated = (String) this.fActivatedIplugs.get(plugDescription.getProxyServiceURL());
-                if (activated.equals("true")) {
-                    plugDescription.setActivate(true);
-                } else {
-                    plugDescription.setActivate(false);
-                }
+
+            if (settingsService.containsIPlug(plugDescription.getProxyServiceURL())) {
+                final boolean activated = settingsService.isIPlugActivated(plugDescription.getProxyServiceURL());
+                plugDescription.setActivate(activated);
             } else {
                 plugDescription.setActivate(this.fIplugAutoActivation);
             }
@@ -464,41 +434,6 @@ public class Registry {
         }
     }
 
-    private void saveProperties() {
-        try {
-            FileOutputStream fos = new FileOutputStream(this.fFile);
-            this.fActivatedIplugs.store(fos, "activated iplugs");
-            fos.close();
-        } catch (IOException e) {
-            if (fLogger.isErrorEnabled()) {
-                fLogger.error("Cannot save the activation properties.", e);
-            }
-        }
-    }
-
-    private void loadProperties() {
-        try {
-            FileInputStream fis = new FileInputStream(this.fFile);
-
-            // create a sorted properties file
-            this.fActivatedIplugs = new Properties() {
-                private static final long serialVersionUID = 6956076060462348684L;
-
-                @Override
-                public synchronized Enumeration<Object> keys() {
-                    return Collections.enumeration(new TreeSet<>(super.keySet()));
-                }
-            };
-
-            this.fActivatedIplugs.load(fis);
-            fis.close();
-        } catch (IOException e) {
-            if (fLogger.isErrorEnabled()) {
-                fLogger.error("Cannot load the activation properties.", e);
-            }
-        }
-    }
-
     /**
      * Activates the IPlug to the given IPlug id.
      *
@@ -509,8 +444,7 @@ public class Registry {
         PlugDescription plugDescription = getPlugDescription(plugId);
         if (plugDescription != null) {
             plugDescription.activate();
-            this.fActivatedIplugs.setProperty(plugId, "true");
-            saveProperties();
+            settingsService.activateIPlug(plugId);
         } else {
             throw new IllegalArgumentException("iplug unknown: ".concat(plugId));
         }
@@ -526,8 +460,7 @@ public class Registry {
         PlugDescription plugDescription = getPlugDescription(plugId);
         if (plugDescription != null) {
             plugDescription.deActivate();
-            this.fActivatedIplugs.setProperty(plugId, "false");
-            saveProperties();
+            settingsService.deactivateIPlug(plugId);
         } else {
             throw new IllegalArgumentException("iplug unknown: ".concat(plugId));
         }

@@ -22,6 +22,7 @@
  */
 package de.ingrid.ibus.comm;
 
+import de.ingrid.ibus.service.SettingsService;
 import junit.framework.TestCase;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.IngridHit;
@@ -31,7 +32,7 @@ import de.ingrid.utils.query.IngridQuery;
 public class GrouperTest extends TestCase {
 
     public void testGrouping() throws Exception {
-        IGrouper grouper = new Grouper(new Registry(10, true, new DummyProxyFactory()));
+        IGrouper grouper = new Grouper(new Registry(10, true, new DummyProxyFactory(), new SettingsService()));
         IngridHit[] hits = new IngridHit[23];
         for (int i = 0; i < hits.length; i++) {
             hits[i] = new IngridHit();
