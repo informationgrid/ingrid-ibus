@@ -597,18 +597,7 @@ public class IndicesService {
     }
     
     public void prepareIndices() {
-        boolean indexExists = indexManager.indexExists( INDEX_INFO_NAME );
-        
-        if (!indexExists) {
-            InputStream defaultMappingStream = getClass().getClassLoader().getResourceAsStream( "ingrid-meta-mapping.json" );
-            try {
-                String mappingString = XMLSerializer.getContents( defaultMappingStream );
-                indexManager.createIndex( INDEX_INFO_NAME, "info", mappingString, null );
-            } catch (IOException e) {
-                log.error("Error preparing index", e);
-            }
-        }
-        
+        indexManager.checkAndCreateInformationIndex();
     }
 
 }
