@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2019 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2020 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -28,6 +28,7 @@
 
 package de.ingrid.ibus.comm;
 
+import de.ingrid.ibus.service.SettingsService;
 import junit.framework.TestCase;
 import net.weta.components.communication.configuration.ClientConfiguration;
 import net.weta.components.communication.configuration.ServerConfiguration;
@@ -55,7 +56,7 @@ public class RemoteBusTest extends TestCase {
 		com.configure(serverConfiguration);
         com.setPeerName(iBusUrl);
         com.startup();
-        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), null));
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), new SettingsService()));
 
         TcpCommunication com2 = new TcpCommunication();
         ClientConfiguration clientConfiguration = new ClientConfiguration();
@@ -84,7 +85,7 @@ public class RemoteBusTest extends TestCase {
 		com.configure(serverConfiguration);
         com.setPeerName(iBusUrl);
         com.startup();
-        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), null));
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), new SettingsService()));
 
         TcpCommunication com2 = new TcpCommunication();
         ClientConfiguration clientConfiguration = new ClientConfiguration();
@@ -117,7 +118,7 @@ public class RemoteBusTest extends TestCase {
 		com.configure(serverConfiguration);
         com.setPeerName(iBusUrl);
         com.startup();
-        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), null));
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), new SettingsService()));
         System.out.println("Restart iBus... done.");
         
         Thread.sleep(1000);
@@ -140,7 +141,7 @@ public class RemoteBusTest extends TestCase {
         
         Thread.sleep(3000);
         
-        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), null));
+        ProxyService.createProxyServer(com, IBus.class, new Bus(new DummyProxyFactory(), new SettingsService()));
         TcpCommunication com2 = new TcpCommunication();
         ClientConfiguration clientConfiguration = new ClientConfiguration();
 		clientConfiguration.setName("/101tec-group:iplug");

@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-ibus-backend
  * ==================================================
- * Copyright (C) 2014 - 2019 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2020 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -67,7 +67,10 @@ public class SettingsService {
                 if (path.toFile().exists()) {
                     this.settingsFile = path.toFile();
                 } else {
-                    // TODO: if conf dir does not exist there will be an error an activeIndices is not initialized!
+                    // if conf dir does not exist then create it
+                    if (!path.getParent().toFile().exists()) {
+                        Files.createDirectories(path.getParent());
+                    }
                     this.settingsFile = Files.createFile( path ).toFile();
                 }
             }
@@ -142,13 +145,29 @@ public class SettingsService {
         return activeIndices.contains( indexName );
     }
 
-    public boolean activateIPlug(String id) throws Exception {
+    public boolean activateIPlug(String id) {
         properties.put( id, "true" );
-        return writeSettings();
+        try {
+            return writeSettings();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public boolean deactivateIPlug(String id) throws Exception {
+    public boolean deactivateIPlug(String id) {
         properties.put( id, "false" );
-        return writeSettings();
+        try {
+            return writeSettings();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean containsIPlug(String proxyServiceURL) {
+        return this.properties.containsKey(proxyServiceURL);
+    }
+
+    public boolean isIPlugActivated(String proxyServiceURL) {
+        return "true".equals(this.properties.get(proxyServiceURL));
     }
 }

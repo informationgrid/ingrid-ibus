@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-ibus-backend
  * ==================================================
- * Copyright (C) 2014 - 2019 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2020 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -597,18 +597,7 @@ public class IndicesService {
     }
     
     public void prepareIndices() {
-        boolean indexExists = indexManager.indexExists( INDEX_INFO_NAME );
-        
-        if (!indexExists) {
-            InputStream defaultMappingStream = getClass().getClassLoader().getResourceAsStream( "ingrid-meta-mapping.json" );
-            try {
-                String mappingString = XMLSerializer.getContents( defaultMappingStream );
-                indexManager.createIndex( INDEX_INFO_NAME, "info", mappingString, null );
-            } catch (IOException e) {
-                log.error("Error preparing index", e);
-            }
-        }
-        
+        indexManager.checkAndCreateInformationIndex();
     }
 
 }

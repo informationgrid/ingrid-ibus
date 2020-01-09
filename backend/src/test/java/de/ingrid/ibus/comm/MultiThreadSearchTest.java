@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2019 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2020 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -22,6 +22,7 @@
  */
 package de.ingrid.ibus.comm;
 
+import de.ingrid.ibus.service.SettingsService;
 import junit.framework.TestCase;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.query.IngridQuery;
@@ -46,7 +47,7 @@ public class MultiThreadSearchTest extends TestCase {
      */
     public void testTreads() throws Exception {
         PlugDescription[] plugDescriptions = new PlugDescription[fSearchCount];
-        Bus bus = new Bus(new DummyProxyFactory(), null);
+        Bus bus = new Bus(new DummyProxyFactory(), new SettingsService());
         for (int i = 0; i < plugDescriptions.length; i++) {
             plugDescriptions[i] = new PlugDescription();
             plugDescriptions[i].setProxyServiceURL("" + i);

@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2019 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2020 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -30,6 +30,7 @@ package de.ingrid.ibus.comm.registry;
 
 import java.util.Arrays;
 
+import de.ingrid.ibus.service.SettingsService;
 import junit.framework.TestCase;
 import de.ingrid.ibus.comm.DummyCommunication;
 import de.ingrid.ibus.comm.DummyProxyFactory;
@@ -49,7 +50,7 @@ public class RegistryTest extends TestCase {
      * @throws Exception
      */
     public void testAddAndGet() throws Exception {
-        Registry registry = new Registry(1000, true, new DummyProxyFactory());
+        Registry registry = new Registry(1000, true, new DummyProxyFactory(), new SettingsService());
         registry.setCommunication(new DummyCommunication());
         PlugDescription plug1 = new PlugDescription();
         plug1.setProxyServiceURL("/:aID");
@@ -63,7 +64,7 @@ public class RegistryTest extends TestCase {
      */
     public void testGetAllIPlugs() throws Exception {
         int plugLifeTime = 250;
-        Registry registry = new Registry(plugLifeTime, true, new DummyProxyFactory());
+        Registry registry = new Registry(plugLifeTime, true, new DummyProxyFactory(), new SettingsService());
         registry.setCommunication(new DummyCommunication());
         PlugDescription plug1 = new PlugDescription();
         plug1.setProxyServiceURL("/:aID");
@@ -87,7 +88,7 @@ public class RegistryTest extends TestCase {
      * @throws Exception
      */
     public void testContains() throws Exception {
-        Registry registry = new Registry(1000, true, new DummyProxyFactory());
+        Registry registry = new Registry(1000, true, new DummyProxyFactory(), new SettingsService());
         registry.setCommunication(new DummyCommunication());
         PlugDescription plugDescription = new PlugDescription();
         plugDescription.setProxyServiceURL("/:aID");

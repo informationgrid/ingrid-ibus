@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2019 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2020 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -30,6 +30,7 @@ package de.ingrid.ibus.comm.registry;
 
 import java.io.StringReader;
 
+import de.ingrid.ibus.service.SettingsService;
 import junit.framework.TestCase;
 import de.ingrid.ibus.comm.DummyCommunication;
 import de.ingrid.ibus.comm.DummyProxyFactory;
@@ -66,7 +67,7 @@ public class SyntaxInterpreterTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        this.registry = new Registry(100000, true, new DummyProxyFactory());
+        this.registry = new Registry(100000, true, new DummyProxyFactory(), new SettingsService());
         this.registry.setCommunication(new DummyCommunication());
         for (int i = 0; i < this.descriptions.length; i++) {
             this.descriptions[i] = new PlugDescription();
@@ -197,7 +198,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testDataTypeQueries() throws Exception {
-        Registry aRegestry = new Registry(100, true, new DummyProxyFactory());
+        Registry aRegestry = new Registry(100, true, new DummyProxyFactory(), new SettingsService());
         aRegestry.setCommunication(new DummyCommunication());
         PlugDescription description = new PlugDescription();
         description.setProxyServiceURL("/:23");
@@ -214,7 +215,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * @throws Exception
      */
     public void testIsRanked() throws Exception {
-        Registry aRegestry = new Registry(10, true, new DummyProxyFactory());
+        Registry aRegestry = new Registry(10, true, new DummyProxyFactory(), new SettingsService());
         aRegestry.setCommunication(new DummyCommunication());
         PlugDescription description = new PlugDescription();
         description.setProxyServiceURL("/:23");
@@ -226,7 +227,7 @@ public class SyntaxInterpreterTest extends TestCase {
 
         assertEquals(1, SyntaxInterpreter.getIPlugsForQuery(query, aRegestry).length);
 
-        aRegestry = new Registry(10, true, new DummyProxyFactory());
+        aRegestry = new Registry(10, true, new DummyProxyFactory(), new SettingsService());
         aRegestry.setCommunication(new DummyCommunication());
         description = new PlugDescription();
         description.setProxyServiceURL("/:23");

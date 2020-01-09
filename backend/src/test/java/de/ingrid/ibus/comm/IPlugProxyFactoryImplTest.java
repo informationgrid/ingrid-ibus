@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2019 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2020 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -28,6 +28,7 @@
 
 package de.ingrid.ibus.comm;
 
+import de.ingrid.ibus.service.SettingsService;
 import junit.framework.TestCase;
 import net.weta.components.communication.configuration.ClientConfiguration;
 import net.weta.components.communication.configuration.ServerConfiguration;
@@ -65,7 +66,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
         this.fBusComm.setPeerName("/101tec-group:ibus1");
         this.fBusComm.startup();
 
-        this.fBus = new Bus(new IPlugProxyFactoryImpl(this.fBusComm), null);
+        this.fBus = new Bus(new IPlugProxyFactoryImpl(this.fBusComm), new SettingsService());
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.fPlugComms[i] = new TcpCommunication();
             ClientConfiguration clientConfiguration = new ClientConfiguration();

@@ -29,15 +29,27 @@
   </properties>
   <body>
 
+  <release version="5.3.0" date="2020-01-09" description="Release 5.3.0">
+      <action type="update" dev="wemove">
+          Updated dependencies (iplug, utils).
+      </action>
+      <action type="update" dev="wemove">
+          Refactor: Use ingrid manager method to create ingrid_meta index.
+      </action>
+      <action type="fix" dev="wemove" issue="1549">
+          Fix saving of activation state of iPlugs/indices.
+      </action>
+  </release>
+
   <release version="5.2.0" date="2019-10-21" description="Release 5.2.0">
       <action type="fix" dev="wemove" issue="1467">
-          Sortierung nach Datum funktioniert nicht.
+          Fix sorting by date.
       </action>
   </release>
 
   <release version="5.1.0" date="2019-07-09" description="Release 5.1.0">
       <action type="fix" dev="wemove" issue="1428">
-          Behebung von Login-Problemen am iBus
+          Fix login problem.
       </action>
       <action type="fix" dev="wemove" issue="1371">
           Remove menu item "Indexieren" since it does not work for all iPlugs
