@@ -153,6 +153,9 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
             parameters = (Map<String, Object>) targetInfo.getParameter();
             if (log.isDebugEnabled()) {
                 log.debug("Create index: " + parameters.get( "name" ));
+                log.debug("  with type: " + parameters.get( "type" ));
+                log.debug("  with esMapping: " + parameters.get( "esMapping" ));
+                log.debug("  with esMapping: " + parameters.get( "esSettings" ));
             }
 
             boolean success = indexManager.createIndex(
