@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,6 @@
  */
 import { IndexDetailComponent } from './+index-detail/index-detail.component';
 import { IndexService } from './index.service';
-import { HttpModule } from '@angular/http';
 import { IndexItemComponent } from './index-item/index-item.component';
 import { ListIndicesComponent } from './list-indices/list-indices.component';
 import { NgModule } from '@angular/core';
@@ -33,7 +32,7 @@ import { DateRelativePipe } from './date-relative.pipe';
 
 @NgModule({
   imports: [
-    CommonModule, HttpModule, SharedModule, ConfirmationPopoverModule
+    CommonModule, SharedModule, ConfirmationPopoverModule
   ],
   providers: [
     IndexService
