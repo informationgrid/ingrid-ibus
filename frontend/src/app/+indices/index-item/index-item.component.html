@@ -20,7 +20,7 @@
 <div class="card mb-3" [class.short]="view === 'short mb-1'">
   <span *ngIf="view === 'short'" class="index-id">{{data.name}}</span>
 
-  <div *ngIf="view !== 'short'" class="dropdown" [class.show]="dropDownOpen">
+  <div class="dropdown" [class.show]="dropDownOpen">
     <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
     </button>
