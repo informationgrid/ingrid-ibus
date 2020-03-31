@@ -32,6 +32,9 @@
       <action type="fix" dev="wemove" issue="1670">
         Fix highlight summary by search query.
       </action>
+      <action type="fix" dev="wemove" issue="1459">
+          Fix score function generation and enable boosting by default.
+      </action>
     </release>
 
   <release version="5.3.0" date="2020-01-09" description="Release 5.3.0">
