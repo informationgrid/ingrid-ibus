@@ -31,8 +31,14 @@
     <dt>Quelle</dt>
     <dd>{{detail.source}}</dd>
     <dt>IDF</dt>
-    <dd><pre>{{detail.idf}}</pre></dd>
-    <dt>Komplettes Index-Dokument</dt>
-    <dd><pre>{{detail.indexDoc | json}}</pre></dd>
+    <button (click)="showIDF = !showIDF" class="btn btn-sm btn-outline-info">
+      {{showIDF ? 'Verstecken' : 'Anzeigen'}}
+    </button>
+    <dd *ngIf="showIDF"><pre class="mapping">{{detail.idf}}</pre></dd>
+    <dt>Index-Dokument</dt>
+    <button (click)="showIndexDocument = !showIndexDocument" class="btn btn-sm btn-outline-info">
+      {{showIndexDocument ? 'Verstecken' : 'Anzeigen'}}
+    </button>
+    <dd *ngIf="showIndexDocument"><pre>{{detail.indexDoc | json}}</pre></dd>
   </dl>
 </div>
