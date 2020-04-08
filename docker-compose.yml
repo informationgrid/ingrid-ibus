@@ -2,8 +2,25 @@ version: '3'
 
 services:
 
+#  apache:
+#    # latest had ERROR: no matching manifest for linux/amd64 in the manifest list entries
+#    image: httpd:2.4.29
+#    volumes:
+#      - ./docker/httpd.conf:/usr/local/apache2/conf/httpd.conf
+#      - ./docker/portal.conf:/usr/local/apache2/conf/extra/portal.conf
+#    ports:
+#      - 82:80
+#    networks:
+#      - ingrid-network
+#
+#  mysql:
+#    image: docker-registry.wemove.com/dev-ingrid-databases
+#    networks:
+#      - ingrid-network
+
   elastic:
     image: docker-registry.wemove.com/ingrid-elasticsearch-with-decompound:6.4.2
+    #image: docker-registry.wemove.com/ingrid-elasticsearch-with-decompound:6.4.2-numis
     environment:
       - cluster.name=ingrid
       - http.host=0.0.0.0
@@ -14,8 +31,47 @@ services:
       - xpack.security.enabled=false
       - xpack.monitoring.enabled=false
       - xpack.ml.enabled=false
-    # volumes:
-    #  - esdata1:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
       - 9300:9300
+    networks:
+      - ingrid-network
+
+  ibus:
+    image: docker-registry.wemove.com/ingrid-ibus:5.3.0
+    depends_on:
+      - elastic
+    environment:
+      - ADMIN_PASSWORD=admin
+      - INGRID_OPTS=-agentlib:jdwp=transport=dt_socket,address=7002,server=y,suspend=n
+      - CODELIST_URL=http://codelist-repo
+      - CODELIST_USERNAME=admin
+      - CODELIST_PASSWORD=admin
+      - ELASTIC_HOSTS=elastic:9300
+    ports:
+      - 8888:80
+    volumes:
+      - ./docker/activatedIplugs.properties:/opt/ingrid/ingrid-ibus/conf/activatedIplugs.properties
+      - ./docker/application-default.properties:/opt/ingrid/ingrid-ibus/conf/application-default.properties
+    command: ["sh", "/wait-for-elasticsearch.sh", "elastic:9200", "/bin/sh start.sh start"]
+    networks:
+      - ingrid-network
+
+#  portal:
+#    image: docker-registry.wemove.com/ingrid-portal
+#    environment:
+#      - JAVA_OPTS=-DDB_PASSWORD="" -Dfile.encoding=UTF8
+#      - PORTAL_CACHE_ENABLE=false
+#      - PORTAL_CSW_URL=http:\/\/192.168.0.229\/interface-csw
+#      - DEBUG=true
+#    ports:
+#      - 8000:8080
+#    volumes:
+#      - ./docker/mdek.override.properties:/opt/ingrid/ingrid-portal/apache-tomcat/webapps/ingrid-portal-mdek-application/WEB-INF/classes/mdek.override.properties
+#    networks:
+#      - ingrid-network
+#    command: ["bash", "/wait-for-it.sh", "mysql:3306", "-t", "240", "--", "/run.sh"]
+
+networks:
+  ingrid-network:
+    driver: "bridge"
