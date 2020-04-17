@@ -26,3 +26,5 @@ node/
 src/main/resources/static/
 data/
 .vscode/
+/backend/conf/activatedIplugs.properties
+/backend/logs/log.log

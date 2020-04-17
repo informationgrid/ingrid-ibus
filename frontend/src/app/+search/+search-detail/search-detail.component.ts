@@ -34,6 +34,8 @@ import {Observable} from "rxjs";
 export class SearchDetailComponent implements OnInit {
 
   detail: SearchHit;
+  showIDF = false;
+  showIndexDocument = false;
 
   constructor(private activeRoute: ActivatedRoute, private indexService: IndexService) {
   }

@@ -42,6 +42,7 @@ export class SearchComponent implements OnInit {
   error: string = null;
   showDebug = false;
   debugInfo: DebugEvent[];
+  lastPage: number;
 
   constructor(private indexService: IndexService) {
   }
@@ -65,14 +66,15 @@ export class SearchComponent implements OnInit {
     this.totalDocs = hits.length;
 
     // calculate the number of pages to show
-    let numPages = Math.round(this.totalDocs / this.numPerPage);
+    this.lastPage = Math.round(this.totalDocs / this.numPerPage);
+    let numPages = Math.min(4, this.lastPage - this.currentPage);
     if (this.totalDocs > this.numPerPage && this.totalDocs % this.numPerPage !== 0) {
       numPages += 1;
     } else if(this.totalDocs <= this.numPerPage) {
       numPages = 1;
     }
 
-    this.pages = Array(numPages).fill(0).map((x, i)=>i);
+    this.pages = Array(numPages).fill(0).map((x, i)=>i + this.currentPage);
     this.debugInfo = hits.debug;
   }
 

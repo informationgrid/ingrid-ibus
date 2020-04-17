@@ -3,6 +3,7 @@ ENV INGRID_USER=root
 ENV RUN_DIRECTLY=true
 ENV IBUS_ID=/ingrid-group:ibus
 ENV SERVER_PORT=80
+ENV INGRID_OPTS=-Xmx512m
 
 ADD ingrid-ibus-*-installer.jar wait-for-elasticsearch.sh /
 
