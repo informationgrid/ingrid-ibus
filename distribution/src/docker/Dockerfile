@@ -1,22 +1,26 @@
-FROM openjdk:8-jdk-alpine
-ENV INGRID_USER=root
-ENV RUN_DIRECTLY=true
-ENV IBUS_ID=/ingrid-group:ibus
-ENV SERVER_PORT=80
-ENV INGRID_OPTS=-Xmx512m
+FROM alpine AS builder
 
 ADD ingrid-ibus-*-installer.jar wait-for-elasticsearch.sh /
-
 RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
-    && mkdir -p /opt/ingrid/ingrid-ibus \
-    && mkdir -p /opt/ingrid/ingrid-ibus/logs \
-    && cp -R /tmp/ingrid-ibus-*/* /opt/ingrid/ingrid-ibus/ \
-    && rm -Rf /tmp/* \
-    && sed -i -r 's/(<AppenderRef.*\/>)/\1<AppenderRef ref="Console" \/>/g' /opt/ingrid/ingrid-ibus/conf/log4j2.xml \
-    && rm ingrid-*.jar
+    && export INSTALL_DIR=`ls -d1 /tmp/ingrid-ibus-*` \
+    && mkdir -p $INSTALL_DIR/logs \
+    && sed -i -r 's/(<AppenderRef.*\/>)/\1<AppenderRef ref="Console" \/>/g' $INSTALL_DIR/conf/log4j2.xml \
+    && cp wait-for-elasticsearch.sh $INSTALL_DIR/
+
+
+FROM docker-registry.wemove.com/ingrid-java:jre-8-alpine
+ENV INGRID_USER=ingrid
+ENV RUN_DIRECTLY=true
+ENV IBUS_ID=/ingrid-group:ibus
+ENV SERVER_PORT=8080
+
+# user, group ingrid (1000:1000) is created in base image
+COPY --chown=1000:1000 --from=builder /tmp/ingrid-ibus-* /opt/ingrid/ingrid-ibus/
+
+USER ingrid
     
 WORKDIR /opt/ingrid/ingrid-ibus
-EXPOSE 80
+EXPOSE 8080
 EXPOSE 9900
 
 CMD /bin/sh start.sh start
