@@ -66,7 +66,6 @@ import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.iplug.IPlugVersionInspector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.processor.ProcessorPipe;
-import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.tool.PlugDescriptionUtil;
 import de.ingrid.utils.tool.QueryUtil;
@@ -159,11 +158,6 @@ public class Bus extends Thread implements IBus {
             requestLength = hitsPerPage * currentPage;
         } else {
             requestLength = startHit + (hitsPerPage * 6);
-        }
-
-        // Exclude folders from search
-        if(!query.containsField("isfolder")) {
-            query.addField(new FieldQuery(true, true, "isfolder", "true"));
         }
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery( query, this.fRegistry );
