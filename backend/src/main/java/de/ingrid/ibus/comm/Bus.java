@@ -163,18 +163,8 @@ public class Bus extends Thread implements IBus {
         }
 
         // Exclude folders from search
-        if(!query.containsField("isfolder")) {
-            boolean hasIsFolderField = false;
-            ClauseQuery[] cqs = query.getClauses();
-            for (ClauseQuery clauseQuery : cqs) {
-                if(clauseQuery.containsField("isfolder")) {
-                    hasIsFolderField = true;
-                    break;
-                }
-            }
-            if(!hasIsFolderField) {
-                query.addField(new FieldQuery(true, true, "isfolder", "true"));
-            }
+        if(!hasQueryFieldIsFolder(query)) {
+            query.addField(new FieldQuery(true, true, "isfolder", "true"));
         }
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery( query, this.fRegistry );
@@ -297,6 +287,25 @@ public class Bus extends Thread implements IBus {
         }
 
         return hitContainer;
+    }
+
+    private boolean hasQueryFieldIsFolder(IngridQuery query) {
+        boolean hasFieldIsFolder = false;
+        
+        if(query.containsField("isfolder")) {
+            hasFieldIsFolder = true;
+        } else {
+            ClauseQuery[] cqs = query.getClauses();
+            for (ClauseQuery clauseQuery : cqs) {
+                if(clauseQuery.containsField("isfolder")) {
+                    hasFieldIsFolder = true;
+                    break;
+                }
+                hasFieldIsFolder = hasQueryFieldIsFolder(clauseQuery);
+            }
+            
+        }
+        return hasFieldIsFolder;
     }
 
     @SuppressWarnings("unchecked")
