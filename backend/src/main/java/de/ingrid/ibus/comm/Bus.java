@@ -41,9 +41,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import de.ingrid.ibus.management.ManagementService;
-import de.ingrid.ibus.service.SearchService;
-import de.ingrid.ibus.service.SettingsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,6 +50,9 @@ import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.ibus.comm.net.PlugQueryRequest;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.comm.registry.SyntaxInterpreter;
+import de.ingrid.ibus.management.ManagementService;
+import de.ingrid.ibus.service.SearchService;
+import de.ingrid.ibus.service.SettingsService;
 import de.ingrid.utils.IBus;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IRecordLoader;
@@ -66,6 +66,7 @@ import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.iplug.IPlugVersionInspector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.processor.ProcessorPipe;
+import de.ingrid.utils.query.ClauseQuery;
 import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.tool.PlugDescriptionUtil;
@@ -163,7 +164,17 @@ public class Bus extends Thread implements IBus {
 
         // Exclude folders from search
         if(!query.containsField("isfolder")) {
-            query.addField(new FieldQuery(true, true, "isfolder", "true"));
+            boolean hasIsFolderField = false;
+            ClauseQuery[] cqs = query.getClauses();
+            for (ClauseQuery clauseQuery : cqs) {
+                if(clauseQuery.containsField("isfolder")) {
+                    hasIsFolderField = true;
+                    break;
+                }
+            }
+            if(!hasIsFolderField) {
+                query.addField(new FieldQuery(true, true, "isfolder", "true"));
+            }
         }
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery( query, this.fRegistry );
