@@ -139,6 +139,9 @@ public class Bus extends Thread implements IBus {
     }
 
     public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds) throws Exception {
+        return search(query, hitsPerPage, currentPage, startHit, maxMilliseconds, true);
+    }
+    public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds, boolean validateIsFolderField) throws Exception {
         long startSearch = 0;
         if (fLogger.isDebugEnabled()) {
             startSearch = System.currentTimeMillis();
@@ -163,8 +166,10 @@ public class Bus extends Thread implements IBus {
         }
 
         // Exclude folders from search
-        if(!hasQueryFieldIsFolder(query)) {
-            query.addField(new FieldQuery(true, true, "isfolder", "true"));
+        if(validateIsFolderField) {
+            if(!hasQueryFieldIsFolder(query)) {
+                query.addField(new FieldQuery(true, true, "isfolder", "true"));
+            }
         }
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery( query, this.fRegistry );
