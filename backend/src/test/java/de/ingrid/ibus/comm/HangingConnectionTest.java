@@ -58,7 +58,7 @@ public class HangingConnectionTest extends TestCase {
         bus.getIPlugRegistry().activatePlug("");
         long start = System.currentTimeMillis();
         try {
-            bus.search(QueryStringParser.parse("hallo"), 10, 1, 100, 1000);
+            bus.search(QueryStringParser.parse("hallo"), 10, 1, 100, 1000, false);
             fail();
         } catch (TimeoutException e) {
             assertTrue(start + 100 < System.currentTimeMillis());
