@@ -95,7 +95,7 @@ public class BusTest {
 
         for (int i = 0; i < 5; i++) {
             long time = System.currentTimeMillis();
-            IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000);
+            IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000, false);
             System.out.println("search took ".concat(new Long(System.currentTimeMillis() - time).toString().concat(" ms")));
             assertEquals(this.plugDescriptions.length, hits.getHits().length);
             assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
@@ -111,7 +111,7 @@ public class BusTest {
     public void testFieldSearch() throws Exception {
         this.plugDescriptions[this.plugDescriptions.length - 1].addField("aField");
         IngridQuery query = QueryStringParser.parse("aField:halle");
-        IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000, false);
         assertEquals(2, hits.getHits().length);
         assertEquals(1, hits.getInVolvedPlugs());
     }
@@ -126,7 +126,7 @@ public class BusTest {
         this.bus.getProccessorPipe().addPostProcessor(new StatisticPostProcessor());
 
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000, false);
     }
 
     /**
@@ -151,7 +151,7 @@ public class BusTest {
     public void testGetHitDetail() throws Exception {
 
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000);
+        IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000, false);
         assertEquals(this.plugDescriptions.length, hits.getHits().length);
         IngridHit[] hitArray = hits.getHits();
         for (int i = 0; i < hitArray.length; i++) {
@@ -173,7 +173,7 @@ public class BusTest {
     @Test
     public void testGetHitDetails() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
-        IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000);
+        IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000, false);
 
         assertEquals(this.plugDescriptions.length, hits.getHits().length);
         IngridHit[] hitArray = hits.getHits();
@@ -204,7 +204,7 @@ public class BusTest {
 
         IngridQuery query = QueryStringParser.parse("fische");
         query.put(IngridQuery.RANKED, IngridQuery.NOT_RANKED);
-        IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000, false);
         assertEquals((this.plugDescriptions.length) * 2, hits.getHits().length);
         assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
         assertFalse(hits.isRanked());
@@ -212,11 +212,11 @@ public class BusTest {
         // invert order of plugdescriptions
         this.bus.removePlugDescription(this.plugDescriptions[0]);
         this.bus.removePlugDescription(this.plugDescriptions[1]);
-        assertEquals(2, this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000).length());
+        assertEquals(2, this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000, false).length());
         this.bus.addPlugDescription(this.plugDescriptions[1]);
         this.bus.addPlugDescription(this.plugDescriptions[0]);
 
-        hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000);
+        hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000, false);
         assertFalse(hits.isRanked());
     }
 
@@ -238,7 +238,7 @@ public class BusTest {
         }
 
         IngridQuery query = QueryStringParser.parse("fische ranking:off datatype:g2k grouped:grouped_by_organisation");
-        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000);
+        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000, false);
         assertEquals(this.plugDescriptions.length, hits.getHits().length);
     }
 
@@ -261,7 +261,7 @@ public class BusTest {
         }
 
         IngridQuery query = QueryStringParser.parse("fische (partner:st OR partner:sl)");
-        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000);
+        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000, false);
         assertEquals(0, hits.getHits().length);
     }
 
@@ -283,7 +283,7 @@ public class BusTest {
         }
 
         IngridQuery query = QueryStringParser.parse("fische ranking:off grouped:grouped_by_plugId");
-        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000);
+        IngridHits hits = this.bus.search(query, 10, 1, 0, 1000, false);
         assertEquals(this.plugDescriptions.length, hits.getHits().length);
         System.out.println(hits);
         System.out.println(hits.getHits()[0].size());
