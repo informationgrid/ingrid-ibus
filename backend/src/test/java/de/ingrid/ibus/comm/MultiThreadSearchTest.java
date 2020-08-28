@@ -86,7 +86,7 @@ public class MultiThreadSearchTest extends TestCase {
 
         public void run() {
             try {
-                this.bus.search(this.query, 10, 1, Integer.MAX_VALUE, 1000);
+                this.bus.search(this.query, 10, 1, Integer.MAX_VALUE, 1000, false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
