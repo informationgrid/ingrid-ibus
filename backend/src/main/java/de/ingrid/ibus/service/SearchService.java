@@ -238,6 +238,16 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
 
             indexManager.deleteIndex( (String) parameter );
             break;
+
+        case "getIndices":
+            parameter = targetInfo.getParameter();
+            if (log.isDebugEnabled()) {
+                log.debug("Get indices with filter: " + parameter);
+            }
+
+            String[] indices = indexManager.getIndices( (String) parameter );
+            doc.put( "result", indices );
+            break;
             
         case "getMapping":
             parameter = targetInfo.getParameter();
