@@ -9,6 +9,9 @@
       <action type="add" dev="wemove" issue="1102">
         Add display folder on portal catalog tree.
       </action>
+      <action type="fix" dev="wemove" issue="2159">
+        Increase aggregation size limit to 1000.
+      </action>
     </release>
 
     <release version="5.5.0" date="2020-07-24" description="Release 5.5.0">
