@@ -19,7 +19,7 @@ services:
 #      - ingrid-network
 
   elastic:
-    image: docker-registry.wemove.com/ingrid-elasticsearch-with-decompound:6.4.2
+    image: docker-registry.wemove.com/ingrid-elasticsearch-with-decompound:6.8.4
     #image: docker-registry.wemove.com/ingrid-elasticsearch-with-decompound:6.4.2-numis
     environment:
       - cluster.name=ingrid

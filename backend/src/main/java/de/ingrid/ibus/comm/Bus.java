@@ -41,9 +41,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import de.ingrid.ibus.management.ManagementService;
-import de.ingrid.ibus.service.SearchService;
-import de.ingrid.ibus.service.SettingsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,6 +50,9 @@ import de.ingrid.ibus.comm.net.IPlugProxyFactory;
 import de.ingrid.ibus.comm.net.PlugQueryRequest;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.comm.registry.SyntaxInterpreter;
+import de.ingrid.ibus.management.ManagementService;
+import de.ingrid.ibus.service.SearchService;
+import de.ingrid.ibus.service.SettingsService;
 import de.ingrid.utils.IBus;
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IRecordLoader;
@@ -66,6 +66,8 @@ import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.iplug.IPlugVersionInspector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.processor.ProcessorPipe;
+import de.ingrid.utils.query.ClauseQuery;
+import de.ingrid.utils.query.FieldQuery;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.tool.PlugDescriptionUtil;
 import de.ingrid.utils.tool.QueryUtil;
@@ -137,6 +139,9 @@ public class Bus extends Thread implements IBus {
     }
 
     public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds) throws Exception {
+        return search(query, hitsPerPage, currentPage, startHit, maxMilliseconds, true);
+    }
+    public IngridHits search(IngridQuery query, int hitsPerPage, int currentPage, int startHit, int maxMilliseconds, boolean validateIsFolderField) throws Exception {
         long startSearch = 0;
         if (fLogger.isDebugEnabled()) {
             startSearch = System.currentTimeMillis();
@@ -158,6 +163,13 @@ public class Bus extends Thread implements IBus {
             requestLength = hitsPerPage * currentPage;
         } else {
             requestLength = startHit + (hitsPerPage * 6);
+        }
+
+        // Exclude folders from search
+        if(validateIsFolderField) {
+            if(!hasQueryFieldIsFolder(query)) {
+                query.addField(new FieldQuery(true, true, "isfolder", "true"));
+            }
         }
 
         PlugDescription[] plugDescriptionsForQuery = SyntaxInterpreter.getIPlugsForQuery( query, this.fRegistry );
@@ -280,6 +292,25 @@ public class Bus extends Thread implements IBus {
         }
 
         return hitContainer;
+    }
+
+    private boolean hasQueryFieldIsFolder(IngridQuery query) {
+        boolean hasFieldIsFolder = false;
+        
+        if(query.containsField("isfolder")) {
+            hasFieldIsFolder = true;
+        } else {
+            ClauseQuery[] cqs = query.getClauses();
+            for (ClauseQuery clauseQuery : cqs) {
+                if(clauseQuery.containsField("isfolder")) {
+                    hasFieldIsFolder = true;
+                    break;
+                }
+                hasFieldIsFolder = hasQueryFieldIsFolder(clauseQuery);
+            }
+            
+        }
+        return hasFieldIsFolder;
     }
 
     @SuppressWarnings("unchecked")
