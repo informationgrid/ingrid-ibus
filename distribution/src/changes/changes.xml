@@ -5,12 +5,15 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="5.6.0-SNAPSHOT" date="2020-xx-xx" description="Release 5.6.0">
+    <release version="5.6.0" date="2020-10-15" description="Release 5.6.0">
       <action type="add" dev="wemove" issue="1102">
         Add display folder on portal catalog tree.
       </action>
       <action type="fix" dev="wemove" issue="2159">
         Increase aggregation size limit to 1000.
+      </action>
+      <action type="add" dev="wemove" issue="2104">
+          Add function to get indices from ES
       </action>
     </release>
 
