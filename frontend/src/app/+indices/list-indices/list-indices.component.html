@@ -59,7 +59,7 @@
           [class.fa-chevron-down]="!expanded['others']"></span>
   </h6>
   <div *ngIf="expanded['others']" class="other">
-    <ng-container *ngFor="let item of indexItems">
+    <ng-container *ngFor="let item of indexItems; trackBy: getIndexItemIdentifier">
       <index-item *ngIf="!item.hasLinkedComponent" [data]="item" [view]="'short'" (onDelete)="refresh()"></index-item>
     </ng-container>
   </div>
