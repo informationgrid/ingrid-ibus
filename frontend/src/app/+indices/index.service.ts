@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,5 +85,19 @@ export class IndexService {
     return this.http.get<string[]>(this.configuration.backendUrl + '/settings/activeComponentIds', {
       params: new HttpParams().set('verify', 'true')
     });
+  }
+
+  getConfigIndexEntries(): Observable<any[]> {
+
+    return this.http.get<any[]>(`${this.configuration.backendUrl}/configIndex`);
+
+  }
+
+  deleteConfigIndexEntry(id: string) {
+    return this.http.delete(`${this.configuration.backendUrl}/configIndex/${id}`);
+  }
+
+  deleteConfigIndex() {
+    return this.http.delete(`${this.configuration.backendUrl}/configIndex`);
   }
 }

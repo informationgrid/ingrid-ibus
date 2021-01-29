@@ -1,0 +1,27 @@
+:host {
+    padding: 20px;
+}
+
+.header {
+    padding: 10px 0 20px;
+}
+
+.accordion .card-header {
+    cursor: pointer;
+
+    &:hover {
+        background-color: darken(#f7f7f7, 2.5%);
+    }
+}
+
+.collapse {
+    overflow: auto;
+
+    .card-body {
+        max-height: 500px;
+
+        pre {
+            font-size: 12px;
+        }
+    }
+}

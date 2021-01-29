@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { Subscription } from 'rxjs/Subscription';
 import {map, startWith, takeWhile} from 'rxjs/operators';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-list-indices',
@@ -49,7 +50,8 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
 
   expanded = {};
 
-  constructor(private indexService: IndexService) {
+  constructor(private indexService: IndexService,
+              private router: Router) {
   }
 
   ngOnInit() {
@@ -100,4 +102,7 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
     this.getIndexNames();
   }
 
+  showConfigIndex() {
+    this.router.navigate(['/configIndex']);
+  }
 }

@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,6 +29,7 @@ import { SettingsListComponent } from './+settings/settings-list/settings-list.c
 import { ConnectedIplugsComponent } from './+iplugs/connected-iplugs/connected-iplugs.component';
 import { environment } from '../environments/environment';
 import {FirstPasswordGuard} from './shared/first-password.guard';
+import {ConfigIndexComponent} from './+indices/config-index/config-index.component';
 
 const appRoutes: Routes = [
   {path: 'iplugs', component: ConnectedIplugsComponent, canActivate: [FirstPasswordGuard]},
@@ -37,6 +38,7 @@ const appRoutes: Routes = [
   {path: 'search', component: SearchComponent, canActivate: [FirstPasswordGuard]},
   {path: 'search/:indexId/:hitId', component: SearchDetailComponent, canActivate: [FirstPasswordGuard]},
   {path: 'settings', component: SettingsListComponent},
+  {path: 'configIndex', component: ConfigIndexComponent},
   {
     path: '',
     redirectTo: '/iplugs',

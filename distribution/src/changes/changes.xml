@@ -5,6 +5,12 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="5.8.0" date="2021-xx-xx" description="Release 5.8.0">
+      <action type="add" dev="wemove" issue="2342">
+          Add management page for configuration index ingrid_meta
+      </action>
+    </release>
+      
     <release version="5.7.0" date="2021-01-19" description="Release 5.7.0">
       <action type="fix" dev="wemove" issue="2197">
           Fix broken connection after IOException
