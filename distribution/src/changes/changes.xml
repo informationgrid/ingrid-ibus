@@ -9,6 +9,9 @@
       <action type="add" dev="wemove" issue="2342">
           Add management page for configuration index ingrid_meta
       </action>
+      <action type="fix" dev="wemove" issue="2385">
+          Make indexing more robust
+      </action>
     </release>
       
     <release version="5.7.0" date="2021-01-19" description="Release 5.7.0">
