@@ -12,6 +12,9 @@
       <action type="fix" dev="wemove" issue="2385">
           Make indexing more robust
       </action>
+      <action type="fix" dev="wemove">
+          Catch all errors in Communication
+      </action>
     </release>
       
     <release version="5.7.0" date="2021-01-19" description="Release 5.7.0">
