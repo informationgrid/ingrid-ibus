@@ -5,6 +5,18 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="5.8.0" date="2021-04-15" description="Release 5.8.0">
+      <action type="add" dev="wemove" issue="2342">
+          Add management page for configuration index ingrid_meta
+      </action>
+      <action type="fix" dev="wemove" issue="2385">
+          Make indexing more robust
+      </action>
+      <action type="fix" dev="wemove">
+          Catch all errors in Communication
+      </action>
+    </release>
+
     <release version="5.7.0" date="2021-01-19" description="Release 5.7.0">
       <action type="fix" dev="wemove" issue="2197">
           Fix broken connection after IOException
@@ -122,13 +134,13 @@
         Prepare for docker deployment.
       </action>
     </release>
-    
+
     <release version="4.0.1" date="2016-01-30" description="Release 4.0.1">
       <action type="fix" dev="wemove" issue="REDMINE-465">
         Fixed wrong path to save data when using cygwin.
       </action>
     </release>
-    
+
     <release version="3.6.2" date="2016-05-13" description="Release 3.6.2">
       <action type="fix" dev="wemove" issue="REDMINE-286">
         Fixed problem with interrupted messages.
@@ -143,7 +155,7 @@
         Remove all references to PortalU.
       </action>
     </release>
-    
+
     <release version="3.6.0" date="2015-06-19" description="Release 3.6.0">
       <action type="add" dev="wemove" issue="REDMINE-661">
         Added handling of results from elastic search index (IDs of hits).

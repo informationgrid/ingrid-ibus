@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,10 +29,12 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { DateRelativePipe } from './date-relative.pipe';
+import { ConfigIndexComponent } from './config-index/config-index.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   imports: [
-    CommonModule, SharedModule, ConfirmationPopoverModule
+    CommonModule, SharedModule, ConfirmationPopoverModule, RouterModule
   ],
   providers: [
     IndexService
@@ -41,7 +43,8 @@ import { DateRelativePipe } from './date-relative.pipe';
     ListIndicesComponent,
     IndexItemComponent,
     IndexDetailComponent,
-    DateRelativePipe
+    DateRelativePipe,
+    ConfigIndexComponent
   ]
 })
 export class IndicesModule { }

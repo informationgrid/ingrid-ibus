@@ -23,7 +23,9 @@
 package de.ingrid.ibus.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.ingrid.ibus.model.ConfigIndexEntry;
 import de.ingrid.ibus.service.ConfigurationService;
+import de.ingrid.ibus.service.IndicesService;
 import de.ingrid.ibus.service.SettingsService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,10 +37,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 @CrossOrigin
 @Controller
@@ -52,6 +51,9 @@ public class SettingsController {
 
     @Autowired
     private ConfigurationService configurationService;
+
+    @Autowired
+    private IndicesService indexService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -108,5 +110,26 @@ public class SettingsController {
     public ResponseEntity<?> getStatus() {
         Properties configuration = this.configurationService.getStatus();
         return ResponseEntity.ok(configuration);
+    }
+
+    @GetMapping("/configIndex")
+    @ResponseBody
+    public ResponseEntity<List<ConfigIndexEntry>> getConfigurationIndex() {
+        List<ConfigIndexEntry> configurations = this.indexService.getConfigurationIndexEntries();
+        return ResponseEntity.ok(configurations);
+    }
+
+    @DeleteMapping("/configIndex/{id}")
+    @ResponseBody
+    public ResponseEntity<Void> deleteConfigurationIndexEntry(@PathVariable String id) {
+        this.indexService.removeConfigurationIndexEntry(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/configIndex")
+    @ResponseBody
+    public ResponseEntity<Void> deleteConfigurationIndex() {
+        this.indexService.removeConfigurationIndex();
+        return ResponseEntity.ok().build();
     }
 }

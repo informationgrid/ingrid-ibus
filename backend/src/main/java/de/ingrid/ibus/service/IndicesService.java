@@ -36,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -49,6 +50,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.indices.IndexClosedException;
+import org.elasticsearch.persistent.RemovePersistentTaskAction;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.joda.time.DateTime;
@@ -62,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -600,4 +603,47 @@ public class IndicesService {
         indexManager.checkAndCreateInformationIndex();
     }
 
+    public List<ConfigIndexEntry> getConfigurationIndexEntries() {
+        SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
+                .setTypes( "info" )
+                .setFetchSource( new String[] { "*" }, null )
+                .setSize( 1000 )
+                .get();
+
+        SearchHit[] hits = response.getHits().getHits();
+        return Arrays.stream(hits)
+                .map(this::mapHitToConfigIndexEntry)
+                .collect(Collectors.toList());
+    }
+
+    private ConfigIndexEntry mapHitToConfigIndexEntry(SearchHit hit) {
+
+        ConfigIndexEntry entry = new ConfigIndexEntry();
+        Map<String, Object> source = hit.getSourceAsMap();
+        
+        entry.id = hit.getId();
+        entry.plugId = (String) source.get("plugId");
+        entry.indexId = (String) source.get("indexId");
+        entry.lastHeartbeat = (String) source.get("lastHeartbeat");
+        entry.iPlugName = (String) source.get("iPlugName");
+        entry.linkedType = (String) source.get("linkedType");
+        entry.lastIndexed = (String) source.get("lastIndexed");
+        entry.linkedIndex = (String) source.get("linkedIndex");
+        entry.adminUrl = (String) source.get("adminUrl");
+        entry.plugdescription = (Map<String, Object>) source.get("plugdescription");
+        
+        return entry;
+    }
+
+    public void removeConfigurationIndexEntry(String id) {
+        DeleteRequest request = new DeleteRequest(INDEX_INFO_NAME)
+                .type("info")
+                .id(id);
+        client.delete(request).actionGet();
+    }
+
+    public void removeConfigurationIndex() {
+        deleteIndex(INDEX_INFO_NAME);
+        indexManager.checkAndCreateInformationIndex();
+    }
 }

@@ -1,0 +1,107 @@
+<!--
+  **************************************************-
+  InGrid iBus Frontend
+  ==================================================
+  Copyright (C) 2014 - 2021 wemove digital solutions GmbH
+  ==================================================
+  Licensed under the EUPL, Version 1.1 or – as soon they will be
+  approved by the European Commission - subsequent versions of the
+  EUPL (the "Licence");
+  
+  You may not use this work except in compliance with the Licence.
+  You may obtain a copy of the Licence at:
+  
+  http://ec.europa.eu/idabc/eupl5
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the Licence is distributed on an "AS IS" basis,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the Licence for the specific language governing permissions and
+  limitations under the Licence.
+  **************************************************#
+  -->
+<div *ngIf="!showInfo" class="text-right text-info mb-1">
+  <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfo = true"></button>
+</div>
+
+<div *ngIf="showInfo" class="card text-white bg-info mb-3">
+  <div class="card-header">
+    Information
+    <button type="button" class="close" aria-label="Close" (click)="showInfo = false">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="card-body">
+    <p>Hier wird der Inhalt des Konfigurationsindex dargestellt. Dieser beinhaltet alle gesammelten
+      Informationen, die von den iPlugs geschickt wurden, insbesondere die PlugDescription, welche
+      für weitere Auswertungen benötigt wird.</p>
+
+    <p>Sollten hier doppelte oder falsche Informationen zu einem iPlug stehen, so kann dieser Eintrag
+      entfernt werden. Nach einer Neuindizierung wird für dieses iPlug ein neuer Eintrag angelegt.</p>
+  </div>
+</div>
+
+<div class="header">
+  <a class="btn btn-outline-secondary" routerLink="/indices">Zurück</a>
+  <div style="float: right">
+    <button class="btn btn-outline-danger"
+            mwlConfirmationPopover
+            [popoverTitle]="'Wirklich löschen?'"
+            [popoverMessage]="'Wollen Sie den Konfigurations-Index wirklich löschen?'"
+            placement="left"
+            confirmText="Löschen"
+            cancelText="Abbrechen"
+            (confirm)="deleteIndex()">Gesamten Index löschen</button>
+  </div>
+</div>
+
+{{entries?.length}} Einträge
+
+<div class="accordion" id="accordionExample">
+  <div *ngFor="let entry of entries" class="card">
+    <div class="card-header" (click)="expandState[entry.id] = !expandState[entry.id]">
+      <h5 class="mb-0">
+        {{entry.iPlugName}}
+        <button class="btn btn-light fa fa-trash btn-outline-danger btn-sm" type="button"
+                style="float: right"
+                (click)="stopEventPropagation($event)"
+                mwlConfirmationPopover
+                [popoverTitle]="'Wirklich löschen?'"
+                [popoverMessage]="'Wollen Sie die iPlug-Information wirklich löschen?'"
+                [appendToBody]="true"
+                placement="left"
+                confirmText="Löschen"
+                cancelText="Abbrechen"
+                (confirm)="deleteEntry(entry.id)">
+        </button>
+      </h5>
+      <div style="margin-top: 10px">
+        {{entry.plugId}} <span *ngIf="entry.linkedType">({{entry.linkedType}})</span>
+        <div style="float: right;" title="Zuletzt indiziert">
+          {{entry.lastIndexed | date:'medium'}}
+        </div>
+      </div>
+    </div>
+
+    <div class="collapse" [class.show]="expandState[entry.id]">
+      <div class="card-body">
+        <dl class="row">
+          <dt class="col-sm-3">ID</dt>
+          <dd class="col-sm-9">{{entry.id}}</dd>
+          <dt class="col-sm-3">ID des iPlug-Index</dt>
+          <dd class="col-sm-9">{{entry.indexId}}</dd>
+          <dt class="col-sm-3">Index</dt>
+          <dd class="col-sm-9">{{entry.linkedIndex}} <span *ngIf="entry.linkedType">({{entry.linkedType}})</span></dd>
+          <dt class="col-sm-3">Letzter Heartbeat</dt>
+          <dd class="col-sm-9">{{entry.lastHeartbeat}}</dd>
+          <dt class="col-sm-3">Admin-URL</dt>
+          <dd class="col-sm-9">{{entry.adminUrl}}</dd>
+          <dt class="col-sm-3">PlugDescription</dt>
+          <dd class="col-sm-9">
+            <pre>{{entry.plugdescription | json}}</pre>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,12 +20,13 @@
  * limitations under the Licence.
  * **************************************************#
  */
-import { IndexService } from '../index.service';
-import { IndexItem } from '../index-item/index-item.component';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
-import { Subscription } from 'rxjs/Subscription';
+import {IndexService} from '../index.service';
+import {IndexItem} from '../index-item/index-item.component';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {IntervalObservable} from 'rxjs/observable/IntervalObservable';
+import {Subscription} from 'rxjs/Subscription';
 import {map, startWith, takeWhile} from 'rxjs/operators';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-list-indices',
@@ -49,18 +50,17 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
 
   expanded = {};
 
-  constructor(private indexService: IndexService) {
+  constructor(private indexService: IndexService,
+              private router: Router) {
   }
 
   ngOnInit() {
     this.observer = IntervalObservable.create(10000)
       .pipe(
         startWith(0),
-        takeWhile( _ => this.autoRefresh )
+        takeWhile(_ => this.autoRefresh)
       )
-      .subscribe( () => {
-        this.getIndexNames();
-      } )
+      .subscribe(() => this.getIndexNames());
   }
 
   ngOnDestroy() {
@@ -69,17 +69,24 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
 
   getIndexNames() {
     this.indexService.getIndices()
-        .pipe(
-            map( items => items.sort((a,b) => {
-              if (!a.longName && !b.longName) {
-                return a.name.localeCompare(b.name);
-              }
-              if (!a.longName) return 1;
-              if (!b.longName) return -1;
-              return a.longName.localeCompare(b.longName);
-            }) )
+      .pipe(
+        map(items => items
+          .sort((a, b) => {
+            if (a.hasLinkedComponent || b.hasLinkedComponent) {
+              if (!a.hasLinkedComponent) return 1;
+              if (!b.hasLinkedComponent) return -1;
+
+              const firstPart = a.longName?.localeCompare(b.longName);
+              return firstPart === 0 || firstPart === undefined
+                ? (a.types || [])[0]?.name?.localeCompare((b.types || [])[0]?.name)
+                : firstPart;
+            } else {
+              return a.name?.localeCompare(b.name);
+            }
+          })
         )
-        .subscribe(items => {
+      )
+      .subscribe(items => {
           this.error = '';
           this.indexItems = items;
           this.isLoading = false;
@@ -88,11 +95,11 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
           this.error = error;
           this.isLoading = false;
         }
-    );
+      );
   }
 
   getIndexItemIdentifier(item: IndexItem) {
-    return item.id;
+    return item.id || item.name;
   }
 
   refresh() {
@@ -100,4 +107,7 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
     this.getIndexNames();
   }
 
+  showConfigIndex() {
+    this.router.navigate(['/configIndex']);
+  }
 }
