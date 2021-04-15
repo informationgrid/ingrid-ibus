@@ -41,7 +41,7 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-communication</artifactId>
-      <version>5.8.0-SNAPSHOT</version>
+      <version>5.8.0</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
@@ -100,7 +100,7 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-elasticsearch-tools</artifactId>
-      <version>5.8.0-SNAPSHOT</version>
+      <version>5.8.0</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
