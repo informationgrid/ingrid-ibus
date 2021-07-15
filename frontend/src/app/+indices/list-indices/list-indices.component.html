@@ -46,21 +46,21 @@
   <h6>Komponenten-Indizes <span *ngIf="isLoading" class="pull-right fa fa-spinner fa-spin"></span></h6>
 
   <ng-container *ngFor="let item of indexItems; trackBy: getIndexItemIdentifier">
-    <index-item *ngIf="item.hasLinkedComponent" [data]="item"
+    <index-item [data]="item"
                 (onDelete)="refresh()"
                 (onError)="error = $event"
     ></index-item>
   </ng-container>
 
   <h6 class="clickable-only pt-3" (click)="expanded['others'] = !expanded['others']">
-    Andere Indizes
+    Andere Indizes ({{otherIndexItems.length}})
     <span class="pull-right fa"
           [class.fa-chevron-up]="expanded['others']"
           [class.fa-chevron-down]="!expanded['others']"></span>
   </h6>
   <div *ngIf="expanded['others']" class="other">
-    <ng-container *ngFor="let item of indexItems; trackBy: getIndexItemIdentifier">
-      <index-item *ngIf="!item.hasLinkedComponent" [data]="item" [view]="'short'" (onDelete)="refresh()"></index-item>
+    <ng-container *ngFor="let item of otherIndexItems; trackBy: getIndexItemIdentifier">
+      <index-item [data]="item" [view]="'short'" (onDelete)="refresh()"></index-item>
     </ng-container>
   </div>
 

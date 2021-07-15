@@ -36,6 +36,7 @@ import {Router} from '@angular/router';
 export class ListIndicesComponent implements OnInit, OnDestroy {
 
   indexItems: IndexItem[] = [];
+  otherIndexItems: IndexItem[] = [];
 
   isLoading = true;
 
@@ -88,7 +89,8 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
       )
       .subscribe(items => {
           this.error = '';
-          this.indexItems = items;
+          this.indexItems = items.filter(item => item.hasLinkedComponent);
+          this.otherIndexItems = items.filter(item => !item.hasLinkedComponent);
           this.isLoading = false;
         },
         error => {
