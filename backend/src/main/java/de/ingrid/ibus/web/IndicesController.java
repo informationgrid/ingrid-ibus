@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,18 +63,18 @@ import de.ingrid.utils.queryparser.QueryStringParser;
 @Controller
 @RequestMapping("/api")
 public class IndicesController {
-    
+
     private static Logger log = LogManager.getLogger(IndicesController.class);
-    
+
     @Autowired
     private IndicesService indicesService;
-    
+
     @Autowired
     private SearchService searchService;
-    
+
     @Autowired
     private SettingsService settingsService;
-    
+
     @Autowired
     private IPlugService iplugService;
 
@@ -106,7 +106,7 @@ public class IndicesController {
     @ResponseBody
     public ResponseEntity<Void> activateIndex(@RequestBody JsonNode json) throws Exception {
         boolean success = this.settingsService.activateIndexType( json.get( "id" ).asText() );
-        
+
         if (success) {
             return ResponseEntity.ok().build();
         } else {
@@ -118,7 +118,7 @@ public class IndicesController {
     @ResponseBody
     public ResponseEntity<Void> deactivateIndex(@RequestBody JsonNode json) throws Exception {
         boolean success = this.settingsService.deactivateIndexType( json.get( "id" ).asText() );
-        
+
         if (success) {
             return ResponseEntity.ok().build();
         } else {
@@ -135,10 +135,10 @@ public class IndicesController {
     @PutMapping("/indices/index")
     @ResponseBody
     public ResponseEntity<Void> planIndex(@RequestBody JsonNode json) {
-        
+
         String plugId = indicesService.getIPlugForIndex(json.get( "id" ).asText());
         boolean success = this.iplugService.index( plugId );
-        
+
         if (success) {
             return ResponseEntity.ok().build();
         } else {
@@ -153,17 +153,19 @@ public class IndicesController {
         // TODO: also have a job to clean up active indices in case they have been deleted somewhere else
         this.indicesService.deleteIndex(json.get( "id" ).asText());
         return ResponseEntity.ok().build();
-        
+
     }
-    
+
     @GetMapping("/search")
     @ResponseBody
     public ResponseEntity<IngridHits> search(@RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int hitsPerPage) throws ParseException {
+
+        IngridQuery iQuery = QueryStringParser.parse( query );
+
         // for convenience we add ranking:score mainly needed to get any results
         if (!query.contains("ranking:")) {
-            query += " ranking:score";
+            iQuery.put( IngridQuery.RANKED, IngridQuery.SCORE_RANKED );
         }
-        IngridQuery iQuery = QueryStringParser.parse( query );
 
         // enable debugging of query
         DebugQuery debugQ = Bus.getInstance().getDebugInfo();
@@ -180,7 +182,7 @@ public class IndicesController {
         }
 
     }
-    
+
     @GetMapping("/indices/{indexId}/{docId}")
     @ResponseBody
     public ResponseEntity<IngridHitDetail> getHitDetail(@PathVariable String indexId, @PathVariable String docId) {
