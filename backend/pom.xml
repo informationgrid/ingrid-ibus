@@ -106,7 +106,7 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-codelist-service</artifactId>
-      <version>5.4.0</version>
+      <version>5.11.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
