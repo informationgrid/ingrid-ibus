@@ -8,7 +8,7 @@ RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
     && cp wait-for-elasticsearch.sh $INSTALL_DIR/
 
 
-FROM docker-registry.wemove.com/ingrid-java:jre-8-alpine
+FROM docker-registry.wemove.com/ingrid-java:jre-8-slim
 ENV INGRID_USER=ingrid
 ENV RUN_DIRECTLY=true
 ENV IBUS_ID=/ingrid-group:ibus
