@@ -38,10 +38,9 @@ import de.ingrid.utils.tool.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Supports you with static methods to extract various informations out of a
@@ -365,13 +364,18 @@ public class SyntaxInterpreter {
     }
 
     private static void filterForIPlugs(long ms, IngridQuery query, List<PlugDescription> plugs) {
-        String[] restrictecPlugIds = query.getIPlugs();
-        if (restrictecPlugIds.length == 0) {
-            return;
+        String[] restrictedPlugIds = query.getIPlugs();
+        if (restrictedPlugIds.length == 0) {
+            restrictedPlugIds = Arrays.stream(query.getAllClauses())
+                    .flatMap(item -> Stream.of(item.getIPlugs()))
+                    .collect(Collectors.toList()).toArray(new String[]{});
+            if (restrictedPlugIds.length == 0) {
+                return;
+            }
         }
         for (Iterator<PlugDescription> iter = plugs.iterator(); iter.hasNext();) {
             PlugDescription plugDescription = iter.next();
-            if (!containsString(restrictecPlugIds, plugDescription.getPlugId())) {
+            if (!containsString(restrictedPlugIds, plugDescription.getPlugId())) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(ms + " remove iplug: " + plugDescription.getProxyServiceURL());
                 }
