@@ -5,7 +5,7 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="5.13.0-SNAPSHOT" date="2022-xx-xx" description="Release 5.13.0-SNAPSHOT">
+    <release version="5.13.0" date="2022-07-21" description="Release 5.13.0">
         <action type="fix" dev="wemove" issue="3797">
             Fix wrong iplug information removed, which contained the latest index.
         </action>
