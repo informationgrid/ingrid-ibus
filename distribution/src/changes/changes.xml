@@ -5,7 +5,10 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
-    <release version="5.14.0-SNAPSHOT" date="2021-xx-xx" description="Release 5.14.0-SNAPSHOT">
+    <release version="5.14.0-SNAPSHOT" date="2022-xx-xx" description="Release 5.14.0-SNAPSHOT">
+        <action type="fix" dev="wemove" issue="3129">
+            Fix click on detail link for SE results on iBus search page
+        </action>
     </release>
 
     <release version="5.13.0" date="2022-07-21" description="Release 5.13.0">
