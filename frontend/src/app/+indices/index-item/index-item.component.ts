@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl5
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,10 +65,10 @@ export class IndexItemComponent implements OnInit {
   ngOnInit() {
   }
 
-  showIndexItem(item: IndexItem, type: string) {
+  showIndexItem(item: IndexItem) {
     if (item.hasLinkedComponent) {
 
-      this.router.navigate(['/indices/' + item.name, {type: type}]);
+      this.router.navigate(['/indices/' + item.name]);
     }
   }
 
@@ -78,12 +78,12 @@ export class IndexItemComponent implements OnInit {
     );
   }
 
-  activateIndexType(type: IndexType, evt: Event) {
+  activateIndexType(item: IndexItem, evt: Event) {
     evt.stopImmediatePropagation();
     evt.stopPropagation();
     evt.preventDefault();
-    type.active = !type.active;
-    this.indexService.setActive(type.id, type.active).subscribe(
+    item.active = !item.active;
+    this.indexService.setActive(item.id, item.active).subscribe(
       null,
       err => this.onError.next(err)
     );

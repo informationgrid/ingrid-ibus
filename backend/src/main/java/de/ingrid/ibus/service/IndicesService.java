@@ -29,10 +29,9 @@ import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.elasticsearch.QueryBuilderService;
 import de.ingrid.ibus.model.*;
 import de.ingrid.utils.IngridHitDetail;
-import de.ingrid.utils.PlugDescription;
-import de.ingrid.utils.xml.XMLSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.search.TotalHits;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
@@ -42,15 +41,14 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.cluster.metadata.IndexMetaData;
-import org.elasticsearch.cluster.metadata.MappingMetaData;
+import org.elasticsearch.cluster.metadata.IndexMetadata;
+import org.elasticsearch.cluster.metadata.MappingMetadata;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.indices.IndexClosedException;
-import org.elasticsearch.persistent.RemovePersistentTaskAction;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.joda.time.DateTime;
@@ -60,8 +58,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -71,7 +67,6 @@ import java.util.stream.Stream;
 public class IndicesService {
 
     private static final String LINKED_INDEX = "linkedIndex";
-    private static final String LINKED_TYPE = "linkedType";
     private static final String INDEX_FIELD_LAST_INDEXED = "lastIndexed";
     private static final String INDEX_FIELD_INDEXING_STATE = "indexingState";
     private static final String INDEX_FIELD_ADMIN_URL = "adminUrl";
@@ -129,8 +124,8 @@ public class IndicesService {
         ElasticsearchInfo info = new ElasticsearchInfo();
         List<Index> indices = new ArrayList<>();
 
-        ImmutableOpenMap<String, IndexMetaData> esIndices = client.admin().cluster().prepareState().execute().actionGet()
-                .getState().getMetaData().getIndices();
+        ImmutableOpenMap<String, IndexMetadata> esIndices = client.admin().cluster().prepareState().execute().actionGet()
+                .getState().getMetadata().getIndices();
 
         esIndices.forEach( (indexMap) -> {
             // System.out.println( "Index: " + indexMap.key );
@@ -143,12 +138,12 @@ public class IndicesService {
             Index index = new Index();
 
             try {
-                addDefaultIndexInfo(indexMap.key, null, index, indexMap.value.getSettings());
+                addDefaultIndexInfo(indexMap.key, index, indexMap.value.getSettings());
 
                 // applyAdditionalData( indexMap.key, index, false );
                 // addMapping( indexMap.key, null, index );
 
-                addTypes(indexMap.key, index);
+                // addTypes(indexMap.key, index);
 
                 // check if iPlug is connected through InGrid Communication
                 //iPlugService.getIPlugDetail()
@@ -170,20 +165,19 @@ public class IndicesService {
     /**
      * 
      * @param indexId
-     * @param type
      * @return
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public IndexTypeDetail getIndexDetail(String indexId, String type) throws InterruptedException, ExecutionException {
+    public IndexTypeDetail getIndexDetail(String indexId) throws InterruptedException, ExecutionException {
         IndexTypeDetail index = new IndexTypeDetail();
 
         GetSettingsResponse getSettingsResponse = client.admin().indices().prepareGetSettings( indexId ).execute().get();
-        addDefaultIndexInfo( indexId, type, index, getSettingsResponse.getIndexToSettings().get( indexId ) );
+        addDefaultIndexInfo( indexId, index, getSettingsResponse.getIndexToSettings().get( indexId ) );
 
-        applyAdditionalData( indexId, type, index );
+        applyAdditionalData( indexId, index );
 
-        applyDetailedIndexInfo( indexId, index, type );
+        applyDetailedIndexInfo( indexId, index );
 
         return index;
     }
@@ -192,31 +186,22 @@ public class IndicesService {
      * 
      * @param indexName
      * @param index
-     * @param type
      */
-    private void applyDetailedIndexInfo(String indexName, IndexTypeDetail index, String type) {
-
-        index.setType( type );
-
-        addMapping( indexName, type, index );
+    private void applyDetailedIndexInfo(String indexName, IndexTypeDetail index) {
+        addMapping( indexName, index );
     }
 
     /**
      * 
      * @param indexName
-     * @param indexType
      * @param index
      */
-    private void addMapping(String indexName, String indexType, Index index) {
+    private void addMapping(String indexName, Index index) {
         GetMappingsRequestBuilder rb = client.admin().indices().prepareGetMappings( indexName );
-
-        if (indexType != null) {
-            rb.setTypes( indexType );
-        }
 
         GetMappingsResponse response = rb.execute().actionGet();
 
-        ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = response.mappings();
+        ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappings = response.mappings();
         Map<String, Object> indexMapping = new HashMap<>();
         mappings.get( indexName ).forEach( (type -> {
             try {
@@ -241,19 +226,11 @@ public class IndicesService {
         GetMappingsResponse response;
         try {
             response = client.admin().indices().prepareGetMappings( indexName ).execute().get();
-            ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = response.mappings();
+            ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappings = response.mappings();
             mappings.get( indexName ).forEach( type -> {
                 if (!"_default_".equals( type.key ))
                     types.add( type.key );
             } );
-
-            List<IndexType> indexTypes = new ArrayList<>();
-            for (String type : types) {
-                IndexType newIndexType = new IndexType();
-                newIndexType.setName( type );
-                indexTypes.add( newIndexType );
-            }
-            index.setTypes( indexTypes );
 
         } catch (InterruptedException | ExecutionException e) {
             log.error("Error adding types to index", e);
@@ -263,24 +240,19 @@ public class IndicesService {
     /**
      * 
      * @param indexName
-     * @param type
      * @param index
      * @param settings
      */
-    private void addDefaultIndexInfo(String indexName, String type, Index index, Settings settings) {
+    private void addDefaultIndexInfo(String indexName, Index index, Settings settings) {
         SearchRequestBuilder srb = client.prepareSearch( indexName );
-
-        if (type != null) {
-            srb.setTypes( type );
-        }
 
         SearchResponse searchResponse = srb.setSize( 0 ).get();
 
-        String created = settings.get( IndexMetaData.SETTING_CREATION_DATE );
+        String created = settings.get( IndexMetadata.SETTING_CREATION_DATE );
 
         index.setName( indexName );
-        index.setNumberDocs( searchResponse.getHits().getTotalHits() );
-        index.setCreated( new Date( Long.valueOf( created ) ) );
+        index.setNumberDocs( searchResponse.getHits().getTotalHits().value );
+        index.setCreated( new Date( Long.parseLong( created ) ) );
     }
 
     /**
@@ -288,21 +260,19 @@ public class IndicesService {
      * iPlug, that delivers the data of the index.
      * 
      * @param indexName
-     * @param type
      * @param index
      */
     @SuppressWarnings("unchecked")
-    private void applyAdditionalData(String indexName, String type, IndexTypeDetail index) {
-        BoolQueryBuilder indexTypeQuery = queryBuilderService.buildMustQuery( LINKED_INDEX, indexName, LINKED_TYPE, type );
+    private void applyAdditionalData(String indexName, IndexTypeDetail index) {
+        BoolQueryBuilder indexTypeQuery = queryBuilderService.buildMustQuery( LINKED_INDEX, indexName );
 
         SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
-                .setTypes( "info" )
                 .setQuery( indexTypeQuery )
                 .setFetchSource( new String[] { "*" }, null )
                 .setSize( 1 )
                 .get();
 
-        long totalHits = response.getHits().totalHits;
+        long totalHits = response.getHits().getTotalHits().value;
         if (totalHits == 1) {
             Map<String, Object> hitSource = response.getHits().getAt( 0 ).getSourceAsMap();
 
@@ -330,14 +300,13 @@ public class IndicesService {
      */
     private void addComponentData(List<Index> indices) {
         SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
-                .setTypes( "info" )
                 .setFetchSource( new String[] { "*" }, null )
                 .setSize( 1000 )
                 .get();
 
         SearchHit[] hits = response.getHits().getHits();
 
-        // iterate over all index informations and apply info to Index-object
+        // iterate over all index information and apply info to Index-object
         for (SearchHit hit : hits) {
             Map<String, Object> hitSource = hit.getSourceAsMap();
             String indexName = (String) hit.getSourceAsMap().get( LINKED_INDEX );
@@ -349,7 +318,6 @@ public class IndicesService {
                         .orElse(null);
 
                 if (indexItem != null) {
-                    String indexType = (String) hit.getSourceAsMap().get(LINKED_TYPE);
                     StdDateFormat format = new StdDateFormat();
                     String lastIndexedString = (String) hit.getSourceAsMap().get(INDEX_FIELD_LAST_INDEXED);
                     Date lastIndexed = null;
@@ -365,15 +333,10 @@ public class IndicesService {
 
                     indexItem.setHasLinkedComponent( true );
                     indexItem.setAdminUrl((String) ((Map)hitSource.get("plugdescription")).get("IPLUG_ADMIN_GUI_URL"));
-
-                    for (IndexType type : indexItem.getTypes()) {
-                        if (type.getName().equals( indexType )) {
-                            type.setId( (String) hitSource.get( INDEX_FIELD_INDEX_ID ) );
-                            type.setHasLinkedComponent( true );
-                            type.setLastIndexed( lastIndexed );
-                            type.setActive( settingsService.isActive( type.getId() ) );
-                        }
-                    }
+                    
+                    indexItem.setId( (String) hitSource.get( INDEX_FIELD_INDEX_ID ) );
+                    indexItem.setLastIndexed( lastIndexed );
+                    indexItem.setActive( settingsService.isActive((String) hitSource.get(INDEX_FIELD_INDEX_ID)) );
                 }
             } catch (Exception ex) {
                 // skip and continue
@@ -398,7 +361,7 @@ public class IndicesService {
             indexState.setNumProcessed(numProcessed);
         }
         if (totalDocs != null) {
-            indexState.setTotalDocs( Integer.valueOf( state.get( "totalDocs" ).toString() ) );
+            indexState.setTotalDocs( Integer.parseInt( state.get( "totalDocs" ).toString() ) );
         }
         return indexState;
     }
@@ -461,7 +424,7 @@ public class IndicesService {
 
         // when no index was selected then do not return any hits
         if (indices.length == 0) {
-            return new SearchHits( new SearchHit[0], 0, 0 );
+            return new SearchHits( new SearchHit[0], new TotalHits(0, TotalHits.Relation.EQUAL_TO), 0 );
         }
 
         String[] justIndexNames = Stream.of(indices)
@@ -504,20 +467,17 @@ public class IndicesService {
 
         // get real index names from active components
         SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
-                .setTypes( "info" )
                 .setQuery( boolQuery )
-                .setFetchSource( new String[] { LINKED_INDEX, LINKED_TYPE }, null )
+                .setFetchSource( new String[] { LINKED_INDEX }, null )
                 .setSize( 1000 )
                 .get();
 
         // collect all referenced indices
         response.getHits().forEach( hit -> {
             String index = (String) hit.getSourceAsMap().get( LINKED_INDEX );
-            String type = (String) hit.getSourceAsMap().get( LINKED_TYPE );
-            if (index != null && type != null) {
+            if (index != null) {
                 IndexInfo info = new IndexInfo();
                 info.setToIndex( index );
-                info.setToType( type );
                 result.add(  info );
             }
         } );
@@ -581,7 +541,6 @@ public class IndicesService {
 
     public String getIPlugForIndex(String id) {
         SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
-                .setTypes( "info" )
                 .setQuery( QueryBuilders.termQuery( LINKED_INDEX, id ) )
                 .setFetchSource( new String[] { "*" }, null )
                 .setSize( 1000 )
@@ -605,7 +564,6 @@ public class IndicesService {
 
     public List<ConfigIndexEntry> getConfigurationIndexEntries() {
         SearchResponse response = client.prepareSearch( INDEX_INFO_NAME )
-                .setTypes( "info" )
                 .setFetchSource( new String[] { "*" }, null )
                 .setSize( 1000 )
                 .get();
@@ -637,7 +595,6 @@ public class IndicesService {
 
     public void removeConfigurationIndexEntry(String id) {
         DeleteRequest request = new DeleteRequest(INDEX_INFO_NAME)
-                .type("info")
                 .id(id);
         client.delete(request).actionGet();
     }

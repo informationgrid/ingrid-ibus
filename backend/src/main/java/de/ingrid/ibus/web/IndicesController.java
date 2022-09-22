@@ -94,7 +94,7 @@ public class IndicesController {
     public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id, @RequestParam String type) {
         IndexTypeDetail index;
         try {
-            index = this.indicesService.getIndexDetail( id, type );
+            index = this.indicesService.getIndexDetail( id );
         } catch (Exception e) {
             log.error("Error getting index detail", e);
             return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( null );
