@@ -5,6 +5,15 @@
     <author email="joachim@wemove.com">Joachim Müller</author>
   </properties>
   <body>
+    <release version="5.14.0" date="2022-10-04" description="Release 5.14.0">
+        <action type="fix" dev="wemove" issue="3129">
+            Fix click on detail link for SE results on iBus search page
+        </action>
+        <action type="fix" dev="wemove" issue="4027">
+            Fix filtering of iplugs
+        </action>
+    </release>
+
     <release version="5.13.0" date="2022-07-21" description="Release 5.13.0">
         <action type="fix" dev="wemove" issue="3797">
             Fix wrong iplug information removed, which contained the latest index.
