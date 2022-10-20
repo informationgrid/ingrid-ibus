@@ -59,12 +59,13 @@
   </div>
 
   <ul *ngIf="view !== 'short'" class="list-group">
-    <li class="list-group-item clickable" (click)="showIndexItem(data)">
-      <div class="indexState fa fa-power-off" [class.text-success]="data.active"
-           [class.text-danger]="!data.active"
-           title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(data, $event)"></div>
-      <div class="pull-right small">{{data.lastIndexed | date:'medium'}}</div>
-      <div *ngIf="data.hasLinkedComponent && !data.hasLinkedComponent" class="text-danger">Nicht referenziert!</div>
+    <li *ngFor="let type of data.types; trackBy: getIndexTypeItemIdentifier" class="list-group-item clickable" (click)="showIndexItem(data, type.name)">
+      <div class="indexState fa fa-power-off" [class.text-success]="type.active"
+           [class.text-danger]="!type.active"
+           title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
+      <span class="content">{{type.name}}</span>
+      <div class="pull-right small">{{type.lastIndexed | date:'medium'}}</div>
+      <div *ngIf="data.hasLinkedComponent && !type.hasLinkedComponent" class="text-danger">Nicht referenziert!</div>
     </li>
   </ul>
 </div>

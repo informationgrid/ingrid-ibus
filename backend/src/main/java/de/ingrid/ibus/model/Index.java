@@ -68,6 +68,9 @@ public class Index {
     @JsonView(View.Summary.class)
     private boolean hasLinkedComponent = false;
 
+    @JsonView(View.Summary.class)
+    private List<IndexType> types;
+
     public String getName() {
         return name;
     }
@@ -155,7 +158,15 @@ public class Index {
     public void setId(String id) {
         this.id = id;
     }
-    
+
+    public List<IndexType> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<IndexType> types2) {
+        this.types = types2;
+    }
+
     public Date getLastIndexed() {
         return lastIndexed;
     }

@@ -29,6 +29,7 @@ export class IndexType {
   name: string;
   active: boolean;
   lastIndexed: string;
+  hasLinkedComponent?: boolean;
 }
 
 export class IndexItem {
@@ -65,10 +66,10 @@ export class IndexItemComponent implements OnInit {
   ngOnInit() {
   }
 
-  showIndexItem(item: IndexItem) {
+  showIndexItem(item: IndexItem, type: string) {
     if (item.hasLinkedComponent) {
 
-      this.router.navigate(['/indices/' + item.name]);
+      this.router.navigate(['/indices/' + item.name, {type: type}]);
     }
   }
 
@@ -78,12 +79,12 @@ export class IndexItemComponent implements OnInit {
     );
   }
 
-  activateIndexType(item: IndexItem, evt: Event) {
+  activateIndexType(type: IndexType, evt: Event) {
     evt.stopImmediatePropagation();
     evt.stopPropagation();
     evt.preventDefault();
-    item.active = !item.active;
-    this.indexService.setActive(item.id, item.active).subscribe(
+    type.active = !type.active;
+    this.indexService.setActive(type.id, type.active).subscribe(
       null,
       err => this.onError.next(err)
     );
