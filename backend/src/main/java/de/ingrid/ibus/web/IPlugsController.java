@@ -38,7 +38,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.websocket.server.PathParam;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
