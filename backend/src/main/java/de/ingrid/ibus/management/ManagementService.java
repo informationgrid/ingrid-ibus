@@ -37,9 +37,6 @@ public class ManagementService implements RegistryConfigurable {
     public static final String MANAGEMENT_IPLUG_ID = "__managementIPlug__";
 
     @Autowired
-    private BusServer busServer;
-
-    @Autowired
     private ManagementIPlug managementIPlug;
     
     @Autowired
