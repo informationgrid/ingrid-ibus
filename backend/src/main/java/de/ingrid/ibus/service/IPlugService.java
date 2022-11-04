@@ -22,8 +22,6 @@
  */
 package de.ingrid.ibus.service;
 
-import javax.annotation.PostConstruct;
-
 import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

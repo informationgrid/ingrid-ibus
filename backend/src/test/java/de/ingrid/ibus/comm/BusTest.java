@@ -92,7 +92,7 @@ public class BusTest {
         for (int i = 0; i < 5; i++) {
             long time = System.currentTimeMillis();
             IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000, false);
-            System.out.println("search took ".concat(new Long(System.currentTimeMillis() - time).toString().concat(" ms")));
+            System.out.println("search took ".concat(Long.valueOf(System.currentTimeMillis() - time).toString().concat(" ms")));
             assertEquals(this.plugDescriptions.length, hits.getHits().length);
             assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
             assertTrue(hits.isRanked());

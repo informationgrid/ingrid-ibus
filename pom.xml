@@ -32,7 +32,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
+    <java.version>17</java.version>
     <spring.version>2.7.5</spring.version>
     <elasticsearch.version>7.17.6</elasticsearch.version>
     <log4j2.version>2.17.1</log4j2.version>
@@ -111,15 +111,15 @@
         <version>4.35.1</version>
         <configuration>
           <activeRecipes>
-            <recipe>org.openrewrite.java.spring.framework.UpgradeSpringFramework_5_3</recipe>
-            <recipe>org.openrewrite.java.spring.boot2.SpringBoot1To2Migration</recipe>
+            <recipe>org.openrewrite.java.migrate.UpgradeJava17</recipe>
+            <recipe>org.openrewrite.java.migrate.JavaxMigrationToJakarta</recipe>
           </activeRecipes>
         </configuration>
         <dependencies>
           <dependency>
             <groupId>org.openrewrite.recipe</groupId>
-            <artifactId>rewrite-spring</artifactId>
-            <version>4.29.0</version>
+            <artifactId>rewrite-migrate-java</artifactId>
+            <version>1.13.0</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -145,6 +145,14 @@
         <configuration>
           <defaultOriginUrl>https://github.com/informationgrid/ingrid-ibus</defaultOriginUrl>
           <noDeploy>true</noDeploy>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jdeprscan-plugin</artifactId>
+        <version>3.0.0-alpha-1</version>
+        <configuration>
+          <release>11</release>
         </configuration>
       </plugin>
     </plugins>
