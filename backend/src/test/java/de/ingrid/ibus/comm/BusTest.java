@@ -86,7 +86,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    void testSearch() throws Exception {
+    public void testSearch() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle ranking:score");
 
         for (int i = 0; i < 5; i++) {
@@ -116,7 +116,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    void testSearchWithStatisticProcessors() throws Exception {
+    public void testSearchWithStatisticProcessors() throws Exception {
         // TODO: make this test log implementation independent
         this.bus.getProccessorPipe().addPreProcessor(new StatisticPreProcessor());
         this.bus.getProccessorPipe().addPostProcessor(new StatisticPostProcessor());

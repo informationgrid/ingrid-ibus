@@ -54,7 +54,6 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  */
 public class ScoreNormalizingTest {
 
-    @BeforeEach
     Bus setUp(float[][] scores) {
         Bus bus = new Bus(new DummyProxyFactory(scores), new SettingsService());
         Registry registry = bus.getIPlugRegistry();
