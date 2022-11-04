@@ -22,14 +22,16 @@
  */
 package de.ingrid.ibus.comm.processor;
 
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.processor.QueryModifierPreProcessor;
+
+import org.junit.jupiter.api.Test;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 import de.ingrid.utils.tool.QueryUtil;
 
-public class QueryModifierPreProcessorTest extends TestCase {
+public class QueryModifierPreProcessorTest {
 
+    @Test
     public void testProcess() throws Exception {
         QueryModifierPreProcessor modifier = new QueryModifierPreProcessor("/querymodifier.properties");
 

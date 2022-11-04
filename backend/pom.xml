@@ -6,8 +6,7 @@
     <version>5.15.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>ingrid-ibus-backend</artifactId>&#xD;
-  <version>5.15.0-SNAPSHOT</version>
+  <artifactId>ingrid-ibus-backend</artifactId>&#xD;<version>5.15.0-SNAPSHOT</version>
   <name>InGrid iBus Backend</name>
   <packaging>jar</packaging>
 
@@ -189,6 +188,16 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

@@ -28,8 +28,9 @@
 
 package de.ingrid.ibus.comm.v02;
 
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.BusTest;
+
+import org.junit.jupiter.api.Test;
 import de.ingrid.ibus.comm.registry.SyntaxInterpreterTest;
 
 /**
@@ -40,12 +41,13 @@ import de.ingrid.ibus.comm.registry.SyntaxInterpreterTest;
  * 
  * @author hs
  */
-public class DispatcherTest extends TestCase {
-    
+public class DispatcherTest {
+
     /**
      * INGRID-18
      * @throws Exception 
      */
+    @Test
     public void testRedirectQueries() throws Exception {
         //for dispatching ability
         new SyntaxInterpreterTest().testGetIPlugs_DataTypes();
@@ -60,6 +62,7 @@ public class DispatcherTest extends TestCase {
      * INGRID-19
      * @throws Exception 
      */
+    @Test
     public void testReturnOfResults() throws Exception {
         new BusTest().testSearch();
     }
@@ -69,7 +72,8 @@ public class DispatcherTest extends TestCase {
      * @throws Exception 
      * @throws Exception 
      */
-    public void testCommunicationWithStatisticOfAccesses() throws Exception{
+    @Test
+    public void testCommunicationWithStatisticOfAccesses() throws Exception {
         new BusTest().testSearchWithStatisticProcessors();
     }
 }

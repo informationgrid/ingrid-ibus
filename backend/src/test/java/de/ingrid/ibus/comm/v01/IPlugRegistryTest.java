@@ -29,7 +29,10 @@ package de.ingrid.ibus.comm.v01;
 
 import de.ingrid.ibus.comm.registry.RegistryTest;
 import de.ingrid.ibus.comm.registry.SyntaxInterpreterTest;
-import junit.framework.TestCase;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test for iplug-registry-feature (INGRID-5). created on 21.07.2005
@@ -37,11 +40,12 @@ import junit.framework.TestCase;
  * 
  * @author hs
  */
-public class IPlugRegistryTest extends TestCase {
+public class IPlugRegistryTest {
 
     /**
      * INGRID-28
      */
+    @Test
     public void testParseMetaData() {
         fail("INGRID-28 not yet implemented");
     }
@@ -51,6 +55,7 @@ public class IPlugRegistryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testStoreConnectionSettingsLocally() throws Exception {
         new RegistryTest().testAddAndGet();
     }
@@ -60,6 +65,7 @@ public class IPlugRegistryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testStoreIndexStructures() throws Exception {
         new RegistryTest().testAddAndGet();
         new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
@@ -71,6 +77,7 @@ public class IPlugRegistryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testStoreIndexStructuresTemporary() throws Exception {
         new RegistryTest().testGetAllIPlugs();
     }
@@ -81,6 +88,7 @@ public class IPlugRegistryTest extends TestCase {
      * @throws Exception
      * 
      */
+    @Test
     public void testStoreDataInRAM() throws Exception {
         new RegistryTest().testAddAndGet();
     }
@@ -89,6 +97,7 @@ public class IPlugRegistryTest extends TestCase {
      * INGRID-33
      * @throws Exception 
      */
+    @Test
     public void testSearchAPI() throws Exception {
         new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
         new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();

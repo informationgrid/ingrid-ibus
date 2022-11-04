@@ -29,13 +29,20 @@
 package de.ingrid.ibus.comm;
 
 import de.ingrid.ibus.service.SettingsService;
-import junit.framework.TestCase;
+
 import net.weta.components.communication.configuration.ClientConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import net.weta.components.communication.configuration.ServerConfiguration;
 import net.weta.components.communication.configuration.ClientConfiguration.ClientConnection;
 import net.weta.components.communication.reflect.ProxyService;
 import net.weta.components.communication.tcp.TcpCommunication;
 import de.ingrid.ibus.comm.net.IPlugProxyFactoryImpl;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import de.ingrid.utils.IPlug;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
@@ -45,7 +52,7 @@ import de.ingrid.utils.queryparser.QueryStringParser;
 /**
  * 
  */
-public class IPlugProxyFactoryImplTest extends TestCase {
+public class IPlugProxyFactoryImplTest {
 
     private int fHowMuchPlugs = 3;
 
@@ -57,7 +64,8 @@ public class IPlugProxyFactoryImplTest extends TestCase {
 
     private TcpCommunication fBusComm;
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         this.fBusComm = new TcpCommunication();
         ServerConfiguration serverConfiguration = new ServerConfiguration();
 		serverConfiguration.setPort(9191);
@@ -94,9 +102,10 @@ public class IPlugProxyFactoryImplTest extends TestCase {
     }
 
     /**
-     * @see junit.framework.TestCase#tearDown()
+     * @see 
      */
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         for (int i = 0; i < this.plugDescriptions.length; i++) {
             this.fPlugComms[i].shutdown();
         }
@@ -107,6 +116,7 @@ public class IPlugProxyFactoryImplTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testSearch() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         for (int i = 0; i < 3; i++) {
