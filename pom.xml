@@ -106,24 +106,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.openrewrite.maven</groupId>
-        <artifactId>rewrite-maven-plugin</artifactId>
-        <version>4.35.1</version>
-        <configuration>
-          <activeRecipes>
-            <recipe>org.openrewrite.java.migrate.UpgradeJava17</recipe>
-            <recipe>org.openrewrite.java.migrate.JavaxMigrationToJakarta</recipe>
-          </activeRecipes>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.openrewrite.recipe</groupId>
-            <artifactId>rewrite-migrate-java</artifactId>
-            <version>1.13.0</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>1.8</version>
