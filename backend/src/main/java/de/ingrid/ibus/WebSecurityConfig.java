@@ -33,7 +33,6 @@ import de.ingrid.ibus.config.IBusConfiguration;
 import de.ingrid.ibus.service.SecurityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -75,7 +74,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SecurityService securityService;
     private final UserDetailsService userDetailsService;
 
-    @Autowired
     public WebSecurityConfig(SecurityService securityService, UserDetailsService userDetailsService) {
         this.securityService = securityService;
         this.userDetailsService = userDetailsService;
@@ -95,7 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // ************************
 
     @Bean
-    public static PasswordEncoder passwordEncoder() {
+    static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -104,6 +102,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
+
     // ************************
 
 
@@ -111,17 +110,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // Codelist Service
     // ************************
     @Bean
-    public CodeListService codelistService() {
+    CodeListService codelistService() {
         CodeListService codeListService = new CodeListService();
         codeListService.setComm(codelistCommunication());
 
         List<ICodeListPersistency> persistencies = new ArrayList<>();
         XmlCodeListPersistency<?> xmlPersistency = new XmlCodeListPersistency<>();
-        xmlPersistency.setPathToXml( "data/codelists" );
-        persistencies.add( xmlPersistency );
+        xmlPersistency.setPathToXml("data/codelists");
+        persistencies.add(xmlPersistency);
         codeListService.setPersistencies(persistencies);
 
-        codeListService.setDefaultPersistency( 0 );
+        codeListService.setDefaultPersistency(0);
         return codeListService;
     }
 

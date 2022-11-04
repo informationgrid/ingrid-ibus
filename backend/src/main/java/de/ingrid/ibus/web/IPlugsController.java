@@ -33,7 +33,6 @@ import de.ingrid.utils.IngridHitDetail;
 import de.ingrid.utils.PlugDescription;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -54,7 +53,6 @@ public class IPlugsController {
     private final IPlugService iPlugService;
     private final Registry registry;
 
-    @Autowired
     public IPlugsController(IPlugService iPlugService, BusServer busServer) {
         this.iPlugService = iPlugService;
         this.registry = busServer.getRegistry();

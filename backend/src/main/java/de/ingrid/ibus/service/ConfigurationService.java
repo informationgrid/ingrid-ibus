@@ -33,7 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -90,7 +89,6 @@ public class ConfigurationService {
             "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port"
     };
 
-    @Autowired
     public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration, IndicesService indicesService) throws IOException {
         ClassPathResource ibusSystemConfig = new ClassPathResource("/application.properties");
         ClassPathResource ibusConfig = new ClassPathResource("/application-default.properties");
