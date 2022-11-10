@@ -22,11 +22,11 @@
  */
 package de.ingrid.ibus.web;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class LogoutController {
