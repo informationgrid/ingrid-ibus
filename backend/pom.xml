@@ -113,12 +113,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-elasticsearch-tools</artifactId>
-      <version>5.15.0-SNAPSHOT</version>
+      <version>5.15.0.3324-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-codelist-service</artifactId>
-      <version>5.11.0</version>
+      <version>5.15.0.3324-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
