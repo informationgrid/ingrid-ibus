@@ -26,7 +26,10 @@
  * $Source: DispatcherTest.java,v $
  */
 package de.ingrid.ibus.comm.v01;
-import junit.framework.TestCase;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for preprocessing-pipeline-feature (INGRID-3).
@@ -34,22 +37,27 @@ import junit.framework.TestCase;
  *
  * @author hs
  */
-public class PreProcessingPipelineTest extends TestCase {
+public class PreProcessingPipelineTest {
     /**
      * 
      */
+    @Test
     public void testProcessRequest() {
         fail("INGRID-21 not yet implemented");
     }
+
     /**
      * 
      */
+    @Test
     public void testProcessResults() {
         fail("INGRID-22 not yet implemented");
     }
+
     /**
      * 
      */
+    @Test
     public void testImproveQuery() {
         fail("INGRID-23 not yet implemented");
     }

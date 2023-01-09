@@ -29,11 +29,11 @@ import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
 import de.ingrid.ibus.WebSecurityConfig;
 import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.config.*;
+import javax.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -41,7 +41,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DefaultPropertiesPersister;
 
-import javax.annotation.PostConstruct;
 import java.io.*;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -90,7 +89,6 @@ public class ConfigurationService {
             "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port"
     };
 
-    @Autowired
     public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration, IndicesService indicesService) throws IOException {
         ClassPathResource ibusSystemConfig = new ClassPathResource("/application.properties");
         ClassPathResource ibusConfig = new ClassPathResource("/application-default.properties");

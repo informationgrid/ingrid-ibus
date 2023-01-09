@@ -26,7 +26,10 @@
  * $Source: DispatcherTest.java,v $
  */
 package de.ingrid.ibus.comm.v01;
-import junit.framework.TestCase;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for iplug-connector-feature (INGRID-6)
@@ -34,17 +37,20 @@ import junit.framework.TestCase;
  *
  * @author hs
  */
-public class IPlugConnectorTest extends TestCase {
+public class IPlugConnectorTest {
 
     /**
      * 
      */
+    @Test
     public void testCommunicationWithIPlug() {
         fail("INGRID-34 not yet implemented");
     }
+
     /**
      * 
      */
+    @Test
     public void testUsageOfJXTASockets() {
         fail("INGRID-35 not yet implemented");
     }

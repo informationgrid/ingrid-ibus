@@ -28,11 +28,14 @@
 
 package de.ingrid.ibus.comm.registry;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.Arrays;
 
 import de.ingrid.ibus.service.SettingsService;
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.DummyCommunication;
+
+import org.junit.jupiter.api.Test;
 import de.ingrid.ibus.comm.DummyProxyFactory;
 import de.ingrid.utils.PlugDescription;
 
@@ -43,12 +46,13 @@ import de.ingrid.utils.PlugDescription;
  * 
  * @author hs
  */
-public class RegistryTest extends TestCase {
+public class RegistryTest {
 
     /**
      * 
      * @throws Exception
      */
+    @Test
     public void testAddAndGet() throws Exception {
         Registry registry = new Registry(1000, true, new DummyProxyFactory(), new SettingsService());
         registry.setCommunication(new DummyCommunication());
@@ -62,6 +66,7 @@ public class RegistryTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetAllIPlugs() throws Exception {
         int plugLifeTime = 250;
         Registry registry = new Registry(plugLifeTime, true, new DummyProxyFactory(), new SettingsService());
@@ -87,6 +92,7 @@ public class RegistryTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testContains() throws Exception {
         Registry registry = new Registry(1000, true, new DummyProxyFactory(), new SettingsService());
         registry.setCommunication(new DummyCommunication());

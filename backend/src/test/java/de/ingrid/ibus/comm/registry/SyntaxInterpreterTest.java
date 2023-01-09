@@ -28,11 +28,16 @@
 
 package de.ingrid.ibus.comm.registry;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.StringReader;
 
 import de.ingrid.ibus.service.SettingsService;
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.DummyCommunication;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import de.ingrid.ibus.comm.DummyProxyFactory;
 import de.ingrid.ibus.comm.debug.DebugQuery;
 import de.ingrid.ibus.comm.processor.UdkMetaclassPreProcessor;
@@ -51,7 +56,7 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @author $Author: ${lastedit}
  * 
  */
-public class SyntaxInterpreterTest extends TestCase {
+public class SyntaxInterpreterTest {
 
     private Registry registry;
 
@@ -66,7 +71,8 @@ public class SyntaxInterpreterTest extends TestCase {
         setUp();
     }
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         this.registry = new Registry(100000, true, new DummyProxyFactory(), new SettingsService());
         this.registry.setCommunication(new DummyCommunication());
         for (int i = 0; i < this.descriptions.length; i++) {
@@ -79,6 +85,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetIPlugs_NoTermsNoFields() throws Exception {
         assertEquals(5, getIPlugs("").length); // no limitations at all.
         // this.descriptions[0].addDataType("UDK"); // as soon a datatype is
@@ -89,6 +96,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetIPlugs_DataTypes() throws Exception {
         this.descriptions[0].addDataType("UDK");
         this.descriptions[1].addDataType("UDK");
@@ -108,6 +116,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetIPlugs_DataTypesAndPartner() throws Exception {
         this.descriptions[0].addDataType("UDK");
         this.descriptions[0].addPartner("bund");
@@ -144,6 +153,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetIPlugs_NoFieldsNoDataDypes() throws Exception {
         this.descriptions[0].addDataType("UDK");
         this.descriptions[0].addField("field1");
@@ -155,6 +165,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetIplugs_FieldsAndDataTypes() throws Exception {
         this.descriptions[0].addDataType("UDK");
         this.descriptions[0].addField("field1");
@@ -180,6 +191,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testGetIplugs_Fields() throws Exception {
         for (int i = 0; i < this.descriptions.length; i++) {
             this.descriptions[i].addField("field" + i);
@@ -197,6 +209,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testDataTypeQueries() throws Exception {
         Registry aRegestry = new Registry(100, true, new DummyProxyFactory(), new SettingsService());
         aRegestry.setCommunication(new DummyCommunication());
@@ -214,6 +227,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testIsRanked() throws Exception {
         Registry aRegestry = new Registry(10, true, new DummyProxyFactory(), new SettingsService());
         aRegestry.setCommunication(new DummyCommunication());
@@ -243,6 +257,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testFilterRanked() throws Exception {
         // get unranked (1 ranked/ 5 not)
         PlugDescription description = new PlugDescription();
@@ -280,6 +295,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetIPlugs_Provider() throws Exception {
         this.descriptions[0].addProvider("anhalt");
         this.descriptions[1].addProvider("berlin");
@@ -298,6 +314,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testGetIPlugs_IPlugs() throws Exception {
         assertEquals(0, getIPlugs("query", new FieldQuery(true, false, IngridQuery.IPLUGS, "abc")).length);
         assertEquals(1, getIPlugs("query", new FieldQuery(true, false, IngridQuery.IPLUGS, this.descriptions[0]
@@ -323,6 +340,7 @@ public class SyntaxInterpreterTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testMetaclass() throws Exception {
         for (int i = 0; i < this.descriptions.length; i++) {
             this.descriptions[i].addField(UdkMetaclassPreProcessor.PORTAL_METACLASS);

@@ -23,14 +23,16 @@
 package de.ingrid.ibus.comm;
 
 import de.ingrid.ibus.service.SettingsService;
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.registry.Registry;
+
+import org.junit.jupiter.api.Test;
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.query.IngridQuery;
 
-public class GrouperTest extends TestCase {
+public class GrouperTest {
 
+    @Test
     public void testGrouping() throws Exception {
         IGrouper grouper = new Grouper(new Registry(10, true, new DummyProxyFactory(), new SettingsService()));
         IngridHit[] hits = new IngridHit[23];

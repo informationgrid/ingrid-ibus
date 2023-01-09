@@ -38,6 +38,8 @@ import de.ingrid.utils.metadata.IMetadataInjector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.metadata.MetadataInjectorFactory;
 import de.ingrid.utils.processor.IPreProcessor;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.configuration.ServerConfiguration;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
@@ -48,8 +50,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -182,7 +182,7 @@ public class BusServer {
         for (Object prop : properties.keySet()) {
             String element = (String) prop;
             try {
-                Float value = new Float((String) properties.get(element));
+                Float value = Float.valueOf((String) properties.get(element));
                 log.info(("add boost for iplug: ".concat(element)).concat(" with value: " + value));
                 globalRanking.put(element, value);
             } catch (NumberFormatException e) {

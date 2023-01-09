@@ -29,24 +29,29 @@
 package de.ingrid.ibus.comm;
 
 import de.ingrid.ibus.service.SettingsService;
-import junit.framework.TestCase;
+
 import net.weta.components.communication.configuration.ClientConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import net.weta.components.communication.configuration.ServerConfiguration;
 import net.weta.components.communication.configuration.ClientConfiguration.ClientConnection;
 import net.weta.components.communication.reflect.ProxyService;
 import net.weta.components.communication.tcp.TcpCommunication;
 import de.ingrid.utils.IBus;
+
+import org.junit.jupiter.api.Test;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
 /**
  * 
  */
-public class RemoteBusTest extends TestCase {
+public class RemoteBusTest {
 
     /**
      * @throws Throwable
      */
+    @Test
     public void testASearch() throws Throwable {
         String iBusUrl = "/101tec-group:ibus";
         
@@ -75,6 +80,7 @@ public class RemoteBusTest extends TestCase {
     }
 
 
+    @Test
     public void testRestartServer() throws Throwable {
         
         String iBusUrl = "/101tec-group:ibus";
@@ -127,7 +133,8 @@ public class RemoteBusTest extends TestCase {
         assertNotNull(hits);
     }
 
-    
+
+    @Test
     public void testRestartClient() throws Throwable {
         
         String iBusUrl = "/101tec-group:ibus";

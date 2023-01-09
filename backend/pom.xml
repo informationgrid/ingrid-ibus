@@ -3,11 +3,10 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-ibus-project</artifactId>
-    <version>5.15.0-SNAPSHOT</version>
+    <version>5.15.0.3324-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>ingrid-ibus-backend</artifactId>&#xD;
-  <version>5.15.0-SNAPSHOT</version>
+  <artifactId>ingrid-ibus-backend</artifactId>&#xD;<version>5.15.0.3324-SNAPSHOT</version>
   <name>InGrid iBus Backend</name>
   <packaging>jar</packaging>
 
@@ -15,9 +14,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <jackson.version>2.13.4</jackson.version>
-    <java.version>1.8</java.version>
+    <jackson.version>2.14.1</jackson.version>
+    <java.version>17</java.version>
     <elasticsearch.version>7.17.6</elasticsearch.version>
+    <maven.compiler.release>17</maven.compiler.release>
   </properties>
 
   <!-- ==================== DEPENDENCIES ==================== -->
@@ -37,25 +37,35 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <!-- contains special hotfix-version, which can be removed later -->
-      <version>${jackson.version}.2</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <!-- InGrid Dependencies -->
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-communication</artifactId>
-      <version>5.11.0</version>
+      <version>5.15.0.3324-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-utils</artifactId>
-      <version>5.12.0</version>
+      <version>5.15.0.3324-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
           <artifactId>log4j</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>1.3.5</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>5.0.0</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
@@ -103,12 +113,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-elasticsearch-tools</artifactId>
-      <version>5.15.0-SNAPSHOT</version>
+      <version>5.15.0.3324-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-codelist-service</artifactId>
-      <version>5.11.0</version>
+      <version>5.15.0.3324-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -141,14 +151,17 @@
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
       </exclusions>
+      <version>2.7.5</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
+      <version>2.7.5</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jetty</artifactId>
+      <version>2.7.5</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -157,16 +170,24 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
+      <version>2.7.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>2.7.5</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
+      <version>2.7.5</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
       <optional>true</optional>
+      <version>2.7.5</version>
     </dependency>
     <!-- backward compatible -->
     <dependency>
@@ -189,6 +210,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
+      <version>2.7.5</version>
     </dependency>
   </dependencies>
 
@@ -218,7 +240,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>2.1.1.RELEASE</version>
       </plugin>
 
       <!--
