@@ -22,7 +22,6 @@
  */
 package de.ingrid.ibus.management;
 
-import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import de.ingrid.ibus.service.SettingsService;
