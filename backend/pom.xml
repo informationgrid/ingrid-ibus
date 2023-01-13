@@ -254,6 +254,14 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <!-- only include this in top level project poms -->
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <skipAssembly>true</skipAssembly>
+        </configuration>
+      </plugin>
+
       <!--
           This plugin configures the git-flow for this project
       -->

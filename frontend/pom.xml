@@ -46,6 +46,14 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <!-- only include this in top level project poms -->
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <skipAssembly>true</skipAssembly>
+        </configuration>
+      </plugin>
     </plugins>
 
     <resources>
