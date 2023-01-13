@@ -130,11 +130,10 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jdeprscan-plugin</artifactId>
-        <version>3.0.0-alpha-1</version>
+        <!-- only include this in top level project poms -->
+        <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <release>11</release>
+          <skipAssembly>true</skipAssembly>
         </configuration>
       </plugin>
     </plugins>
@@ -166,20 +165,6 @@
               <failOnMissingHeader>true</failOnMissingHeader>
               <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
             </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-changes-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>changes-report</id>
-                <phase>none</phase>
-              </execution>
-              <execution>
-                <id>changes-announcement-mail</id>
-                <phase>none</phase>
-              </execution>
-            </executions>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
