@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -22,14 +22,16 @@
  */
 package de.ingrid.ibus.comm.processor;
 
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.processor.QueryModifierPreProcessor;
+
+import org.junit.jupiter.api.Test;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 import de.ingrid.utils.tool.QueryUtil;
 
-public class QueryModifierPreProcessorTest extends TestCase {
+public class QueryModifierPreProcessorTest {
 
+    @Test
     public void testProcess() throws Exception {
         QueryModifierPreProcessor modifier = new QueryModifierPreProcessor("/querymodifier.properties");
 

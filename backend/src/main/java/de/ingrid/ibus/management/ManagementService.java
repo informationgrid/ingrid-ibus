@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-ibus-backend
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -22,7 +22,6 @@
  */
 package de.ingrid.ibus.management;
 
-import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.ibus.comm.registry.RegistryConfigurable;
 import de.ingrid.ibus.service.SettingsService;
@@ -35,9 +34,6 @@ import org.springframework.stereotype.Service;
 public class ManagementService implements RegistryConfigurable {
 
     public static final String MANAGEMENT_IPLUG_ID = "__managementIPlug__";
-
-    @Autowired
-    private BusServer busServer;
 
     @Autowired
     private ManagementIPlug managementIPlug;

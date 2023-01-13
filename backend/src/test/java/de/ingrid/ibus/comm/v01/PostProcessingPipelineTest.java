@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -26,7 +26,10 @@
  * $Source: DispatcherTest.java,v $
  */
 package de.ingrid.ibus.comm.v01;
-import junit.framework.TestCase;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for postprocessing-pipeline-feature (INGRID-4).
@@ -34,28 +37,35 @@ import junit.framework.TestCase;
  *
  * @author hs
  */
-public class PostProcessingPipelineTest extends TestCase {
+public class PostProcessingPipelineTest {
     /**
      * 
      */
+    @Test
     public void testProcessRequest() {
         fail("INGRID-24 not yet implemented");
     }
+
     /**
      * 
      */
+    @Test
     public void testProcessResults() {
         fail("INGRID-25 not yet implemented");
     }
+
     /**
      * 
      */
+    @Test
     public void testNewRankingOfResults() {
         fail("INGRID-26 not yet implemented");
     }
+
     /**
      * 
      */
+    @Test
     public void testReturnOfSimilarTerms() {
         fail("INGRID-27 not yet implemented");
     }

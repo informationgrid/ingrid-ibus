@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -26,7 +26,10 @@
  * $Source: DispatcherTest.java,v $
  */
 package de.ingrid.ibus.comm.v01;
-import junit.framework.TestCase;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for iplug-connector-feature (INGRID-6)
@@ -34,17 +37,20 @@ import junit.framework.TestCase;
  *
  * @author hs
  */
-public class IPlugConnectorTest extends TestCase {
+public class IPlugConnectorTest {
 
     /**
      * 
      */
+    @Test
     public void testCommunicationWithIPlug() {
         fail("INGRID-34 not yet implemented");
     }
+
     /**
      * 
      */
+    @Test
     public void testUsageOfJXTASockets() {
         fail("INGRID-35 not yet implemented");
     }

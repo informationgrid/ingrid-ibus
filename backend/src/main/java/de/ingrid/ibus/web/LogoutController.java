@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-ibus-backend
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -22,11 +22,11 @@
  */
 package de.ingrid.ibus.web;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class LogoutController {
@@ -35,7 +35,7 @@ public class LogoutController {
      * Demonstrates that invoking {@link HttpServletRequest#logout()} will log the user out.
      * We then redirect the user to the home page.
      */
-    @RequestMapping("/logout")
+    @GetMapping("/logout")
     public String logout(HttpServletRequest request) throws ServletException {
         request.logout();
         return "redirect:/";

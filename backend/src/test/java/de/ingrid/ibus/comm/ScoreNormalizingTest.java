@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -29,8 +29,13 @@
 package de.ingrid.ibus.comm;
 
 import de.ingrid.ibus.service.SettingsService;
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.registry.Registry;
+
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
 import de.ingrid.utils.IngridHit;
 import de.ingrid.utils.IngridHits;
 import de.ingrid.utils.PlugDescription;
@@ -47,9 +52,9 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @author $Author: ${lastedit}
  * 
  */
-public class ScoreNormalizingTest extends TestCase {
+public class ScoreNormalizingTest {
 
-    private Bus setUp(float[][] scores) {
+    Bus setUp(float[][] scores) {
         Bus bus = new Bus(new DummyProxyFactory(scores), new SettingsService());
         Registry registry = bus.getIPlugRegistry();
         registry.setCommunication(new DummyCommunication());
@@ -73,10 +78,11 @@ public class ScoreNormalizingTest extends TestCase {
 //        registry.setGlobalRanking(globalRanking);
         return bus;
     }
-  
+
     /**
      * @throws Exception
      */
+    @Test
     public void testScore() throws Exception {
         System.out.println("testScore");
         // scores have to be sorted in descending order (like from a real iPlug)
@@ -91,10 +97,11 @@ public class ScoreNormalizingTest extends TestCase {
         for (int i = 0; i < hitsArray.length; i++) {
             IngridHit hit = hitsArray[i];
             System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
-            assertTrue(hit.getScore() == expectedScores[i]);
+            assertEquals(hit.getScore(), expectedScores[i]);
         }
     }
-    
+
+    @Test
     public void testScoreAllBelowOne() throws Exception {
         System.out.println("testScoreAllBelowOne");
         // scores have to be sorted in descending order (like from a real iPlug)
@@ -109,10 +116,11 @@ public class ScoreNormalizingTest extends TestCase {
         for (int i = 0; i < hitsArray.length; i++) {
             IngridHit hit = hitsArray[i];
             System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
-            assertTrue(hit.getScore() == expectedScores[i]);
+            assertEquals(hit.getScore(), expectedScores[i]);
         }
     }
-    
+
+    @Test
     public void testScoreAllAboveOne() throws Exception {
         System.out.println("testScoreAllAboveOne");
         // scores have to be sorted in descending order (like from a real iPlug)
@@ -127,10 +135,11 @@ public class ScoreNormalizingTest extends TestCase {
         for (int i = 0; i < hitsArray.length; i++) {
             IngridHit hit = hitsArray[i];
             System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
-            assertTrue(hit.getScore() == expectedScores[i]);
+            assertEquals(hit.getScore(), expectedScores[i]);
         }
     }
-   
+
+    @Test
     public void testScorePaging() throws Exception {
         System.out.println("testScoreMoreResultsAvailable");
         // scores have to be sorted in descending order (like from a real iPlug)
@@ -153,14 +162,15 @@ public class ScoreNormalizingTest extends TestCase {
         
         for (int i = 0; i < hitsArray.length; i++) {
             System.out.println("plugid:" + hitsArray[i].getPlugId() + " score: " + hitsArray[i].getScore());
-            assertTrue(hitsArray[i].getScore() == expectedScores1[i]);
+            assertEquals(hitsArray[i].getScore(), expectedScores1[i]);
         }
         for (int i = 0; i < hitsArray2.length; i++) {
             System.out.println("plugid:" + hitsArray2[i].getPlugId() + " score: " + hitsArray2[i].getScore());
-            assertTrue(hitsArray2[i].getScore() == expectedScores2[i]);
+            assertEquals(hitsArray2[i].getScore(), expectedScores2[i]);
         }
     }
-    
+
+    @Test
     public void testScoreOneIPlugOnly() throws Exception {
         float[][] scores = {
                 {6.0f, 4.5f, 3.75f, 3.0f, 1.5f, 0.75f, 0.5f, 0.4f, 0.3f},
@@ -178,10 +188,11 @@ public class ScoreNormalizingTest extends TestCase {
         
         for (int i = 0; i < hitsArray.length; i++) {
             System.out.println("plugid:" + hitsArray[i].getPlugId() + " score: " + hitsArray[i].getScore());
-            assertTrue(hitsArray[i].getScore() == expectedScores1[i]);
+            assertEquals(hitsArray[i].getScore(), expectedScores1[i]);
         }
     }
-    
+
+    @Test
     public void testScoreSameScoreGroupedIPlugs() throws Exception {
         System.out.println("testScoreSameScoreGroupedIPlugs");
         // scores have to be sorted according to plug IDs
@@ -196,11 +207,11 @@ public class ScoreNormalizingTest extends TestCase {
         for (int i = 0; i < hitsArray.length; i++) {
             IngridHit hit = hitsArray[i];
             System.out.println("plugid:" + hit.getPlugId() + " score: " + hit.getScore());
-            assertTrue(hit.getScore() == expectedScores[i]);
+            assertEquals(hit.getScore(), expectedScores[i]);
             if (i<2) {
-                assertTrue(hit.getPlugId().equals("/:1"));
+                assertEquals(hit.getPlugId(), "/:1");
             } else {
-                assertTrue(hit.getPlugId().equals("/:2"));
+                assertEquals(hit.getPlugId(), "/:2");
             }
         }
     }

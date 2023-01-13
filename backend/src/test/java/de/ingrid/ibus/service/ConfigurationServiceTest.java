@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-ibus-backend
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -22,10 +22,11 @@
  */
 package de.ingrid.ibus.service;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,24 +35,24 @@ import java.util.Properties;
 public class ConfigurationServiceTest {
 
     @Test
-    public void propertiesEmptyTest() throws Exception {
+    void propertiesEmptyTest() throws Exception {
         Properties result = getProperties(new Properties());
 
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("value3Mod", result.get("key3"));
-        Assert.assertEquals("value4New", result.get("key4"));
+        assertEquals(2, result.size());
+        assertEquals("value3Mod", result.get("key3"));
+        assertEquals("value4New", result.get("key4"));
     }
 
     @Test
-    public void propertiesChangeTest() throws Exception {
+    void propertiesChangeTest() throws Exception {
         Properties props = new Properties();
 
         props.put("key4", "value4Mod");
         Properties result = getProperties(props);
 
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("value3Mod", result.get("key3"));
-        Assert.assertEquals("value4Mod", result.get("key4"));
+        assertEquals(2, result.size());
+        assertEquals("value3Mod", result.get("key3"));
+        assertEquals("value4Mod", result.get("key4"));
     }
 
     /**
@@ -63,15 +64,15 @@ public class ConfigurationServiceTest {
      * @throws NoSuchMethodException
      */
     @Test
-    public void propertiesRevertTest() throws Exception {
+    void propertiesRevertTest() throws Exception {
         Properties props = new Properties();
 //        Assert.assertEquals("8083", new ConfigurationService().getConfiguration().get("server.port"));
 
         props.put("key3", "value3");
         Properties result = getProperties(props);
 
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("value4New", result.get("key4"));
+        assertEquals(1, result.size());
+        assertEquals("value4New", result.get("key4"));
     }
 
     private Properties getProperties(Properties props) throws Exception {

@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus Frontend
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -41,20 +41,9 @@
 */
 
 
-/** IE10 and IE11 requires the following for NgClass support on SVG elements */
-// import 'classlist.js';  // Run `npm install --save classlist.js`.
-
-/** IE10 and IE11 requires the following to support `@angular/animation`. */
-// import 'web-animations-js';  // Run `npm install --save web-animations-js`.
-
-
 /** Evergreen browsers require these. **/
-import 'core-js/es6/reflect';
-import 'core-js/es7/reflect';
-
-
-/** ALL Firefox browsers require the following to support `@angular/animation`. **/
-// import 'web-animations-js';  // Run `npm install --save web-animations-js`.
+// import 'core-js/es6/reflect';
+// import 'core-js/es7/reflect';
 
 
 

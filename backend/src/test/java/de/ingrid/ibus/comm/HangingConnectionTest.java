@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -29,8 +29,13 @@
 package de.ingrid.ibus.comm;
 
 import de.ingrid.ibus.service.SettingsService;
+
 import net.weta.components.communication.tcp.TimeoutException;
-import junit.framework.TestCase;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 import de.ingrid.utils.PlugDescription;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
@@ -44,11 +49,12 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @author $Author: ${lastedit}
  *  
  */
-public class HangingConnectionTest extends TestCase {
+public class HangingConnectionTest {
 
     /**
      * @throws Exception
      */
+    @Test
     public void testhangConnection() throws Exception {
         Bus bus = new Bus(new HangingPlugDummyProxyFactory(), new SettingsService());
         PlugDescription plugDescriptions = new PlugDescription();

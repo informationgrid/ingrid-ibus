@@ -3,11 +3,11 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-releases-pom</artifactId>
-    <version>5.11.0</version>
+    <version>6.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-project</artifactId>
-  <version>5.14.0</version>
+  <version>6.0.0</version>
   <packaging>pom</packaging>
   <name>InGrid iBus</name>
   <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
@@ -32,10 +32,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
-    <spring.version>2.2.13.RELEASE</spring.version>
-    <elasticsearch.version>6.8.17</elasticsearch.version>
-    <log4j2.version>2.17.1</log4j2.version>
+    <java.version>17</java.version>
+    <spring.version>2.7.7</spring.version>
+    <elasticsearch.version>7.17.6</elasticsearch.version>
+    <log4j2.version>2.19.0</log4j2.version>
   </properties>
 
   <modules>
@@ -127,6 +127,14 @@
         <configuration>
           <defaultOriginUrl>https://github.com/informationgrid/ingrid-ibus</defaultOriginUrl>
           <noDeploy>true</noDeploy>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jdeprscan-plugin</artifactId>
+        <version>3.0.0-alpha-1</version>
+        <configuration>
+          <release>11</release>
         </configuration>
       </plugin>
     </plugins>

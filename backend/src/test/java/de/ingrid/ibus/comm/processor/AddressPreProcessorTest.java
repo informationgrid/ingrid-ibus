@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -26,8 +26,12 @@
 
 package de.ingrid.ibus.comm.processor;
 
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.processor.AddressPreProcessor;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
@@ -41,11 +45,12 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @author $Author: ${lastedit}
  * 
  */
-public class AddressPreProcessorTest extends TestCase {
+public class AddressPreProcessorTest {
 
     /**
      * @throws Exception
      */
+    @Test
     public void testProcessZip() throws Exception {
         IngridQuery query = QueryStringParser.parse("query zip:282");
         new AddressPreProcessor().process(query);

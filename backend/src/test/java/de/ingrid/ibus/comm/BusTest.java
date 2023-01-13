@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -28,17 +28,13 @@
 
 package de.ingrid.ibus.comm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 
 import de.ingrid.ibus.service.SettingsService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.ingrid.ibus.comm.registry.Registry;
 import de.ingrid.utils.IngridHit;
@@ -72,7 +68,7 @@ public class BusTest {
         //setUp();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         Registry registry = this.bus.getIPlugRegistry();
@@ -96,7 +92,7 @@ public class BusTest {
         for (int i = 0; i < 5; i++) {
             long time = System.currentTimeMillis();
             IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000, false);
-            System.out.println("search took ".concat(new Long(System.currentTimeMillis() - time).toString().concat(" ms")));
+            System.out.println("search took ".concat(Long.valueOf(System.currentTimeMillis() - time).toString().concat(" ms")));
             assertEquals(this.plugDescriptions.length, hits.getHits().length);
             assertEquals(this.plugDescriptions.length, hits.getInVolvedPlugs());
             assertTrue(hits.isRanked());
@@ -108,7 +104,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    public void testFieldSearch() throws Exception {
+    void testFieldSearch() throws Exception {
         this.plugDescriptions[this.plugDescriptions.length - 1].addField("aField");
         IngridQuery query = QueryStringParser.parse("aField:halle");
         IngridHits hits = this.bus.search(query, 10, 1, Integer.MAX_VALUE, 1000, false);
@@ -133,7 +129,7 @@ public class BusTest {
      * Test the instanciation process.
      */
     @Test
-    public void testAddRemoveIPlug() {
+    void testAddRemoveIPlug() {
         assertEquals(this.plugDescriptions.length, this.bus.getIPlugRegistry().getAllIPlugs().length);
         PlugDescription pd = new PlugDescription();
         pd.setProxyServiceURL("bla");
@@ -148,7 +144,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    public void testGetHitDetail() throws Exception {
+    void testGetHitDetail() throws Exception {
 
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000, false);
@@ -171,7 +167,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    public void testGetHitDetails() throws Exception {
+    void testGetHitDetails() throws Exception {
         IngridQuery query = QueryStringParser.parse("fische ort:halle");
         IngridHits hits = this.bus.search(query, this.plugDescriptions.length, 1, Integer.MAX_VALUE, 1000, false);
 
@@ -189,7 +185,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    public void testUnrankedSearch() throws Exception {
+    void testUnrankedSearch() throws Exception {
         this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
@@ -224,7 +220,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    public void testUnrankedGroupedDatatypeSearch() throws Exception {
+    void testUnrankedGroupedDatatypeSearch() throws Exception {
         this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
@@ -247,7 +243,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    public void testFilterForPartner() throws Exception {
+    void testFilterForPartner() throws Exception {
         this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         this.plugDescriptions = new PlugDescription[3];
         for (int i = 0; i < this.plugDescriptions.length; i++) {
@@ -269,7 +265,7 @@ public class BusTest {
      * @throws Exception
      */
     @Test
-    public void testGroupByPlugId() throws Exception {
+    void testGroupByPlugId() throws Exception {
         this.bus = new Bus(new DummyProxyFactory(), new SettingsService());
         Registry registry = this.bus.getIPlugRegistry();
         this.plugDescriptions = new PlugDescription[3];
@@ -288,7 +284,7 @@ public class BusTest {
         System.out.println(hits);
         System.out.println(hits.getHits()[0].size());
     }
-    
+
     /**
      * Comparison tests
      * With Java7 comparisons are more strict and can throw exceptions if
@@ -296,93 +292,93 @@ public class BusTest {
      */
     @Test
     @SuppressWarnings("unchecked")
-	public void testSortHitsSpecial() {
-    	IngridHit[] documents = new IngridHit[32];
-    	for (int i = 0; i < documents.length; i++) {
-    		if (i%2 == 0) {
-    			documents[i] = null;
-    			continue;
-    		}
-			documents[i] = new IngridHit();
-			documents[i].setScore(1.0f);
-		}
-    	documents[29].setScore(1.4f);
-    	
-        Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
-        
-        assertEquals(1.4f, documents[0].getScore(), 0);
-        for (int i = 1; i < documents.length/2; i++) {
-        	assertEquals(1.0f, documents[i].getScore(), 0);
+    void testSortHitsSpecial() {
+        IngridHit[] documents = new IngridHit[32];
+        for (int i = 0; i < documents.length; i++) {
+            if (i % 2 == 0) {
+                documents[i] = null;
+                continue;
+            }
+            documents[i] = new IngridHit();
+            documents[i].setScore(1.0f);
         }
-        assertNull(documents[documents.length-1]);
+        documents[29].setScore(1.4f);
+
+        Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
+
+        assertEquals(1.4f, documents[0].getScore(), 0);
+        for (int i = 1; i < documents.length / 2; i++) {
+            assertEquals(1.0f, documents[i].getScore(), 0);
+        }
+        assertNull(documents[documents.length - 1]);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
-	public void testSortHits() {
-    	IngridHit[] documents = new IngridHit[32];
+    void testSortHits() {
+        IngridHit[] documents = new IngridHit[32];
         // *******************************
-    	// 16 -> NULL, 15 -> 1.0, 1 -> 1.4
+        // 16 -> NULL, 15 -> 1.0, 1 -> 1.4
         // *******************************
-    	for (int i = 0; i < documents.length; i++) {
-    		if (i<documents.length/2) {
-    			documents[i] = null;
-    			continue;
-    		}
-			documents[i] = new IngridHit();
-			documents[i].setScore(1.0f);
-		}
-    	documents[29].setScore(1.4f);
-    	
+        for (int i = 0; i < documents.length; i++) {
+            if (i < documents.length / 2) {
+                documents[i] = null;
+                continue;
+            }
+            documents[i] = new IngridHit();
+            documents[i].setScore(1.0f);
+        }
+        documents[29].setScore(1.4f);
+
         Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
         checkSortedDocuments(documents);
-        
+
         // *******************************
         // 15 -> 1.0, 1 -> 1.4, 16 -> NULL
         // *******************************
-    	for (int i = 0; i < documents.length; i++) {
-    		if (i>=documents.length/2) {
-    			documents[i] = null;
-    			continue;
-    		}
-			documents[i] = new IngridHit();
-			documents[i].setScore(1.0f);
-		}
-    	documents[11].setScore(1.4f);
-    	
+        for (int i = 0; i < documents.length; i++) {
+            if (i >= documents.length / 2) {
+                documents[i] = null;
+                continue;
+            }
+            documents[i] = new IngridHit();
+            documents[i].setScore(1.0f);
+        }
+        documents[11].setScore(1.4f);
+
         Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
         checkSortedDocuments(documents);
-        
+
         // *******************************
         // 15 -> 1.0, 16 -> NULL, 1 -> 1.4
         // *******************************
-    	for (int i = 0; i < documents.length; i++) {
-    		if (i>=documents.length/2) {
-    			documents[i] = null;
-    			continue;
-    		}
-			documents[i] = new IngridHit();
-			documents[i].setScore(1.0f);
-		}
-    	documents[31] = new IngridHit();
-    	documents[31].setScore(1.4f);
-    	
+        for (int i = 0; i < documents.length; i++) {
+            if (i >= documents.length / 2) {
+                documents[i] = null;
+                continue;
+            }
+            documents[i] = new IngridHit();
+            documents[i].setScore(1.0f);
+        }
+        documents[31] = new IngridHit();
+        documents[31].setScore(1.4f);
+
         Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
         checkSortedDocuments(documents);
-        
+
         // *******************************
         // 1 -> 1.4, 15 -> 1.0, 16 -> NULL
         // *******************************
-    	for (int i = 0; i < documents.length; i++) {
-    		if (i>=documents.length/2) {
-    			documents[i] = null;
-    			continue;
-    		}
-			documents[i] = new IngridHit();
-			documents[i].setScore(1.0f);
-		}
-    	documents[0].setScore(1.4f);
-    	
+        for (int i = 0; i < documents.length; i++) {
+            if (i >= documents.length / 2) {
+                documents[i] = null;
+                continue;
+            }
+            documents[i] = new IngridHit();
+            documents[i].setScore(1.0f);
+        }
+        documents[0].setScore(1.4f);
+
         Arrays.sort(documents, Comparators.SCORE_HIT_COMPARATOR);
         checkSortedDocuments(documents);
     }

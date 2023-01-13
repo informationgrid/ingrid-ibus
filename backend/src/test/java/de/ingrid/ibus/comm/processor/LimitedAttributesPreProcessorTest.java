@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -25,8 +25,11 @@
  */
 package de.ingrid.ibus.comm.processor;
 
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.processor.LimitedAttributesPreProcessor;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
@@ -40,11 +43,12 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @author $Author: ${lastedit}
  * 
  */
-public class LimitedAttributesPreProcessorTest extends TestCase {
+public class LimitedAttributesPreProcessorTest {
 
     /**
      * @throws Exception
      */
+    @Test
     public void testIt() throws Exception {
         LimitedAttributesPreProcessor preProcessor = new LimitedAttributesPreProcessor();
         IngridQuery query = QueryStringParser.parse("wasser AND (brot OR wein) "

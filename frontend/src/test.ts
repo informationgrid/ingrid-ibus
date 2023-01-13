@@ -2,7 +2,7 @@
  * **************************************************-
  * ingrid-ibus-frontend
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -34,7 +34,6 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@ang
 
 // Unfortunately there's no typing for the `__karma__` variable. Just declare it as any.
 declare var __karma__: any;
-declare var require: any;
 
 // Prevent Karma from running prematurely.
 __karma__.loaded = function () {};
@@ -42,11 +41,9 @@ __karma__.loaded = function () {};
 // First, initialize the Angular testing environment.
 getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting()
+  platformBrowserDynamicTesting(), {
+    teardown: { destroyAfterEach: false }
+}
 );
-// Then we find all the tests.
-const context = require.context('./', true, /\.spec\.ts$/);
-// And load the modules.
-context.keys().map(context);
 // Finally, start Karma to run the tests.
 __karma__.start();

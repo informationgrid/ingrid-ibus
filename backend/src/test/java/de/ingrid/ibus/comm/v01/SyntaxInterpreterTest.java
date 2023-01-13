@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -27,8 +27,12 @@
  */
 package de.ingrid.ibus.comm.v01;
 
-import junit.framework.TestCase;
 import de.ingrid.utils.query.FieldQuery;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.query.TermQuery;
 import de.ingrid.utils.queryparser.ParseException;
@@ -40,13 +44,14 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * 
  * @author hs
  */
-public class SyntaxInterpreterTest extends TestCase {
+public class SyntaxInterpreterTest {
 
     /**
      * test for feature INGRID-36
      * 
      * @throws Exception
      */
+    @Test
     public void testTranslateToQuerySyntax() throws Exception {
         // tests functionality from QueryStringParser from ingrid-utils
         checkParseSimple();
@@ -59,6 +64,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testFindAddressedDataSources() throws Exception {
         new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIPlugs_DataTypes();
         new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();
@@ -69,6 +75,7 @@ public class SyntaxInterpreterTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testFindDataFields() throws Exception {
         new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_Fields();
         new de.ingrid.ibus.comm.registry.SyntaxInterpreterTest().testGetIplugs_FieldsAndDataTypes();

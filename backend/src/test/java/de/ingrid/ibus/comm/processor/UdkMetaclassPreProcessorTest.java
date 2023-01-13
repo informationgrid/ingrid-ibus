@@ -2,7 +2,7 @@
  * **************************************************-
  * InGrid iBus
  * ==================================================
- * Copyright (C) 2014 - 2022 wemove digital solutions GmbH
+ * Copyright (C) 2014 - 2023 wemove digital solutions GmbH
  * ==================================================
  * Licensed under the EUPL, Version 1.1 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
@@ -26,8 +26,12 @@
 
 package de.ingrid.ibus.comm.processor;
 
-import junit.framework.TestCase;
 import de.ingrid.ibus.comm.processor.UdkMetaclassPreProcessor;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.ingrid.utils.query.IngridQuery;
 import de.ingrid.utils.queryparser.QueryStringParser;
 
@@ -41,11 +45,12 @@ import de.ingrid.utils.queryparser.QueryStringParser;
  * @author $Author: ${lastedit}
  * 
  */
-public class UdkMetaclassPreProcessorTest extends TestCase {
+public class UdkMetaclassPreProcessorTest {
 
     /**
      * @throws Exception
      */
+    @Test
     public void testProcess() throws Exception {
         IngridQuery query = QueryStringParser.parse("query " + UdkMetaclassPreProcessor.PORTAL_METACLASS + ':'
                 + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE + ' ' + UdkMetaclassPreProcessor.PORTAL_METACLASS
@@ -66,6 +71,7 @@ public class UdkMetaclassPreProcessorTest extends TestCase {
     /**
      * @throws Exception
      */
+    @Test
     public void testProcessClauses() throws Exception {
         IngridQuery query = QueryStringParser.parse("(query " + UdkMetaclassPreProcessor.PORTAL_METACLASS + ':'
                 + UdkMetaclassPreProcessor.PORTAL_METACLASS_DATABASE + " " + UdkMetaclassPreProcessor.PORTAL_METACLASS
