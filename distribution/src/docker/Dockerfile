@@ -1,7 +1,7 @@
 FROM alpine AS builder
 
 ADD ingrid-ibus-*-installer.jar wait-for-elasticsearch.sh /
-RUN unzip ingrid-ibus-*-installer.jar -d /tmp \
+RUN unzip -q ingrid-ibus-*-installer.jar -d /tmp \
     && export INSTALL_DIR=`ls -d1 /tmp/ingrid-ibus-*` \
     && mkdir -p $INSTALL_DIR/logs \
     && sed -i -r 's/(<AppenderRef.*\/>)/\1<AppenderRef ref="Console" \/>/g' $INSTALL_DIR/conf/log4j2.xml \

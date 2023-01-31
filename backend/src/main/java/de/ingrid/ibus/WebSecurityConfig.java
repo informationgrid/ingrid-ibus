@@ -63,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${development:false}")
     private boolean developmentMode;
     
-    @Value("${app.enable.cors:false}")
+    @Value("${app.enable.cors:true}")
     private boolean enableCors;
     
     @Value("${app.enable.csrf:true}")
