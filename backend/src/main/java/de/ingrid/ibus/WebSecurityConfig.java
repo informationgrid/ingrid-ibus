@@ -62,6 +62,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${development:false}")
     private boolean developmentMode;
+    
+    @Value("${app.enable.cors:false}")
+    private boolean enableCors;
+    
+    @Value("${app.enable.csrf:true}")
+    private boolean enableCsrf;
 
     @Value("${codelistrepo.url:http://not-configured}")
     private String codelistUrl;
@@ -142,12 +148,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // ************************
 
     private void initProductionMode(HttpSecurity http) throws Exception {
+
+        if (enableCsrf) {
+            http = http.csrf()
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // make cookies readable within JS
+                    .and();
+        } else {
+            http = http.csrf().disable();
+        }
+        
+        if (enableCors) {
+            http = http.cors().and();
+        } else {
+            http = http.cors().disable();
+        }
+        
         // @formatter:off
-        http
-            .csrf()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // make cookies readable within JS
-                .and()
-            .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers( "/css/**" ).permitAll()
                 .and()
             // make access to login page more permissive because 'formLogin' is very strict
@@ -183,7 +200,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .csrf()
                 .disable();
-                //.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         // @formatter:on
     }
 
