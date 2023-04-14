@@ -1,4 +1,14 @@
 
+## 6.0.2 (14.04.2023)
+
+
+
+
+
+### Bugfixes
+
+* Nach Update Elasticsearch wird die Anzahl der Suchergebnisse beschränkt  (#4744)
+    
 ## 6.0.0 (13.01.2023)
 
 ### Features
