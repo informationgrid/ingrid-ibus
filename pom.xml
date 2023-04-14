@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-project</artifactId>
-  <version>6.0.0</version>
+  <version>6.1.0</version>
   <packaging>pom</packaging>
   <name>InGrid iBus</name>
   <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
@@ -33,7 +33,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
-    <spring.version>2.7.7</spring.version>
+    <spring.version>2.7.10</spring.version>
     <elasticsearch.version>7.17.6</elasticsearch.version>
     <log4j2.version>2.19.0</log4j2.version>
   </properties>
@@ -98,6 +98,13 @@
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-jul</artifactId>
         <version>${log4j2.version}</version>
+      </dependency>
+
+      <!-- Fix security issue => https://avd.aquasec.com/nvd/cve-2022-1471 -->
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>2.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
