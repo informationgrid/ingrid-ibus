@@ -3,11 +3,11 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-ibus-project</artifactId>
-    <version>6.3.0-SNAPSHOT</version>
+    <version>6.4.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-backend</artifactId>
-  <version>6.3.0-SNAPSHOT</version>
+  <version>6.4.0-SNAPSHOT</version>
   <name>InGrid iBus Backend</name>
   <packaging>jar</packaging>
 
