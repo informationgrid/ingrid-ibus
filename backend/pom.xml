@@ -50,7 +50,7 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-utils</artifactId>
-      <version>6.3.0-SNAPSHOT</version>
+      <version>6.3.0</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -119,7 +119,7 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-codelist-service</artifactId>
-      <version>6.3.0-SNAPSHOT</version>
+      <version>6.3.0</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
