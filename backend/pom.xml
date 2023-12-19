@@ -3,11 +3,11 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-ibus-project</artifactId>
-    <version>6.4.0-SNAPSHOT</version>
+    <version>7.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-backend</artifactId>
-  <version>6.4.0-SNAPSHOT</version>
+  <version>7.0.0-SNAPSHOT</version>
   <name>InGrid iBus Backend</name>
   <packaging>jar</packaging>
 
@@ -44,12 +44,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-communication</artifactId>
-      <version>6.0.0</version>
+      <version>7.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-utils</artifactId>
-      <version>6.3.0</version>
+      <version>7.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-iplug</artifactId>
-      <version>5.3.0</version>
+      <version>7.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>de.ingrid</groupId>
@@ -113,12 +113,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-elasticsearch-tools</artifactId>
-      <version>6.4.0-SNAPSHOT</version>
+      <version>7.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-codelist-service</artifactId>
-      <version>6.3.0</version>
+      <version>7.0.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -271,6 +271,14 @@
         <configuration>
           <defaultOriginUrl>https://github.com/informationgrid/ingrid-ibus</defaultOriginUrl>
           <noDeploy>true</noDeploy>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseResolver>${project.baseUri}/../license</licenseResolver>
         </configuration>
       </plugin>
     </plugins>
