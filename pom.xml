@@ -35,7 +35,8 @@
     <java.version>17</java.version>
     <spring.version>2.7.17</spring.version>
     <elasticsearch.version>7.17.15</elasticsearch.version>
-    <log4j2.version>2.22.0</log4j2.version>
+    <jackson.version>2.14.1</jackson.version>
+    <log4j2.version>2.22.1</log4j2.version>
   </properties>
 
   <modules>
