@@ -3,11 +3,11 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-ibus-project</artifactId>
-    <version>6.3.0</version>
+    <version>7.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-backend</artifactId>
-  <version>6.3.0</version>
+  <version>7.0.0</version>
   <name>InGrid iBus Backend</name>
   <packaging>jar</packaging>
 
@@ -15,9 +15,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <jackson.version>2.14.1</jackson.version>
     <java.version>17</java.version>
-    <elasticsearch.version>7.17.6</elasticsearch.version>
     <maven.compiler.release>17</maven.compiler.release>
   </properties>
 
@@ -45,12 +43,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-communication</artifactId>
-      <version>6.0.0</version>
+      <version>7.0.0</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-utils</artifactId>
-      <version>6.3.0</version>
+      <version>7.0.0</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -71,7 +69,7 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-iplug</artifactId>
-      <version>5.3.0</version>
+      <version>7.0.0</version>
       <exclusions>
         <exclusion>
           <groupId>de.ingrid</groupId>
@@ -114,12 +112,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-elasticsearch-tools</artifactId>
-      <version>6.1.0</version>
+      <version>7.0.0</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-codelist-service</artifactId>
-      <version>6.3.0</version>
+      <version>7.0.0</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -272,6 +270,14 @@
         <configuration>
           <defaultOriginUrl>https://github.com/informationgrid/ingrid-ibus</defaultOriginUrl>
           <noDeploy>true</noDeploy>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseResolver>${project.baseUri}/../license</licenseResolver>
         </configuration>
       </plugin>
     </plugins>
