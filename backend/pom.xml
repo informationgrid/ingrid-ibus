@@ -43,12 +43,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-communication</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.0.0</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-utils</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.0.0</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-iplug</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.0.0</version>
       <exclusions>
         <exclusion>
           <groupId>de.ingrid</groupId>
@@ -112,12 +112,12 @@
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-elasticsearch-tools</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.0.0</version>
     </dependency>
     <dependency>
       <groupId>de.ingrid</groupId>
       <artifactId>ingrid-codelist-service</artifactId>
-      <version>7.0.0-SNAPSHOT</version>
+      <version>7.0.0</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
