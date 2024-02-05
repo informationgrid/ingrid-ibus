@@ -41,6 +41,7 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.cluster.metadata.IndexMetadata;
@@ -53,6 +54,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.indices.IndexClosedException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.xcontent.XContentType;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -201,6 +203,23 @@ public class IndicesService {
 
         index.setMapping(indexMapping);
 
+    }
+    
+    public void toggleIndexActiveState(String indexId, boolean active) {
+        BoolQueryBuilder indexTypeQuery = queryBuilderService.buildMustQuery(INDEX_FIELD_INDEX_ID, indexId);
+
+        SearchResponse response = client.prepareSearch(INDEX_INFO_NAME)
+                .setQuery(indexTypeQuery)
+                .setFetchSource(false)
+                .setSize(1)
+                .get();
+
+        String id = response.getHits().getAt(0).getId();
+        UpdateRequest request = new UpdateRequest(INDEX_INFO_NAME, id);
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("active", active);
+        request.doc(jsonMap);
+        client.update(request); // .actionGet().getGetResult().status();
     }
 
     private void addTypes(String indexName, Index index) {
@@ -430,7 +449,7 @@ public class IndicesService {
         // get active components
         Set<String> activeComponents = settingsService.getActiveComponentIds();
 
-        if (activeComponents == null || activeComponents.size() == 0) {
+        if (activeComponents == null || activeComponents.isEmpty()) {
             return new IndexInfo[0];
         }
 
