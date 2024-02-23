@@ -7,12 +7,12 @@
   Licensed under the EUPL, Version 1.2 or – as soon they will be
   approved by the European Commission - subsequent versions of the
   EUPL (the "Licence");
-  
+
   You may not use this work except in compliance with the Licence.
   You may obtain a copy of the Licence at:
-  
+
   https://joinup.ec.europa.eu/software/page/eupl
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the Licence is distributed on an "AS IS" basis,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,7 @@
         {{data.longName}}
         <span class="link">
           <span *ngIf="view !== 'short' && data.isConnected" title="Verbunden mit iBus" class="fa fa-link text-success"></span>
-          <span *ngIf="view !== 'short' && !data.isConnected" title="Nicht verbunden mit iBus" class="fa fa-link text-danger"></span>
+<!--          <span *ngIf="view !== 'short' && !data.isConnected" title="Nicht verbunden mit iBus" class="fa fa-link text-danger"></span>-->
         </span>
         <span *ngIf="data.adminUrl" class="bookmark">
           <a href="{{data.adminUrl}}"
