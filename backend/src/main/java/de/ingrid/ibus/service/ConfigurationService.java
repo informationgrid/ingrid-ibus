@@ -25,6 +25,7 @@ package de.ingrid.ibus.service;
 import de.ingrid.codelists.CodeListService;
 import de.ingrid.codelists.comm.HttpCLCommunication;
 import de.ingrid.codelists.model.CodeList;
+import de.ingrid.elasticsearch.ElasticConfig;
 import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
 import de.ingrid.ibus.WebSecurityConfig;
 import de.ingrid.ibus.comm.BusServer;
@@ -34,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -59,6 +61,8 @@ public class ConfigurationService {
 
     @Value("${app.timestamp}")
     private String appTimestamp;
+    
+    private final ElasticConfig elasticConfig;
 
     private File settingsFile;
 
@@ -86,10 +90,10 @@ public class ConfigurationService {
     private Properties properties;
 
     private static String[] configurableProps = new String[]{
-            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "ibus.url", "ibus.port"
+            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "elastic.username", "elastic.password", "ibus.url", "ibus.port"
     };
 
-    public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration, IndicesService indicesService) throws IOException {
+    public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration, IndicesService indicesService, ElasticConfig elasticConfig) throws IOException {
         ClassPathResource ibusSystemConfig = new ClassPathResource("/application.properties");
         ClassPathResource ibusConfig = new ClassPathResource("/application-default.properties");
 
@@ -132,6 +136,7 @@ public class ConfigurationService {
         this.springConfiguration = securityConfiguration;
         this.serverConfiguration = serverConfiguration;
         this.indicesService = indicesService;
+        this.elasticConfig = elasticConfig;
     }
 
     @PostConstruct
@@ -141,6 +146,8 @@ public class ConfigurationService {
         this.properties.put("codelistrepo.username", codelistConfiguration.getUsername());
         this.properties.put("codelistrepo.password", codelistConfiguration.getPassword());
         this.properties.put("elastic.remoteHosts", String.join(",", elasticConfiguration.getRemoteHosts()));
+        this.properties.put("elastic.username", String.join(",", elasticConfiguration.getUsername()));
+        this.properties.put("elastic.password", String.join(",", elasticConfiguration.getPassword()));
         this.properties.put("server.port", String.valueOf( serverConfiguration.getPort() ));
         this.properties.put("ibus.url", busConfiguration.getUrl());
         this.properties.put("spring.security.user.password", springConfiguration.getUser().getPassword());
@@ -205,6 +212,8 @@ public class ConfigurationService {
 
         // Elasticsearch
         String remoteHosts = (String) configuration.get("elastic.remoteHosts");
+        elasticConfiguration.setUsername((String) configuration.get("elastic.username"));
+        elasticConfiguration.setPassword((String) configuration.get("elastic.password"));
         if (remoteHosts != null) {
             try {
                 String[] remoteHostsArray;
@@ -215,7 +224,10 @@ public class ConfigurationService {
                 }
 
                 elasticConfiguration.setRemoteHosts( remoteHostsArray );
-                elasticsearchBean.createTransportClient(remoteHostsArray);
+                elasticConfig.remoteHosts = remoteHostsArray;
+                elasticConfig.username = elasticConfiguration.getUsername();
+                elasticConfig.password = elasticConfiguration.getPassword();
+                elasticsearchBean.createTransportClient(elasticConfig);
             } catch (UnknownHostException e) {
                 log.error("Error updating elasticsearch connection", e);
             }
