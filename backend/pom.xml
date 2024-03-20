@@ -245,10 +245,6 @@
           <includes>
             <include>**/*Test.java</include>
           </includes>
-          <excludes>
-            <exclude>**/v01/*</exclude>
-            <exclude>**/v02/*</exclude>
-          </excludes>
         </configuration>
       </plugin>
 
