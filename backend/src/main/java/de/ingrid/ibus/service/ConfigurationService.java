@@ -27,6 +27,7 @@ import de.ingrid.codelists.comm.HttpCLCommunication;
 import de.ingrid.codelists.model.CodeList;
 import de.ingrid.elasticsearch.ElasticConfig;
 import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
+import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.ibus.WebSecurityConfig;
 import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.config.*;
@@ -86,6 +87,8 @@ public class ConfigurationService {
 
     private final IndicesService indicesService;
 
+    private final IndexManager indexManager;
+
     private Properties propertiesSystem;
     private Properties properties;
 
@@ -93,7 +96,7 @@ public class ConfigurationService {
             "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "elastic.username", "elastic.password", "ibus.url", "ibus.port"
     };
 
-    public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration, IndicesService indicesService, ElasticConfig elasticConfig) throws IOException {
+    public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration, IndicesService indicesService, ElasticConfig elasticConfig, IndexManager indexManager) throws IOException {
         ClassPathResource ibusSystemConfig = new ClassPathResource("/application.properties");
         ClassPathResource ibusConfig = new ClassPathResource("/application-default.properties");
 
@@ -137,6 +140,7 @@ public class ConfigurationService {
         this.serverConfiguration = serverConfiguration;
         this.indicesService = indicesService;
         this.elasticConfig = elasticConfig;
+        this.indexManager = indexManager;
     }
 
     @PostConstruct
@@ -186,6 +190,8 @@ public class ConfigurationService {
         codelistConfiguration.setUsername( (String) configuration.get("codelistrepo.username") );
 
         updateBeansConfiguration(configuration, ibusChanged);
+        indicesService.init();
+        indexManager.init();
 
         // check if elasticsearch connection was established the first time and needs index "ingrid_meta"
         try {
