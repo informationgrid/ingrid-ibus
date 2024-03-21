@@ -66,7 +66,7 @@
       <div class="indexState fa fa-power-off" [class.text-success]="type.active"
            [class.text-danger]="!type.active"
            title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
-      <span class="content">{{type.name}}</span>
+      <span class="content">{{getTypePart(type.id)}}</span>
       <div class="pull-right small">{{type.lastIndexed | date:'medium'}}</div>
       <div *ngIf="data.hasLinkedComponent && !type.hasLinkedComponent" class="text-danger">Nicht referenziert!</div>
     </li>

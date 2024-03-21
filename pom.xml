@@ -34,7 +34,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
     <spring.version>2.7.17</spring.version>
-    <elasticsearch.version>7.17.15</elasticsearch.version>
+    <elasticsearch.version>7.17.18</elasticsearch.version>
     <jackson.version>2.14.1</jackson.version>
     <log4j2.version>2.22.1</log4j2.version>
   </properties>
