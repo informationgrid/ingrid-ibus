@@ -30,6 +30,7 @@ public class ElasticsearchConfiguration {
     private String[] remoteHosts;
     private String username;
     private String password;
+    private String sslTransport;
 
 
     public String[] getRemoteHosts() {
@@ -54,5 +55,13 @@ public class ElasticsearchConfiguration {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSslTransport() {
+        return sslTransport;
+    }
+
+    public void setSslTransport(String sslTransport) {
+        this.sslTransport = sslTransport;
     }
 }

@@ -126,6 +126,10 @@
                      required="false">
             </div>
           </div>
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="sslTransport" name="elasticSSL" [(ngModel)]="config['elastic.sslTransport']">
+            <label class="form-check-label" for="sslTransport">SSL</label>
+          </div>
 
         </div>
       </div>

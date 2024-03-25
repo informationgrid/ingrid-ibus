@@ -24,7 +24,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ConfigService, Configuration} from '../config.service';
 import {BehaviorSubject, Observable} from 'rxjs/Rx';
-import {flatMap, tap} from 'rxjs/operators';
+import {flatMap, map, tap} from 'rxjs/operators';
 
 export interface AppConfiguation {
   'codelistrepo.url'?: string;
@@ -33,6 +33,7 @@ export interface AppConfiguation {
   'elastic.remoteHosts'?: string;
   'elastic.username'?: string;
   'elastic.password'?: string;
+  'elastic.sslTransport'?: boolean;
   'spring.security.user.password'?: string;
 }
 
@@ -50,6 +51,11 @@ export class SettingsService {
   get(): Observable<AppConfiguation> {
     return this.http.get<AppConfiguation>(this.configuration.backendUrl + '/settings')
       .pipe(
+        map(cfg => {
+          // @ts-ignore
+          cfg["elastic.sslTransport"] = cfg["elastic.sslTransport"] === "true";
+          return cfg
+        }),
         tap(cfg => this.appConfiguration.next(cfg))
       );
   }

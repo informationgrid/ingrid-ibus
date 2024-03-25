@@ -36,7 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -50,6 +49,42 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+
+class ElasticConnectionCheck extends Thread {
+
+    private static Logger log = LogManager.getLogger(ElasticConnectionCheck.class);
+
+    private final ElasticsearchNodeFactoryBean elasticsearchBean;
+    private final ElasticConfig elasticConfig;
+    private final IndexManager indexManager;
+    private final IndicesService indicesService;
+
+    ElasticConnectionCheck(ElasticsearchNodeFactoryBean elasticsearchBean, ElasticConfig elasticConfig, IndexManager indexManager, IndicesService indicesService) {
+        this.elasticsearchBean = elasticsearchBean;
+        this.elasticConfig = elasticConfig;
+        this.indexManager = indexManager;
+        this.indicesService = indicesService;
+    }
+    
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(10000);
+                int connectedNodes = ((TransportClient)elasticsearchBean.getClient()).connectedNodes().size();
+                if (connectedNodes == 0) {
+                    log.info("Elasticsearch not connected ... Reconnecting");
+                    elasticsearchBean.createTransportClient(elasticConfig);
+                    indexManager.init();
+                    indicesService.init();
+                }
+            } catch (InterruptedException | UnknownHostException e) {
+                log.error("Connection could not be esablished: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        }
+    }
+}
 
 @Service
 public class ConfigurationService {
@@ -93,7 +128,7 @@ public class ConfigurationService {
     private Properties properties;
 
     private static String[] configurableProps = new String[]{
-            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "elastic.username", "elastic.password", "ibus.url", "ibus.port"
+            "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "elastic.username", "elastic.password", "elastic.sslTransport", "ibus.url", "ibus.port"
     };
 
     public ConfigurationService(CodeListService codeListService, ElasticsearchNodeFactoryBean elasticsearchBean, WebSecurityConfig webSecurityConfig, BusServer busServer, CodelistConfiguration codelistConfiguration, IBusConfiguration busConfiguration, ElasticsearchConfiguration elasticConfiguration, SecurityProperties securityConfiguration, ServerProperties serverConfiguration, IndicesService indicesService, ElasticConfig elasticConfig, IndexManager indexManager) throws IOException {
@@ -150,12 +185,14 @@ public class ConfigurationService {
         this.properties.put("codelistrepo.username", codelistConfiguration.getUsername());
         this.properties.put("codelistrepo.password", codelistConfiguration.getPassword());
         this.properties.put("elastic.remoteHosts", String.join(",", elasticConfiguration.getRemoteHosts()));
-        this.properties.put("elastic.username", String.join(",", elasticConfiguration.getUsername()));
-        this.properties.put("elastic.password", String.join(",", elasticConfiguration.getPassword()));
+        this.properties.put("elastic.username", elasticConfiguration.getUsername());
+        this.properties.put("elastic.password", elasticConfiguration.getPassword());
+        this.properties.put("elastic.sslTransport", elasticConfiguration.getSslTransport());
         this.properties.put("server.port", String.valueOf( serverConfiguration.getPort() ));
         this.properties.put("ibus.url", busConfiguration.getUrl());
         this.properties.put("spring.security.user.password", springConfiguration.getUser().getPassword());
 
+        new ElasticConnectionCheck(elasticsearchBean, elasticConfig, indexManager, indicesService).start();
     }
 
     public boolean writeConfiguration(Properties configuration) throws Exception {
@@ -220,6 +257,7 @@ public class ConfigurationService {
         String remoteHosts = (String) configuration.get("elastic.remoteHosts");
         elasticConfiguration.setUsername((String) configuration.get("elastic.username"));
         elasticConfiguration.setPassword((String) configuration.get("elastic.password"));
+        elasticConfiguration.setSslTransport((String) configuration.get("elastic.sslTransport"));
         if (remoteHosts != null) {
             try {
                 String[] remoteHostsArray;
@@ -233,6 +271,7 @@ public class ConfigurationService {
                 elasticConfig.remoteHosts = remoteHostsArray;
                 elasticConfig.username = elasticConfiguration.getUsername();
                 elasticConfig.password = elasticConfiguration.getPassword();
+                elasticConfig.sslTransport = elasticConfiguration.getSslTransport();
                 elasticsearchBean.createTransportClient(elasticConfig);
             } catch (UnknownHostException e) {
                 log.error("Error updating elasticsearch connection", e);
