@@ -129,6 +129,9 @@
           <div class="form-group form-check">
             <input type="checkbox" class="form-check-input" id="sslTransport" name="elasticSSL" [(ngModel)]="config['elastic.sslTransport']">
             <label class="form-check-label" for="sslTransport">SSL</label>
+            <div *ngIf="config['elastic.sslTransport']">
+              Die notwendigen Dateien müssen im Verzeichnis /opt/ingrid/ingrid-ibus vorhanden sein: client.key, client.cert und client-ca.cert
+            </div>
           </div>
 
         </div>
