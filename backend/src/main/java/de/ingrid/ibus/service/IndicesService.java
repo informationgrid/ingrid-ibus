@@ -41,6 +41,7 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.cluster.metadata.IndexMetadata;
@@ -67,7 +68,6 @@ import java.util.stream.Stream;
 public class IndicesService {
 
     private static final String LINKED_INDEX = "linkedIndex";
-    private static final String LINKED_TYPE = "linkedType";
     private static final String INDEX_FIELD_LAST_INDEXED = "lastIndexed";
     private static final String INDEX_FIELD_INDEXING_STATE = "indexingState";
     private static final String INDEX_FIELD_ADMIN_URL = "adminUrl";
@@ -136,12 +136,12 @@ public class IndicesService {
             Index index = new Index();
 
             try {
-                addDefaultIndexInfo(indexMap.key, null, index, indexMap.value.getSettings());
+                addDefaultIndexInfo(indexMap.key, index, indexMap.value.getSettings());
 
                 // applyAdditionalData( indexMap.key, index, false );
                 // addMapping( indexMap.key, null, index );
 
-                addTypes(indexMap.key, index);
+                addTypes(index);
 
                 // check if iPlug is connected through InGrid Communication
                 //iPlugService.getIPlugDetail()
@@ -160,32 +160,28 @@ public class IndicesService {
         return info;
     }
 
-    public IndexTypeDetail getIndexDetail(String indexId, String type) throws InterruptedException, ExecutionException {
+    public IndexTypeDetail getIndexDetail(String indexId) throws InterruptedException, ExecutionException {
         IndexTypeDetail index = new IndexTypeDetail();
 
         GetSettingsResponse getSettingsResponse = client.admin().indices().prepareGetSettings(indexId).execute().get();
-        addDefaultIndexInfo(indexId, type, index, getSettingsResponse.getIndexToSettings().get(indexId));
+        addDefaultIndexInfo(indexId, index, getSettingsResponse.getIndexToSettings().get(indexId));
 
-        applyAdditionalData(indexId, type, index);
+        applyAdditionalData(indexId, index);
 
-        applyDetailedIndexInfo(indexId, index, type);
+        applyDetailedIndexInfo(indexId, index);
 
         return index;
     }
 
-    private void applyDetailedIndexInfo(String indexName, IndexTypeDetail index, String type) {
+    private void applyDetailedIndexInfo(String indexName, IndexTypeDetail index) {
 
-        index.setType(type);
+        index.setType("base");
 
-        addMapping(indexName, type, index);
+        addMapping(indexName, index);
     }
 
-    private void addMapping(String indexName, String indexType, Index index) {
+    private void addMapping(String indexName, Index index) {
         GetMappingsRequestBuilder rb = client.admin().indices().prepareGetMappings(indexName);
-
-        if (indexType != null) {
-            rb.setTypes(indexType);
-        }
 
         GetMappingsResponse response = rb.execute().actionGet();
 
@@ -202,38 +198,34 @@ public class IndicesService {
         index.setMapping(indexMapping);
 
     }
+    
+    public void toggleIndexActiveState(String indexId, boolean active) {
+        BoolQueryBuilder indexTypeQuery = queryBuilderService.buildMustQuery(INDEX_FIELD_INDEX_ID, indexId);
 
-    private void addTypes(String indexName, Index index) {
-        List<String> types = new ArrayList<>();
+        SearchResponse response = client.prepareSearch(INDEX_INFO_NAME)
+                .setQuery(indexTypeQuery)
+                .setFetchSource(false)
+                .setSize(1)
+                .get();
 
-        GetMappingsResponse response;
-        try {
-            response = client.admin().indices().prepareGetMappings(indexName).execute().get();
-            ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetadata>> mappings = response.mappings();
-            mappings.get(indexName).forEach(type -> {
-                if (!"_default_".equals(type.key))
-                    types.add(type.key);
-            });
-
-            List<IndexType> indexTypes = new ArrayList<>();
-            for (String type : types) {
-                IndexType newIndexType = new IndexType();
-                newIndexType.setName(type);
-                indexTypes.add(newIndexType);
-            }
-            index.setTypes(indexTypes);
-
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Error adding types to index", e);
-        }
+        String id = response.getHits().getAt(0).getId();
+        UpdateRequest request = new UpdateRequest(INDEX_INFO_NAME, id);
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("active", active);
+        request.doc(jsonMap);
+        client.update(request); // .actionGet().getGetResult().status();
     }
 
-    private void addDefaultIndexInfo(String indexName, String type, Index index, Settings settings) {
-        SearchRequestBuilder srb = client.prepareSearch(indexName);
+    private void addTypes(Index index) {
+            List<IndexType> indexTypes = new ArrayList<>();
+            IndexType newIndexType = new IndexType();
+            newIndexType.setName("base");
+            indexTypes.add(newIndexType);
+            index.setTypes(indexTypes);
+    }
 
-        if (type != null) {
-            srb.setTypes(type);
-        }
+    private void addDefaultIndexInfo(String indexName, Index index, Settings settings) {
+        SearchRequestBuilder srb = client.prepareSearch(indexName);
 
         SearchResponse searchResponse = srb.setSize(0).get();
 
@@ -249,15 +241,13 @@ public class IndicesService {
      * iPlug, that delivers the data of the index.
      *
      * @param indexName is the name of the index
-     * @param type is the type of the index
      * @param index detailed info about index
      */
     @SuppressWarnings("unchecked")
-    private void applyAdditionalData(String indexName, String type, IndexTypeDetail index) {
-        BoolQueryBuilder indexTypeQuery = queryBuilderService.buildMustQuery(LINKED_INDEX, indexName, LINKED_TYPE, type);
+    private void applyAdditionalData(String indexName, IndexTypeDetail index) {
+        BoolQueryBuilder indexTypeQuery = queryBuilderService.buildMustQuery(LINKED_INDEX, indexName);
 
         SearchResponse response = client.prepareSearch(INDEX_INFO_NAME)
-                .setTypes("info")
                 .setQuery(indexTypeQuery)
                 .setFetchSource(new String[]{"*"}, null)
                 .setSize(1)
@@ -287,7 +277,6 @@ public class IndicesService {
 
     private void addComponentData(List<Index> indices) {
         SearchResponse response = client.prepareSearch(INDEX_INFO_NAME)
-                .setTypes("info")
                 .setFetchSource(new String[]{"*"}, null)
                 .setSize(1000)
                 .get();
@@ -306,7 +295,6 @@ public class IndicesService {
                         .orElse(null);
 
                 if (indexItem != null) {
-                    String indexType = (String) hit.getSourceAsMap().get(LINKED_TYPE);
                     StdDateFormat format = new StdDateFormat();
                     String lastIndexedString = (String) hit.getSourceAsMap().get(INDEX_FIELD_LAST_INDEXED);
                     Date lastIndexed = null;
@@ -324,12 +312,10 @@ public class IndicesService {
                     indexItem.setAdminUrl((String) ((Map) hitSource.get("plugdescription")).get("IPLUG_ADMIN_GUI_URL"));
 
                     for (IndexType type : indexItem.getTypes()) {
-                        if (type.getName().equals(indexType)) {
-                            type.setId((String) hitSource.get(INDEX_FIELD_INDEX_ID));
-                            type.setHasLinkedComponent(true);
-                            type.setLastIndexed(lastIndexed);
-                            type.setActive(settingsService.isActive(type.getId()));
-                        }
+                        type.setId((String) hitSource.get(INDEX_FIELD_INDEX_ID));
+                        type.setHasLinkedComponent(true);
+                        type.setLastIndexed(lastIndexed);
+                        type.setActive(settingsService.isActive(type.getId()));
                     }
                 }
             } catch (Exception ex) {
@@ -430,7 +416,7 @@ public class IndicesService {
         // get active components
         Set<String> activeComponents = settingsService.getActiveComponentIds();
 
-        if (activeComponents == null || activeComponents.size() == 0) {
+        if (activeComponents == null || activeComponents.isEmpty()) {
             return new IndexInfo[0];
         }
 
@@ -442,20 +428,17 @@ public class IndicesService {
 
         // get real index names from active components
         SearchResponse response = client.prepareSearch(INDEX_INFO_NAME)
-                .setTypes("info")
                 .setQuery(boolQuery)
-                .setFetchSource(new String[]{LINKED_INDEX, LINKED_TYPE}, null)
+                .setFetchSource(new String[]{LINKED_INDEX}, null)
                 .setSize(1000)
                 .get();
 
         // collect all referenced indices
         response.getHits().forEach(hit -> {
             String index = (String) hit.getSourceAsMap().get(LINKED_INDEX);
-            String type = (String) hit.getSourceAsMap().get(LINKED_TYPE);
-            if (index != null && type != null) {
+            if (index != null) {
                 IndexInfo info = new IndexInfo();
                 info.setToIndex(index);
-                info.setToType(type);
                 result.add(info);
             }
         });
@@ -504,7 +487,6 @@ public class IndicesService {
 
     public String getIPlugForIndex(String id) {
         SearchResponse response = client.prepareSearch(INDEX_INFO_NAME)
-                .setTypes("info")
                 .setQuery(QueryBuilders.termQuery(LINKED_INDEX, id))
                 .setFetchSource(new String[]{"*"}, null)
                 .setSize(1000)
@@ -528,7 +510,6 @@ public class IndicesService {
 
     public List<ConfigIndexEntry> getConfigurationIndexEntries() {
         SearchResponse response = client.prepareSearch(INDEX_INFO_NAME)
-                .setTypes("info")
                 .setFetchSource(new String[]{"*"}, null)
                 .setSize(1000)
                 .get();

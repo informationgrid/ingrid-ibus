@@ -1,4 +1,12 @@
 
+## 7.1.0 (26.03.2024)
+
+### Features
+
+* Unterstützung von Authentifizierung bei Elasticsearch (#6103)
+* Speicherung des Status eines Indexes im ingrid_meta Index (#5941)
+
+    
 ## 7.0.0 (05.01.2024)
 
 ### Features

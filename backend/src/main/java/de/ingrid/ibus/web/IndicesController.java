@@ -94,7 +94,7 @@ public class IndicesController {
     public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id, @RequestParam String type) {
         IndexTypeDetail index;
         try {
-            index = this.indicesService.getIndexDetail( id, type );
+            index = this.indicesService.getIndexDetail( id );
         } catch (Exception e) {
             log.error("Error getting index detail", e);
             return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( null );
@@ -105,7 +105,9 @@ public class IndicesController {
     @PutMapping("/indices/activate")
     @ResponseBody
     public ResponseEntity<Void> activateIndex(@RequestBody JsonNode json) throws Exception {
-        boolean success = this.settingsService.activateIndexType( json.get( "id" ).asText() );
+        String id = json.get("id").asText();
+        indicesService.toggleIndexActiveState(id, true);
+        boolean success = this.settingsService.activateIndexType(id);
 
         if (success) {
             return ResponseEntity.ok().build();
@@ -117,7 +119,9 @@ public class IndicesController {
     @PutMapping("/indices/deactivate")
     @ResponseBody
     public ResponseEntity<Void> deactivateIndex(@RequestBody JsonNode json) throws Exception {
-        boolean success = this.settingsService.deactivateIndexType( json.get( "id" ).asText() );
+        String id = json.get("id").asText();
+        indicesService.toggleIndexActiveState(id, false);
+        boolean success = this.settingsService.deactivateIndexType(id);
 
         if (success) {
             return ResponseEntity.ok().build();
