@@ -73,6 +73,7 @@ export class SettingsListComponent implements OnInit, OnDestroy {
   }
 
   saveSettings() {
+    this.error = null;
     if (this.isEmptyPassword) {
       this.config['codelistrepo.password'] = '';
     } else if (this.config['codelistrepo.password'] === '') {
@@ -98,5 +99,6 @@ export class SettingsListComponent implements OnInit, OnDestroy {
   handleError(error: any) {
     console.error('Error happened: ', error);
     this.error = error.statusText || error.message || error.json().message;
+    if (error.error) this.error += `: ${error.error}`
   }
 }

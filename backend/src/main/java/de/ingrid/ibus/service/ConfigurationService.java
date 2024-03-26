@@ -71,6 +71,7 @@ class ElasticConnectionCheck extends Thread {
         while (true) {
             try {
                 Thread.sleep(10000);
+                log.debug("Checking Elasticsearch connection");
                 int connectedNodes = ((TransportClient)elasticsearchBean.getClient()).connectedNodes().size();
                 if (connectedNodes == 0) {
                     log.info("Elasticsearch not connected ... Reconnecting");
@@ -126,6 +127,7 @@ public class ConfigurationService {
 
     private Properties propertiesSystem;
     private Properties properties;
+    volatile private Thread elasticCheck;
 
     private static String[] configurableProps = new String[]{
             "codelistrepo.url", "codelistrepo.username", "elastic.remoteHosts", "elastic.username", "elastic.password", "elastic.sslTransport", "ibus.url", "ibus.port"
@@ -191,8 +193,8 @@ public class ConfigurationService {
         this.properties.put("server.port", String.valueOf( serverConfiguration.getPort() ));
         this.properties.put("ibus.url", busConfiguration.getUrl());
         this.properties.put("spring.security.user.password", springConfiguration.getUser().getPassword());
-
-        new ElasticConnectionCheck(elasticsearchBean, elasticConfig, indexManager, indicesService).start();
+        
+        updateElasticCheckThread();
     }
 
     public boolean writeConfiguration(Properties configuration) throws Exception {
@@ -229,6 +231,7 @@ public class ConfigurationService {
         updateBeansConfiguration(configuration, ibusChanged);
         indicesService.init();
         indexManager.init();
+        updateElasticCheckThread();
 
         // check if elasticsearch connection was established the first time and needs index "ingrid_meta"
         try {
@@ -238,6 +241,14 @@ public class ConfigurationService {
         }
 
         return true;
+    }
+    
+    private void updateElasticCheckThread() {
+        if (elasticCheck != null) {
+            elasticCheck.interrupt();
+        }
+        elasticCheck = new ElasticConnectionCheck(elasticsearchBean, elasticConfig, indexManager, indicesService);
+        elasticCheck.start();
     }
 
     private void updateBeansConfiguration(Properties configuration, boolean ibusChanged) throws Exception {
