@@ -34,7 +34,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
     <spring.version>2.7.17</spring.version>
-    <elasticsearch.version>7.17.18</elasticsearch.version>
+<!--    <elasticsearch.version>8.14.1</elasticsearch.version>-->
     <jackson.version>2.14.1</jackson.version>
     <log4j2.version>2.22.1</log4j2.version>
   </properties>
@@ -57,21 +57,6 @@
         <!-- lookup parent from repository -->
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.elasticsearch</groupId>
-        <artifactId>elasticsearch</artifactId>
-        <version>${elasticsearch.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.elasticsearch.client</groupId>
-        <artifactId>transport</artifactId>
-        <version>${elasticsearch.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.elasticsearch.plugin</groupId>
-        <artifactId>transport-netty4-client</artifactId>
-        <version>${elasticsearch.version}</version>
       </dependency>
       <!-- backward compatible -->
       <dependency>

@@ -19,10 +19,11 @@ services:
 #      - ingrid-network
 
   elastic:
-    image: docker-registry.wemove.com/ingrid-elasticsearch-with-decompound:6.8.4
-    #image: docker-registry.wemove.com/ingrid-elasticsearch-with-decompound:6.4.2-numis
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
     environment:
       - cluster.name=ingrid
+      - discovery.type=single-node
+      - ingest.geoip.downloader.enabled=false
       - http.host=0.0.0.0
       - transport.host=0.0.0.0
       - http.cors.enabled=true
@@ -31,14 +32,16 @@ services:
       - xpack.security.enabled=false
       - xpack.monitoring.enabled=false
       - xpack.ml.enabled=false
+    restart: unless-stopped
     ports:
-      - 9200:9200
-      - 9300:9300
+      - "9201:9200"
+      - "9301:9300"
     networks:
       - ingrid-network
-
+  
+  
   ibus:
-    image: docker-registry.wemove.com/ingrid-ibus:5.3.0
+    image: docker-registry.wemove.com/ingrid-ibus:7.0.0
     depends_on:
       - elastic
     environment:
@@ -49,11 +52,12 @@ services:
       - CODELIST_PASSWORD=admin
       - ELASTIC_HOSTS=elastic:9300
     ports:
-      - 8888:80
+      - 8888:8080
+      - 8889:9900
     volumes:
       - ./docker/activatedIplugs.properties:/opt/ingrid/ingrid-ibus/conf/activatedIplugs.properties
       - ./docker/application-default.properties:/opt/ingrid/ingrid-ibus/conf/application-default.properties
-    command: ["sh", "/wait-for-elasticsearch.sh", "elastic:9200", "/bin/sh start.sh start"]
+#    command: ["sh", "/wait-for-elasticsearch.sh", "elastic:9200", "/bin/sh start.sh start"]
     networks:
       - ingrid-network
 

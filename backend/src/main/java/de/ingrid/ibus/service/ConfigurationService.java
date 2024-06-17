@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,14 +65,14 @@ class ElasticConnectionCheck extends Thread {
         this.indexManager = indexManager;
         this.indicesService = indicesService;
     }
-    
+
     @Override
     public void run() {
         while (true) {
             try {
                 Thread.sleep(10000);
                 log.debug("Checking Elasticsearch connection");
-                int connectedNodes = ((TransportClient)elasticsearchBean.getClient()).connectedNodes().size();
+                int connectedNodes = (elasticsearchBean.getClient()).nodes().stats().nodeStats().total();
                 if (connectedNodes == 0) {
                     log.info("Elasticsearch not connected ... Reconnecting");
                     elasticsearchBean.createTransportClient(elasticConfig);
@@ -81,6 +81,8 @@ class ElasticConnectionCheck extends Thread {
                 }
             } catch (InterruptedException | UnknownHostException e) {
                 log.error("Connection could not be esablished: " + e.getMessage());
+                throw new RuntimeException(e);
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -98,7 +100,7 @@ public class ConfigurationService {
 
     @Value("${app.timestamp}")
     private String appTimestamp;
-    
+
     private final ElasticConfig elasticConfig;
 
     private File settingsFile;
@@ -193,7 +195,7 @@ public class ConfigurationService {
         this.properties.put("server.port", String.valueOf( serverConfiguration.getPort() ));
         this.properties.put("ibus.url", busConfiguration.getUrl());
         this.properties.put("spring.security.user.password", springConfiguration.getUser().getPassword());
-        
+
         updateElasticCheckThread();
     }
 
@@ -242,13 +244,13 @@ public class ConfigurationService {
 
         return true;
     }
-    
+
     private void updateElasticCheckThread() {
         if (elasticCheck != null) {
             elasticCheck.interrupt();
         }
-        elasticCheck = new ElasticConnectionCheck(elasticsearchBean, elasticConfig, indexManager, indicesService);
-        elasticCheck.start();
+//        elasticCheck = new ElasticConnectionCheck(elasticsearchBean, elasticConfig, indexManager, indicesService);
+//        elasticCheck.start();
     }
 
     private void updateBeansConfiguration(Properties configuration, boolean ibusChanged) throws Exception {
@@ -351,7 +353,11 @@ public class ConfigurationService {
 
         List<CodeList> codeLists = codeListService.updateFromServer(new Date().getTime());
         props.put("codelistrepo", codeLists == null ? "false" : "true");
-        props.put("elasticsearch", ((TransportClient)elasticsearchBean.getClient()).connectedNodes().size() > 0 ? "true" : "false");
+        try {
+            props.put("elasticsearch", (elasticsearchBean.getClient()).nodes().info().nodeStats().total() > 0 ? "true" : "false");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return props;
     }
