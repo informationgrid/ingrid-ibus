@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,9 +24,9 @@ package de.ingrid.ibus.model;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.codehaus.jettison.json.JSONObject;
 
 public class Index {
 
@@ -47,7 +47,7 @@ public class Index {
 
     @JsonView(View.Summary.class)
     private Date created;
-    
+
     @JsonView(View.Summary.class)
     private boolean isConnected;
 
@@ -55,7 +55,7 @@ public class Index {
 
     private Date lastIndexed;
 
-    private Map<String, Object> mapping;
+    private String mapping;
 
     private IndexState indexingState;
 
@@ -111,11 +111,11 @@ public class Index {
         this.lastHeartbeat = dateTime;
     }
 
-    public Map<String, Object> getMapping() {
+    public String getMapping() {
         return mapping;
     }
 
-    public void setMapping(Map<String, Object> mapping) {
+    public void setMapping(String mapping) {
         this.mapping = mapping;
     }
 

@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,7 @@ import {SearchHits} from '../+search/SearchHits';
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class IndexService {
@@ -39,50 +40,51 @@ export class IndexService {
   }
 
   getIndices(): Observable<IndexItem[]> {
-    return this.http.get<IndexItem[]>(this.configuration.backendUrl + '/indices');
+    return this.http.get<IndexItem[]>(`${this.configuration.backendUrl}/indices`);
   }
 
-  getIndexDetail(id: string, type: string): Observable<IndexDetail> {
-    return this.http.get<IndexDetail>(this.configuration.backendUrl + '/indices/' + id + '?type=' + type);
-  }
-
-  update(detail: IndexDetail) {
-    // TODO: implement
+  getIndexDetail(id: string): Observable<IndexDetail> {
+    return this.http.get<IndexDetail>(`${this.configuration.backendUrl}/indices/${id}`)
+      .pipe(map(data => {
+        debugger
+        data.mapping = JSON.parse(data.mapping);
+        return data;
+      }));
   }
 
   deleteIndex(id: string): Observable<HttpResponse<void>> {
-    return this.http.request<void>('DELETE', this.configuration.backendUrl + '/indices', {body: {id: id}, observe: 'response'});
+    return this.http.request<void>('DELETE', `${this.configuration.backendUrl}/indices`, {body: {id: id}, observe: 'response'});
     // .map(response => response.status);
   }
 
   setActive(id: string, active: boolean) {
     let command = active ? 'activate' : 'deactivate';
-    return this.http.put(this.configuration.backendUrl + '/indices/' + command, {
+    return this.http.put(`${this.configuration.backendUrl}/indices/${command}`, {
       id: id
     }, {responseType: 'text'});
   }
 
   index(id: string) {
-    return this.http.put(this.configuration.backendUrl + '/indices/index', {
+    return this.http.put(`${this.configuration.backendUrl}/indices/index`, {
       id: id
     }, {observe: 'response', responseType: 'text'});
   }
 
   search(query: string, page: number, numPerPage: number): Observable<SearchHits> {
-    return this.http.get<SearchHits>(this.configuration.backendUrl + '/search?query=' + query + '&page=' + page + '&hitsPerPage=' + numPerPage);
+    return this.http.get<SearchHits>(`${this.configuration.backendUrl}/search?query=${query}&page=${page}&hitsPerPage=${numPerPage}`);
   }
 
   getSearchDetail(indexId: string, hitId: string, requestIPlug?: boolean): Observable<SearchHit> {
     return requestIPlug
-      ? this.http.get<SearchHit>(this.configuration.backendUrl + '/iplugs/recordDetail',
+      ? this.http.get<SearchHit>(`${this.configuration.backendUrl}/iplugs/recordDetail`,
         {
           params: {plugId: indexId, docId: hitId}
         })
-      : this.http.get<SearchHit>(this.configuration.backendUrl + '/indices/' + indexId + '/' + hitId);
+      : this.http.get<SearchHit>(`${this.configuration.backendUrl}/indices/${indexId}/${hitId}`);
   }
 
   getActiveComponentIds(): Observable<string[]> {
-    return this.http.get<string[]>(this.configuration.backendUrl + '/settings/activeComponentIds', {
+    return this.http.get<string[]>(`${this.configuration.backendUrl}/settings/activeComponentIds`, {
       params: new HttpParams().set('verify', 'true')
     });
   }

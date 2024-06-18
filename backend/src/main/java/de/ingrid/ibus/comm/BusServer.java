@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,8 +38,8 @@ import de.ingrid.utils.metadata.IMetadataInjector;
 import de.ingrid.utils.metadata.Metadata;
 import de.ingrid.utils.metadata.MetadataInjectorFactory;
 import de.ingrid.utils.processor.IPreProcessor;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import net.weta.components.communication.ICommunication;
 import net.weta.components.communication.configuration.ServerConfiguration;
 import net.weta.components.communication.reflect.ReflectMessageHandler;
@@ -61,7 +61,7 @@ import java.util.Properties;
 @Component
 public class BusServer {
 
-    private static Logger log = LogManager.getLogger( BusServer.class );
+    private static Logger log = LogManager.getLogger(BusServer.class);
 
     private Registry registry;
 
@@ -93,10 +93,10 @@ public class BusServer {
     private SettingsService settingsService;
 
     /**
-     * 
      *
      */
-    public BusServer() {}
+    public BusServer() {
+    }
 
     @PostConstruct
     public void postConstruct() throws Exception {
@@ -134,49 +134,49 @@ public class BusServer {
             serverConfiguration.setMessageThreadCount(iBusThreadCount);
             serverConfiguration.setQueueSize(iBusQueueSize);
 
-            communication = StartCommunication.create( serverConfiguration );
+            communication = StartCommunication.create(serverConfiguration);
 
             communication.startup();
-            communication.subscribeGroup( busConfiguration.getUrl() );
+            communication.subscribeGroup(busConfiguration.getUrl());
 
             // removeCommunicationFile();
         } catch (Exception e) {
-            log.error( "Cannot start the communication: ", e );
+            log.error("Cannot start the communication: ", e);
             return;
         }
 
         // instantiate the IBus
-        IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl( communication );
-        Bus bus = new Bus( proxyFactory, settingsService );
+        IPlugProxyFactory proxyFactory = new IPlugProxyFactoryImpl(communication);
+        Bus bus = new Bus(proxyFactory, settingsService);
         Metadata metadata = new Metadata();
-        injectMetadatas( metadata, bus );
-        bus.setMetadata( metadata );
+        injectMetadatas(metadata, bus);
+        bus.setMetadata(metadata);
         registry = bus.getIPlugRegistry();
-        registry.setUrl( busConfiguration.getUrl() );
-        registry.setCommunication( communication );
+        registry.setUrl(busConfiguration.getUrl());
+        registry.setCommunication(communication);
 
         // remove all processors first
         IPreProcessor[] preProcessors = bus.getProccessorPipe().getPreProcessors();
-        for (IPreProcessor pre: preProcessors) {
+        for (IPreProcessor pre : preProcessors) {
             bus.getProccessorPipe().removePreProcessor(pre);
         }
 
         // add processors
-        bus.getProccessorPipe().addPreProcessor( new UdkMetaclassPreProcessor() );
-        bus.getProccessorPipe().addPreProcessor( new LimitedAttributesPreProcessor() );
-        bus.getProccessorPipe().addPreProcessor( new QueryModePreProcessor() );
-        bus.getProccessorPipe().addPreProcessor( new AddressPreProcessor() );
-        bus.getProccessorPipe().addPreProcessor( new BusUrlPreProcessor( busConfiguration.getUrl() ) );
-        bus.getProccessorPipe().addPreProcessor( new QueryModifierPreProcessor( "/querymodifier.properties" ) );
+        bus.getProccessorPipe().addPreProcessor(new UdkMetaclassPreProcessor());
+        bus.getProccessorPipe().addPreProcessor(new LimitedAttributesPreProcessor());
+        bus.getProccessorPipe().addPreProcessor(new QueryModePreProcessor());
+        bus.getProccessorPipe().addPreProcessor(new AddressPreProcessor());
+        bus.getProccessorPipe().addPreProcessor(new BusUrlPreProcessor(busConfiguration.getUrl()));
+        bus.getProccessorPipe().addPreProcessor(new QueryModifierPreProcessor("/querymodifier.properties"));
 
         // read in the boost for iplugs
-        InputStream is = bus.getClass().getResourceAsStream( "/globalRanking.properties" );
+        InputStream is = bus.getClass().getResourceAsStream("/globalRanking.properties");
 
         Properties properties = new Properties();
         try {
-            properties.load( is );
+            properties.load(is);
         } catch (Exception e) {
-            log.error( "Problems on loading globalRanking.properties. Does it exist?" );
+            log.error("Problems on loading globalRanking.properties. Does it exist?");
         }
         HashMap<String, Float> globalRanking = new HashMap<>();
         for (Object prop : properties.keySet()) {
@@ -190,13 +190,13 @@ public class BusServer {
                         + " to a Float.");
             }
         }
-        registry.setGlobalRanking( globalRanking );
+        registry.setGlobalRanking(globalRanking);
 
         // start the proxy service
         ReflectMessageHandler messageHandler = new ReflectMessageHandler();
-        messageHandler.addObjectToCall( IBus.class, bus );
-        registry.getCommunication().getMessageQueue().getProcessorRegistry().addMessageHandler( ReflectMessageHandler.MESSAGE_TYPE,
-                messageHandler );
+        messageHandler.addObjectToCall(IBus.class, bus);
+        registry.getCommunication().getMessageQueue().getProcessorRegistry().addMessageHandler(ReflectMessageHandler.MESSAGE_TYPE,
+                messageHandler);
 
         // update all classes that use the registry, since it has changed now (new Bus())
         for (RegistryConfigurable registryConfigurable : classesUsingRegistry) {
@@ -207,10 +207,10 @@ public class BusServer {
     private void injectMetadatas(Metadata metadata, IBus bus) throws Exception {
         // ibus has no plugdescription
         PlugDescription plugDescription = new PlugDescription();
-        MetadataInjectorFactory factory = new MetadataInjectorFactory( plugDescription, bus );
+        MetadataInjectorFactory factory = new MetadataInjectorFactory(plugDescription, bus);
         List<IMetadataInjector> metadataInjectors = factory.getMetadataInjectors();
         for (IMetadataInjector metadataInjector : metadataInjectors) {
-            metadataInjector.injectMetaDatas( metadata );
+            metadataInjector.injectMetaDatas(metadata);
         }
     }
 

@@ -34,7 +34,6 @@ import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.query.IngridQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -124,8 +123,8 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
         try {
             elasticConfig.activeIndices = indexService.getActiveIndices();
             return indexUtils.search( query, start, length );
-        } catch (NoNodeAvailableException ex) {
-            log.warn("No search on elasticsearch since not connected to node");
+        } catch (Exception ex) {
+            log.warn("No search on elasticsearch since not connected to node", ex);
             return new IngridHits( 0, new IngridHit[0] );
         }
     }
