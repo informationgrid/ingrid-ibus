@@ -23,7 +23,6 @@
 package de.ingrid.ibus.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
@@ -35,8 +34,6 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.GetIndicesSettingsResponse;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.elasticsearch.indices.get_mapping.IndexMappingRecord;
-import co.elastic.clients.json.JsonpMapper;
-import co.elastic.clients.json.JsonpMapperFeatures;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
 import de.ingrid.elasticsearch.IndexInfo;
@@ -47,7 +44,6 @@ import de.ingrid.utils.ElasticDocument;
 import de.ingrid.utils.IngridHitDetail;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import jakarta.json.stream.JsonGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -57,7 +53,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -234,18 +229,18 @@ public class IndicesService {
     }
 
     private void addTypes(Index index) {
-            List<IndexType> indexTypes = new ArrayList<>();
-            IndexType newIndexType = new IndexType();
-            newIndexType.setName("base");
-            indexTypes.add(newIndexType);
-            index.setTypes(indexTypes);
+        List<IndexType> indexTypes = new ArrayList<>();
+        IndexType newIndexType = new IndexType();
+        newIndexType.setName("base");
+        indexTypes.add(newIndexType);
+        index.setTypes(indexTypes);
     }
 
     private void addDefaultIndexInfo(String indexName, Index index, IndexSettings settings) {
         SearchResponse<ElasticDocument> searchResponse;
         try {
             searchResponse = client.search(s -> s
-                    .index(indexName)
+                            .index(indexName)
                             .size(0)
                     , ElasticDocument.class);
         } catch (IOException e) {
@@ -265,7 +260,7 @@ public class IndicesService {
      * iPlug, that delivers the data of the index.
      *
      * @param indexName is the name of the index
-     * @param index detailed info about index
+     * @param index     detailed info about index
      */
     @SuppressWarnings("unchecked")
     private void applyAdditionalData(String indexName, IndexTypeDetail index) {
@@ -273,11 +268,11 @@ public class IndicesService {
 
         SearchResponse<ElasticDocument> response;
         try {
-            response = client.search(s->s
+            response = client.search(s -> s
                             .index(INDEX_INFO_NAME)
-                    .query(indexTypeQuery._toQuery())
-                    .source(fs -> fs.fetch(true))
-                    .size(1)
+                            .query(indexTypeQuery._toQuery())
+                            .source(fs -> fs.fetch(true))
+                            .size(1)
                     , ElasticDocument.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -309,8 +304,8 @@ public class IndicesService {
         SearchResponse<ElasticDocument> response;
         try {
             response = client.search(s -> s.index(INDEX_INFO_NAME)
-                    .source( fs -> fs.fetch(true))// new String[]{"*"}, null)
-                    .size(1000)
+                            .source(fs -> fs.fetch(true))// new String[]{"*"}, null)
+                            .size(1000)
                     , ElasticDocument.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -376,7 +371,7 @@ public class IndicesService {
         return indexState;
     }
 
-     private Date mapDate(String date) {
+    private Date mapDate(String date) {
         if (date != null) {
             try {
                 return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(date);
@@ -387,72 +382,6 @@ public class IndicesService {
             return null;
         }
     }
-
-    // public List<SearchResult> search(String query) {
-    //
-    // IngridQuery iQuery = new IngridQuery( true, false, 0, query );
-    // IngridHits searchAndDetail = searchService.searchAndDetail( iQuery, 5, 0, 0, 1000, new String[] { "title" } );
-    //
-    // String[] indices = getActiveIndices();
-    // String[] justIndexNames = Stream.of( indices )
-    // .map( indexWithType -> indexWithType.split( ":" )[0] )
-    // .collect( Collectors.toSet() )
-    // .toArray( new String[0] );
-    //
-    // BoolQueryBuilder indexTypeFilter = queryBuilderService.createIndexTypeFilter( indices );
-    // BoolQueryBuilder queryWithFilter = queryBuilderService.createQueryWithFilter( query, indexTypeFilter );
-    //
-    // SearchResponse response = client.prepareSearch( justIndexNames )
-    // .setQuery( queryWithFilter )
-    // .setFetchSource( new String[] { "*" }, null )
-    // .setSize( 10 )
-    // .get();
-    //
-    // SearchHit[] hits = response.getHits().getHits();
-    //
-    // List<SearchResult> results = new ArrayList<SearchResult>();
-    // for (SearchHit hit : hits) {
-    // SearchResult result = new SearchResult();
-    // result.setId( hit.getId() );
-    // result.setIndexId( hit.getIndex() );
-    // result.setTitle( (String) hit.getSource().get( "title" ) );
-    // result.setSummary( (String) hit.getSource().get( "summary" ) );
-    // result.setSource( (String) hit.getSource().get( "name" ) );
-    // results.add( result );
-    // }
-    // return results;
-    // }
-
-    /* TODO AW: public HitsMetadata<ElasticDocument> search(QueryBuilder query) {
-        IndexInfo[] indices = getActiveIndices();
-
-        // when no index was selected then do not return any hits
-        if (indices.length == 0) {
-            return HitsMetadata.of( b -> b
-                    .hits(new ArrayList<>())
-                    .total(TotalHits.of(th -> th
-                        .relation(TotalHitsRelation.Eq)
-                        .value(0))));
-        }
-
-        String[] justIndexNames = Stream.of(indices)
-                .map(IndexInfo::getToIndex)
-                .distinct()
-                .toArray(String[]::new);
-
-        BoolQuery.Builder indexTypeFilter = queryBuilderService.createIndexTypeFilter(indices);
-
-        // TODO: handle not existing index names which lead to an exception
-
-       *//* SearchResponse<ElasticDocument> response = client.search(s -> s
-                        .index(Arrays.asList(justIndexNames))
-                .query(QueryBuilders.bool().must(query).must(indexTypeFilter))
-                .source(fs -> fs.fetch(true)) // new String[]{"*"}, null)
-                .size(10)
-                , ElasticDocument.class);*//*
-
-        return new HitsMetadata.Builder().build(); // TODO AW: response.hits();
-    }*/
 
     public IndexInfo[] getActiveIndices() {
         List<IndexInfo> result = new ArrayList<>();
@@ -474,10 +403,10 @@ public class IndicesService {
         SearchResponse<ElasticDocument> response;
         try {
             response = client.search(s -> s
-                    .index(INDEX_INFO_NAME)
-                    .query(boolQuery.build()._toQuery())
-                    .source(fs -> fs.fetch(true) ) //new String[]{LINKED_INDEX}, null)
-                    .size(1000)
+                            .index(INDEX_INFO_NAME)
+                            .query(boolQuery.build()._toQuery())
+                            .source(fs -> fs.fetch(true)) //new String[]{LINKED_INDEX}, null)
+                            .size(1000)
                     , ElasticDocument.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -485,7 +414,7 @@ public class IndicesService {
 
         // collect all referenced indices
         response.hits().hits().forEach(hit -> {
-            String index = (String) hit.source().get(LINKED_INDEX);
+            String index = (String) (hit.source() != null ? hit.source().get(LINKED_INDEX) : null);
             if (index != null) {
                 IndexInfo info = new IndexInfo();
                 info.setToIndex(index);
@@ -503,7 +432,7 @@ public class IndicesService {
                             .index(indexId)
                             .id(hitId)
                             .source(fs -> fs.fetch(true))
-    //                .setFetchSource("*", null)
+                    //                .setFetchSource("*", null)
                     , ElasticDocument.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -519,7 +448,7 @@ public class IndicesService {
         Object iPlugId = source.get("iPlugId");
 
         if (iPlugId instanceof ArrayList) {
-            iPlugIdString = (String) ((ArrayList) iPlugId).get(0);
+            iPlugIdString = (String) ((ArrayList<?>) iPlugId).get(0);
         } else {
             iPlugIdString = (String) iPlugId;
         }
@@ -551,10 +480,10 @@ public class IndicesService {
         SearchResponse<ElasticDocument> response;
         try {
             response = client.search(s -> s
-                    .index(INDEX_INFO_NAME)
-                    .query(TermQuery.of(tq -> tq.field(LINKED_INDEX).value(id))._toQuery())
-                    .source(fs -> fs.fetch(true)) // new String[]{"*"}, null)
-                    .size(1000)
+                            .index(INDEX_INFO_NAME)
+                            .query(TermQuery.of(tq -> tq.field(LINKED_INDEX).value(id))._toQuery())
+                            .source(fs -> fs.fetch(true)) // new String[]{"*"}, null)
+                            .size(1000)
                     , ElasticDocument.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -564,7 +493,7 @@ public class IndicesService {
 
         // get first plugid found
         // it's possible that there are more than one documents returned since for each type a document exists
-        if (hits.size() > 0) {
+        if (!hits.isEmpty()) {
             return (String) hits.get(0).source().get(INDEX_FIELD_IPLUG_ID);
         } else {
             log.error("There should be at least one corresponding component for the index: " + id);
@@ -580,9 +509,9 @@ public class IndicesService {
         SearchResponse<ElasticDocument> response;
         try {
             response = client.search(s -> s
-                    .index(INDEX_INFO_NAME)
-                    .source(fs -> fs.fetch(true)) // .setFetchSource(new String[]{"*"}, null)
-                    .size(1000)
+                            .index(INDEX_INFO_NAME)
+                            .source(fs -> fs.fetch(true)) // .setFetchSource(new String[]{"*"}, null)
+                            .size(1000)
                     , ElasticDocument.class);
         } catch (IOException e) {
             throw new RuntimeException(e);

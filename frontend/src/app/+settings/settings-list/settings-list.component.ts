@@ -101,4 +101,10 @@ export class SettingsListComponent implements OnInit, OnDestroy {
     this.error = error.statusText || error.message || error.json().message;
     if (error.error) this.error += `: ${error.error}`
   }
+
+  submitIfInit() {
+    if (this.config['needPasswordChange'] === "true") {
+      this.saveSettings();
+    }
+  }
 }

@@ -1,3 +1,7 @@
+:host-context(.other) .card-body {
+    padding: 4px 20px;
+}
+
 .index-id {
   border-bottom: 1px solid #ddd;
   border-right: 1px solid #ddd;
@@ -5,6 +9,12 @@
   border-radius: 6px;
   display: inline-block;
   font-size: x-small;
+}
+
+.card-body {
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }
 
 .list-group-item {
@@ -33,17 +43,10 @@
   padding-left: 15px;
 }
 
-.indexState {
-  padding: 5px;
-  margin-right: 5px;
-  position: absolute;
-  left: 5px;
-  top: 8px;
-}
-
 .indexState:hover, .delete:hover {
   background-color: #eeeeee;
   border-radius: 20px;
+    cursor: pointer;
 }
 
 .delete {
@@ -58,14 +61,6 @@
   color: #ff0000;
 }
 
-.dropdown {
-  position: absolute;
-  right: 5px;
-  top: 10px;
-}
-.short .dropdown {
-  top: 1px;
-}
 .menu-icon:after {
   content: '\22EE';
   font-size: 1.5em;

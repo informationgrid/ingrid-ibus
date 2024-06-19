@@ -20,16 +20,15 @@
  * limitations under the Licence.
  * **************************************************#
  */
-import { Router } from '@angular/router';
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { IndexService } from '../index.service';
+import {Router} from '@angular/router';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
+import {IndexService} from '../index.service';
 
 export class IndexType {
   id: string;
   name: string;
   active: boolean;
   lastIndexed: string;
-  hasLinkedComponent?: boolean;
 }
 
 export class IndexItem {
@@ -52,18 +51,23 @@ export class IndexItem {
 export class IndexItemComponent implements OnInit {
 
   @Input() data: IndexItem;
-  @Input() view = 'full';
+  @Input() showFull = true;
 
   @Output() onDelete = new EventEmitter();
-
   @Output() onError = new EventEmitter();
 
   dropDownOpen = false;
+  title = '';
 
   constructor(private eRef: ElementRef, private router: Router, private indexService: IndexService) {
   }
 
   ngOnInit() {
+    if (this.showFull) {
+      this.title = this.data.longName + ' - ' + this.getTypePart(this.data.types[0].id);
+    } else {
+      this.title = this.data.name;
+    }
   }
 
   showIndexItem(item: IndexItem, type: string) {
@@ -75,7 +79,7 @@ export class IndexItemComponent implements OnInit {
 
   deleteIndex(item: IndexItem) {
     this.indexService.deleteIndex(item.name).subscribe(
-      response => this.onDelete.next()
+      _response => this.onDelete.next()
     );
   }
 
@@ -108,16 +112,12 @@ export class IndexItemComponent implements OnInit {
     }
   }
 
-  getIndexTypeItemIdentifier(item: IndexType) {
-    return item.id;
-  }
-
   handleError(error: any) {
     console.error('Error happened: ', error);
   }
 
   getTypePart(id: string) {
-    const splitted = id?.split(":");
-    return splitted ? splitted[splitted.length-1] : id;
+    const splitted = id?.split(':');
+    return splitted ? splitted[splitted.length - 1] : id;
   }
 }
