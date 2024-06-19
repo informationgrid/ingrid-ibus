@@ -30,7 +30,6 @@ import de.ingrid.codelists.persistency.XmlCodeListPersistency;
 import de.ingrid.ibus.config.CodelistConfiguration;
 import de.ingrid.ibus.config.ElasticsearchConfiguration;
 import de.ingrid.ibus.config.IBusConfiguration;
-import de.ingrid.ibus.service.SecurityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -62,7 +60,7 @@ import java.util.List;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private static Logger log = LogManager.getLogger(WebSecurityConfig.class);
+    private static final Logger log = LogManager.getLogger(WebSecurityConfig.class);
 
     @Value("${development:false}")
     private boolean developmentMode;
@@ -95,6 +93,10 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        if (!password.isEmpty()) {
+            this.isPasswordDefined = true;
+        }
+
         if (developmentMode) {
             return initDevelopmentMode(http);
         } else {
@@ -110,6 +112,7 @@ public class WebSecurityConfig {
     static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 /*    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -139,7 +142,7 @@ public class WebSecurityConfig {
     }
 
     public void secureWebapp(String adminPassword) {
-//        this.securityService.isPasswordDefined = true;
+        this.isPasswordDefined = true;
         InMemoryUserDetailsManager userService = (InMemoryUserDetailsManager) this.userDetailsService;
         UserDetails adminUser = new User("admin", adminPassword, new ArrayList<>());
         userService.updateUser(adminUser);
@@ -158,14 +161,11 @@ public class WebSecurityConfig {
 
         if (enableCsrf) {
             http = http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())); // make cookies readable within JS
-
         } else {
             http = http.csrf(AbstractHttpConfigurer::disable);
         }
 
         if (!enableCors) {
-//            http = http.cors().and();
-//        } else {
             http = http.cors(AbstractHttpConfigurer::disable);
         }
 
@@ -175,7 +175,6 @@ public class WebSecurityConfig {
                         .anyRequest().access(customAuthManager()))
                 .formLogin(form -> form.loginPage("/login").permitAll())
                 .logout(LogoutConfigurer::permitAll)
-//                .passwordManagement(management -> management.)
                 .build();
     }
 
