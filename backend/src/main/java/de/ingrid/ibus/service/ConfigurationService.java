@@ -233,8 +233,8 @@ public class ConfigurationService {
         codelistConfiguration.setUsername( (String) configuration.get("codelistrepo.username") );
 
         updateBeansConfiguration(configuration, ibusChanged);
-        indicesService.init();
         indexManager.init();
+        indicesService.init();
         updateElasticCheckThread();
 
         // check if elasticsearch connection was established the first time and needs index "ingrid_meta"
@@ -251,7 +251,11 @@ public class ConfigurationService {
         if (elasticCheck != null) {
             elasticCheck.interrupt();
         }
+
+        Thread.UncaughtExceptionHandler exceptionHandler = (th, ex) -> log.debug("ElasticConnectionCheck Exception: " + ex);
+
         elasticCheck = new ElasticConnectionCheck(elasticsearchBean, elasticConfig, indexManager, indicesService);
+        elasticCheck.setUncaughtExceptionHandler(exceptionHandler);
         elasticCheck.start();
     }
 
@@ -287,7 +291,12 @@ public class ConfigurationService {
                 elasticConfig.username = elasticConfiguration.getUsername();
                 elasticConfig.password = elasticConfiguration.getPassword();
                 elasticConfig.sslTransport = elasticConfiguration.getSslTransport();
+
+                // when creating a new transport client, then stop elastic connection check
+                // to prevent creation of multiple clients
+                this.elasticCheck.interrupt();
                 elasticsearchBean.createTransportClient(elasticConfig);
+                updateElasticCheckThread();
             } catch (UnknownHostException e) {
                 log.error("Error updating elasticsearch connection", e);
             }
