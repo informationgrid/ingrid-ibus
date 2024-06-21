@@ -41,6 +41,7 @@ export class IndexItem {
   adminUrl?: string;
   isConnected: boolean;
   types: IndexType[];
+  numberDocs: number;
 }
 
 @Component({
@@ -64,7 +65,7 @@ export class IndexItemComponent implements OnInit {
 
   ngOnInit() {
     if (this.showFull) {
-      this.title = this.data.longName + ' - ' + this.getTypePart(this.data.types[0].id);
+      this.title = `${this.data.longName} - ${this.getTypePart(this.data.types[0].id)} (${this.data.numberDocs} docs)`;
     } else {
       this.title = this.data.name;
     }

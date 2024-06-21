@@ -39,7 +39,10 @@
         </span>
       </div>
     </div>
-    <div class="index-last-indexed">{{data.types[0].lastIndexed | date:'medium'}}</div>
+    <div class="text-right">
+      <div class="index-last-indexed">{{data.types[0].lastIndexed | date:'medium'}}</div>
+      <div class="comment">{{data.numberDocs}} docs</div>
+    </div>
     <div class="dropdown" [class.show]="dropDownOpen">
       <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
