@@ -30,7 +30,6 @@ public class ConfigIndexEntry {
     public String indexId;
     public String lastHeartbeat;
     public String iPlugName;
-    public String linkedType;
     public String lastIndexed;
     public String linkedIndex;
     public String adminUrl;

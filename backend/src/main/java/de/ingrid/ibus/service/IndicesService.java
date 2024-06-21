@@ -341,7 +341,8 @@ public class IndicesService {
                     indexItem.setHasLinkedComponent(true);
                     indexItem.setAdminUrl((String) ((Map) hitSource.get("plugdescription")).get("IPLUG_ADMIN_GUI_URL"));
 
-                    for (IndexType type : indexItem.getTypes()) {
+                    if (!indexItem.getTypes().isEmpty()) {
+                        IndexType type = indexItem.getTypes().get(0);
                         type.setId((String) hitSource.get(INDEX_FIELD_INDEX_ID));
                         type.setHasLinkedComponent(true);
                         type.setLastIndexed(lastIndexed);
@@ -531,10 +532,9 @@ public class IndicesService {
         entry.id = hit.id();
         entry.plugId = (String) source.get("plugId");
         entry.indexId = (String) source.get("indexId");
-        entry.lastHeartbeat = (String) source.get("lastHeartbeat");
+        entry.lastHeartbeat = String.valueOf(source.get("lastHeartbeat"));
         entry.iPlugName = (String) source.get("iPlugName");
-        entry.linkedType = (String) source.get("linkedType");
-        entry.lastIndexed = (String) source.get("lastIndexed");
+        entry.lastIndexed = String.valueOf(source.get("lastIndexed"));
         entry.linkedIndex = (String) source.get("linkedIndex");
         entry.adminUrl = (String) source.get("adminUrl");
         entry.plugdescription = (Map<String, Object>) source.get("plugdescription");

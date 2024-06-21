@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.codehaus.jettison.json.JSONObject;
 
 public class Index {
 

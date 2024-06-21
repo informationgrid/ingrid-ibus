@@ -3,9 +3,6 @@
     	"linkedIndex": {
     		"type": "keyword"
     	},
-    	"linkedType": {
-    		"type": "keyword"
-    	},
     	"indexId": {
     		"type": "keyword"
     	},
