@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,7 +65,7 @@ class ElasticConnectionCheck extends Thread {
         this.indexManager = indexManager;
         this.indicesService = indicesService;
     }
-    
+
     @Override
     public void run() {
         while (true) {
@@ -79,9 +79,13 @@ class ElasticConnectionCheck extends Thread {
                     indexManager.init();
                     indicesService.init();
                 }
-            } catch (InterruptedException | UnknownHostException e) {
-                log.error("Connection could not be esablished: " + e.getMessage());
+            } catch (InterruptedException e) {
+                log.info("Thread 'ElasticConnectionCheck' interrupted");
                 throw new RuntimeException(e);
+            } catch (UnknownHostException e) {
+                log.debug("Connection could not be established: Unknown host " + String.join(",", elasticConfig.remoteHosts));
+            } catch (Exception e) {
+                log.error("An exception occurred while checking Elasticsearch connection", e.getMessage());
             }
         }
     }
@@ -98,7 +102,7 @@ public class ConfigurationService {
 
     @Value("${app.timestamp}")
     private String appTimestamp;
-    
+
     private final ElasticConfig elasticConfig;
 
     private File settingsFile;
@@ -193,7 +197,7 @@ public class ConfigurationService {
         this.properties.put("server.port", String.valueOf( serverConfiguration.getPort() ));
         this.properties.put("ibus.url", busConfiguration.getUrl());
         this.properties.put("spring.security.user.password", springConfiguration.getUser().getPassword());
-        
+
         updateElasticCheckThread();
     }
 
@@ -242,7 +246,7 @@ public class ConfigurationService {
 
         return true;
     }
-    
+
     private void updateElasticCheckThread() {
         if (elasticCheck != null) {
             elasticCheck.interrupt();
