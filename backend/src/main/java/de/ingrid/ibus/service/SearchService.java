@@ -34,6 +34,7 @@ import de.ingrid.utils.dsc.Record;
 import de.ingrid.utils.query.IngridQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -221,7 +222,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
             parameters = (Map<String, Object>) targetInfo.getParameter();
             indexManager.updateIPlugInformation(
                     (String) parameters.get( "id" ),
-                    (String) parameters.get( "info" ) );
+                    (JSONObject) parameters.get( "info" ) );
             break;
 
         case "flush":
@@ -255,7 +256,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
 
         case "updateHearbeatInformation":
             parameter = targetInfo.getParameter();
-            indexManager.updateHearbeatInformation( (Map<String, String>) parameter );
+            indexManager.updateHearbeatInformation( (Map<String, JSONObject>) parameter );
             break;
 
         case "search":
