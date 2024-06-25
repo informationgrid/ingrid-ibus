@@ -56,7 +56,7 @@ export class ListIndicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.observer = IntervalObservable.create(1000)
+    this.observer = IntervalObservable.create(10000)
       .pipe(
         startWith(0),
         takeWhile(_ => this.autoRefresh)

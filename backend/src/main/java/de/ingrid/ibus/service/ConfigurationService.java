@@ -30,8 +30,9 @@ import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
 import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.ibus.WebSecurityConfig;
 import de.ingrid.ibus.comm.BusServer;
-import de.ingrid.ibus.config.*;
-import javax.annotation.PostConstruct;
+import de.ingrid.ibus.config.CodelistConfiguration;
+import de.ingrid.ibus.config.ElasticsearchConfiguration;
+import de.ingrid.ibus.config.IBusConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +42,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DefaultPropertiesPersister;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -71,8 +73,9 @@ class ElasticConnectionCheck extends Thread {
             try {
                 Thread.sleep(10000);
                 log.debug("Checking Elasticsearch connection");
-                int connectedNodes = (elasticsearchBean.getClient()).nodes().stats().nodeStats().total();
-                if (connectedNodes == 0) {
+                try {
+                    elasticsearchBean.getClient().info();
+                } catch (Exception ex) {
                     log.info("Elasticsearch not connected ... Reconnecting");
                     elasticsearchBean.createTransportClient(elasticConfig);
                     indexManager.init();
@@ -161,7 +164,7 @@ public class ConfigurationService {
         // then we need to change it and tell frontend
         this.needPasswordChange =
                 propertiesOverride.get("spring.security.user.password") == null
-                && System.getenv("IBUS_PASSWORD") == null;
+                        && System.getenv("IBUS_PASSWORD") == null;
 
         // TODO: Refactor to let beans reconfigure themselves by implementing same interface
         this.properties = new Properties();
@@ -191,7 +194,7 @@ public class ConfigurationService {
         this.properties.put("elastic.username", elasticConfiguration.getUsername());
         this.properties.put("elastic.password", elasticConfiguration.getPassword());
         this.properties.put("elastic.sslTransport", elasticConfiguration.getSslTransport());
-        this.properties.put("server.port", String.valueOf( serverConfiguration.getPort() ));
+        this.properties.put("server.port", String.valueOf(serverConfiguration.getPort()));
         this.properties.put("ibus.url", busConfiguration.getUrl());
         this.properties.put("spring.security.user.password", springConfiguration.getUser().getPassword());
 
@@ -224,10 +227,10 @@ public class ConfigurationService {
 
         // map configuration to ConfigBean
         boolean ibusChanged = !busConfiguration.getUrl().equals(configuration.get("ibus.url")) || (busConfiguration.getPort() != Integer.valueOf((String) configuration.get("ibus.port")));
-        busConfiguration.setUrl( (String) configuration.get("ibus.url") );
-        busConfiguration.setPort( Integer.valueOf((String) configuration.get("ibus.port")) );
-        codelistConfiguration.setUrl( (String) configuration.get("codelistrepo.url") );
-        codelistConfiguration.setUsername( (String) configuration.get("codelistrepo.username") );
+        busConfiguration.setUrl((String) configuration.get("ibus.url"));
+        busConfiguration.setPort(Integer.valueOf((String) configuration.get("ibus.port")));
+        codelistConfiguration.setUrl((String) configuration.get("codelistrepo.url"));
+        codelistConfiguration.setUsername((String) configuration.get("codelistrepo.username"));
 
         updateBeansConfiguration(configuration, ibusChanged);
         indicesService.init();
@@ -260,7 +263,7 @@ public class ConfigurationService {
 
         // only update password if new one was set, otherwise use the old one
         if (configuration.get("codelistrepo.password") != null) {
-            codelistConfiguration.setPassword( (String) configuration.get("codelistrepo.password") );
+            codelistConfiguration.setPassword((String) configuration.get("codelistrepo.password"));
         }
         communication.setPassword(codelistConfiguration.getPassword());
         codeListService.setComm(communication);
@@ -279,7 +282,7 @@ public class ConfigurationService {
                     remoteHostsArray = remoteHosts.split(",");
                 }
 
-                elasticConfiguration.setRemoteHosts( remoteHostsArray );
+                elasticConfiguration.setRemoteHosts(remoteHostsArray);
                 elasticConfig.remoteHosts = remoteHostsArray;
                 elasticConfig.username = elasticConfiguration.getUsername();
                 elasticConfig.password = elasticConfiguration.getPassword();
@@ -294,7 +297,7 @@ public class ConfigurationService {
         String adminPassword = (String) configuration.get("spring.security.user.password");
         if (adminPassword != null && !"".equals(adminPassword)) {
             webSecurityConfig.secureWebapp(adminPassword);
-            springConfiguration.getUser().setPassword( adminPassword );
+            springConfiguration.getUser().setPassword(adminPassword);
             needPasswordChange = false;
         }
 
