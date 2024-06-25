@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- *
+ * 
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- *
+ * 
  * https://joinup.ec.europa.eu/software/page/eupl
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,7 +91,7 @@ public class IndicesController {
 
     @GetMapping("/indices/{id}")
     @ResponseBody
-    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable("id") String id) {
+    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id, @RequestParam String type) {
         IndexTypeDetail index;
         try {
             index = this.indicesService.getIndexDetail( id );
@@ -162,7 +162,7 @@ public class IndicesController {
 
     @GetMapping("/search")
     @ResponseBody
-    public ResponseEntity<IngridHits> search(@RequestParam("query") String query, @RequestParam(name="page", defaultValue = "0") int page, @RequestParam(name="hitsPerPage", defaultValue = "10") int hitsPerPage) throws ParseException {
+    public ResponseEntity<IngridHits> search(@RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int hitsPerPage) throws ParseException {
 
         IngridQuery iQuery = QueryStringParser.parse( query );
 

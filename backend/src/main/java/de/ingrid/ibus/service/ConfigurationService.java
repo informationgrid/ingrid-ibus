@@ -31,9 +31,11 @@ import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.ibus.WebSecurityConfig;
 import de.ingrid.ibus.comm.BusServer;
 import de.ingrid.ibus.config.*;
-import jakarta.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -236,7 +238,7 @@ public class ConfigurationService {
         // check if elasticsearch connection was established the first time and needs index "ingrid_meta"
         try {
             this.indicesService.prepareIndices();
-        } catch (Exception e) {
+        } catch (NoNodeAvailableException e) {
             log.warn("Elasticsearch does not seem to be configured, since we could not connect to it. Please check the settings.");
         }
 
@@ -352,8 +354,7 @@ public class ConfigurationService {
         List<CodeList> codeLists = codeListService.updateFromServer(new Date().getTime());
         props.put("codelistrepo", codeLists == null ? "false" : "true");
         try {
-            elasticsearchBean.getClient().info();
-            props.put("elasticsearch", "true");
+            props.put("elasticsearch", (elasticsearchBean.getClient()).nodes().info().nodeStats().total() > 0 ? "true" : "false");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
