@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- *
+ * 
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- *
+ * 
  * https://joinup.ec.europa.eu/software/page/eupl
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,26 +30,23 @@ import de.ingrid.codelists.persistency.XmlCodeListPersistency;
 import de.ingrid.ibus.config.CodelistConfiguration;
 import de.ingrid.ibus.config.ElasticsearchConfiguration;
 import de.ingrid.ibus.config.IBusConfiguration;
+import de.ingrid.ibus.service.SecurityService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authorization.AuthorizationDecision;
-import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.util.ArrayList;
@@ -58,49 +55,42 @@ import java.util.List;
 @Configuration
 @EnableConfigurationProperties({CodelistConfiguration.class, ElasticsearchConfiguration.class, IBusConfiguration.class})
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final Logger log = LogManager.getLogger(WebSecurityConfig.class);
+    private static Logger log = LogManager.getLogger( WebSecurityConfig.class );
 
     @Value("${development:false}")
     private boolean developmentMode;
-
+    
     @Value("${app.enable.cors:false}")
     private boolean enableCors;
-
+    
     @Value("${app.enable.csrf:true}")
     private boolean enableCsrf;
 
     @Value("${codelistrepo.url:http://not-configured}")
     private String codelistUrl;
-
+    
     @Value("${codelistrepo.username:}")
     private String codelistUsername;
-
+    
     @Value("${codelistrepo.password:}")
     private String codelistPassword;
 
+    private final SecurityService securityService;
     private final UserDetailsService userDetailsService;
 
-    public boolean isPasswordDefined = false;
-
-    @Value("${spring.security.user.password:}")
-    private String password;
-
-    public WebSecurityConfig(UserDetailsService userDetailsService) {
+    public WebSecurityConfig(SecurityService securityService, UserDetailsService userDetailsService) {
+        this.securityService = securityService;
         this.userDetailsService = userDetailsService;
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        if (!password.isEmpty()) {
-            this.isPasswordDefined = true;
-        }
-
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         if (developmentMode) {
-            return initDevelopmentMode(http);
+            initDevelopmentMode( http );
         } else {
-            return initProductionMode(http);
+            initProductionMode( http );
         }
     }
 
@@ -113,12 +103,11 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-/*    @Override
+    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
-    }*/
+    }
 
     // ************************
 
@@ -142,7 +131,7 @@ public class WebSecurityConfig {
     }
 
     public void secureWebapp(String adminPassword) {
-        this.isPasswordDefined = true;
+        this.securityService.isPasswordDefined = true;
         InMemoryUserDetailsManager userService = (InMemoryUserDetailsManager) this.userDetailsService;
         UserDetails adminUser = new User("admin", adminPassword, new ArrayList<>());
         userService.updateUser(adminUser);
@@ -150,52 +139,67 @@ public class WebSecurityConfig {
 
     private ICodeListCommunication codelistCommunication() {
         HttpCLCommunication comm = new HttpCLCommunication();
-        comm.setRequestUrl(codelistUrl + "/rest/getCodelists");
-        comm.setUsername(codelistUsername);
-        comm.setPassword(codelistPassword);
+        comm.setRequestUrl( codelistUrl + "/rest/getCodelists" );
+        comm.setUsername( codelistUsername );
+        comm.setPassword( codelistPassword );
         return comm;
     }
     // ************************
 
-    private SecurityFilterChain initProductionMode(HttpSecurity http) throws Exception {
+    private void initProductionMode(HttpSecurity http) throws Exception {
 
         if (enableCsrf) {
-            http = http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())); // make cookies readable within JS
+            http = http.csrf()
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // make cookies readable within JS
+                    .and();
         } else {
-            http = http.csrf(AbstractHttpConfigurer::disable);
+            http = http.csrf().disable();
         }
-
-        if (!enableCors) {
-            http = http.cors(AbstractHttpConfigurer::disable);
+        
+        if (enableCors) {
+            http = http.cors().and();
+        } else {
+            http = http.cors().disable();
         }
-
-        return http.authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/login*").permitAll()
-                        .anyRequest().access(customAuthManager()))
-                .formLogin(form -> form.loginPage("/login").permitAll())
-                .logout(LogoutConfigurer::permitAll)
-                .build();
+        
+        // @formatter:off
+        http.authorizeRequests()
+                .antMatchers( "/css/**" ).permitAll()
+                .and()
+            // make access to login page more permissive because 'formLogin' is very strict
+            // for instance is prevents access to login?lang=de which produces a redirect loop
+            // in some cases
+            // see https://stackoverflow.com/a/29379310
+            .authorizeRequests()
+                .antMatchers("/login*").permitAll()
+                .and()
+            .authorizeRequests()
+                .anyRequest()
+                .access("@security.hasPermission(authentication)")
+                .and()
+            .formLogin()
+                .loginPage( "/login" )
+                .permitAll()
+                .and()
+            .logout()
+                .permitAll();
+        // @formatter:on
     }
 
-    private SecurityFilterChain initDevelopmentMode(HttpSecurity http) throws Exception {
-        log.info("======================================================");
-        log.info("================== DEVELOPMENT MODE ==================");
-        log.info("======================================================");
-        return http
-                .authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
-                .build();
-    }
-
-    AuthorizationManager<RequestAuthorizationContext> customAuthManager() {
-        return (authentication, object) -> {
-            // make authorization decision
-            if (!isPasswordDefined || !authentication.get().getPrincipal().equals("anonymousUser")) {
-                return new AuthorizationDecision(true);
-            }
-            return new AuthorizationDecision(false);
-        };
+    private void initDevelopmentMode(HttpSecurity http) throws Exception {
+        log.info( "======================================================" );
+        log.info( "================== DEVELOPMENT MODE ==================" );
+        log.info( "======================================================" );
+        // @formatter:off
+        http
+            .cors().and()
+            .authorizeRequests()
+                .anyRequest()
+                .permitAll()
+                .and()
+            .csrf()
+                .disable();
+        // @formatter:on
     }
 
 }

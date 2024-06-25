@@ -34,8 +34,6 @@ import de.ingrid.ibus.config.*;
 import javax.annotation.PostConstruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -44,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DefaultPropertiesPersister;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -82,7 +81,7 @@ class ElasticConnectionCheck extends Thread {
             } catch (InterruptedException | UnknownHostException e) {
                 log.error("Connection could not be esablished: " + e.getMessage());
                 throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -238,7 +237,7 @@ public class ConfigurationService {
         // check if elasticsearch connection was established the first time and needs index "ingrid_meta"
         try {
             this.indicesService.prepareIndices();
-        } catch (NoNodeAvailableException e) {
+        } catch (Exception e) {
             log.warn("Elasticsearch does not seem to be configured, since we could not connect to it. Please check the settings.");
         }
 
@@ -352,9 +351,12 @@ public class ConfigurationService {
         Properties props = new Properties();
 
         List<CodeList> codeLists = codeListService.updateFromServer(new Date().getTime());
-        props.put("codelistrepo", codeLists == null ? "false" : "true");
+        props.put("codelistrepo", codeLists != null);
         try {
-            props.put("elasticsearch", (elasticsearchBean.getClient()).nodes().info().nodeStats().total() > 0 ? "true" : "false");
+            elasticsearchBean.getClient().info();
+            props.put("elasticsearch", true);
+        } catch (ConnectException e) {
+            props.put("elasticsearch", false);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

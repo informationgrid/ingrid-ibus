@@ -23,7 +23,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {IndexService} from '../../+indices/index.service';
 import {AppConfiguation, SettingsService} from '../settings.service';
-import {Subscription} from 'rxjs/Rx';
 
 @Component({
   selector: 'app-settings-list',
@@ -39,7 +38,6 @@ export class SettingsListComponent implements OnInit, OnDestroy {
   isEmptyPassword = false;
   statusCodelistRepo = false;
   statusElasticsearch = false;
-  private status$: Subscription;
 
   isReloading = false;
   saveSuccess = false;
@@ -61,15 +59,15 @@ export class SettingsListComponent implements OnInit, OnDestroy {
       ids => this.activeIndices = ids
     );
     this.settingsService.get().subscribe(cfg => this.config = cfg);
-    this.status$ = this.settingsService.status().subscribe(status => {
-      console.log('.');
-      this.statusCodelistRepo = status['codelistrepo'] === 'true';
-      this.statusElasticsearch = status['elasticsearch'] === 'true';
+    setInterval(() => this.settingsService.status(), 10000);
+    this.settingsService.status();
+    this.settingsService.$status.subscribe(status => {
+      this.statusCodelistRepo = status['codelistrepo'] === true;
+      this.statusElasticsearch = status['elasticsearch'] === true;
     });
   }
 
   ngOnDestroy() {
-    this.status$.unsubscribe();
   }
 
   saveSettings() {
@@ -82,12 +80,13 @@ export class SettingsListComponent implements OnInit, OnDestroy {
 
     this.settingsService.save(<AppConfiguation>this.config).subscribe(() => {
       this.saveSuccess = true;
-      setTimeout( () => this.saveSuccess = false, 5000);
+      this.settingsService.status();
+      setTimeout(() => this.saveSuccess = false, 5000);
 
       // redirect if password was changed
       if (this.config['spring.security.user.password'] && this.config['spring.security.user.password'].length > 0) {
         this.isReloading = true;
-        setTimeout( () => window.location.replace('./login'), 5000);
+        setTimeout(() => window.location.replace('./login'), 5000);
       }
     }, (error) => this.handleError(error));
   }
