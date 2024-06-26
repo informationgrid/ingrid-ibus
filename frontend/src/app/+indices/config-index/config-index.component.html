@@ -7,12 +7,12 @@
   Licensed under the EUPL, Version 1.2 or – as soon they will be
   approved by the European Commission - subsequent versions of the
   EUPL (the "Licence");
-  
+
   You may not use this work except in compliance with the Licence.
   You may obtain a copy of the Licence at:
-  
+
   https://joinup.ec.europa.eu/software/page/eupl
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the Licence is distributed on an "AS IS" basis,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,7 +76,7 @@
         </button>
       </h5>
       <div style="margin-top: 10px">
-        {{entry.plugId}} <span *ngIf="entry.linkedType">({{entry.linkedType}})</span>
+        {{entry.plugId}}
         <div style="float: right;" title="Zuletzt indiziert">
           {{entry.lastIndexed | date:'medium'}}
         </div>
@@ -91,9 +91,9 @@
           <dt class="col-sm-3">ID des iPlug-Index</dt>
           <dd class="col-sm-9">{{entry.indexId}}</dd>
           <dt class="col-sm-3">Index</dt>
-          <dd class="col-sm-9">{{entry.linkedIndex}} <span *ngIf="entry.linkedType">({{entry.linkedType}})</span></dd>
+          <dd class="col-sm-9">{{entry.linkedIndex}}</dd>
           <dt class="col-sm-3">Letzter Heartbeat</dt>
-          <dd class="col-sm-9">{{entry.lastHeartbeat}}</dd>
+          <dd class="col-sm-9">{{entry.lastHeartbeat | date:'medium'}}</dd>
           <dt class="col-sm-3">Admin-URL</dt>
           <dd class="col-sm-9">{{entry.adminUrl}}</dd>
           <dt class="col-sm-3">PlugDescription</dt>

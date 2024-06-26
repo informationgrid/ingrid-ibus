@@ -30,10 +30,8 @@
     <dl class="row">
       <dt class="col-4 text-right text-right">Für Suche verwenden</dt>
       <dd class="col-8">
-        <span class="fa fa-power-off"
-              [class.text-success]="detail.active"
-              [class.text-danger]="!detail.active"
-        ></span>
+        <span *ngIf="detail.active">Ja</span>
+        <span *ngIf="!detail.active">Nein</span>
       </dd>
 
       <dt class="col-4 text-right text-right">Index-Name</dt>

@@ -60,7 +60,7 @@ public class SettingsController {
 
     @GetMapping("/settings/activeComponentIds")
     @ResponseBody
-    public ResponseEntity<String[]> getActiveComponentIds(@RequestParam(defaultValue = "false") boolean verify) {
+    public ResponseEntity<String[]> getActiveComponentIds(@RequestParam(name = "verify", defaultValue = "false") boolean verify) {
         // TODO: add parameter to verify if id exists
         log.info( "parameter verify was set to: " + verify );
         

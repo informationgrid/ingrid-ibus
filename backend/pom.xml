@@ -134,12 +134,6 @@
       </exclusions>
     </dependency>
 
-    <!-- Elasticsearch -->
-    <dependency>
-      <groupId>org.elasticsearch.client</groupId>
-      <artifactId>transport</artifactId>
-    </dependency>
-
     <!-- Spring Boot Dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

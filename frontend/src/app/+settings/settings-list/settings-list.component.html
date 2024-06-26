@@ -130,7 +130,7 @@
             <input type="checkbox" class="form-check-input" id="sslTransport" name="elasticSSL" [(ngModel)]="config['elastic.sslTransport']">
             <label class="form-check-label" for="sslTransport">SSL</label>
             <div *ngIf="config['elastic.sslTransport']">
-              Die notwendigen Dateien müssen im Verzeichnis /opt/ingrid/ingrid-ibus vorhanden sein: client.key, client.cert und client-ca.cert
+              Das notwendige Zertifikat muss im Verzeichnis /opt/ingrid/ingrid-ibus vorhanden sein: elasticsearch-ca.pem
             </div>
           </div>
 
@@ -179,7 +179,9 @@
             <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfoServerPassword = !showInfoServerPassword"></button>
           </div>
 
-          <input id="adminPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off" [(ngModel)]="config['spring.security.user.password']">
+          <input id="adminPassword" type="password" class="form-control" placeholder="<aktuelles Passwort>" [ngModelOptions]="{standalone: true}" autocomplete="off"
+                 [(ngModel)]="config['spring.security.user.password']"
+                (keydown.enter)="submitIfInit()">
           <div *ngIf="showInfoServerPassword" class="alert alert-info" role="alert">
             Dies ist das Passwort, das für die Anmeldung an die Admin-GUI benötigt wird.
           </div>
