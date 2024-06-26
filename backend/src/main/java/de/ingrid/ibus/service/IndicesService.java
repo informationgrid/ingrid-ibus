@@ -351,6 +351,7 @@ public class IndicesService {
                 }
             } catch (Exception ex) {
                 // skip and continue
+                log.debug("Skipping index: " + ex.getMessage());
             }
         }
     }
