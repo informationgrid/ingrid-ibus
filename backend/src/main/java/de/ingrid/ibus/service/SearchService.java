@@ -35,6 +35,7 @@ import de.ingrid.utils.query.IngridQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -220,9 +221,16 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
 
         case "updateIPlugInformation":
             parameters = (Map<String, Object>) targetInfo.getParameter();
+            Object info = parameters.get("info");
+            JSONObject json;
+            if (info instanceof String) {
+                json = (JSONObject) new JSONParser().parse((String) info);
+            } else json = (JSONObject) info;
+
             indexManager.updateIPlugInformation(
                     (String) parameters.get( "id" ),
-                    (JSONObject) parameters.get( "info" ) );
+                    json
+            );
             break;
 
         case "flush":
