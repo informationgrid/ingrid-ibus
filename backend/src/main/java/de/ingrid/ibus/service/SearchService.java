@@ -264,7 +264,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
 
         case "updateHearbeatInformation":
             parameter = targetInfo.getParameter();
-            indexManager.updateHearbeatInformation( (Map<String, JSONObject>) parameter );
+            indexManager.updateHearbeatInformation( (Map<String, Object>) parameter );
             break;
 
         case "search":
