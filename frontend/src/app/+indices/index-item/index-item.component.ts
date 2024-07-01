@@ -65,7 +65,7 @@ export class IndexItemComponent implements OnInit {
 
   ngOnInit() {
     if (this.showFull) {
-      this.title = `${this.data.longName} - ${this.getTypePart(this.data.types[0].id)} (${this.data.numberDocs} docs)`;
+      this.title = `${this.data.longName} - ${this.getTypePart(this.data.types[0].id)}`;
     } else {
       this.title = this.data.name;
     }
