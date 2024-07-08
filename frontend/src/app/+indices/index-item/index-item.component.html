@@ -20,34 +20,16 @@
   limitations under the Licence.
   **************************************************#
   -->
-<div class="card mb-3" [class.short]="view === 'short mb-1'">
-  <span *ngIf="view === 'short'" class="index-id">{{data.name}}</span>
-
-  <div class="dropdown" [class.show]="dropDownOpen">
-    <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
-    </button>
-    <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
-      <!--<button *ngIf="data.isConnected" class="dropdown-item"(click)="index()">Indexieren</button>-->
-      <button class="dropdown-item" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
-         [popoverTitle]="'Wirklich löschen?'"
-         [popoverMessage]="'Wollen Sie den Index wirklich löschen?'"
-         placement="left"
-         confirmText="Löschen"
-         cancelText="Abbrechen"
-         (confirm)="deleteIndex(data)">Löschen
-      </button>
-    </div>
-  </div>
-
+<div class="card mb-3" [class.short]="!showFull">
   <div class="card-body">
-    <!--<div class="pull-left"><span class="glyphicon glyphicon-off" [class.active]="data.active"></span></div>-->
-    <div class="pull-left">
+    <div *ngIf="showFull" class="indexState fa fa-power-off" [class.text-success]="data.types[0].active"
+         [class.text-danger]="!data.types[0].active"
+         title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(data.types[0], $event)"></div>
+    <div class="flex-fill" [class.clickable]="showFull" (click)="showIndexItem(data, data.types[0].name)">
       <div class="index-name" [title]="'Index: ' + data.name">
-        {{data.longName}}
+        {{ title }}
         <span class="link">
-          <span *ngIf="view !== 'short' && data.isConnected" title="Verbunden mit iBus" class="fa fa-link text-success"></span>
-<!--          <span *ngIf="view !== 'short' && !data.isConnected" title="Nicht verbunden mit iBus" class="fa fa-link text-danger"></span>-->
+          <span *ngIf="showFull && data.isConnected" title="Verbunden mit iBus" class="fa fa-link text-success"></span>
         </span>
         <span *ngIf="data.adminUrl" class="bookmark">
           <a href="{{data.adminUrl}}"
@@ -56,19 +38,26 @@
                  class="fa fa-bookmark"></a>
         </span>
       </div>
-      <!--<div *ngIf="!data.hasLinkedComponent">Dieser Index wird von keiner Komponenten referenziert!</div>-->
     </div>
-    <div class="index-last-indexed pull-right">{{data.lastIndexed | date:'medium'}}</div>
+    <div class="text-right">
+      <div class="index-last-indexed">{{data.types[0].lastIndexed | date:'medium'}}</div>
+      <div class="comment">{{data.numberDocs}} docs</div>
+    </div>
+    <div class="dropdown" [class.show]="dropDownOpen">
+      <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
+      </button>
+      <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
+        <!--<button *ngIf="data.isConnected" class="dropdown-item"(click)="index()">Indexieren</button>-->
+        <button class="dropdown-item" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
+                [popoverTitle]="'Wirklich löschen?'"
+                [popoverMessage]="'Wollen Sie den Index wirklich löschen?'"
+                placement="left"
+                confirmText="Löschen"
+                cancelText="Abbrechen"
+                (confirm)="deleteIndex(data)">Löschen
+        </button>
+      </div>
+    </div>
   </div>
-
-  <ul *ngIf="view !== 'short'" class="list-group">
-    <li *ngFor="let type of data.types; trackBy: getIndexTypeItemIdentifier" class="list-group-item clickable" (click)="showIndexItem(data, type.name)">
-      <div class="indexState fa fa-power-off" [class.text-success]="type.active"
-           [class.text-danger]="!type.active"
-           title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(type, $event)"></div>
-      <span class="content">{{getTypePart(type.id)}}</span>
-      <div class="pull-right small">{{type.lastIndexed | date:'medium'}}</div>
-      <div *ngIf="data.hasLinkedComponent && !type.hasLinkedComponent" class="text-danger">Nicht referenziert!</div>
-    </li>
-  </ul>
 </div>

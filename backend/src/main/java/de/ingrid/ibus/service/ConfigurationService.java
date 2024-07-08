@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +30,11 @@ import de.ingrid.elasticsearch.ElasticsearchNodeFactoryBean;
 import de.ingrid.elasticsearch.IndexManager;
 import de.ingrid.ibus.WebSecurityConfig;
 import de.ingrid.ibus.comm.BusServer;
-import de.ingrid.ibus.config.*;
-import javax.annotation.PostConstruct;
+import de.ingrid.ibus.config.CodelistConfiguration;
+import de.ingrid.ibus.config.ElasticsearchConfiguration;
+import de.ingrid.ibus.config.IBusConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -43,7 +42,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DefaultPropertiesPersister;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,23 +66,28 @@ class ElasticConnectionCheck extends Thread {
         this.indexManager = indexManager;
         this.indicesService = indicesService;
     }
-    
+
     @Override
     public void run() {
         while (true) {
             try {
                 Thread.sleep(10000);
                 log.debug("Checking Elasticsearch connection");
-                int connectedNodes = ((TransportClient)elasticsearchBean.getClient()).connectedNodes().size();
-                if (connectedNodes == 0) {
+                try {
+                    elasticsearchBean.getClient().info();
+                } catch (Exception ex) {
                     log.info("Elasticsearch not connected ... Reconnecting");
                     elasticsearchBean.createTransportClient(elasticConfig);
                     indexManager.init();
                     indicesService.init();
                 }
-            } catch (InterruptedException | UnknownHostException e) {
-                log.error("Connection could not be esablished: " + e.getMessage());
+            } catch (InterruptedException e) {
+                log.info("Thread 'ElasticConnectionCheck' interrupted");
                 throw new RuntimeException(e);
+            } catch (UnknownHostException e) {
+                log.debug("Connection could not be established: Unknown host " + String.join(",", elasticConfig.remoteHosts));
+            } catch (Exception e) {
+                log.error("An exception occurred while checking Elasticsearch connection", e.getMessage());
             }
         }
     }
@@ -98,7 +104,7 @@ public class ConfigurationService {
 
     @Value("${app.timestamp}")
     private String appTimestamp;
-    
+
     private final ElasticConfig elasticConfig;
 
     private File settingsFile;
@@ -160,7 +166,7 @@ public class ConfigurationService {
         // then we need to change it and tell frontend
         this.needPasswordChange =
                 propertiesOverride.get("spring.security.user.password") == null
-                && System.getenv("IBUS_PASSWORD") == null;
+                        && System.getenv("IBUS_PASSWORD") == null;
 
         // TODO: Refactor to let beans reconfigure themselves by implementing same interface
         this.properties = new Properties();
@@ -190,10 +196,10 @@ public class ConfigurationService {
         this.properties.put("elastic.username", elasticConfiguration.getUsername());
         this.properties.put("elastic.password", elasticConfiguration.getPassword());
         this.properties.put("elastic.sslTransport", elasticConfiguration.getSslTransport());
-        this.properties.put("server.port", String.valueOf( serverConfiguration.getPort() ));
+        this.properties.put("server.port", String.valueOf(serverConfiguration.getPort()));
         this.properties.put("ibus.url", busConfiguration.getUrl());
         this.properties.put("spring.security.user.password", springConfiguration.getUser().getPassword());
-        
+
         updateElasticCheckThread();
     }
 
@@ -223,31 +229,35 @@ public class ConfigurationService {
 
         // map configuration to ConfigBean
         boolean ibusChanged = !busConfiguration.getUrl().equals(configuration.get("ibus.url")) || (busConfiguration.getPort() != Integer.valueOf((String) configuration.get("ibus.port")));
-        busConfiguration.setUrl( (String) configuration.get("ibus.url") );
-        busConfiguration.setPort( Integer.valueOf((String) configuration.get("ibus.port")) );
-        codelistConfiguration.setUrl( (String) configuration.get("codelistrepo.url") );
-        codelistConfiguration.setUsername( (String) configuration.get("codelistrepo.username") );
+        busConfiguration.setUrl((String) configuration.get("ibus.url"));
+        busConfiguration.setPort(Integer.valueOf((String) configuration.get("ibus.port")));
+        codelistConfiguration.setUrl((String) configuration.get("codelistrepo.url"));
+        codelistConfiguration.setUsername((String) configuration.get("codelistrepo.username"));
 
         updateBeansConfiguration(configuration, ibusChanged);
-        indicesService.init();
         indexManager.init();
+        indicesService.init();
         updateElasticCheckThread();
 
         // check if elasticsearch connection was established the first time and needs index "ingrid_meta"
         try {
             this.indicesService.prepareIndices();
-        } catch (NoNodeAvailableException e) {
+        } catch (Exception e) {
             log.warn("Elasticsearch does not seem to be configured, since we could not connect to it. Please check the settings.");
         }
 
         return true;
     }
-    
+
     private void updateElasticCheckThread() {
         if (elasticCheck != null) {
             elasticCheck.interrupt();
         }
+
+        Thread.UncaughtExceptionHandler exceptionHandler = (th, ex) -> log.debug("ElasticConnectionCheck Exception: " + ex);
+
         elasticCheck = new ElasticConnectionCheck(elasticsearchBean, elasticConfig, indexManager, indicesService);
+        elasticCheck.setUncaughtExceptionHandler(exceptionHandler);
         elasticCheck.start();
     }
 
@@ -259,7 +269,7 @@ public class ConfigurationService {
 
         // only update password if new one was set, otherwise use the old one
         if (configuration.get("codelistrepo.password") != null) {
-            codelistConfiguration.setPassword( (String) configuration.get("codelistrepo.password") );
+            codelistConfiguration.setPassword((String) configuration.get("codelistrepo.password"));
         }
         communication.setPassword(codelistConfiguration.getPassword());
         codeListService.setComm(communication);
@@ -278,12 +288,17 @@ public class ConfigurationService {
                     remoteHostsArray = remoteHosts.split(",");
                 }
 
-                elasticConfiguration.setRemoteHosts( remoteHostsArray );
+                elasticConfiguration.setRemoteHosts(remoteHostsArray);
                 elasticConfig.remoteHosts = remoteHostsArray;
                 elasticConfig.username = elasticConfiguration.getUsername();
                 elasticConfig.password = elasticConfiguration.getPassword();
                 elasticConfig.sslTransport = elasticConfiguration.getSslTransport();
+
+                // when creating a new transport client, then stop elastic connection check
+                // to prevent creation of multiple clients
+                this.elasticCheck.interrupt();
                 elasticsearchBean.createTransportClient(elasticConfig);
+                updateElasticCheckThread();
             } catch (UnknownHostException e) {
                 log.error("Error updating elasticsearch connection", e);
             }
@@ -293,7 +308,7 @@ public class ConfigurationService {
         String adminPassword = (String) configuration.get("spring.security.user.password");
         if (adminPassword != null && !"".equals(adminPassword)) {
             webSecurityConfig.secureWebapp(adminPassword);
-            springConfiguration.getUser().setPassword( adminPassword );
+            springConfiguration.getUser().setPassword(adminPassword);
             needPasswordChange = false;
         }
 
@@ -350,8 +365,15 @@ public class ConfigurationService {
         Properties props = new Properties();
 
         List<CodeList> codeLists = codeListService.updateFromServer(new Date().getTime());
-        props.put("codelistrepo", codeLists == null ? "false" : "true");
-        props.put("elasticsearch", ((TransportClient)elasticsearchBean.getClient()).connectedNodes().size() > 0 ? "true" : "false");
+        props.put("codelistrepo", codeLists != null);
+        try {
+            elasticsearchBean.getClient().info();
+            props.put("elasticsearch", true);
+        } catch (ConnectException e) {
+            props.put("elasticsearch", false);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return props;
     }

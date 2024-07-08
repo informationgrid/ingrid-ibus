@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-project</artifactId>
-  <version>7.1.0</version>
+  <version>7.2.0</version>
   <packaging>pom</packaging>
   <name>InGrid iBus</name>
   <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
@@ -33,9 +33,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
-    <spring.version>2.7.17</spring.version>
-    <elasticsearch.version>7.17.18</elasticsearch.version>
-    <jackson.version>2.14.1</jackson.version>
+    <spring.version>2.7.18</spring.version>
+    <jackson.version>2.17.1</jackson.version>
     <log4j2.version>2.22.1</log4j2.version>
   </properties>
 
@@ -57,21 +56,6 @@
         <!-- lookup parent from repository -->
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.elasticsearch</groupId>
-        <artifactId>elasticsearch</artifactId>
-        <version>${elasticsearch.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.elasticsearch.client</groupId>
-        <artifactId>transport</artifactId>
-        <version>${elasticsearch.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.elasticsearch.plugin</groupId>
-        <artifactId>transport-netty4-client</artifactId>
-        <version>${elasticsearch.version}</version>
       </dependency>
       <!-- backward compatible -->
       <dependency>
@@ -106,6 +90,16 @@
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.elasticsearch.client</groupId>
+        <artifactId>elasticsearch-rest-client</artifactId>
+        <version>8.14.1</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.json</groupId>
+        <artifactId>jakarta.json-api</artifactId>
+        <version>2.1.3</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

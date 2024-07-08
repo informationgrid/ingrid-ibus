@@ -189,7 +189,7 @@ public class IndicesController {
 
     @GetMapping("/indices/{indexId}/{docId}")
     @ResponseBody
-    public ResponseEntity<IngridHitDetail> getHitDetail(@PathVariable String indexId, @PathVariable String docId) {
+    public ResponseEntity<IngridHitDetail> getHitDetail(@PathVariable(name = "indexId") String indexId, @PathVariable(name = "docId") String docId) {
 
         IngridHitDetail hitDetail = this.indicesService.getHitDetail(indexId, docId);
         return ResponseEntity.ok( hitDetail );
