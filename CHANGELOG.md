@@ -1,4 +1,11 @@
 
+## 7.2.1 (25.07.2024)
+
+
+### Bugfixes
+
+* dataSourceName wird nicht korrekt ausgegeben (#6564)
+    
 ## 7.1.0 (26.03.2024)
 
 ### Features
