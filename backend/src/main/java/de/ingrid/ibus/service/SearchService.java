@@ -305,7 +305,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
 
         case "getDocById":
             parameter = targetInfo.getParameter();
-            ElasticDocument docById = this.indexManager.getDocById(parameter);
+            ElasticDocument docById = this.indexManager.getDocById((IngridHit)parameter);
             doc.put( "result", docById );
             break;
 
@@ -344,7 +344,7 @@ public class SearchService implements IPlug, IRecordLoader, Serializable, Regist
     public Record getRecord(IngridHit hit) {
         Record record = null;
 
-        ElasticDocument doc = indexManager.getDocById( hit.getDocumentId() );
+        ElasticDocument doc = indexManager.getDocById(hit);
         if (doc != null) {
             log.debug("Found record in central index with id: " + hit.getDocumentId());
             String data = (String) doc.get("idf");
