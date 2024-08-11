@@ -1,4 +1,11 @@
 
+## 7.2.2 (11.08.2024)
+
+
+### Bugfixes
+
+* getRecord-Anfrage im iBus nicht eindeutig (#6637)
+    
 ## 7.2.1 (25.07.2024)
 
 
