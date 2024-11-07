@@ -1,4 +1,11 @@
 
+## 7.3.3 (07.11.2024)
+
+
+### Bugfixes
+
+* Sehr viele Warnungen im iBus (#6924)
+    
 ## 7.3.0 (01.10.2024)
 
 
