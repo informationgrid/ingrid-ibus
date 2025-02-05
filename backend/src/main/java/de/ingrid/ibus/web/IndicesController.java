@@ -91,7 +91,7 @@ public class IndicesController {
 
     @GetMapping("/indices/{id}")
     @ResponseBody
-    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id, @RequestParam String type) {
+    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id) {
         IndexTypeDetail index;
         try {
             index = this.indicesService.getIndexDetail( id );
@@ -128,12 +128,6 @@ public class IndicesController {
         }
     }
 
-    @PutMapping("/indices")
-    @ResponseBody
-    public ResponseEntity<Void> updateIndex(@RequestBody JsonNode json) {
-        return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).build();
-    }
-
     @PutMapping("/indices/index")
     @ResponseBody
     public ResponseEntity<Void> planIndex(@RequestBody JsonNode json) {
@@ -160,11 +154,11 @@ public class IndicesController {
 
     @GetMapping("/search")
     @ResponseBody
-    public ResponseEntity<IngridHits> search(@RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int hitsPerPage) throws ParseException {
+    public ResponseEntity<IngridHits> search(@RequestParam("query") String query, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "hitsPerPage", defaultValue = "10") int hitsPerPage) throws ParseException {
 
         IngridQuery iQuery = QueryStringParser.parse( query );
 
-        // for convenience we add ranking:score mainly needed to get any results
+        // for convenience, we add ranking:score mainly needed to get any results
         if (!query.contains("ranking:")) {
             iQuery.put( IngridQuery.RANKED, IngridQuery.SCORE_RANKED );
         }
