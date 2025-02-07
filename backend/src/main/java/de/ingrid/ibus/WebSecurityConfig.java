@@ -151,7 +151,10 @@ public class WebSecurityConfig {
                 .password(passwordEncoder().encode(adminPassword))
                 .roles()
                 .build();
-        this.userDetailsService.updateUser(adminUser);
+        if (this.userDetailsService.userExists("admin"))
+            this.userDetailsService.updateUser(adminUser);
+        else
+            this.userDetailsService.createUser(adminUser);
     }
 
     private ICodeListCommunication codelistCommunication() {
