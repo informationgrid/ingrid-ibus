@@ -37,10 +37,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -79,6 +78,7 @@ public class WebSecurityConfig {
 
     private final SecurityService securityService;
     private final InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
     public WebSecurityConfig(SecurityService securityService) {
@@ -87,7 +87,16 @@ public class WebSecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return passwordEncoder;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        System.out.println(userDetailsService);
+        return authProvider;
     }
 
     @Bean
@@ -148,7 +157,7 @@ public class WebSecurityConfig {
     public void secureWebapp(String adminPassword) {
         this.securityService.isPasswordDefined = true;
         UserDetails adminUser = User.withUsername("admin")
-                .password(passwordEncoder().encode(adminPassword))
+                .password(adminPassword) // password already is encrypted
                 .roles()
                 .build();
         if (this.userDetailsService.userExists("admin"))
