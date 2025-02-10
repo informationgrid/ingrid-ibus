@@ -82,6 +82,9 @@ public class WebSecurityConfig {
     @Value("${codelistrepo.password:}")
     private String codelistPassword;
 
+    @Value("${spring.security.user.password:}")
+    private String ibusPassword;
+
     private final SecurityService securityService;
     private final InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -101,7 +104,13 @@ public class WebSecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
-        System.out.println(userDetailsService);
+        if (this.securityService.isPasswordDefined) {
+            userDetailsService.createUser(
+                    User.withUsername("admin")
+                            .password(ibusPassword)
+                            .roles("admin")
+                            .build());
+        }
         return authProvider;
     }
 
