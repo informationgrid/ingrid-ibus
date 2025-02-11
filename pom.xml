@@ -92,6 +92,11 @@
         <version>2.0</version>
       </dependency>-->
       <dependency>
+        <groupId>co.elastic.clients</groupId>
+        <artifactId>elasticsearch-java</artifactId>
+        <version>8.14.1</version>
+      </dependency>
+      <dependency>
         <groupId>org.elasticsearch.client</groupId>
         <artifactId>elasticsearch-rest-client</artifactId>
         <version>8.14.1</version>
