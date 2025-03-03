@@ -215,14 +215,22 @@ public class IndicesService {
             throw new RuntimeException(e);
         }
 
-        String id = response.hits().hits().get(0).id();
+        List<Hit<ElasticDocument>> hits = response.hits().hits();
+        String id = hits.isEmpty() ? null : hits.get(0).id();
         Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("active", active);
         try {
-            client.update(u -> u
-                    .index(INDEX_INFO_NAME)
-                    .id(id)
-                    .doc(jsonMap), ElasticDocument.class);
+            if (id != null) {
+                client.update(u -> u
+                        .index(INDEX_INFO_NAME)
+                        .id(id)
+                        .doc(jsonMap), ElasticDocument.class);
+            } else {
+                jsonMap.put(INDEX_FIELD_INDEX_ID, indexId);
+                client.index(c -> c
+                        .index(INDEX_INFO_NAME)
+                        .document(jsonMap));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
