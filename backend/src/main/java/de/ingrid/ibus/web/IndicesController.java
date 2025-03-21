@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,7 +91,7 @@ public class IndicesController {
 
     @GetMapping("/indices/{id}")
     @ResponseBody
-    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id, @RequestParam String type) {
+    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id) {
         IndexTypeDetail index;
         try {
             index = this.indicesService.getIndexDetail( id );
@@ -106,7 +106,6 @@ public class IndicesController {
     @ResponseBody
     public ResponseEntity<Void> activateIndex(@RequestBody JsonNode json) throws Exception {
         String id = json.get("id").asText();
-        indicesService.toggleIndexActiveState(id, true);
         boolean success = this.settingsService.activateIndexType(id);
 
         if (success) {
@@ -120,7 +119,6 @@ public class IndicesController {
     @ResponseBody
     public ResponseEntity<Void> deactivateIndex(@RequestBody JsonNode json) throws Exception {
         String id = json.get("id").asText();
-        indicesService.toggleIndexActiveState(id, false);
         boolean success = this.settingsService.deactivateIndexType(id);
 
         if (success) {
@@ -128,12 +126,6 @@ public class IndicesController {
         } else {
             return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
         }
-    }
-
-    @PutMapping("/indices")
-    @ResponseBody
-    public ResponseEntity<Void> updateIndex(@RequestBody JsonNode json) {
-        return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).build();
     }
 
     @PutMapping("/indices/index")
@@ -162,11 +154,11 @@ public class IndicesController {
 
     @GetMapping("/search")
     @ResponseBody
-    public ResponseEntity<IngridHits> search(@RequestParam String query, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int hitsPerPage) throws ParseException {
+    public ResponseEntity<IngridHits> search(@RequestParam("query") String query, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "hitsPerPage", defaultValue = "10") int hitsPerPage) throws ParseException {
 
         IngridQuery iQuery = QueryStringParser.parse( query );
 
-        // for convenience we add ranking:score mainly needed to get any results
+        // for convenience, we add ranking:score mainly needed to get any results
         if (!query.contains("ranking:")) {
             iQuery.put( IngridQuery.RANKED, IngridQuery.SCORE_RANKED );
         }

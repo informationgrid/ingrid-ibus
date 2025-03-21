@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,6 +42,8 @@ import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DefaultPropertiesPersister;
@@ -55,6 +57,9 @@ public class SettingsService {
 
     private Set<String> activeIndices = null;
     private Properties properties;
+
+    @Autowired @Lazy
+    private IndicesService indicesService;
 
     public SettingsService() {
         ClassPathResource ibusSettings = new ClassPathResource( "/activatedIplugs.properties" );
@@ -83,16 +88,16 @@ public class SettingsService {
                     return Collections.enumeration(new TreeSet<>(super.keySet()));
                 }
             };
-            
+
             properties.load( new FileReader( this.settingsFile ) );
 
             String propActiveIndices = properties.getProperty( "activeIndices" );
             if (propActiveIndices != null) {
-                
-                List<String> activeList = propActiveIndices.trim().length() == 0 
+
+                List<String> activeList = propActiveIndices.trim().length() == 0
                         ? new ArrayList<>()
                         : Arrays.asList( propActiveIndices.split( "," ) );
-                        
+
                 activeIndices = new HashSet<>( activeList );
             } else {
                 activeIndices = new HashSet<>();
@@ -104,7 +109,7 @@ public class SettingsService {
             }
         }
     }
-    
+
     public Set<String> getActiveComponentIds() {
         return this.activeIndices;
     }
@@ -112,15 +117,17 @@ public class SettingsService {
     public boolean activateIndexType(String index) throws Exception {
         activeIndices.add( index );
         properties.put( "activeIndices", StringUtils.collectionToCommaDelimitedString( activeIndices ) );
+        indicesService.toggleIndexActiveState(index, true);
         return writeSettings();
     }
-    
+
     public boolean deactivateIndexType(String index) throws Exception {
         activeIndices.remove( index );
         properties.put( "activeIndices", StringUtils.collectionToCommaDelimitedString( activeIndices ) );
+        indicesService.toggleIndexActiveState(index, false);
         return writeSettings();
     }
-    
+
     private boolean writeSettings() throws Exception {
         DefaultPropertiesPersister p = new DefaultPropertiesPersister();
         OutputStream out = null;

@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-project</artifactId>
-  <version>7.4.0</version>
+  <version>7.5.0</version>
   <packaging>pom</packaging>
   <name>InGrid iBus</name>
   <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
@@ -33,8 +33,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
-    <spring.version>2.7.18</spring.version>
-    <jackson.version>2.17.1</jackson.version>
+    <spring.version>3.4.3</spring.version>
+    <jackson.version>2.18.2</jackson.version>
     <log4j2.version>2.22.1</log4j2.version>
   </properties>
 
@@ -86,10 +86,15 @@
       </dependency>
 
       <!-- Fix security issue => https://avd.aquasec.com/nvd/cve-2022-1471 -->
-      <dependency>
+      <!--<dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>2.0</version>
+      </dependency>-->
+      <dependency>
+        <groupId>co.elastic.clients</groupId>
+        <artifactId>elasticsearch-java</artifactId>
+        <version>8.14.1</version>
       </dependency>
       <dependency>
         <groupId>org.elasticsearch.client</groupId>
@@ -97,9 +102,9 @@
         <version>8.14.1</version>
       </dependency>
       <dependency>
-        <groupId>jakarta.json</groupId>
-        <artifactId>jakarta.json-api</artifactId>
-        <version>2.1.3</version>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
