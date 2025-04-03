@@ -68,7 +68,6 @@ export class ConnectedIplugsComponent implements OnInit, OnDestroy {
         },
         error => this.handleError(error)
       );
-;
   }
 
   ngOnDestroy() {
