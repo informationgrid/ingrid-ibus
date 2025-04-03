@@ -121,7 +121,7 @@ public class SettingsController {
 
     @DeleteMapping("/configIndex/{id}")
     @ResponseBody
-    public ResponseEntity<Void> deleteConfigurationIndexEntry(@PathVariable String id) {
+    public ResponseEntity<Void> deleteConfigurationIndexEntry(@PathVariable(name = "id") String id) {
         this.indexService.removeConfigurationIndexEntry(id);
         return ResponseEntity.ok().build();
     }
