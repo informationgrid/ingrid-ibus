@@ -23,7 +23,7 @@
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { IndexService } from '../index.service';
 import { Component, OnInit } from '@angular/core';
-import 'rxjs/add/operator/switchMap';
+import {switchMap} from 'rxjs/operators';
 
 export class IndexDetail {
   id: string;
@@ -58,9 +58,11 @@ export class IndexDetailComponent implements OnInit {
 
   ngOnInit() {
     this.activeRoute.paramMap
-      .switchMap((params: ParamMap) => {
-        return this.indexService.getIndexDetail(params.get('id'), params.get('type'));
-      })
+      .pipe(
+        switchMap((params: ParamMap) =>
+          this.indexService.getIndexDetail(params.get('id')!, params.get('type')!)
+        )
+      )
       .subscribe(detail => this.detail = detail);
   }
 

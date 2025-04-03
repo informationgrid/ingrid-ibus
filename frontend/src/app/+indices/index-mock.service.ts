@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,13 +20,13 @@
  * limitations under the Licence.
  * **************************************************#
  */
-import { IndexDetail } from './+index-detail/index-detail.component';
-import { IndexItem } from './index-item/index-item.component';
-import { SearchHits } from '../+search/SearchHits';
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
+import {IndexDetail} from './+index-detail/index-detail.component';
+import {IndexItem} from './index-item/index-item.component';
+import {SearchHits} from '../+search/SearchHits';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
+import {of} from 'rxjs';
 
 let INDICES: IndexItem[] = [
   {
