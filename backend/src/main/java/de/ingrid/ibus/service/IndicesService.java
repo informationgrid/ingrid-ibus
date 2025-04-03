@@ -296,8 +296,8 @@ public class IndicesService {
             index.setLastIndexed(mapDate((String) hitSource.get(INDEX_FIELD_LAST_INDEXED)));
             index.setActive(settingsService.isActive(index.getId()));
 
-            index.setLastHeartbeat(mapDate(hitSource.get(INDEX_FIELD_LAST_HEARTBEAT).toString()));
-            index.setAdminUrl(hitSource.get(INDEX_FIELD_ADMIN_URL).toString());
+            index.setLastHeartbeat(mapDate(hitSource.getOrDefault(INDEX_FIELD_LAST_HEARTBEAT, "").toString()));
+            index.setAdminUrl(hitSource.getOrDefault(INDEX_FIELD_ADMIN_URL, "").toString());
             index.setIndexingState(mapIndexingState((Map<String, Object>) hitSource.get(INDEX_FIELD_INDEXING_STATE)));
             // index.setHasLinkedComponent( true );
 
@@ -366,6 +366,7 @@ public class IndicesService {
 
     private IndexState mapIndexingState(Map<String, Object> state) {
         IndexState indexState = new IndexState();
+        if (state == null) return indexState;
 
         Integer numProcessed = (Integer) state.get("numProcessed");
         Integer totalDocs = (Integer) state.get("totalDocs");
