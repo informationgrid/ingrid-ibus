@@ -91,7 +91,7 @@ public class IndicesController {
 
     @GetMapping("/indices/{id}")
     @ResponseBody
-    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable String id) {
+    public ResponseEntity<IndexTypeDetail> getIndexDetail(@PathVariable(name = "id") String id) {
         IndexTypeDetail index;
         try {
             index = this.indicesService.getIndexDetail( id );
