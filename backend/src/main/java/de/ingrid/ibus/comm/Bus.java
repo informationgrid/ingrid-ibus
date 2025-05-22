@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@
  */
 /*
  * Copyright (c) 1997-2005 by media style GmbH
- * 
+ *
  * $Source: /cvs/asp-search/src/java/com/ms/aspsearch/PermissionDeniedException.java,v $
  */
 
@@ -77,7 +77,7 @@ import net.weta.components.communication.util.PooledThreadExecutor;
 /**
  * The IBus a centralized Bus that routes queries and return results. Created on
  * 09.08.2005
- * 
+ *
  * @author sg
  * @version $Revision: 1.3 $
  */
@@ -113,7 +113,7 @@ public class Bus extends Thread implements IBus {
      * iplug if it is able to handle the query. For all implemented criteria see
      * de.ingrid.ibus.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery,
      * Registry) .
-     * 
+     *
      * @param factory
      *            A factroy for creating iplug proxies.
      * @see de.ingrid.ibus.comm.registry.SyntaxInterpreter#getIPlugsForQuery(IngridQuery,
@@ -130,7 +130,7 @@ public class Bus extends Thread implements IBus {
 
     /**
      * Do not use this method. Only for internal usage.
-     * 
+     *
      * @return The bus instance, if it was initialised.
      * @deprecated
      */
@@ -263,11 +263,9 @@ public class Bus extends Thread implements IBus {
                     fLogger.debug( "(search) grouping ends: " + query.hashCode() );
                 }
             } else {
-                // prevent array cutting with only one requested iplug, assuming
-                // we already have the right number of hits in the result array
-                if (!oneIPlugOnly) {
-                    hits = cutHitsRight( hits, currentPage, hitsPerPage, startHit );
-                }
+                // Do not check for oneIPlugOnly now, since central-index can contain multiple "iPlugs"
+                // always make sure to return the requested size
+                hits = cutHitsRight( hits, currentPage, hitsPerPage, startHit );
                 hitContainer = new IngridHits( totalHits, hits );
             }
         }
@@ -296,7 +294,7 @@ public class Bus extends Thread implements IBus {
 
     private boolean hasQueryFieldIsFolder(IngridQuery query) {
         boolean hasFieldIsFolder = false;
-        
+
         if(query.containsField("isfolder")) {
             hasFieldIsFolder = true;
         } else {
@@ -308,7 +306,7 @@ public class Bus extends Thread implements IBus {
                 }
                 hasFieldIsFolder = hasQueryFieldIsFolder(clauseQuery);
             }
-            
+
         }
         return hasFieldIsFolder;
     }
@@ -844,7 +842,7 @@ public class Bus extends Thread implements IBus {
     /**
      * This function is used to handle the fallback to the old docId usage,
      * where it was an integer.
-     * 
+     *
      * @return
      */
     private String getDocIdAsString(IngridHit hit) {
@@ -870,7 +868,7 @@ public class Bus extends Thread implements IBus {
      * A pipe with pre process and post process functionality for a query. Every
      * query goes through the posst process pipe before the search and the pre
      * process pipe after the search.
-     * 
+     *
      * @return The processing pipe.
      */
     public ProcessorPipe getProccessorPipe() {
@@ -879,7 +877,7 @@ public class Bus extends Thread implements IBus {
 
     /**
      * The registry for all iplugs.
-     * 
+     *
      * @return The iplug registry.
      */
     public Registry getIPlugRegistry() {
