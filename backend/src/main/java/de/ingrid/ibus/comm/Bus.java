@@ -264,8 +264,11 @@ public class Bus extends Thread implements IBus {
                 }
             } else {
                 // Do not check for oneIPlugOnly now, since central-index can contain multiple "iPlugs"
-                // always make sure to return the requested size
-                hits = cutHitsRight( hits, currentPage, hitsPerPage, startHit );
+                // always make sure to return the requested size if there are more hits (this can happen
+                // when duplicates were found
+                if (hits.length > hitsPerPage) {
+                    hits = cutHitsRight(hits, currentPage, hitsPerPage);
+                }
                 hitContainer = new IngridHits( totalHits, hits );
             }
         }
@@ -612,7 +615,7 @@ public class Bus extends Thread implements IBus {
         return cuttedHits;
     }
 
-    private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage, int startHit) {
+    private IngridHit[] cutHitsRight(IngridHit[] hits, int currentPage, int hitsPerPage) {
         int pageStart = Math.min( ((currentPage - 1) * hitsPerPage), hits.length );
         int resultLength = 0;
         if (hits.length <= pageStart) {
