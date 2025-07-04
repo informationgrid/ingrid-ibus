@@ -1,4 +1,12 @@
 
+## 8.0.0 (04.07.2025)
+
+
+### Bugfixes
+
+* Anzeige des Index und des Suchergebnisses funktioniert nicht (#7539)
+* IBUS: Suche liefert mehr Treffer als erlaubt (#7054)
+    
 ## 7.5.0 (21.03.2025)
 
 
