@@ -118,7 +118,7 @@ public class WebSecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityService securityService) throws Exception {
         if (developmentMode) {
             return http
-                    .cors(Customizer.withDefaults())
+                    .cors(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                     .csrf(AbstractHttpConfigurer::disable)
                     .build();

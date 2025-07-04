@@ -54,7 +54,7 @@
         <button (click)="showMapping = !showMapping" class="btn btn-sm btn-outline-info">
           {{showMapping ? 'Verstecken' : 'Anzeigen'}}
         </button>
-        <pre *ngIf="showMapping" class="mapping">{{detail.mapping | json}}</pre>
+        <pre *ngIf="showMapping" class="mapping">{{JSON.parse(detail.mapping) | json}}</pre>
       </dd>
 
       <dt class="col-4 text-right">Status</dt>

@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,9 @@
  */
 import {IPlugInfo, IPlugService} from '../iplug-service.service';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {IntervalObservable} from 'rxjs/observable/IntervalObservable';
 import {Subscription} from 'rxjs/Subscription';
-import {startWith, takeWhile} from 'rxjs/operators';
+import {interval} from 'rxjs';
+import {startWith, takeWhile, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-connected-iplugs',
@@ -49,28 +49,25 @@ export class ConnectedIplugsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.observer = IntervalObservable.create(10000)
+    this.observer = interval(10000)
       .pipe(
         startWith(0),
-        takeWhile(() => this.autoRefresh )
+        takeWhile(() => this.autoRefresh),
+        switchMap(() => this.iPlugService.getConnectedIPlugs())
       )
-      .subscribe( () => {
-        this.iPlugService.getConnectedIPlugs()
-          .subscribe(
-          iPlugs => {
-              console.log('iPlugs:', iPlugs);
-              this.iplugsLocalIndex = iPlugs
-                  .filter(p => !p.id.startsWith('__') && !p.useCentralIndex)
-                  .sort(ConnectedIplugsComponent.compareIPlugInfoName);
-              this.iplugsCentralIndex = iPlugs
-                  .filter(p => !p.id.startsWith('__') && p.useCentralIndex)
-                  .sort(ConnectedIplugsComponent.compareIPlugInfoName);
-
-            this.error = '';
-          },
-          error => this.handleError( error )
-        )
-      } );
+      .subscribe(
+        iPlugs => {
+          console.log('iPlugs:', iPlugs);
+          this.iplugsLocalIndex = iPlugs
+            .filter(p => !p.id.startsWith('__') && !p.useCentralIndex)
+            .sort(ConnectedIplugsComponent.compareIPlugInfoName);
+          this.iplugsCentralIndex = iPlugs
+            .filter(p => !p.id.startsWith('__') && p.useCentralIndex)
+            .sort(ConnectedIplugsComponent.compareIPlugInfoName);
+          this.error = '';
+        },
+        error => this.handleError(error)
+      );
   }
 
   ngOnDestroy() {

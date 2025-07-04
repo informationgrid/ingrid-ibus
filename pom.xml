@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-project</artifactId>
-  <version>7.5.0</version>
+  <version>8.0.0</version>
   <packaging>pom</packaging>
   <name>InGrid iBus</name>
   <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
@@ -33,7 +33,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
-    <spring.version>3.4.3</spring.version>
+    <spring.version>3.4.6</spring.version>
     <jackson.version>2.18.2</jackson.version>
     <log4j2.version>2.22.1</log4j2.version>
   </properties>
