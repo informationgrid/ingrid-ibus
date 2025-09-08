@@ -26,7 +26,8 @@ import { SearchDetailComponent } from './search-detail.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IndexService } from '../../+indices/index.service';
 import { IndexService as IndexServiceMock } from '../../+indices/index-mock.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('SearchDetailComponent', () => {
   let component: SearchDetailComponent;
@@ -34,15 +35,14 @@ describe('SearchDetailComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ SearchDetailComponent ],
-      imports: [
-        RouterTestingModule,
-        HttpClientTestingModule
-      ],
-      providers: [
-        {provide: IndexService, useClass: IndexServiceMock}
-      ]
-    })
+    declarations: [SearchDetailComponent],
+    imports: [RouterTestingModule],
+    providers: [
+        { provide: IndexService, useClass: IndexServiceMock },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
   });
 
   beforeEach(() => {

@@ -21,14 +21,14 @@
  * **************************************************#
  */
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import {AppConfiguation, SettingsService} from '../+settings/settings.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class FirstPasswordGuard implements CanActivate {
+export class FirstPasswordGuard  {
 
   private config: AppConfiguation;
 

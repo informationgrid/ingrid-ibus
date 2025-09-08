@@ -29,9 +29,10 @@ import {Router} from '@angular/router';
 import {interval} from 'rxjs';
 
 @Component({
-  selector: 'app-list-indices',
-  templateUrl: './list-indices.component.html',
-  styleUrls: ['./list-indices.component.scss']
+    selector: 'app-list-indices',
+    templateUrl: './list-indices.component.html',
+    styleUrls: ['./list-indices.component.scss'],
+    standalone: false
 })
 export class ListIndicesComponent implements OnInit, OnDestroy {
 

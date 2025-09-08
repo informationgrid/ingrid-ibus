@@ -1,65 +1,73 @@
 <!--
-  **************************************************-
-  ingrid-ibus-frontend
-  ==================================================
-  Copyright (C) 2014 - 2025 wemove digital solutions GmbH
-  ==================================================
-  Licensed under the EUPL, Version 1.2 or – as soon they will be
-  approved by the European Commission - subsequent versions of the
-  EUPL (the "Licence");
-  You may not use this work except in compliance with the Licence.
-  You may obtain a copy of the Licence at:
-  https://joinup.ec.europa.eu/software/page/eupl
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the Licence is distributed on an "AS IS" basis,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the Licence for the specific language governing permissions and
-  limitations under the Licence.
-  **************************************************#
-  -->
+**************************************************-
+ingrid-ibus-frontend
+==================================================
+Copyright (C) 2014 - 2025 wemove digital solutions GmbH
+==================================================
+Licensed under the EUPL, Version 1.2 or – as soon they will be
+approved by the European Commission - subsequent versions of the
+EUPL (the "Licence");
+You may not use this work except in compliance with the Licence.
+You may obtain a copy of the Licence at:
+https://joinup.ec.europa.eu/software/page/eupl
+Unless required by applicable law or agreed to in writing, software
+distributed under the Licence is distributed on an "AS IS" basis,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the Licence for the specific language governing permissions and
+limitations under the Licence.
+**************************************************#
+-->
 <div class="container">
 
   <button class="btn btn-light" (click)="showConfigIndex()">Verwaltung des Konfigurationsindex</button>
 
-  <div *ngIf="!showInfo" class="text-right text-info mb-1">
-    <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfo = true"></button>
-  </div>
-
-  <div *ngIf="showInfo" class="card text-white bg-info mb-3">
-    <div class="card-header">
-      Information
-      <button type="button" class="close" aria-label="Close" (click)="showInfo = false">
-        <span aria-hidden="true">&times;</span>
-      </button>
+  @if (!showInfo) {
+    <div class="text-right text-info mb-1">
+      <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfo = true"></button>
     </div>
-    <div class="card-body">
-      Hier werden alle Elasticsearch-Indizes angezeigt, die von den neuen iPlugs angelegt worden sind. Anstatt die indexierten Daten
-      lokal im iPlug zu halten, werden diese in den zentralen Index einliefert, welcher vom iBus verwaltet wird.
-      Dabei kann die Einlieferung der Daten direkt in den Elasticsearch Index geschehen oder über die InGrid-Kommunikation,
-      so dass kein zusätzlicher Port geöffnet werden muss.
+  }
+
+  @if (showInfo) {
+    <div class="card text-white bg-info mb-3">
+      <div class="card-header">
+        Information
+        <button type="button" class="close" aria-label="Close" (click)="showInfo = false">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+        Hier werden alle Elasticsearch-Indizes angezeigt, die von den neuen iPlugs angelegt worden sind. Anstatt die indexierten Daten
+        lokal im iPlug zu halten, werden diese in den zentralen Index einliefert, welcher vom iBus verwaltet wird.
+        Dabei kann die Einlieferung der Daten direkt in den Elasticsearch Index geschehen oder über die InGrid-Kommunikation,
+        so dass kein zusätzlicher Port geöffnet werden muss.
+      </div>
     </div>
-  </div>
+  }
 
-  <h6>Komponenten-Indizes <span *ngIf="isLoading" class="pull-right fa fa-spinner fa-spin"></span></h6>
+  <h6>Komponenten-Indizes @if (isLoading) {
+    <span class="pull-right fa fa-spinner fa-spin"></span>
+  }</h6>
 
-  <ng-container *ngFor="let item of indexItems; trackBy: getIndexItemIdentifier">
+  @for (item of indexItems; track getIndexItemIdentifier($index, item)) {
     <index-item [data]="item"
-                (onDelete)="refresh()"
-                (onError)="error = $event"
+      (onDelete)="refresh()"
+      (onError)="error = $event"
     ></index-item>
-  </ng-container>
+  }
 
   <h6 class="clickable-only pt-3" (click)="expanded['others'] = !expanded['others']">
     Andere Indizes ({{otherIndexItems.length}})
     <span class="pull-right fa"
-          [class.fa-chevron-up]="expanded['others']"
-          [class.fa-chevron-down]="!expanded['others']"></span>
+      [class.fa-chevron-up]="expanded['others']"
+    [class.fa-chevron-down]="!expanded['others']"></span>
   </h6>
-  <div *ngIf="expanded['others']" class="other">
-    <ng-container *ngFor="let item of otherIndexItems; trackBy: getIndexItemIdentifier">
-      <index-item [data]="item" [showFull]="false" (onDelete)="refresh()"></index-item>
-    </ng-container>
-  </div>
+  @if (expanded['others']) {
+    <div class="other">
+      @for (item of otherIndexItems; track getIndexItemIdentifier($index, item)) {
+        <index-item [data]="item" [showFull]="false" (onDelete)="refresh()"></index-item>
+      }
+    </div>
+  }
 
   <ingrid-error [msg]="error"></ingrid-error>
 </div>

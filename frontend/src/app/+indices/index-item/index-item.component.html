@@ -1,39 +1,45 @@
 <!--
-  **************************************************-
-  ingrid-ibus-frontend
-  ==================================================
-  Copyright (C) 2014 - 2025 wemove digital solutions GmbH
-  ==================================================
-  Licensed under the EUPL, Version 1.2 or – as soon they will be
-  approved by the European Commission - subsequent versions of the
-  EUPL (the "Licence");
-  You may not use this work except in compliance with the Licence.
-  You may obtain a copy of the Licence at:
-  https://joinup.ec.europa.eu/software/page/eupl
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the Licence is distributed on an "AS IS" basis,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the Licence for the specific language governing permissions and
-  limitations under the Licence.
-  **************************************************#
-  -->
+**************************************************-
+ingrid-ibus-frontend
+==================================================
+Copyright (C) 2014 - 2025 wemove digital solutions GmbH
+==================================================
+Licensed under the EUPL, Version 1.2 or – as soon they will be
+approved by the European Commission - subsequent versions of the
+EUPL (the "Licence");
+You may not use this work except in compliance with the Licence.
+You may obtain a copy of the Licence at:
+https://joinup.ec.europa.eu/software/page/eupl
+Unless required by applicable law or agreed to in writing, software
+distributed under the Licence is distributed on an "AS IS" basis,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the Licence for the specific language governing permissions and
+limitations under the Licence.
+**************************************************#
+-->
 <div class="card mb-3" [class.short]="!showFull">
   <div class="card-body">
-    <div *ngIf="showFull" class="indexState fa fa-power-off" [class.text-success]="data.types[0].active"
-         [class.text-danger]="!data.types[0].active"
-         title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(data.types[0], $event)"></div>
+    @if (showFull) {
+      <div class="indexState fa fa-power-off" [class.text-success]="data.types[0].active"
+        [class.text-danger]="!data.types[0].active"
+      title="Aktiviere/Deaktiviere Indextyp" (click)="activateIndexType(data.types[0], $event)"></div>
+    }
     <div class="flex-fill" [class.clickable]="showFull" (click)="showIndexItem(data, data.types[0].name)">
       <div class="index-name" [title]="'Index: ' + data.name">
         {{ title }}
         <span class="link">
-          <span *ngIf="showFull && data.isConnected" title="Verbunden mit iBus" class="fa fa-link text-success"></span>
+          @if (showFull && data.isConnected) {
+            <span title="Verbunden mit iBus" class="fa fa-link text-success"></span>
+          }
         </span>
-        <span *ngIf="data.adminUrl" class="bookmark">
-          <a href="{{data.adminUrl}}"
-                 title="Admin-GUI"
-                 target="_blank"
-                 class="fa fa-bookmark"></a>
-        </span>
+        @if (data.adminUrl) {
+          <span class="bookmark">
+            <a href="{{data.adminUrl}}"
+              title="Admin-GUI"
+              target="_blank"
+            class="fa fa-bookmark"></a>
+          </span>
+        }
       </div>
     </div>
     <div class="text-right">
@@ -42,17 +48,17 @@
     </div>
     <div class="dropdown" [class.show]="dropDownOpen">
       <button class="btn btn-sm btn-light menu-icon rounded" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
+        aria-haspopup="true" aria-expanded="false" (click)="dropDownOpen = !dropDownOpen">
       </button>
       <div class="dropdown-menu" [class.show]="dropDownOpen" aria-labelledby="dropdownMenuButton">
         <!--<button *ngIf="data.isConnected" class="dropdown-item"(click)="index()">Indexieren</button>-->
         <button class="dropdown-item" title="Index löschen" confirmbuttontype="danger" mwlConfirmationPopover
-                [popoverTitle]="'Wirklich löschen?'"
-                [popoverMessage]="'Wollen Sie den Index wirklich löschen?'"
-                placement="left"
-                confirmText="Löschen"
-                cancelText="Abbrechen"
-                (confirm)="deleteIndex(data)">Löschen
+          [popoverTitle]="'Wirklich löschen?'"
+          [popoverMessage]="'Wollen Sie den Index wirklich löschen?'"
+          placement="left"
+          confirmText="Löschen"
+          cancelText="Abbrechen"
+          (confirm)="deleteIndex(data)">Löschen
         </button>
       </div>
     </div>

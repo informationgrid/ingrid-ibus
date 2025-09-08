@@ -27,9 +27,11 @@ import {interval} from 'rxjs';
 import {startWith, takeWhile, switchMap} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-connected-iplugs',
-  templateUrl: './connected-iplugs.component.html',
-  styleUrls: ['./connected-iplugs.component.scss'] // TODO: ? '../../+indices/index-item/index-item.component.scss',  ?
+    selector: 'app-connected-iplugs',
+    templateUrl: './connected-iplugs.component.html',
+    styleUrls: ['./connected-iplugs.component.scss'] // TODO: ? '../../+indices/index-item/index-item.component.scss',  ?
+    ,
+    standalone: false
 })
 export class ConnectedIplugsComponent implements OnInit, OnDestroy {
 

@@ -24,7 +24,7 @@ import {IndexDetail} from './+index-detail/index-detail.component';
 import {IndexItem} from './index-item/index-item.component';
 import {SearchHits} from '../+search/SearchHits';
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs';
 

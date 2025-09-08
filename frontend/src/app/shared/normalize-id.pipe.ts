@@ -23,7 +23,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'normalizeId'
+    name: 'normalizeId',
+    standalone: false
 })
 export class NormalizeIdPipe implements PipeTransform {
 

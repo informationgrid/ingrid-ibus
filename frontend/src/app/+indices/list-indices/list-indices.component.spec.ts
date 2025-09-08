@@ -32,7 +32,7 @@ import { indexServiceStub, shouldNotShowError, shouldShowError, testIndexItem } 
 import { IndexService } from '../index.service';
 import { SharedModule } from '../../shared/shared.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { of } from 'rxjs/observable/of';
 import {throwError} from 'rxjs/internal/observable/throwError';
 
@@ -43,17 +43,14 @@ describe('ListIndicesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientModule,
-        RouterTestingModule,
+    declarations: [ListIndicesComponent, IndexItemComponent],
+    imports: [RouterTestingModule,
         ConfirmationPopoverModule.forRoot({
-          confirmButtonType: 'danger' // set defaults here
+            confirmButtonType: 'danger' // set defaults here
         }),
-        SharedModule
-      ],
-      declarations: [ListIndicesComponent, IndexItemComponent],
-      providers: [{provide: IndexService, useValue: indexServiceStub}]
-    });
+        SharedModule],
+    providers: [{ provide: IndexService, useValue: indexServiceStub }, provideHttpClient(withInterceptorsFromDi())]
+});
   }));
 
   beforeEach(() => {

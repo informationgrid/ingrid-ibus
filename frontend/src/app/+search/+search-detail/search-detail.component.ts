@@ -27,9 +27,10 @@ import {SearchHit} from '../SearchHit';
 import {Observable} from "rxjs";
 
 @Component({
-  selector: 'search-detail',
-  templateUrl: './search-detail.component.html',
-  styleUrls: ['./search-detail.component.scss']
+    selector: 'search-detail',
+    templateUrl: './search-detail.component.html',
+    styleUrls: ['./search-detail.component.scss'],
+    standalone: false
 })
 export class SearchDetailComponent implements OnInit {
 
