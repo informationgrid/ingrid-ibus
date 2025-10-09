@@ -1,106 +1,99 @@
 <!--
-  **************************************************-
-  ingrid-ibus-frontend
-  ==================================================
-  Copyright (C) 2014 - 2025 wemove digital solutions GmbH
-  ==================================================
-  Licensed under the EUPL, Version 1.2 or – as soon they will be
-  approved by the European Commission - subsequent versions of the
-  EUPL (the "Licence");
-  You may not use this work except in compliance with the Licence.
-  You may obtain a copy of the Licence at:
-  https://joinup.ec.europa.eu/software/page/eupl
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the Licence is distributed on an "AS IS" basis,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the Licence for the specific language governing permissions and
-  limitations under the Licence.
-  **************************************************#
-  -->
-<div *ngIf="detail">
-
-
-  <div class="detail-container container">
-
-    <ingrid-error [msg]="error"></ingrid-error>
-
-    <dl class="row">
-      <dt class="col-4 text-right text-right">Für Suche verwenden</dt>
-      <dd class="col-8">
-        <span *ngIf="detail.active">Ja</span>
-        <span *ngIf="!detail.active">Nein</span>
-      </dd>
-
-      <dt class="col-4 text-right text-right">Index-Name</dt>
-      <dd class="col-8">{{detail.name}}</dd>
-
-      <dt class="col-4 text-right">Name der Komponente</dt>
-      <dd class="col-8">{{detail.longName}}</dd>
-
-      <dt class="col-4 text-right">Admin-URL</dt>
-      <dd class="col-8"><a target="_blank" [href]="detail.adminUrl">{{detail.adminUrl}}</a></dd>
-
-      <dt class="col-4 text-right">Anzahl Dokumente</dt>
-      <dd class="col-8">{{detail.numberDocs}}</dd>
-
-      <dt class="col-4 text-right">Letzte Aktualisierung</dt>
-      <dd class="col-8">{{detail.lastIndexed | date:'medium'}}</dd>
-
-      <dt class="col-4 text-right">Letzter Heartbeat</dt>
-      <dd class="col-8">{{detail.lastHeartbeat | dateRelative}} ({{detail.lastHeartbeat | date:'medium'}})</dd>
-
-      <dt class="col-4 text-right">Mapping</dt>
-      <dd class="col-8">
-        <button (click)="showMapping = !showMapping" class="btn btn-sm btn-outline-info">
-          {{showMapping ? 'Verstecken' : 'Anzeigen'}}
-        </button>
-        <pre *ngIf="showMapping" class="mapping">{{JSON.parse(detail.mapping) | json}}</pre>
-      </dd>
-
-      <dt class="col-4 text-right">Status</dt>
-      <dd class="col-8" *ngIf="detail.indexingState?.running">
-        {{detail.indexingState?.numProcessed}} / {{detail.indexingState?.totalDocs}}:
-        {{detail.indexingState?.message}}
-      </dd>
-      <dd class="col-8" *ngIf="!detail.indexingState?.running">
-        Bereit
-      </dd>
-    </dl>
-
-  </div>
-
-  <div class="footer">
-    <div class="container">
-      <form class="form-inline">
-
-        <!-- DELETE BUTTON-->
-        <button type="button" class="btn btn-danger deleteIndex" confirmbuttontype="danger" mwlConfirmationPopover
-           [popoverTitle]="'Wirklich löschen?'"
-           [popoverMessage]="'Achtung! Der Index kann noch weitere Typen enthalten, die ebenfalls entfernt werden. Wollen Sie den Index wirklich löschen?'"
-           placement="top"
-           confirmText="Löschen"
-           cancelText="Abbrechen"
-           (confirm)="deleteIndex()">Löschen</button>
-
-        <!-- ACTIVATE / DEACTIVATE -->
-        <button type="button" class="btn btn-light toggleActiveIndex" (click)="toggleActive()">
-          {{ detail.active ? 'Deaktivieren' : 'Aktivieren'}}
-        </button>
-
-        <!-- INDEX -->
-        <!--<button type="button" class="btn btn-light doIndex" (click)="index()">Indexieren</button>-->
-
-        <!-- TOGGLE WHEN NO HEARTBEAT-->
-        <!--<div class="form-check">
+**************************************************-
+ingrid-ibus-frontend
+==================================================
+Copyright (C) 2014 - 2025 wemove digital solutions GmbH
+==================================================
+Licensed under the EUPL, Version 1.2 or – as soon they will be
+approved by the European Commission - subsequent versions of the
+EUPL (the "Licence");
+You may not use this work except in compliance with the Licence.
+You may obtain a copy of the Licence at:
+https://joinup.ec.europa.eu/software/page/eupl
+Unless required by applicable law or agreed to in writing, software
+distributed under the Licence is distributed on an "AS IS" basis,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the Licence for the specific language governing permissions and
+limitations under the Licence.
+**************************************************#
+-->
+@if (detail) {
+  <div>
+    <div class="detail-container container">
+      <ingrid-error [msg]="error"></ingrid-error>
+      <dl class="row">
+        <dt class="col-4 text-right text-right">Für Suche verwenden</dt>
+        <dd class="col-8">
+          @if (detail.active) {
+            <span>Ja</span>
+          }
+          @if (!detail.active) {
+            <span>Nein</span>
+          }
+        </dd>
+        <dt class="col-4 text-right text-right">Index-Name</dt>
+        <dd class="col-8">{{detail.name}}</dd>
+        <dt class="col-4 text-right">Name der Komponente</dt>
+        <dd class="col-8">{{detail.longName}}</dd>
+        <dt class="col-4 text-right">Admin-URL</dt>
+        <dd class="col-8"><a target="_blank" [href]="detail.adminUrl">{{detail.adminUrl}}</a></dd>
+        <dt class="col-4 text-right">Anzahl Dokumente</dt>
+        <dd class="col-8">{{detail.numberDocs}}</dd>
+        <dt class="col-4 text-right">Letzte Aktualisierung</dt>
+        <dd class="col-8">{{detail.lastIndexed | date:'medium'}}</dd>
+        <dt class="col-4 text-right">Letzter Heartbeat</dt>
+        <dd class="col-8">{{detail.lastHeartbeat | dateRelative}} ({{detail.lastHeartbeat | date:'medium'}})</dd>
+        <dt class="col-4 text-right">Mapping</dt>
+        <dd class="col-8">
+          <button (click)="showMapping = !showMapping" class="btn btn-sm btn-outline-info">
+            {{showMapping ? 'Verstecken' : 'Anzeigen'}}
+          </button>
+          @if (showMapping) {
+            <pre class="mapping">{{JSON.parse(detail.mapping) | json}}</pre>
+          }
+        </dd>
+        <dt class="col-4 text-right">Status</dt>
+        @if (detail.indexingState?.running) {
+          <dd class="col-8">
+            {{detail.indexingState?.numProcessed}} / {{detail.indexingState?.totalDocs}}:
+            {{detail.indexingState?.message}}
+          </dd>
+        }
+        @if (!detail.indexingState?.running) {
+          <dd class="col-8">
+            Bereit
+          </dd>
+        }
+      </dl>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <form class="form-inline">
+          <!-- DELETE BUTTON-->
+          <button type="button" class="btn btn-danger deleteIndex" confirmbuttontype="danger" mwlConfirmationPopover
+            [popoverTitle]="'Wirklich löschen?'"
+            [popoverMessage]="'Achtung! Der Index kann noch weitere Typen enthalten, die ebenfalls entfernt werden. Wollen Sie den Index wirklich löschen?'"
+            placement="top"
+            confirmText="Löschen"
+            cancelText="Abbrechen"
+          (confirm)="deleteIndex()">Löschen</button>
+          <!-- ACTIVATE / DEACTIVATE -->
+          <button type="button" class="btn btn-light toggleActiveIndex" (click)="toggleActive()">
+            {{ detail.active ? 'Deaktivieren' : 'Aktivieren'}}
+          </button>
+          <!-- INDEX -->
+          <!--<button type="button" class="btn btn-light doIndex" (click)="index()">Indexieren</button>-->
+          <!-- TOGGLE WHEN NO HEARTBEAT-->
+          <!--<div class="form-check">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input"
-                   [checked]="detail.deactivateWhenNoHeartbeat"
-                   (click)="toggleHeartbeatDeactivation()">
+              [checked]="detail.deactivateWhenNoHeartbeat"
+              (click)="toggleHeartbeatDeactivation()">
             deaktivieren, wenn kein Heartbeat
           </label>
         </div>-->
-
       </form>
     </div>
   </div>
 </div>
+}

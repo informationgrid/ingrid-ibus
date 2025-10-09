@@ -1,43 +1,45 @@
 <!--
-  **************************************************-
-  ingrid-ibus-frontend
-  ==================================================
-  Copyright (C) 2014 - 2025 wemove digital solutions GmbH
-  ==================================================
-  Licensed under the EUPL, Version 1.2 or – as soon they will be
-  approved by the European Commission - subsequent versions of the
-  EUPL (the "Licence");
-  
-  You may not use this work except in compliance with the Licence.
-  You may obtain a copy of the Licence at:
-  
-  https://joinup.ec.europa.eu/software/page/eupl
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the Licence is distributed on an "AS IS" basis,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the Licence for the specific language governing permissions and
-  limitations under the Licence.
-  **************************************************#
-  -->
+**************************************************-
+ingrid-ibus-frontend
+==================================================
+Copyright (C) 2014 - 2025 wemove digital solutions GmbH
+==================================================
+Licensed under the EUPL, Version 1.2 or – as soon they will be
+approved by the European Commission - subsequent versions of the
+EUPL (the "Licence");
+
+You may not use this work except in compliance with the Licence.
+You may obtain a copy of the Licence at:
+
+https://joinup.ec.europa.eu/software/page/eupl
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the Licence is distributed on an "AS IS" basis,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the Licence for the specific language governing permissions and
+limitations under the Licence.
+**************************************************#
+-->
 <div class="container">
 
   <div class="search input-group">
     <input #query (keyup.enter)="search(query.value)" class="form-control" name="ibus_search_query" placeholder="Suche nach ...">
     <span class="input-group-btn">
-        <button class="btn btn-info" type="button" (click)="search(query.value)">Suchen</button>
+      <button class="btn btn-info" type="button" (click)="search(query.value)">Suchen</button>
       <div class="form-check">
         <input #isDebug class="form-check-input" type="checkbox" value="true" id="chkShowDebug" (change)="showDebug = isDebug.checked">
         <label class="form-check-label" for="chkShowDebug">
           debug
         </label>
       </div>
-      </span>
+    </span>
   </div>
 
 
   <nav aria-label="Search result paging">
-    <div *ngIf="hits" class="pull-left">Gesamt: {{totalDocs}}</div>
+    @if (hits) {
+      <div class="pull-left">Gesamt: {{totalDocs}}</div>
+    }
     <ul class="pagination justify-content-end">
       <li class="page-item" [class.disabled]="currentPage === 0">
         <a class="page-link" title="First" (click)="search(query.value, 0)">
@@ -51,9 +53,11 @@
           <span class="sr-only">Previous</span>
         </a>
       </li>
-      <li class="page-item" *ngFor="let pageNum of pages" [class.active]="currentPage === pageNum">
-        <a class="page-link" (click)="search(query.value, pageNum)">{{pageNum + 1}}</a>
-      </li>
+      @for (pageNum of pages; track pageNum) {
+        <li class="page-item" [class.active]="currentPage === pageNum">
+          <a class="page-link" (click)="search(query.value, pageNum)">{{pageNum + 1}}</a>
+        </li>
+      }
       <li class="page-item" [class.disabled]="currentPage === (pages.length - 1)">
         <a class="page-link" title="Next" (click)="search(query.value, currentPage + 1)">
           <span aria-hidden="true">&gt;</span>
@@ -74,25 +78,37 @@
       <div class="card text-white bg-secondary">
         <div class="card-header">Debug Information</div>
         <div class="card-body">
-          <div *ngFor="let info of debugInfo">
-            <span class="debug-title">{{info.title}}:</span> {{info.message}} <span *ngIf="info.duration">(took: {{info.duration}}ms)</span>
-            <ul *ngIf="info.messageList">
-              <li *ngFor="let msg of info.messageList">{{msg}}</li>
-            </ul>
+          @for (info of debugInfo; track info) {
+            <div>
+              <span class="debug-title">{{info.title}}:</span> {{info.message}} @if (info.duration) {
+              <span>(took: {{info.duration}}ms)</span>
+            }
+            @if (info.messageList) {
+              <ul>
+                @for (msg of info.messageList; track msg) {
+                  <li>{{msg}}</li>
+                }
+              </ul>
+            }
           </div>
-        </div>
+        }
       </div>
-    </div>
-
-    <div *ngFor="let hit of hits">
-      <hit-item [hit]="hit"></hit-item>
-    </div>
-
-    <div *ngIf="hits.length === 0">
-      Die Suche ergab keine Treffer.
     </div>
   </div>
 
-  <ingrid-error [msg]="error"></ingrid-error>
+  @for (hit of hits; track hit) {
+    <div>
+      <hit-item [hit]="hit"></hit-item>
+    </div>
+  }
+
+  @if (hits.length === 0) {
+    <div>
+      Die Suche ergab keine Treffer.
+    </div>
+  }
+</div>
+
+<ingrid-error [msg]="error"></ingrid-error>
 
 </div>

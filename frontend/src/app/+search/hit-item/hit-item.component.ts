@@ -25,9 +25,10 @@ import { SearchHit } from '../SearchHit';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'hit-item',
-  templateUrl: './hit-item.component.html',
-  styleUrls: ['./hit-item.component.scss']
+    selector: 'hit-item',
+    templateUrl: './hit-item.component.html',
+    styleUrls: ['./hit-item.component.scss'],
+    standalone: false
 })
 export class HitItemComponent implements OnInit {
 

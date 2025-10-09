@@ -39,9 +39,10 @@ export class IndexDetail {
 }
 
 @Component({
-  selector: 'index-detail',
-  templateUrl: './index-detail.component.html',
-  styleUrls: ['./index-detail.component.scss']
+    selector: 'index-detail',
+    templateUrl: './index-detail.component.html',
+    styleUrls: ['./index-detail.component.scss'],
+    standalone: false
 })
 export class IndexDetailComponent implements OnInit {
 

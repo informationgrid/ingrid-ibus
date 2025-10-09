@@ -24,9 +24,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { IPlugService, IPlugInfo } from '../iplug-service.service';
 
 @Component({
-  selector: 'iplug-item',
-  templateUrl: './iplug-item.component.html',
-  styleUrls: ['../../+indices/index-item/index-item.component.scss', './iplug-item.component.scss']
+    selector: 'iplug-item',
+    templateUrl: './iplug-item.component.html',
+    styleUrls: ['../../+indices/index-item/index-item.component.scss', './iplug-item.component.scss'],
+    standalone: false
 })
 export class IPlugItemComponent implements OnInit {
 

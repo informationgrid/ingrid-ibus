@@ -45,9 +45,10 @@ export class IndexItem {
 }
 
 @Component({
-  selector: 'index-item',
-  templateUrl: './index-item.component.html',
-  styleUrls: ['./index-item.component.scss']
+    selector: 'index-item',
+    templateUrl: './index-item.component.html',
+    styleUrls: ['./index-item.component.scss'],
+    standalone: false
 })
 export class IndexItemComponent implements OnInit {
 

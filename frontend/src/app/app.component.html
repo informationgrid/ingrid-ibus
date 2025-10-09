@@ -1,32 +1,32 @@
 <!--
-  **************************************************-
-  ingrid-ibus-frontend
-  ==================================================
-  Copyright (C) 2014 - 2025 wemove digital solutions GmbH
-  ==================================================
-  Licensed under the EUPL, Version 1.2 or – as soon they will be
-  approved by the European Commission - subsequent versions of the
-  EUPL (the "Licence");
-  
-  You may not use this work except in compliance with the Licence.
-  You may obtain a copy of the Licence at:
-  
-  https://joinup.ec.europa.eu/software/page/eupl
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the Licence is distributed on an "AS IS" basis,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the Licence for the specific language governing permissions and
-  limitations under the Licence.
-  **************************************************#
-  -->
+**************************************************-
+ingrid-ibus-frontend
+==================================================
+Copyright (C) 2014 - 2025 wemove digital solutions GmbH
+==================================================
+Licensed under the EUPL, Version 1.2 or – as soon they will be
+approved by the European Commission - subsequent versions of the
+EUPL (the "Licence");
+
+You may not use this work except in compliance with the Licence.
+You may obtain a copy of the Licence at:
+
+https://joinup.ec.europa.eu/software/page/eupl
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the Licence is distributed on an "AS IS" basis,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the Licence for the specific language governing permissions and
+limitations under the Licence.
+**************************************************#
+-->
 <div>
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <a routerLink="/" class="navbar-brand">iBus</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
-            (click)="showMenu = !showMenu">
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+      (click)="showMenu = !showMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -36,9 +36,11 @@
         <li class="nav-item" routerLinkActive="active">
           <a class="nav-link menuIplugs" routerLink="/iplugs">Angeschlossene iPlugs</a>
         </li>
-        <li *ngIf="showIndicesPage" class="nav-item" routerLinkActive="active">
-          <a class="nav-link menuIndices" routerLink="/indices">Index-Verwaltung</a>
-        </li>
+        @if (showIndicesPage) {
+          <li class="nav-item" routerLinkActive="active">
+            <a class="nav-link menuIndices" routerLink="/indices">Index-Verwaltung</a>
+          </li>
+        }
         <li class="nav-item" routerLinkActive="active">
           <a class="nav-link menuSearch" routerLink="/search">Such-Analyse</a>
         </li>

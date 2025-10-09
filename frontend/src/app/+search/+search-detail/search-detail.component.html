@@ -1,44 +1,50 @@
 <!--
-  **************************************************-
-  ingrid-ibus-frontend
-  ==================================================
-  Copyright (C) 2014 - 2025 wemove digital solutions GmbH
-  ==================================================
-  Licensed under the EUPL, Version 1.2 or – as soon they will be
-  approved by the European Commission - subsequent versions of the
-  EUPL (the "Licence");
-  
-  You may not use this work except in compliance with the Licence.
-  You may obtain a copy of the Licence at:
-  
-  https://joinup.ec.europa.eu/software/page/eupl
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the Licence is distributed on an "AS IS" basis,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the Licence for the specific language governing permissions and
-  limitations under the Licence.
-  **************************************************#
-  -->
+**************************************************-
+ingrid-ibus-frontend
+==================================================
+Copyright (C) 2014 - 2025 wemove digital solutions GmbH
+==================================================
+Licensed under the EUPL, Version 1.2 or – as soon they will be
+approved by the European Commission - subsequent versions of the
+EUPL (the "Licence");
+
+You may not use this work except in compliance with the Licence.
+You may obtain a copy of the Licence at:
+
+https://joinup.ec.europa.eu/software/page/eupl
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the Licence is distributed on an "AS IS" basis,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the Licence for the specific language governing permissions and
+limitations under the Licence.
+**************************************************#
+-->
 <div class="container">
-  <dl *ngIf="detail" class="dl-horizontal">
-    <dt>ID</dt>
-    <dd>{{detail['0']}}</dd>
-    <dt>Titel</dt>
-    <dd>{{detail.title}}</dd>
-    <dt>Zusammenfassung</dt>
-    <dd>{{detail.abstract}}</dd>
-    <dt>Quelle</dt>
-    <dd>{{detail.source}}</dd>
-    <dt>IDF</dt>
-    <button (click)="showIDF = !showIDF" class="btn btn-sm btn-outline-info">
-      {{showIDF ? 'Verstecken' : 'Anzeigen'}}
-    </button>
-    <dd *ngIf="showIDF"><pre class="mapping">{{detail.idf}}</pre></dd>
-    <dt>Index-Dokument</dt>
-    <button (click)="showIndexDocument = !showIndexDocument" class="btn btn-sm btn-outline-info">
-      {{showIndexDocument ? 'Verstecken' : 'Anzeigen'}}
-    </button>
-    <dd *ngIf="showIndexDocument"><pre>{{detail.indexDoc | json}}</pre></dd>
-  </dl>
+  @if (detail) {
+    <dl class="dl-horizontal">
+      <dt>ID</dt>
+      <dd>{{detail['0']}}</dd>
+      <dt>Titel</dt>
+      <dd>{{detail.title}}</dd>
+      <dt>Zusammenfassung</dt>
+      <dd>{{detail.abstract}}</dd>
+      <dt>Quelle</dt>
+      <dd>{{detail.source}}</dd>
+      <dt>IDF</dt>
+      <button (click)="showIDF = !showIDF" class="btn btn-sm btn-outline-info">
+        {{showIDF ? 'Verstecken' : 'Anzeigen'}}
+      </button>
+      @if (showIDF) {
+        <dd><pre class="mapping">{{detail.idf}}</pre></dd>
+      }
+      <dt>Index-Dokument</dt>
+      <button (click)="showIndexDocument = !showIndexDocument" class="btn btn-sm btn-outline-info">
+        {{showIndexDocument ? 'Verstecken' : 'Anzeigen'}}
+      </button>
+      @if (showIndexDocument) {
+        <dd><pre>{{detail.indexDoc | json}}</pre></dd>
+      }
+    </dl>
+  }
 </div>

@@ -25,9 +25,10 @@ import {IndexService} from '../../+indices/index.service';
 import {AppConfiguation, SettingsService} from '../settings.service';
 
 @Component({
-  selector: 'app-settings-list',
-  templateUrl: './settings-list.component.html',
-  styleUrls: ['./settings-list.component.scss']
+    selector: 'app-settings-list',
+    templateUrl: './settings-list.component.html',
+    styleUrls: ['./settings-list.component.scss'],
+    standalone: false
 })
 export class SettingsListComponent implements OnInit, OnDestroy {
 

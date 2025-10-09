@@ -3,11 +3,11 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-ibus-project</artifactId>
-    <version>8.0.0</version>
+    <version>8.1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-frontend</artifactId>
-  <version>8.0.0</version>
+  <version>8.1.0</version>
   <name>InGrid iBus Frontend</name>
 
   <!-- ==================== Build Configuration ==================== -->
@@ -18,8 +18,8 @@
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.8.0</version>
         <configuration>
-          <nodeVersion>v18.12.1</nodeVersion>
-          <npmVersion>8.19.2</npmVersion>
+          <nodeVersion>v22.19.0</nodeVersion>
+          <npmVersion>9.6.4</npmVersion>
           <workingDirectory>.</workingDirectory>
         </configuration>
         <executions>
@@ -65,7 +65,7 @@
 
     <resources>
       <resource>
-        <directory>target/frontend</directory>
+        <directory>target/frontend/browser</directory>
         <targetPath>static</targetPath>
       </resource>
     </resources>

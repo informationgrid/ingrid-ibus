@@ -1,61 +1,71 @@
 <!--
-  **************************************************-
-  ingrid-ibus-frontend
-  ==================================================
-  Copyright (C) 2014 - 2025 wemove digital solutions GmbH
-  ==================================================
-  Licensed under the EUPL, Version 1.2 or – as soon they will be
-  approved by the European Commission - subsequent versions of the
-  EUPL (the "Licence");
-  
-  You may not use this work except in compliance with the Licence.
-  You may obtain a copy of the Licence at:
-  
-  https://joinup.ec.europa.eu/software/page/eupl
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the Licence is distributed on an "AS IS" basis,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the Licence for the specific language governing permissions and
-  limitations under the Licence.
-  **************************************************#
-  -->
+**************************************************-
+ingrid-ibus-frontend
+==================================================
+Copyright (C) 2014 - 2025 wemove digital solutions GmbH
+==================================================
+Licensed under the EUPL, Version 1.2 or – as soon they will be
+approved by the European Commission - subsequent versions of the
+EUPL (the "Licence");
+
+You may not use this work except in compliance with the Licence.
+You may obtain a copy of the Licence at:
+
+https://joinup.ec.europa.eu/software/page/eupl
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the Licence is distributed on an "AS IS" basis,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the Licence for the specific language governing permissions and
+limitations under the Licence.
+**************************************************#
+-->
 <div class="container">
 
-  <div *ngIf="!showInfo" class="text-right text-info mb-1">
-    <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfo = true"></button>
-  </div>
-
-  <div *ngIf="showInfo" class="card text-white bg-info mb-3">
-    <div class="card-header">
-      Information
-      <button type="button" class="close" aria-label="Close" (click)="showInfo = false">
-        <span aria-hidden="true">&times;</span>
-      </button>
+  @if (!showInfo) {
+    <div class="text-right text-info mb-1">
+      <button class="btn btn-info fa fa-info rounded-circle" (click)="showInfo = true"></button>
     </div>
-    <div class="card-body">
-      Hier werden alle iPlugs angezeigt, die ihren Index selbst verwalten. Dies
-      entspricht dem alten Verhalten, wo der iBus die iPlugs separat anfragt, um die Suchergebnisse zu erhalten.
-      Mit einem Klick auf dem An-/Ausschalter wird ein iPlug für die Suche einbezogen oder nicht. Über das Lesezeichen
-      <i class="fa fa-bookmark"></i> kann direkt zur Adminoberfläche gesprungen werden.
-    </div>
-  </div>
+  }
 
-  <ng-container *ngIf="iplugsCentralIndex?.length > 0">
+  @if (showInfo) {
+    <div class="card text-white bg-info mb-3">
+      <div class="card-header">
+        Information
+        <button type="button" class="close" aria-label="Close" (click)="showInfo = false">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+        Hier werden alle iPlugs angezeigt, die ihren Index selbst verwalten. Dies
+        entspricht dem alten Verhalten, wo der iBus die iPlugs separat anfragt, um die Suchergebnisse zu erhalten.
+        Mit einem Klick auf dem An-/Ausschalter wird ein iPlug für die Suche einbezogen oder nicht. Über das Lesezeichen
+        <i class="fa fa-bookmark"></i> kann direkt zur Adminoberfläche gesprungen werden.
+      </div>
+    </div>
+  }
+
+  @if (iplugsCentralIndex?.length > 0) {
     <h6>IPlugs mit zentralem Suchindex</h6>
-    <iplug-item [component]="data" [showActivateToggle]="false" *ngFor="let data of iplugsCentralIndex; trackBy: getIPlugIdentifier"></iplug-item>
-  </ng-container>
+    @for (data of iplugsCentralIndex; track getIPlugIdentifier($index, data)) {
+      <iplug-item [component]="data" [showActivateToggle]="false"></iplug-item>
+    }
+  }
 
-  <ng-container *ngIf="iplugsLocalIndex?.length > 0">
+  @if (iplugsLocalIndex?.length > 0) {
     <h6>IPlugs mit eigenem/keinem Suchindex</h6>
-    <iplug-item [component]="data" *ngFor="let data of iplugsLocalIndex; trackBy: getIPlugIdentifier"></iplug-item>
-  </ng-container>
+    @for (data of iplugsLocalIndex; track getIPlugIdentifier($index, data)) {
+      <iplug-item [component]="data"></iplug-item>
+    }
+  }
 
-  <div *ngIf="iplugsLocalIndex?.length === 0 && iplugsCentralIndex?.length === 0" class="card text-white bg-warning">
-    <div class="card-body">
-      Es sind keine iPlugs mit dem iBus verbunden.
+  @if (iplugsLocalIndex?.length === 0 && iplugsCentralIndex?.length === 0) {
+    <div class="card text-white bg-warning">
+      <div class="card-body">
+        Es sind keine iPlugs mit dem iBus verbunden.
+      </div>
     </div>
-  </div>
+  }
 
   <ingrid-error [msg]="error"></ingrid-error>
 </div>

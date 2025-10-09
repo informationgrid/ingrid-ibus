@@ -23,19 +23,20 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { IPlugService } from './iplug-service.service';
-import {HttpClientModule} from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {ConfigService} from '../config.service';
 import {configServiceStub} from '../../../testing';
 
 describe('IplugServiceService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
-      providers: [
+    imports: [],
+    providers: [
         IPlugService,
-        { provide: ConfigService, useValue: configServiceStub }
-      ]
-    });
+        { provide: ConfigService, useValue: configServiceStub },
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+});
   });
 
   it('should be created', inject([IPlugService], (service: IPlugService) => {
