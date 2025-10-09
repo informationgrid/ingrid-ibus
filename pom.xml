@@ -36,8 +36,8 @@
     <spring.version>3.5.6</spring.version>
     <jackson.version>2.19.2</jackson.version>
     <log4j2.version>2.25.1</log4j2.version>
-    <codelist-service.version>8.1.0-SNAPSHOT</codelist-service.version>
-    <ingrid-utils.version>8.1.0-SNAPSHOT</ingrid-utils.version>
+    <codelist-service.version>8.1.0</codelist-service.version>
+    <ingrid-utils.version>8.1.0</ingrid-utils.version>
   </properties>
 
   <modules>
