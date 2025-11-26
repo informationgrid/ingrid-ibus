@@ -1,10 +1,11 @@
+# InGrid iBus
 
+<img src="https://ingrid-oss.eu/8.2.0/assets/components/ingrid-plattform.png" alt="InformationGrid illustration" width="480" align="right">
 
-InGrid iBus
-========
+This repository is part of **[InGrid](https://ingrid-oss.eu)**, an open-source solution for building, managing, and exposing metadata-driven information systems. 
 
-The iBus is the central commmunication component in a InGrid System. It handles the communication to other InGrid components and provides several interfaces to access data in the InGrid data space.
-
+**About InGrid iBus:**  
+Orchestrates communication among InGrid components and delivers straightforward interfaces for unified data access across the InGrid data space.
 
 Features
 --------
