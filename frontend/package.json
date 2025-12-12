@@ -13,13 +13,13 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "20.2.4",
-    "@angular/compiler": "20.2.4",
-    "@angular/core": "20.2.4",
-    "@angular/forms": "20.2.4",
-    "@angular/platform-browser": "20.2.4",
-    "@angular/platform-browser-dynamic": "20.2.4",
-    "@angular/router": "20.2.4",
+    "@angular/common": "21.0.5",
+    "@angular/compiler": "21.0.5",
+    "@angular/core": "21.0.5",
+    "@angular/forms": "21.0.5",
+    "@angular/platform-browser": "21.0.5",
+    "@angular/platform-browser-dynamic": "21.0.5",
+    "@angular/router": "21.0.5",
     "angular-confirmation-popover": "7.0.0",
     "bootstrap": "4.6.2",
     "core-js": "3.26.1",
@@ -30,10 +30,10 @@
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "@angular/build": "^20.2.2",
-    "@angular/cli": "20.2.2",
-    "@angular/compiler-cli": "20.2.4",
-    "@angular/language-service": "^20.2.4",
+    "@angular/build": "^21.0.3",
+    "@angular/cli": "21.0.3",
+    "@angular/compiler-cli": "21.0.5",
+    "@angular/language-service": "^21.0.5",
     "@types/jasmine": "3.3.5",
     "@types/node": "^22.18.1",
     "jasmine-core": "~4.5.0",
@@ -47,6 +47,6 @@
     "protractor": "~7.0.0",
     "ts-node": "7.0.1",
     "tslint": "~6.1.0",
-    "typescript": "5.8.3"
+    "typescript": "5.9.3"
   }
 }
