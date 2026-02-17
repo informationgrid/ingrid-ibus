@@ -7,12 +7,12 @@
  * Licensed under the EUPL, Version 1.2 or – as soon they will be
  * approved by the European Commission - subsequent versions of the
  * EUPL (the "Licence");
- * 
+ *
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +32,7 @@ import co.elastic.clients.elasticsearch.core.GetResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.GetIndicesSettingsResponse;
+import co.elastic.clients.elasticsearch.indices.GetMappingResponse;
 import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.elasticsearch.indices.get_mapping.IndexMappingRecord;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
@@ -119,7 +120,7 @@ public class IndicesService {
         List<IndicesRecord> esIndices;
         GetIndicesSettingsResponse settings;
         try {
-            esIndices = client.cat().indices().valueBody();
+            esIndices = client.cat().indices().indices();
             settings = client.indices().getSettings();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -163,9 +164,9 @@ public class IndicesService {
     public IndexTypeDetail getIndexDetail(String indexId) {
         IndexTypeDetail index = new IndexTypeDetail();
 
-        Map<String, co.elastic.clients.elasticsearch.indices.IndexState> getSettingsResponse = null;
+        GetIndicesSettingsResponse getSettingsResponse = null;
         try {
-            getSettingsResponse = client.indices().getSettings(s -> s.index(indexId)).result();
+            getSettingsResponse = client.indices().getSettings(s -> s.index(indexId));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -183,9 +184,9 @@ public class IndicesService {
     }
 
     private void addMapping(String indexName, Index index) {
-        Map<String, IndexMappingRecord> mappings;
+        GetMappingResponse mappings;
         try {
-            mappings = client.indices().getMapping(m -> m.index(indexName)).result();
+            mappings = client.indices().getMapping(m -> m.index(indexName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

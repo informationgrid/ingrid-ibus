@@ -38,6 +38,7 @@
     <log4j2.version>2.25.3</log4j2.version>
     <codelist-service.version>8.2.0</codelist-service.version>
     <ingrid-utils.version>8.1.0</ingrid-utils.version>
+    <elastic.version>9.3.0</elastic.version>
   </properties>
 
   <modules>
@@ -96,12 +97,12 @@
       <dependency>
         <groupId>co.elastic.clients</groupId>
         <artifactId>elasticsearch-java</artifactId>
-        <version>8.14.1</version>
+        <version>${elastic.version}</version>
       </dependency>
       <dependency>
         <groupId>org.elasticsearch.client</groupId>
         <artifactId>elasticsearch-rest-client</artifactId>
-        <version>8.14.1</version>
+        <version>${elastic.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-collections</groupId>
