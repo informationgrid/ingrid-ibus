@@ -217,6 +217,20 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
 
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <version>2.9.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>makeAggregateBom</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <!--
           Define which tests to execute
       -->
