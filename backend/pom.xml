@@ -46,22 +46,11 @@
   <!-- ==================== DEPENDENCIES ==================== -->
   <dependencies>
 
-    <!--<dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      &lt;!&ndash; contains special hotfix-version, which can be removed later &ndash;&gt;
-      <version>${jackson.version}</version>
-    </dependency>-->
 
     <!-- InGrid Dependencies -->
     <dependency>
@@ -178,6 +167,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>tools.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -199,6 +194,10 @@
       <artifactId>ingrid-ibus-frontend</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-jackson2</artifactId>
     </dependency>
     <!-- does not seem to work with Spring Boot 2.1.1 -->
     <!--<dependency>
