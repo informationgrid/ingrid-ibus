@@ -7,7 +7,7 @@ License:                    Proprietary
 URL:                        https://www.wemove.com/
 BuildArch:                  noarch
 AutoReqProv:                no
-Requires:                   jre >= 25
+Requires:                   java >= 17
 
 %define target              %{buildroot}/opt/ingrid/ingrid-ibus
 %define systemd_dir         /usr/lib/systemd/system
