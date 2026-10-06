@@ -130,13 +130,13 @@ pipeline {
             steps {
                 script {
                     def repoType = env.TAG_NAME ? "rpm-ingrid-releases" : "rpm-ingrid-snapshots"
-                    sh "mv backend/target/bom.json backend/target/ingrid-ibus-${determineRpmVersion()}.bom.json"
-                    archiveArtifacts artifacts: "backend/target/*.bom.json", fingerprint: true
+                    sh "mv backend/target/bom.json backend/target/ingrid-ibus-${determineRpmVersion()}.sbom.json"
+                    archiveArtifacts artifacts: "backend/target/*.sbom.json", fingerprint: true
 
                     withCredentials([usernamePassword(credentialsId: '9623a365-d592-47eb-9029-a2de40453f68', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                         sh '''
                             curl -f --user $USERNAME:$PASSWORD --upload-file target/rpms/ingrid/*.rpm https://nexus.informationgrid.eu/repository/''' + repoType + '''/
-                            curl -f --user $USERNAME:$PASSWORD --upload-file backend/target/*.bom.json https://nexus.informationgrid.eu/repository/''' + repoType + '''/
+                            curl -f --user $USERNAME:$PASSWORD --upload-file backend/target/*.sbom.json https://nexus.informationgrid.eu/repository/''' + repoType + '''/
                         '''
                     }
                 }
@@ -219,6 +219,6 @@ def determineRpmReleasePart() {
         }
         return '1'
     } else {
-        return 'dev'
+        return 'SNAPSHOT'
     }
 }
