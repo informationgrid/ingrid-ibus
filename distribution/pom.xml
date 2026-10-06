@@ -3,11 +3,11 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-ibus-project</artifactId>
-    <version>8.4.0</version>
+    <version>8.5.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus</artifactId>
-  <version>8.4.0</version>
+  <version>8.5.0</version>
   <packaging>pom</packaging>
   <name>InGrid iBus Distribution</name>
 
@@ -113,7 +113,6 @@
             </dependencies>
             <configuration>
               <skipDocker>false</skipDocker>
-              <imageName>docker-registry.wemove.com/${project.artifactId}:${project.version}</imageName>
               <dockerDirectory>distribution/src/docker</dockerDirectory>
             </configuration>
           </plugin>

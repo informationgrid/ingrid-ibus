@@ -3,11 +3,11 @@
   <parent>
     <groupId>de.ingrid</groupId>
     <artifactId>ingrid-releases-pom</artifactId>
-    <version>7.0.0</version>
+    <version>8.5.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ingrid-ibus-project</artifactId>
-  <version>8.4.0</version>
+  <version>8.5.0</version>
   <packaging>pom</packaging>
   <name>InGrid iBus</name>
   <description>Management of Elasticsearch indices, partner, provider and codelists.</description>
@@ -33,12 +33,13 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>17</java.version>
-    <spring.version>3.5.15</spring.version>
-    <jackson.version>2.19.2</jackson.version>
+    <spring.version>4.1.1</spring.version>
+    <jackson.version>2.21</jackson.version>
     <log4j2.version>2.25.3</log4j2.version>
     <codelist-service.version>8.3.0</codelist-service.version>
     <elasticsearch-tools.version>8.4.0</elasticsearch-tools.version>
     <ingrid-utils.version>8.1.0</ingrid-utils.version>
+    <tomcat.version>11.0.26</tomcat.version>
   </properties>
 
   <modules>
@@ -108,6 +109,21 @@
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
         <version>3.2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-el</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-websocket</artifactId>
+        <version>${tomcat.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

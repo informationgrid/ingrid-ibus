@@ -1,4 +1,12 @@
 
+## 8.5.0 (06.10.2026)
+
+### Features
+
+* Erstellung von RPM Paketen für RHEL 10 für InGrid Komponenten (#9371)
+* Update Java 17 LTS auf Java 25 LTS (#8697)
+
+    
 ## 8.1.0 (09.10.2025)
 
 

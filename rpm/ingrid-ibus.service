@@ -1,0 +1,19 @@
+[Unit]
+Description=InGrid iBus
+After=network.target
+
+[Service]
+Environment=
+Type=simple
+User=ingrid
+Group=ingrid
+WorkingDirectory=/opt/ingrid/ingrid-ibus
+ExecStart=/opt/ingrid/ingrid-ibus/start.sh start
+Restart=on-failure
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=ingrid-ibus
+
+[Install]
+WantedBy=multi-user.target
