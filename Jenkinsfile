@@ -88,6 +88,118 @@ pipeline {
             }
         }
 
+        stage ('Create SBOMs') {
+            when {
+                anyOf {
+                    branch 'develop'
+                    buildingTag()
+                }
+            }
+            steps {
+                withMaven(
+                    maven: 'Maven3',
+                    mavenSettingsConfig: '2529f595-4ac5-44c6-8b4f-f79b5c3f4bae'
+                ) {
+                    sh "mvn cyclonedx:makeAggregateBom "
+                    sh "mvn cyclonedx:makeAggregateBom -D includeTestScope=true -D outputName=bom-dev"
+                }
+                script {
+                    def imageToScan = "bellsoft/liberica-openjre-alpine:25"
+
+                    docker.withRegistry('https://registry.opencode.de', 'registry-opencode') {
+                        sh """
+                            docker run --rm --pull=always --volumes-from jenkins anchore/syft:latest ${imageToScan} --output cyclonedx-json=${WORKSPACE}/target/sbom-docker-image.json
+                        """
+                    }
+                }
+            }
+        }
+
+        stage ('Merge SBOMs') {
+            when {
+                anyOf {
+                    branch 'develop'
+                    buildingTag()
+                }
+            }
+            agent {
+                docker {
+                    image 'cyclonedx/cyclonedx-cli:latest'
+                    // CRITICAL: Overrides the entrypoint so Jenkins can run it as a regular shell agent
+                    args '-u root --entrypoint=""'
+                    reuseNode true
+                }
+            }
+            steps {
+                script {
+                    sh """
+                        cyclonedx merge --input-files target/bom.json target/sbom-docker-image.json --output-file target/sbom-docker.json --output-format json --output-version v1_6 --hierarchical --group de.ingrid --name ingrid-iplug-blp --version ${determineVersion()}
+                    """
+                }
+            }
+        }
+
+        stage ('Upload SBOM') {
+            when {
+                anyOf {
+                    branch 'develop'
+                    buildingTag()
+                }
+            }
+            steps {
+                script {
+                    def parentId = '02f3b12f-f381-4db3-9457-8a39309dd5ff'
+                    def componentName = 'ingrid-ibus'
+
+                    // Attach SBOM to Docker Image
+                    withCredentials([
+                            file(credentialsId: 'cosign-private-key', variable: 'COSIGN_KEY_FILE'),
+                            string(credentialsId: 'cosign-key-password', variable: 'COSIGN_PASSWORD'),
+                            usernamePassword(credentialsId: 'registry-opencode', usernameVariable: 'REG_USER', passwordVariable: 'REG_PASS')
+                        ]) {
+                        if (env.TAG_NAME) {
+                            env.VERSION = env.TAG_NAME
+                        } else if (BRANCH_NAME == 'develop') {
+                            env.VERSION = 'latest'
+                        } else {
+                            env.VERSION = BRANCH_NAME.replaceAll('/', '-')
+                        }
+                        echo "VERSION: ${env.VERSION}"
+                        def imageDigest = sh(script: "docker inspect --format='{{index .RepoDigests 0}}' registry.opencode.de/informationgrid/${componentName}:${env.VERSION} | cut -d'@' -f2", returnStdout: true).trim()
+                        echo "IMAGE_DIGEST: ${env.IMAGE_DIGEST}"
+                        def imageToScan = "registry.opencode.de/informationgrid/${componentName}@${imageDigest}"
+                        sh """
+                            docker run -u 0:0 --rm \
+                              -e COSIGN_PASSWORD \
+                              --volumes-from jenkins \
+                              ghcr.io/sigstore/cosign/cosign:v3.1.3 attest \
+                              --type cyclonedx \
+                              --predicate \${WORKSPACE}/target/sbom-docker.json \
+                              --key "\$COSIGN_KEY_FILE" \
+                              --registry-username "\$REG_USER" \
+                              --registry-password "\$REG_PASS" \
+                              ${imageToScan}
+                        """
+                    }
+
+                    // Dependency Track
+                    withCredentials([string(credentialsId: 'api-token-dependency-track', variable: 'API_KEY')]) {
+                        def baseVersion = determineVersion()
+                        def sbomConfigs = [
+                            [artifact: 'target/bom.json',        suffix: '',              tag: 'ingrid_deps_prod'],
+                            [artifact: 'target/bom-dev.json',    suffix: '-dev',          tag: 'ingrid_deps_dev'],
+                            [artifact: 'target/sbom-docker.json', suffix: '-docker-image', tag: 'ingrid_deps_docker']
+                        ]
+
+                        sbomConfigs.each { cfg ->
+                            def props = [group: 'InGrid', parentId: parentId, tags: ['ingrid', cfg.tag], isLatest: cfg.suffix == '']
+                            dependencyTrackPublisher(artifact: cfg.artifact, projectName: componentName, projectVersion: baseVersion + cfg.suffix, synchronous: true, dependencyTrackApiKey: API_KEY, projectProperties: props)
+                        }
+                    }
+                }
+            }
+        }
+
         stage ('Build RPM') {
             when { expression { return shouldBuildDevOrRelease() } }
             agent {
